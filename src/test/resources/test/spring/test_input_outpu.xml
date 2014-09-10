@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<description>test </description>
+	
+	<bean id="fileInput" class="com.duowan.dataswitch.input.FileInput" >
+		<property name="dir" value="/svnroot/duowan/dw_public/dataswitch/src/test/resources/test/fileinput"></property>
+		<property name="IOInput" >
+			<bean class="com.duowan.dataswitch.input.ReaderInput">
+				<property name="columns" value="name,age,sex"></property>
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="fileOutput" class="com.duowan.dataswitch.output.FileOutput" >
+		<property name="dir" value="/tmp/fileout"></property>
+		<property name="IOOutput" >
+			<bean class="com.duowan.dataswitch.output.WriterOutput">
+				<property name="columns" value="name,age"></property>
+			</bean>
+		</property>
+	</bean>
+</beans>
