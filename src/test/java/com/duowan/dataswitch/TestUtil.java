@@ -24,7 +24,7 @@ public class TestUtil {
 			printRows(rows);
 			count += rows.size();
 		}
-		Assert.assertFalse(empty);
+		Assert.assertFalse("must be not empty",empty);
 		input.close();
 		return count;
 	}

@@ -86,11 +86,13 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		return batchArgs;
 	}
 	
-	private void executeWithSemicolonComma(DataSource ds, String sql) {
+	private static void executeWithSemicolonComma(DataSource ds, String sql) {
 		if (StringUtils.isNotBlank(sql)) {
 			String[] sqls = sql.split(";");
 			for (String s : sqls) {
-				new JdbcTemplate(ds).execute(s);
+				if(StringUtils.isNotBlank(s)) {
+					new JdbcTemplate(ds).execute(s);
+				}
 			}
 		}
 	}
