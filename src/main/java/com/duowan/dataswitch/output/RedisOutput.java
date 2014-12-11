@@ -19,6 +19,8 @@ public class RedisOutput implements Output{
 
 	private JedisPool jedisPool;
 	private String script;
+//	private String beforeScript;
+//	private String afterScript;
 	private Map context;
 	
 	public JedisPool getJedisPool() {

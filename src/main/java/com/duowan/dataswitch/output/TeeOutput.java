@@ -11,23 +11,25 @@ import com.duowan.dataswitch.util.IOUtil;
  */
 public class TeeOutput extends ProxyOutput implements Output{
 
-	private Output branch;
+	private Output[] branchs;
 	
-	public TeeOutput(Output out,Output branch) {
+	public TeeOutput(Output out,Output... branchs) {
 		super(out);
-		this.branch = branch;
+		this.branchs = branchs;
 	}
 	
 	@Override
 	public synchronized void write(List<Object> rows) {
 		super.write(rows);
-		this.branch.write(rows);
+		for(Output branch : branchs)
+			branch.write(rows);
 	}
 
 	@Override
 	public void close() {
 		super.close();
-		IOUtil.closeQuietly(branch);
+		for(Output branch : branchs)
+			IOUtil.closeQuietly(branch);
 	}
 
 }
