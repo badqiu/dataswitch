@@ -21,11 +21,6 @@ public abstract class DataSourceProvider extends BaseObject{
 	public DataSource getDataSource() {
 		if (dataSource == null) {
 			Assert.notNull(url,"jdbc url must be not empty");
-			DriverManagerDataSource ds = new DriverManagerDataSource();
-			ds.setDriverClassName(driverClass);
-			ds.setUsername(username);
-			ds.setPassword(password);
-			ds.setUrl(url);
 			this.dataSource = getDataSource(username,password,url,driverClass);
 		}
 		return dataSource;
