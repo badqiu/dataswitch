@@ -46,7 +46,7 @@
 			<dependency>
 				<groupId>com.duowan.common</groupId>
 				<artifactId>duowan-common-test</artifactId>
-				<version>1.0</version>
+				<version>1.0.1</version>
 				<scope>test</scope>
 			</dependency>
 
@@ -322,12 +322,6 @@
 			<groupId>cglib</groupId>
 			<artifactId>cglib-nodep</artifactId>
 			<version>2.2</version>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>apache-oro</groupId>
-			<artifactId>jakarta-oro</artifactId>
-			<version>2.0.8</version>
 			<optional>true</optional>
 		</dependency>
 		<!-- spring end -->
