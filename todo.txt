@@ -2,3 +2,6 @@
 StreamOutput使用 #号,以支持注释
 script 需要增加 context, beforeScript put var into context for init.
 	script user context
+
+增加提供中间交换使用的 storage
+	
