@@ -5,15 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.MapUtils;
+import org.apache.zookeeper.Transaction;
 import org.mvel2.MVEL;
 import org.springframework.util.Assert;
 
 import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.Transaction;
 
-import com.duowan.common.redis.RedisTemplate;
-import com.duowan.common.redis.RedisTransactionCallback;
+import com.github.rapid.common.redis.RedisTemplate;
+import com.github.rapid.common.redis.RedisTransactionCallback;
 
 public class RedisOutput implements Output{
 
@@ -69,7 +68,7 @@ public class RedisOutput implements Output{
 		final Serializable expr = MVEL.compileExpression(newExpr);
 		template.execute(new RedisTransactionCallback(){
 			@Override
-			public Object doInTransaction(Transaction redis) {
+			public Object doInTransaction(redis.clients.jedis.Transaction redis) {
 				Map vars = new HashMap();
 				if(globalContext != null) {
 					vars.putAll(globalContext);

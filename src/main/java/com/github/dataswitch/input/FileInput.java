@@ -62,7 +62,7 @@ public class FileInput extends BaseInput implements Input{
 				Assert.notNull(deserializer,"deserializer must be not null");
 				isInit = true;
 				this.files = listAllFiles();
-				Assert.isTrue(!this.files.isEmpty(),"not found any file by dirs:"+getDirs());
+				Assert.notEmpty(this.files,"not found any file by dirs:"+getDirs());
 			}
 			
 			if(inputStream == null) {
@@ -101,6 +101,7 @@ public class FileInput extends BaseInput implements Input{
 	}
 	
 	public List<File> listAllFiles(List<String> dirs) {
+		Assert.notEmpty(dirs,"'dirs' must be not empty");
 		List<File> files = new LinkedList<File>();
 		for(String dir : dirs) {
 			List tempFiles = listAllFiles(newFile(dir));

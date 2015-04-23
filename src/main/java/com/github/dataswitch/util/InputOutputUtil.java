@@ -25,8 +25,34 @@ public class InputOutputUtil {
 	}
 	
 	public static void copy(Input input,Output output,int readSize) {
+		copy(input,output,readSize,false);
+	}
+	
+	public static void copy(Input input,Output output,int readSize,boolean ignoreWriteError) {
 		List<Object> rows = null;
 		while(!(rows = input.read(readSize)).isEmpty()) {
+			try {
+				output.write(rows);
+			}catch(Exception e) {
+				if(ignoreWriteError) {
+					continue;
+				}
+				throw new RuntimeException("copy error",e);
+			}
+		}
+	}
+	
+	//FIXME copy by storage
+	public static void copy(Input input,Output output,int readSize,String storegeId,Storage storage) {
+		if(!storage.isInputStored(storegeId)){
+			List<Object> rows = null;
+			while(!(rows = input.read(readSize)).isEmpty()) {
+				storage.write(rows);
+			}
+			storage.saveInputStored(storegeId);
+		}
+		List<Object> rows = null;
+		while(!(rows = storage.read(readSize)).isEmpty()) {
 			output.write(rows);
 		}
 	}

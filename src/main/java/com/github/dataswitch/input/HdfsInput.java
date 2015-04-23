@@ -8,7 +8,7 @@ import java.io.InputStream;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 
-import com.duowan.common.hadoop.HdfsFile;
+import com.github.rapid.common.hadoop.HdfsFile;
 
 public class HdfsInput extends FileInput{
 

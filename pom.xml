@@ -39,23 +39,29 @@
 			</dependency>
 
 			<dependency>
-				<groupId>com.duowan.common</groupId>
-				<artifactId>duowan-common-util</artifactId>
-				<version>1.0.13</version>	
+				<groupId>com.github.rapid.common</groupId>
+				<artifactId>rapid-common-util</artifactId>
+				<version>1.0.0</version>	
 			</dependency>
 			<dependency>
-				<groupId>com.duowan.common</groupId>
-				<artifactId>duowan-common-test</artifactId>
-				<version>1.0.1</version>
+				<groupId>com.github.rapid.common</groupId>
+				<artifactId>rapid-common-test</artifactId>
+				<version>1.0.0</version>
 				<scope>test</scope>
 			</dependency>
 
 			<dependency>
-			        <groupId>com.duowan.common</groupId>
-			        <artifactId>duowan-common-redis</artifactId>
-			        <version>1.0.1</version>
+			        <groupId>com.github.rapid.common</groupId>
+			        <artifactId>rapid-common-redis</artifactId>
+			        <version>1.0.0</version>
 			</dependency>
 
+			<dependency>
+				<groupId>redis.clients</groupId>
+				<artifactId>jedis</artifactId>
+				<version>2.7.0</version>
+			</dependency>
+		
 			<dependency>
 				<groupId>org.xerial.snappy</groupId>
 				<artifactId>snappy-java</artifactId>

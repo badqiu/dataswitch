@@ -16,11 +16,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
-import com.duowan.common.beanutils.PropertyUtils;
-import com.duowan.common.util.DateConvertUtils;
 import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.Constants;
 import com.github.dataswitch.util.Util;
+import com.github.rapid.common.beanutils.PropertyUtils;
+import com.github.rapid.common.util.DateConvertUtils;
 
 public class TxtSerializer extends BaseObject implements Serializer<Object>,Flushable{
 

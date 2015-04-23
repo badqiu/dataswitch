@@ -11,8 +11,8 @@ import javax.script.ScriptException;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.util.Assert;
 
-import com.duowan.common.util.FastBeanUtil;
 import com.github.dataswitch.BaseObject;
+import com.github.rapid.common.util.FastBeanUtil;
 
 
 public class ScriptOutput extends BaseObject implements Output{
