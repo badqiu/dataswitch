@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.serializer.Deserializer;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import com.github.dataswitch.util.CompressUtil;
 
@@ -44,7 +45,8 @@ public class FileInput extends BaseInput implements Input{
 	}
 	
 	public void setDir(String dir) {
-		setDirs(Arrays.asList(dir));
+		String[] dirArray = StringUtils.tokenizeToStringArray(dir, "\t\n,;");
+		setDirs(Arrays.asList(dirArray));
 	}
 	
 	public Deserializer getDeserializer() {
