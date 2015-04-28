@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.serializer.Deserializer;
 import org.springframework.util.Assert;
+import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
 
 import com.github.dataswitch.util.CompressUtil;
@@ -113,7 +114,11 @@ public class FileInput extends BaseInput implements Input{
 	}
 	
 	protected File newFile(String dir) {
-		return new File(dir);
+		try {
+			return ResourceUtils.getFile(dir);
+		} catch (FileNotFoundException e) {
+			return new File(dir);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
