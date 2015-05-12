@@ -24,6 +24,10 @@ public class InputOutputUtil {
 		copy(input,output,DEFAULT_BUFFER_SIZE);
 	}
 	
+	public static void copy(Input input,Output output,boolean ignoreWriteError) {
+		copy(input,output,DEFAULT_BUFFER_SIZE,ignoreWriteError);
+	}
+	
 	public static void copy(Input input,Output output,int readSize) {
 		copy(input,output,readSize,false);
 	}
