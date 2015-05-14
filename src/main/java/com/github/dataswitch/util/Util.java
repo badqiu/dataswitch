@@ -5,7 +5,7 @@ import org.springframework.util.StringUtils;
 public class Util {
 
 	public static String[] splitColumns(String columns) {
-		return StringUtils.trimArrayElements(columns.split(","));
+		return StringUtils.trimArrayElements(columns.split("[,\\s]+"));
 	}
 	
 }

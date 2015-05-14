@@ -19,24 +19,43 @@ public class InputOutputUtil {
 			//ignore
 		}
 	}
-	
-	public static void copy(Input input,Output output) {
-		copy(input,output,DEFAULT_BUFFER_SIZE);
+	/**
+	 * 拷贝数据
+	 * @return 拷贝的数据量
+	 */
+	public static int copy(Input input,Output output) {
+		return copy(input,output,DEFAULT_BUFFER_SIZE);
+	}
+	/**
+	 * 拷贝数据
+	 * @return 拷贝的数据量
+	 */
+	public static int copy(Input input,Output output,boolean ignoreWriteError) {
+		return copy(input,output,DEFAULT_BUFFER_SIZE,ignoreWriteError);
 	}
 	
-	public static void copy(Input input,Output output,boolean ignoreWriteError) {
-		copy(input,output,DEFAULT_BUFFER_SIZE,ignoreWriteError);
+	/**
+	 * 拷贝数据
+	 * @return 拷贝的数据量
+	 */
+	public static int copy(Input input,Output output,int readSize) {
+		return copy(input,output,readSize,false);
 	}
-	
-	public static void copy(Input input,Output output,int readSize) {
-		copy(input,output,readSize,false);
-	}
-	
-	public static void copy(Input input,Output output,int readSize,boolean ignoreWriteError) {
+	/**
+	 * 
+	 * @param input
+	 * @param output
+	 * @param readSize
+	 * @param ignoreWriteError
+	 * @return 拷贝的数据量
+	 */
+	public static int copy(Input input,Output output,int readSize,boolean ignoreWriteError) {
 		List<Object> rows = null;
+		int count = 0;
 		while(!(rows = input.read(readSize)).isEmpty()) {
 			try {
 				output.write(rows);
+				count += rows.size();
 			}catch(Exception e) {
 				if(ignoreWriteError) {
 					continue;
@@ -44,6 +63,7 @@ public class InputOutputUtil {
 				throw new RuntimeException("copy error",e);
 			}
 		}
+		return count;
 	}
 	
 	//FIXME copy by storage
