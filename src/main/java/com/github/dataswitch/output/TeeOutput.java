@@ -9,25 +9,22 @@ import com.github.dataswitch.util.IOUtil;
  * @author badqiu
  *
  */
-public class TeeOutput extends ProxyOutput implements Output{
+public class TeeOutput  implements Output{
 
 	private Output[] branchs;
 	
-	public TeeOutput(Output out,Output... branchs) {
-		super(out);
+	public TeeOutput(Output... branchs) {
 		this.branchs = branchs;
 	}
 	
 	@Override
 	public synchronized void write(List<Object> rows) {
-		super.write(rows);
 		for(Output branch : branchs)
 			branch.write(rows);
 	}
 
 	@Override
 	public void close() {
-		super.close();
 		for(Output branch : branchs)
 			IOUtil.closeQuietly(branch);
 	}
