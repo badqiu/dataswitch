@@ -6,7 +6,7 @@ import java.io.OutputStream;
 
 import org.apache.hadoop.fs.FileSystem;
 
-import com.github.dataswitch.input.HdfsInput;
+import com.github.dataswitch.util.HadoopConfUtil;
 import com.github.rapid.common.hadoop.HdfsFile;
 
 public class HdfsOutput extends FileOutput {
@@ -16,13 +16,31 @@ public class HdfsOutput extends FileOutput {
 	private String hadoopJobUgi = ""; //HDFS 登录帐号，格式为：username,groupname,(groupname...) #password
 	private String hadoopConf; // hadoop-site.xml conf
 
+	private String hdfsUri;
+	private String hdfsUser;
 	private FileSystem fs = null;
 	
+	public String getHdfsUri() {
+		return hdfsUri;
+	}
+
+	public void setHdfsUri(String hdfsUri) {
+		this.hdfsUri = hdfsUri;
+	}
+
+	public String getHdfsUser() {
+		return hdfsUser;
+	}
+
+	public void setHdfsUser(String hdfsUser) {
+		this.hdfsUser = hdfsUser;
+	}
+
 	@Override
 	protected File newFile(String path) {
 		try {
 			if(fs == null) {
-				fs = HdfsInput.getFileSystem();
+				fs = HadoopConfUtil.getFileSystem(hdfsUri,hdfsUser);
 			}
 			return new HdfsFile(fs,path);
 		}catch(Exception e) {

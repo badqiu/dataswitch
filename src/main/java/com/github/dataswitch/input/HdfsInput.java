@@ -5,15 +5,17 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 
+import com.github.dataswitch.util.HadoopConfUtil;
 import com.github.rapid.common.hadoop.HdfsFile;
 
 public class HdfsInput extends FileInput{
 
-	private String hadoopJobUgi = ""; //HDFS 登录帐号，格式为：username,groupname,(groupname...) #password
-	private String hadoopConf; // hadoop-site.xml conf
+//	private String hadoopJobUgi = ""; //HDFS 登录帐号，格式为：username,groupname,(groupname...) #password
+//	private String hadoopConf; // hadoop-site.xml conf
+	private String hdfsUri; // hdfs uri: hdfs://ip:port
+	private String hdfsUser; // hdfs ugi: hadoop:hadoop
 
 //	private FileSystem fs;
 //	private boolean isInit = false;
@@ -69,26 +71,40 @@ public class HdfsInput extends FileInput{
 //		return files;
 //	}
 	
-	
+	private FileSystem fs = null;
 	@Override
-	protected File newFile(String dir) {
-		return new HdfsFile(fs,dir);
+	protected File newFile(String path) {
+		try {
+			if(fs == null) {
+				fs = HadoopConfUtil.getFileSystem(hdfsUri,hdfsUser);
+			}
+			return new HdfsFile(fs,path);
+		} catch (IOException e) {
+			throw new RuntimeException("newFile error,path:"+path,e);
+		}
 	}
 	
+	public String getHdfsUri() {
+		return hdfsUri;
+	}
+
+	public void setHdfsUri(String hdfsUri) {
+		this.hdfsUri = hdfsUri;
+	}
+
+	public String getHdfsUser() {
+		return hdfsUser;
+	}
+
+	public void setHdfsUser(String hdfsUser) {
+		this.hdfsUser = hdfsUser;
+	}
+
 	@Override
 	protected InputStream openFileInputStream(File currentFile)
 			throws FileNotFoundException {
 		HdfsFile f = (HdfsFile)currentFile;
 		return f.open();
-	}
-	
-	static FileSystem fs = null;
-	public static FileSystem getFileSystem() throws IOException {
-		if(fs == null) {
-			Configuration conf = new Configuration();
-	        fs = FileSystem.get(conf);
-		}
-		return fs;
 	}
 	
 	@Override

@@ -58,10 +58,11 @@ public class FileOutput extends BaseOutput implements Output {
 	
 	private void init() throws IOException {
 		Assert.notNull(serializer,"serializer must be not null");
-		log.info("clean dir:"+newFile(dir));
-		FileUtils.deleteDirectory(newFile(dir));
+		File hdfsDir = newFile(dir);
+		log.info("clean dir:"+hdfsDir);
+		FileUtils.deleteDirectory(hdfsDir);
 		File file = newFile(newFilenameByCompressType());
-		log.info("mkdirs dir:"+newFile(dir));
+		log.info("mkdirs dir:"+hdfsDir);
 		file.getParentFile().mkdirs();
 		
 		log.info("fileoutput:"+file.getPath());
