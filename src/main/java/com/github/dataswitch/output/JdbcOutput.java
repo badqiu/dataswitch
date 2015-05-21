@@ -6,6 +6,8 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -20,6 +22,8 @@ import com.github.dataswitch.util.DataSourceProvider;
 
 public class JdbcOutput extends DataSourceProvider implements Output {
 
+	private static Logger logger = LoggerFactory.getLogger(JdbcOutput.class);
+	
 	private String sql;
 	private String beforeSql;
 	private String afterSql;
@@ -52,6 +56,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 
 	public void init() {
 		executeWithSemicolonComma(getDataSource(),beforeSql);
+		logger.info(getId() + " execute beforeSql:"+beforeSql);
 	}
 	
 	@Override
@@ -100,6 +105,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	@Override
 	public void close() {
 		executeWithSemicolonComma(getDataSource(),afterSql);
+		logger.info(getId() + " execute afterSql:"+afterSql);
 	}
 	
 }

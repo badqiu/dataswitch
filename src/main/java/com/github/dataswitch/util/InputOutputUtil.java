@@ -2,13 +2,17 @@ package com.github.dataswitch.util;
 
 import java.io.Closeable;
 import java.util.List;
-import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.dataswitch.input.Input;
 import com.github.dataswitch.output.Output;
 
 public class InputOutputUtil {
 
+	private static Logger logger = LoggerFactory.getLogger(InputOutputUtil.class);
+	
 	private static int DEFAULT_BUFFER_SIZE = 3000;
 	
 	public static void close(Closeable io) {
@@ -16,7 +20,17 @@ public class InputOutputUtil {
 			if(io != null) 
 				io.close();
 		}catch(Exception e) {
+			throw new RuntimeException("close error",e);
+		}
+	}
+	
+	public static void closeQuietly(Closeable io) {
+		try {
+			if(io != null) 
+				io.close();
+		}catch(Exception e) {
 			//ignore
+			logger.warn("close error",e);
 		}
 	}
 	/**
