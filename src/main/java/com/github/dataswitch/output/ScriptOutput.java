@@ -27,7 +27,23 @@ public class ScriptOutput extends BaseObject implements Output{
 	private transient boolean isInit = false;
 	private transient ScriptEngine engine;
 	private Map context;
+	private Output output;
 	
+	public ScriptOutput() {
+	}
+	
+	public ScriptOutput(Output output) {
+		this.output = output;
+	}
+	
+	public Output getOutput() {
+		return output;
+	}
+
+	public void setOutput(Output output) {
+		this.output = output;
+	}
+
 	public String getLang() {
 		return lang;
 	}
@@ -111,6 +127,9 @@ public class ScriptOutput extends BaseObject implements Output{
 		}
 		if(beforeBinding != null) {
 			bindings.putAll(beforeBinding);
+		}
+		if(output != null) {
+			bindings.put("output", output);
 		}
 		return bindings;
 	}
