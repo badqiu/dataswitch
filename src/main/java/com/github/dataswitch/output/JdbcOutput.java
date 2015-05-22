@@ -56,7 +56,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 
 	public void init() {
 		executeWithSemicolonComma(getDataSource(),beforeSql);
-		logger.info(getId() + " execute beforeSql:"+beforeSql);
+		logger.info("execute end beforeSql:"+beforeSql);
 	}
 	
 	@Override
@@ -65,15 +65,20 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 			isInit = true;
 			init();
 		}
-		
-		TransactionTemplate tt = new TransactionTemplate(new DataSourceTransactionManager(getDataSource()));
-		tt.execute(new TransactionCallback<int[]>() {
-			@Override
-			public int[] doInTransaction(TransactionStatus status) {
-				SqlParameterSource[] batchArgs = newSqlParameterSource(rows);
-				return new NamedParameterJdbcTemplate(getDataSource()).batchUpdate(sql, batchArgs);
-			}
-		});
+		String[] sqlArray = StringUtils.split(this.sql,";");
+		for(final String updateSql : sqlArray) {
+			if(StringUtils.isBlank(updateSql)) 
+				continue;
+			
+			TransactionTemplate tt = new TransactionTemplate(new DataSourceTransactionManager(getDataSource()));
+			tt.execute(new TransactionCallback<int[]>() {
+				@Override
+				public int[] doInTransaction(TransactionStatus status) {
+					SqlParameterSource[] batchArgs = newSqlParameterSource(rows);
+					return new NamedParameterJdbcTemplate(getDataSource()).batchUpdate(updateSql, batchArgs);
+				}
+			});
+		}
 		
 	}
 	
@@ -105,7 +110,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	@Override
 	public void close() {
 		executeWithSemicolonComma(getDataSource(),afterSql);
-		logger.info(getId() + " execute afterSql:"+afterSql);
+		logger.info(" execute end afterSql:"+afterSql);
 	}
 	
 }
