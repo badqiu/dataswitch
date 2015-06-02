@@ -27,10 +27,22 @@ public class MultiInput implements Input{
 	}
 	
 	public MultiInput(List<Input> inputs) {
-		this.inputs = inputs;
+		setInputs(inputs);
 	}
 	
 	public MultiInput(Input... inputs) {
+		setInputs(inputs);
+	}
+	
+	public void setInput(Input input) {
+		this.inputs = new ArrayList<Input>(Arrays.asList(input));
+	}
+	
+	public void setInputs(List<Input> inputs) {
+		this.inputs = inputs;
+	}
+	
+	public void setInputs(Input... inputs) {
 		this.inputs = new ArrayList<Input>(Arrays.asList(inputs));
 	}
 	

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.dataswitch.input.Input;
 import com.github.dataswitch.output.Output;
+import com.github.dataswitch.storage.Storage;
 
 public class InputOutputUtil {
 

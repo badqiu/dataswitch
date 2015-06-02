@@ -4,13 +4,14 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import com.github.rapid.common.util.MapUtils;
+import com.github.rapid.common.util.MapUtil;
+
 
 public class HdfsTxtOutputTest {
 
 	@Test
 	public void test() {
-		Map row = MapUtils.newMap("username","badqiu","age",20,"height",185);
+		Map row = MapUtil.newMap("username","badqiu","age",20,"height",185);
 		HdfsTxtOutput output = new HdfsTxtOutput();
 		output.setColumns("username,age");
 		output.setColumnSplit(",");

@@ -1,4 +1,4 @@
-package com.github.dataswitch.util;
+package com.github.dataswitch.storage;
 
 import java.util.List;
 

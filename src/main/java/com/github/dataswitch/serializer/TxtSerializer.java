@@ -20,7 +20,7 @@ import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.Constants;
 import com.github.dataswitch.util.Util;
 import com.github.rapid.common.beanutils.PropertyUtils;
-import com.github.rapid.common.util.DateConvertUtils;
+import com.github.rapid.common.util.DateConvertUtil;
 
 public class TxtSerializer extends BaseObject implements Serializer<Object>,Flushable{
 
@@ -106,7 +106,7 @@ public class TxtSerializer extends BaseObject implements Serializer<Object>,Flus
 			return nullValue;
 		}
 		if(value instanceof Date) {
-			return DateConvertUtils.format((Date)value, "yyyy-MM-dd HH:mm:ss");
+			return DateConvertUtil.format((Date)value, "yyyy-MM-dd HH:mm:ss");
 		}
 		return value.toString();
 	}
