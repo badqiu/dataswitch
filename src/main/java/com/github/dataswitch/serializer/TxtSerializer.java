@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,12 +26,13 @@ public class TxtSerializer extends BaseObject implements Serializer<Object>,Flus
 
 	private static Logger log = LoggerFactory.getLogger(TxtSerializer.class);
 	private String nullValue = Constants.NULL_VALUE;
+	private String dateFormat = "yyyy-MM-dd HH:mm:ss";
 	
 	private String columns; // 输出列
 	private String columnSplit = Constants.COLUMN_SPLIT; //列分隔符
 	private String lineSplit = "\n"; //行分隔符
-	
 	private String charset;
+	
 	private String[] columnNames;
 	private boolean isInit = false;
 	
@@ -85,8 +86,15 @@ public class TxtSerializer extends BaseObject implements Serializer<Object>,Flus
 	public void setCharset(String charset) {
 		this.charset = charset;
 	}
-
 	
+	public String getDateFormat() {
+		return dateFormat;
+	}
+
+	public void setDateFormat(String dateFormat) {
+		this.dateFormat = dateFormat;
+	}
+
 	public void write(Writer out,Object row) {
 		try {
 			List<String> values = new ArrayList<String>();
@@ -106,7 +114,7 @@ public class TxtSerializer extends BaseObject implements Serializer<Object>,Flus
 			return nullValue;
 		}
 		if(value instanceof Date) {
-			return DateConvertUtil.format((Date)value, "yyyy-MM-dd HH:mm:ss");
+			return DateConvertUtil.format((Date)value, dateFormat);
 		}
 		return value.toString();
 	}
