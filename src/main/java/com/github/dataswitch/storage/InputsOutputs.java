@@ -1,7 +1,9 @@
 package com.github.dataswitch.storage;
 
 import java.util.Arrays;
+import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,10 +78,30 @@ public class InputsOutputs {
 	}
 
 	public void exec() {
+		MultiInput input = new MultiInput(inputs);
 		TeeOutput output = new TeeOutput(outputs);
-		int rows = InputOutputUtil.copy(new MultiInput(inputs), output, true);
-		logger.info("copy success,rows:" + rows + " inputs:" + Arrays.toString(inputs)
+		
+		int rows = InputOutputUtil.copy(input, output);
+		logger.info(id+" copy success,rows:" + rows + " inputs:" + Arrays.toString(inputs)
 				+ " outputs:" + Arrays.toString(outputs));
 	}
 
+	public void execByStorage() {
+		MultiInput input = new MultiInput(inputs);
+		TeeOutput output = new TeeOutput(outputs);
+		
+		
+		Storage storage = new Storage();
+		List<Object> rows = null;
+		if(!storage.isInputStored(id)) {
+			while(CollectionUtils.isNotEmpty((rows = input.read(3000)))) {
+				storage.write(rows);
+			}
+		}
+		
+		while((CollectionUtils.isNotEmpty(rows = storage.read(3000)))) {
+			output.write(rows);
+		}
+		
+	}
 }

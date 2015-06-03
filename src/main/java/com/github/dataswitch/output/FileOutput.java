@@ -24,13 +24,13 @@ public class FileOutput extends BaseOutput implements Output {
 	
 	private String dir; //文件存储目录
 	private int maxFileSize; //最大文件大小
-	private String charset; // 输入编码
 	private String compressType; // 压缩类型: gzip, snappy,bzip2
+	private boolean deleteDir = false; //是否写入之前，删除目录
+	private String filename = "fileoutput_0000_";
 	
 	private transient  Serializer serializer;
 	private transient  boolean isInit = false;
-
-	private OutputStream outputStream;
+	private transient OutputStream outputStream;
 	
 	public String getDir() {
 		return dir;
@@ -39,6 +39,14 @@ public class FileOutput extends BaseOutput implements Output {
 	public void setDir(String dir) {
 		this.dir = dir;
 	}
+	
+	public boolean isDeleteDir() {
+		return deleteDir;
+	}
+
+	public void setDeleteDir(boolean deleteDir) {
+		this.deleteDir = deleteDir;
+	}
 
 	public String getCompressType() {
 		return compressType;
@@ -46,6 +54,14 @@ public class FileOutput extends BaseOutput implements Output {
 
 	public void setCompressType(String compressType) {
 		this.compressType = compressType;
+	}
+	
+	public String getFilename() {
+		return filename;
+	}
+
+	public void setFilename(String filename) {
+		this.filename = filename;
 	}
 
 	public Serializer getSerializer() {
@@ -58,11 +74,15 @@ public class FileOutput extends BaseOutput implements Output {
 	
 	private void init() throws IOException {
 		Assert.notNull(serializer,"serializer must be not null");
-		File hdfsDir = newFile(dir);
-		log.info("clean dir:"+hdfsDir);
-		FileUtils.deleteDirectory(hdfsDir);
+		File dirFile = newFile(dir);
+		
+		if(isDeleteDir()) {
+			log.info("delete dir:"+dirFile);
+			FileUtils.deleteDirectory(dirFile);
+		}
+		
 		File file = newFile(newFilenameByCompressType());
-		log.info("mkdirs dir:"+hdfsDir);
+		log.info("mkdirs dir:"+dirFile);
 		file.getParentFile().mkdirs();
 		
 		log.info("fileoutput:"+file.getPath());
@@ -72,9 +92,9 @@ public class FileOutput extends BaseOutput implements Output {
 	private String newFilenameByCompressType() {
 		String ext = CompressUtil.getExtionsionByCompressType(compressType);
 		if(StringUtils.isNotBlank(compressType) && StringUtils.isBlank(ext)) {
-			throw new RuntimeException("not found ext for compressType:"+compressType);
+			throw new RuntimeException("not found ext name for compressType:"+compressType);
 		}
-		return dir+"/00000"+(ext == null ? "" : "."+ext);
+		return dir + "/" + filename + (ext == null ? "" : "."+ext);
 	}
 
 	protected OutputStream openOutputStream(File file) throws FileNotFoundException {

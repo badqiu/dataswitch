@@ -3,6 +3,7 @@ package com.github.dataswitch.util;
 import java.io.Closeable;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +68,7 @@ public class InputOutputUtil {
 	public static int copy(Input input,Output output,int readSize,boolean ignoreWriteError) {
 		List<Object> rows = null;
 		int count = 0;
-		while(!(rows = input.read(readSize)).isEmpty()) {
+		while(CollectionUtils.isNotEmpty((rows = input.read(readSize)))) {
 			try {
 				output.write(rows);
 				count += rows.size();
