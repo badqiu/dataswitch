@@ -56,7 +56,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 
 	public void init() {
 		executeWithSemicolonComma(getDataSource(),beforeSql);
-		logger.info("execute end beforeSql:"+beforeSql);
+		logger.info("executed beforeSql:"+beforeSql);
 	}
 	
 	@Override
@@ -110,7 +110,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	@Override
 	public void close() {
 		executeWithSemicolonComma(getDataSource(),afterSql);
-		logger.info(" execute end afterSql:"+afterSql);
+		logger.info(" executed afterSql:"+afterSql);
 	}
 	
 }

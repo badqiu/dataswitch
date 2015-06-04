@@ -1,0 +1,25 @@
+<monitorJob cron=”30 9 * * *”>
+　　<input>
+	　　<jdbc>
+	　　		<dataSource>
+		　　<sql>
+		　　select value from table where a=’xxxx’
+		　　</sql>
+	　　</jdbc>
+　　</input>
+　　
+　　<monitor>
+	　　<groovy>
+	　　If(value  > 100 || value < 10) 
+	　　Return “xxxx指标超出上下限10-100”;
+	　　</groovy>
+　　</monitor>
+　　
+　　<notify>
+	　　<content>
+	　　
+	　　</content>
+	　　<qiubaichao notifyTypes=”sms,,email”/>
+	　　<kss_group notifyTypes=”sms,,email”/>
+　　</notify>
+</monitorJob>

@@ -4,12 +4,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dataswitch.input.Input;
 import com.github.dataswitch.input.MultiInput;
 import com.github.dataswitch.output.Output;
+import com.github.dataswitch.output.ProxyOutput;
 import com.github.dataswitch.output.TeeOutput;
 import com.github.dataswitch.util.InputOutputUtil;
 
@@ -28,7 +30,8 @@ public class InputsOutputs {
 	private String author; // 作者
 	private Input[] inputs;
 	private Output[] outputs;
-
+	private Output[] filters;
+	
 	public String getId() {
 		return id;
 	}
@@ -88,8 +91,10 @@ public class InputsOutputs {
 
 	public void execByStorage() {
 		MultiInput input = new MultiInput(inputs);
-		TeeOutput output = new TeeOutput(outputs);
-		
+		Output output = new TeeOutput(outputs);
+		if(ArrayUtils.isNotEmpty(filters)) {
+			output = newFilterOutput(filters,output,0);
+		}
 		
 		Storage storage = new Storage();
 		List<Object> rows = null;
@@ -103,5 +108,12 @@ public class InputsOutputs {
 			output.write(rows);
 		}
 		
+	}
+
+	private Output newFilterOutput(Output[] filters,Output lastOutput,int index) {
+		if(index > filters.length) {
+			return lastOutput;
+		}
+		return new ProxyOutput(newFilterOutput(filters,lastOutput,index + 1));
 	}
 }

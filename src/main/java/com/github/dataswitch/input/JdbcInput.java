@@ -54,6 +54,7 @@ public class JdbcInput extends DataSourceProvider implements Input{
 	}
 
 	public void init() {
+		rowMapper = new ColumnMapRowMapper();
 		if(StringUtils.isBlank(sql)) {
 			Assert.hasText(table,"table or sql must be not empty");
 			sql = "select * from " + table;
