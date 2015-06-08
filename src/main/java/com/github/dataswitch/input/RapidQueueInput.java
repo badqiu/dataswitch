@@ -8,6 +8,8 @@ public class RapidQueueInput extends BaseObject implements Input{
 
 	private String host;
 	private int port;
+	private int timeout;
+	
 	private String username;
 	private String password;
 	private String queue;
@@ -59,6 +61,14 @@ public class RapidQueueInput extends BaseObject implements Input{
 
 	public void setVhost(String vhost) {
 		this.vhost = vhost;
+	}
+	
+	public int getTimeout() {
+		return timeout;
+	}
+
+	public void setTimeout(int timeout) {
+		this.timeout = timeout;
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package com.github.dataswitch.util;
 
 import java.io.Closeable;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -35,6 +36,22 @@ public class InputOutputUtil {
 			logger.warn("close error",e);
 		}
 	}
+	
+	/**
+	 * 将input全部读完,返回所有数据行
+	 * @param input
+	 * @param readSize 每次读的批量大小
+	 * @return
+	 */
+	public static List<Object> readFully(Input input,int readSize) {
+		List<Object> result = new ArrayList<Object>(readSize);
+		List<Object> rows = null;
+		while(CollectionUtils.isNotEmpty((rows = input.read(readSize)))) {
+			result.addAll(rows);
+		}
+		return result;
+	}
+	
 	/**
 	 * 拷贝数据
 	 * @return 拷贝的数据量
