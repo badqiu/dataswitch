@@ -15,6 +15,7 @@ import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.util.Assert;
 
 import com.github.dataswitch.util.DataSourceProvider;
+import com.github.rapid.common.util.MapUtil;
 
 
 public class JdbcInput extends DataSourceProvider implements Input{
@@ -28,6 +29,7 @@ public class JdbcInput extends DataSourceProvider implements Input{
 	private transient Connection conn;
 	private transient ColumnMapRowMapper rowMapper = new ColumnMapRowMapper();
 	private transient boolean isInit = false;
+	private boolean mapKey2lowerCase = true;
 	
 	public String getId() {
 		return id;
@@ -52,6 +54,14 @@ public class JdbcInput extends DataSourceProvider implements Input{
 	public void setTable(String table) {
 		this.table = table;
 	}
+	
+	public boolean isMapKey2lowerCase() {
+		return mapKey2lowerCase;
+	}
+
+	public void setMapKey2lowerCase(boolean mapKey2lowerCase) {
+		this.mapKey2lowerCase = mapKey2lowerCase;
+	}
 
 	public void init() {
 		rowMapper = new ColumnMapRowMapper();
@@ -68,24 +78,29 @@ public class JdbcInput extends DataSourceProvider implements Input{
 			ps.setFetchSize(fetchSize);
 			rs = ps.executeQuery();
 		}catch(Exception e) {
-			throw new RuntimeException("init error,sql:"+sql,e);
+			throw new RuntimeException("executeQuery error,sql:"+sql,e);
 		}
 	}
 	
 	@Override
 	public List<Object> read(int size) { // TODO 可以继承BaseInput,删除该方法
-		List<Object> result = new ArrayList<Object>();
+		List result = new ArrayList<Map>();
 		for(int i = 0; i < size; i++) {
-			Object map = read();
+			Map map = read();
 			if(map == null) {
 				break;
 			}
 			result.add(map);
 		}
-		return result;
+		
+		if(mapKey2lowerCase) {
+			return (List)MapUtil.allMapKey2LowerCase(result);
+		}else {
+			return (List)result;
+		}
 	}
 	
-	public Object read() {
+	public Map read() {
 		if(!isInit) {
 			isInit = true;
 			init();
