@@ -2,6 +2,8 @@ package com.github.dataswitch.output;
 
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import com.github.dataswitch.util.IOUtil;
 /**
  * 将一个输入copy一份输出在branch上
@@ -18,7 +20,9 @@ public class TeeOutput  implements Output{
 	}
 	
 	@Override
-	public synchronized void write(List<Object> rows) {
+	public void write(List<Object> rows) {
+		if(CollectionUtils.isEmpty(rows)) return;
+		
 		for(Output branch : branchs)
 			branch.write(rows);
 	}

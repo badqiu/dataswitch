@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.zookeeper.Transaction;
 import org.mvel2.MVEL;
 import org.springframework.util.Assert;
@@ -48,6 +49,8 @@ public class RedisOutput implements Output{
 
 	@Override
 	public void write(List<Object> rows) {
+		if(CollectionUtils.isEmpty(rows)) return;
+		
 		try {
 			batchRedis(jedisPool, rows,context,script);
 		} catch (Exception e) {

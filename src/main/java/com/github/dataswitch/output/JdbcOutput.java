@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,10 +62,13 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	
 	@Override
 	public void write(final List<Object> rows) {
+		if(CollectionUtils.isEmpty(rows)) return;
+		
 		if(!isInit) {
 			isInit = true;
 			init();
 		}
+		
 		String[] sqlArray = StringUtils.split(this.sql,";");
 		for(final String updateSql : sqlArray) {
 			if(StringUtils.isBlank(updateSql)) 

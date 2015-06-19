@@ -8,6 +8,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.util.Assert;
 
@@ -94,6 +95,8 @@ public class ScriptOutput extends BaseObject implements Output{
 
 	@Override
 	public void write(List<Object> rows) {
+		if(CollectionUtils.isEmpty(rows)) return;
+		
 		try {
 			if(!isInit) {
 				isInit = true;

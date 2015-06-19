@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +74,7 @@ public class HttpOutput extends BaseOutput implements Output {
 	@Override
 	public void writeObject(Object object) {
 		try {
+			
 			if(!isInit) {
 				isInit = true;
 				init();

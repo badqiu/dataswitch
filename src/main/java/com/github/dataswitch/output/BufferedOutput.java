@@ -2,6 +2,8 @@ package com.github.dataswitch.output;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
 /**
  * 提供缓冲功能的Output,缓冲池大小根据bufSize设置
  * 
@@ -36,6 +38,8 @@ public class BufferedOutput extends ProxyOutput{
 	
 	@Override
 	public void write(List<Object> rows) {
+		if(CollectionUtils.isEmpty(rows)) return;
+		
 		buf.addAll(rows);
 		if(bufTimeout > 0) {
 			lastSendTime = System.currentTimeMillis();
