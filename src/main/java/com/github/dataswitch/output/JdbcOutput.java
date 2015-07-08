@@ -65,8 +65,10 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		if(CollectionUtils.isEmpty(rows)) return;
 		
 		if(!isInit) {
-			isInit = true;
-			init();
+			synchronized(this) {
+				isInit = true;
+				init();
+			}
 		}
 		
 		String[] sqlArray = StringUtils.split(this.sql,";");
