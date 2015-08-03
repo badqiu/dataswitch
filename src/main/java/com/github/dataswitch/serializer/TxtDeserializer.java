@@ -27,7 +27,6 @@ public class TxtDeserializer extends BaseObject implements Deserializer<Map>{
 	 * hive 的null 值特殊转义字符
 	 */
 	private String nullValue = Constants.NULL_VALUE;
-	
 	/**
 	 * 数据列
 	 */
@@ -82,8 +81,7 @@ public class TxtDeserializer extends BaseObject implements Deserializer<Map>{
 	public void setCharset(String charset) {
 		this.charset = charset;
 	}
-
-
+	
 	private Map toMap(String line,String[] columnNames) {
 		String[] columnValues = splitLine(line,columnSplit);
 		return MapUtil.toMap(columnValues, columnNames);

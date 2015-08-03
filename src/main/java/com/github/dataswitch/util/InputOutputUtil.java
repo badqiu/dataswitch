@@ -71,23 +71,23 @@ public class InputOutputUtil {
 	 * 拷贝数据
 	 * @return 拷贝的数据量
 	 */
-	public static int copy(Input input,Output output,int readSize) {
-		return copy(input,output,readSize,false);
+	public static int copy(Input input,Output output,int bufferSize) {
+		return copy(input,output,bufferSize,false);
 	}
 	/**
 	 * 
 	 * @param input
 	 * @param output
-	 * @param readSize
+	 * @param bufferSize
 	 * @param ignoreWriteError
 	 * @return 拷贝的数据量
 	 */
-	public static int copy(Input input,Output output,int readSize,boolean ignoreWriteError) {
-		if(readSize <= 0) throw new IllegalArgumentException("readSize > 0 must be true");
+	public static int copy(Input input,Output output,int bufferSize,boolean ignoreWriteError) {
+		if(bufferSize <= 0) throw new IllegalArgumentException("readSize > 0 must be true");
 		
 		List<Object> rows = null;
 		int count = 0;
-		while(CollectionUtils.isNotEmpty((rows = input.read(readSize)))) {
+		while(CollectionUtils.isNotEmpty((rows = input.read(bufferSize)))) {
 			try {
 				output.write(rows);
 				count += rows.size();
