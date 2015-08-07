@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,12 +15,18 @@ import com.github.dataswitch.output.FileOutput;
 import com.github.dataswitch.output.Output;
 import com.github.dataswitch.output.ProxyOutput;
 import com.github.dataswitch.output.TeeOutput;
+import com.github.dataswitch.processor.DefaultProcessor;
+import com.github.dataswitch.processor.Processor;
 import com.github.dataswitch.serializer.ByteDeserializer;
 import com.github.dataswitch.serializer.ByteSerializer;
 import com.github.dataswitch.util.InputOutputUtil;
 
 /**
  * 输入输出类，一个输入可以配置多个输出
+ * 
+ * 数据处理流程:
+ * 
+ * Input => Processor => Output
  * 
  * @author badqiu
  *
@@ -36,6 +41,7 @@ public class InputsOutputs {
 	private Input[] inputs; //输入
 	private Output[] outputs; //输出
 	private Output[] filters;
+	private Processor processor;//数据处理器
 	private int bufferSize = 5000;
 	private File storageDir;
 	
@@ -98,12 +104,12 @@ public class InputsOutputs {
 
 	public void exec() {
 		if(bufferSize <= 0) bufferSize = 5000;
-//		Assert.isTrue(bufferSize > 0,"bufferSize > 0 must be true");
+		if(processor == null) processor = new DefaultProcessor();
 		
 		MultiInput input = new MultiInput(inputs);
 		TeeOutput output = new TeeOutput(outputs);
 		
-		int rows = InputOutputUtil.copy(input, output,bufferSize);
+		int rows = InputOutputUtil.copy(input, output,bufferSize,processor);
 		logger.info(id+" copy success,rows:" + rows + " bufferSize:"+ bufferSize +" inputs:" + Arrays.toString(inputs) + " outputs:" + Arrays.toString(outputs));
 		
 		InputOutputUtil.closeQuietly(input);

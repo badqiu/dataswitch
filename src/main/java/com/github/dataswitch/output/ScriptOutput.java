@@ -23,7 +23,7 @@ public class ScriptOutput extends BaseObject implements Output{
 	private String script; // write()时执行的脚本
 	private String afterScript; // script执行之后的脚本
 	
-	private boolean perRowEval = true; //是否每一行数据单独eval,不然将会传递rows参数,以作为数据引用
+	private boolean rowEval = true; //是否每一行数据单独eval,不然将会传递rows参数,以作为数据引用
 	
 	private transient boolean isInit = false;
 	private transient ScriptEngine engine;
@@ -85,12 +85,12 @@ public class ScriptOutput extends BaseObject implements Output{
 		this.context = context;
 	}
 
-	public boolean isPerRowEval() {
-		return perRowEval;
+	public boolean isRowEval() {
+		return rowEval;
 	}
 
-	public void setPerRowEval(boolean perRowEval) {
-		this.perRowEval = perRowEval;
+	public void setRowEval(boolean perRowEval) {
+		this.rowEval = perRowEval;
 	}
 
 	@Override
@@ -103,7 +103,7 @@ public class ScriptOutput extends BaseObject implements Output{
 				init();
 			}
 			
-			if(perRowEval) { //还可以支持每三种,script生成for循环,再eval
+			if(rowEval) { //还可以支持每三种,script生成for循环,再eval
 				for(Object row : rows) {
 					javax.script.Bindings bindings = createBinding();
 					if(row instanceof Map) {

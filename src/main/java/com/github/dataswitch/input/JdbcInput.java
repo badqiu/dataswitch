@@ -24,12 +24,12 @@ public class JdbcInput extends DataSourceProvider implements Input{
 	private String sql;
 	private String table;
 	private int fetchSize = 10000;
+	private boolean mapKey2lowerCase = true;
 	
 	private transient ResultSet rs;
 	private transient Connection conn;
 	private transient ColumnMapRowMapper rowMapper = new ColumnMapRowMapper();
 	private transient boolean isInit = false;
-	private boolean mapKey2lowerCase = true;
 	
 	public String getId() {
 		return id;
