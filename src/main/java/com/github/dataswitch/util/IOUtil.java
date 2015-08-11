@@ -34,6 +34,16 @@ public class IOUtil {
 		dos.write(buf);
 	}
 	
+	public static void writeWithLength(OutputStream out,byte[] buf) throws IOException {
+		int v = buf.length;
+		out.write((v >>> 24) & 0xFF);
+	    out.write((v >>> 16) & 0xFF);
+	    out.write((v >>>  8) & 0xFF);
+	    out.write((v >>>  0) & 0xFF);
+	    out.write(buf);
+	}
+	
+	
 	public static byte[] javaObject2Bytes(Object obj) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		new ObjectOutputStream(baos).writeObject(obj);
