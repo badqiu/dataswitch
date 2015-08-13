@@ -43,7 +43,6 @@ public class InputsOutputs {
 	private Output[] filters;
 	private Processor processor;//数据处理器
 	private int bufferSize = 5000;
-	private File storageDir;
 	
 	public String getId() {
 		return id;
@@ -116,27 +115,6 @@ public class InputsOutputs {
 		InputOutputUtil.closeQuietly(output);
 	}
 
-	public void execByStorage() {
-		MultiInput input = new MultiInput(inputs);
-		Output output = new TeeOutput(outputs);
-		if(ArrayUtils.isNotEmpty(filters)) {
-			output = newFilterOutput(filters,output,0);
-		}
-		
-		List<Object> rows = null;
-		if(storageDir != null) {
-			FileOutput fileOutput = new FileOutput();
-			fileOutput.setDir(storageDir.getAbsolutePath());
-			fileOutput.setCompressType("gzip");
-			fileOutput.setSerializer(new ByteSerializer());
-			InputOutputUtil.copy(input, fileOutput);
-		}
-		
-		FileInput fileInput = new FileInput();
-		fileInput.setDir(storageDir.getAbsolutePath());
-		fileInput.setDeserializer(new ByteDeserializer());
-		InputOutputUtil.copy(fileInput, output);
-	}
 
 	private Output newFilterOutput(Output[] filters,Output lastOutput,int index) {
 		if(index > filters.length) {
