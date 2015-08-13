@@ -8,12 +8,18 @@ import javax.script.Bindings;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
-import com.github.dataswitch.output.ScriptOutput;
+import org.apache.commons.lang.StringUtils;
 
+import com.github.dataswitch.output.ScriptOutput;
+/**
+ * 
+ * @author badqiu
+ *
+ */
 public class ScriptProcessor implements Processor {
 
 	private String lang; //动态语言
-	private String beforeScript; // script执行之前的脚本
+	private String beforeScript; // script执行之前的脚本,可以执行初始化操作
 	private String script; // write()时执行的脚本
 	
 	private boolean rowEval = true; //是否每一行数据单独eval,不然将会传递rows参数,以作为数据引用
@@ -23,6 +29,15 @@ public class ScriptProcessor implements Processor {
 	private boolean inited = false;
 	private Bindings beforeBinding;
 	
+	public ScriptProcessor(){
+	}
+	
+	public ScriptProcessor(String lang, String script) {
+		super();
+		this.lang = lang;
+		this.script = script;
+	}
+
 	@Override
 	public List<Object> process(List<Object> datas) throws Exception {
 		synchronized(this) {

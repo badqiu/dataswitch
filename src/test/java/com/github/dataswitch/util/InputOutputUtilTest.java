@@ -1,44 +1,38 @@
 package com.github.dataswitch.util;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import static org.junit.Assert.assertEquals;
 
-import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Test;
 
-import com.github.dataswitch.input.Input;
-import com.github.dataswitch.output.Output;
+import com.github.dataswitch.input.CollectDataOutput;
+import com.github.dataswitch.input.RandomStringInput;
+import com.github.dataswitch.processor.MultiProcessor;
+import com.github.dataswitch.processor.Processor;
+import com.github.dataswitch.processor.ScriptProcessor;
+import com.github.dataswitch.processor.SqlProcessor;
 
 public class InputOutputUtilTest {
-	List<Object> object = new ArrayList();
 	@Test
 	public void test() {
-		for(int i = 0; i < 10; i++) {
-			object.add(RandomStringUtils.random(10));
-		}
+		CollectDataOutput output = new CollectDataOutput();
+		InputOutputUtil.copy(new RandomStringInput(10),output, null);
+		assertEquals(output.getDatas().toString(),"[{num=0}, {num=1}, {num=2}, {num=3}, {num=4}, {num=5}, {num=6}, {num=7}, {num=8}, {num=9}]");
 		
-		InputOutputUtil.copy(new Input(){
-			public void close() throws IOException {
-				
-			}
-			public List<Object> read(int size) {
-				if(!object.isEmpty()) {
-					return Arrays.asList(object.remove(0));
-				}
-				return null;
-			}
-			
-		}, new Output() {
-			@Override
-			public void close() throws IOException {
-			}
-
-			@Override
-			public void write(List<Object> rows) {
-			}
-		}, null);
+		output = new CollectDataOutput();
+		SqlProcessor sqlProcessor = new SqlProcessor("select * from t where num >= 7");
+		InputOutputUtil.copy(new RandomStringInput(10),output, sqlProcessor);
+		assertEquals(output.getDatas().toString(),"[{num=7}, {num=8}, {num=9}]");
+		
+		output = new CollectDataOutput();
+		ScriptProcessor scriptProcessor = new ScriptProcessor("groovy","row.put('name','groovy');return row;");
+		InputOutputUtil.copy(new RandomStringInput(5),output, scriptProcessor);
+		assertEquals(output.getDatas().toString(),"[{num=0, name=groovy}, {num=1, name=groovy}, {num=2, name=groovy}, {num=3, name=groovy}, {num=4, name=groovy}]");
+		
+		output = new CollectDataOutput();
+		Processor multiProcessor = new MultiProcessor(sqlProcessor,scriptProcessor);
+		InputOutputUtil.copy(new RandomStringInput(10),output, multiProcessor);
+		assertEquals(output.getDatas().toString(),"[{num=7, name=groovy}, {num=8, name=groovy}, {num=9, name=groovy}]");
+		
 	}
 
 }
