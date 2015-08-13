@@ -99,13 +99,28 @@ public class TxtSerializer extends BaseObject implements Serializer<Object>,Flus
 		try {
 			List<String> values = new ArrayList<String>();
 			for(String name : columnNames) {
-				Object value = PropertyUtils.getSimpleProperty(row,name); //TODO 性能是否有问题
+				Object value = getValue(row, name);
 				values.add(format(value));
 			}
 			out.write(StringUtils.join(values,columnSplit));
 			out.write(lineSplit);
 		}catch(IOException e) {
 			throw new RuntimeException("write() error,id:"+getId(),e);
+		}
+	}
+
+	private Object getValue(Object row, String name) {
+		if(row instanceof Map) {
+			Map map = (Map)row;
+			if(map.containsKey(name)) {
+				return map.get(name);
+			}
+			throw new RuntimeException("not exist key:"+name+" on row:"+row);
+		}else {
+			if(PropertyUtils.isReadable(row, name)) {
+				return PropertyUtils.getSimpleProperty(row,name); //TODO 性能是否有问题
+			}
+			throw new RuntimeException("not exist key:"+name+" on row:"+row);
 		}
 	}
 
