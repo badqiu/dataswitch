@@ -3,6 +3,9 @@ package com.github.dataswitch.input;
 import java.io.File;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.dataswitch.output.FileOutput;
 import com.github.dataswitch.serializer.ByteDeserializer;
 import com.github.dataswitch.serializer.ByteSerializer;
@@ -14,6 +17,7 @@ import com.github.dataswitch.util.InputOutputUtil;
  */
 public class FileBufferedInput extends ProxyInput{
 
+	private Logger logger = LoggerFactory.getLogger(FileBufferedInput.class);
 	private String dir;
 	private String filename;
 	private FileOutput bufferedOutput;
@@ -43,7 +47,7 @@ public class FileBufferedInput extends ProxyInput{
 	public List<Object> read(int size) {
 		File file = new File(dir,filename);
 		if(!file.exists() || file.length() <= 0) {
-			System.out.println("create buf,file:"+file);
+			logger.info("create buf file:"+file);
 			bufferedOutput = new FileOutput();
 			bufferedOutput.setDir(dir);
 			bufferedOutput.setFilename(filename);

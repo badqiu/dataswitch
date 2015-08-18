@@ -12,7 +12,6 @@ import com.github.dataswitch.input.Input;
 import com.github.dataswitch.output.Output;
 import com.github.dataswitch.processor.DefaultProcessor;
 import com.github.dataswitch.processor.Processor;
-import com.github.dataswitch.storage.Storage;
 
 public class InputOutputUtil {
 
@@ -129,21 +128,6 @@ public class InputOutputUtil {
 			}
 		}
 		return count;
-	}
-	
-	//FIXME copy by storage
-	public static void copy(Input input,Output output,int readSize,String storegeId,Storage storage) {
-		if(!storage.isInputStored(storegeId)){
-			List<Object> rows = null;
-			while(!(rows = input.read(readSize)).isEmpty()) {
-				storage.write(rows);
-			}
-			storage.saveInputStored(storegeId);
-		}
-		List<Object> rows = null;
-		while(!(rows = storage.read(readSize)).isEmpty()) {
-			output.write(rows);
-		}
 	}
 	
 }
