@@ -15,6 +15,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -30,6 +31,8 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	private String afterSql;
 	
 	private transient boolean isInit = false;
+	
+	private TransactionTemplate transactionTemplate;
 	
 	public String getSql() {
 		return sql;
@@ -71,21 +74,28 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 			}
 		}
 		
-		String[] sqlArray = StringUtils.split(this.sql,";");
-		for(final String updateSql : sqlArray) {
-			if(StringUtils.isBlank(updateSql)) 
-				continue;
-			
-			TransactionTemplate tt = new TransactionTemplate(new DataSourceTransactionManager(getDataSource()));
-			tt.execute(new TransactionCallback<int[]>() {
-				@Override
-				public int[] doInTransaction(TransactionStatus status) {
-					SqlParameterSource[] batchArgs = newSqlParameterSource(rows);
-					return new NamedParameterJdbcTemplate(getDataSource()).batchUpdate(updateSql, batchArgs);
-				}
-			});
-		}
+		final String[] sqlArray = StringUtils.split(this.sql,";");
+		TransactionTemplate tt = getTransactionTemplate();
 		
+		tt.execute(new TransactionCallback<Object>() {
+			public Object doInTransaction(TransactionStatus status) {
+				for(final String updateSql : sqlArray) {
+					if(StringUtils.isBlank(updateSql)) 
+						continue;
+					SqlParameterSource[] batchArgs = newSqlParameterSource(rows);
+					new NamedParameterJdbcTemplate(getDataSource()).batchUpdate(updateSql, batchArgs);
+				}
+				return true;
+			}
+		});
+	}
+
+	private TransactionTemplate getTransactionTemplate() {
+		if(transactionTemplate == null) {
+			transactionTemplate = new TransactionTemplate(new DataSourceTransactionManager(getDataSource()));
+			transactionTemplate.setIsolationLevelName("ISOLATION_READ_UNCOMMITTED");
+		}
+		return transactionTemplate;
 	}
 	
 	private static SqlParameterSource[] newSqlParameterSource(final List<Object> rows) {
