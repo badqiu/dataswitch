@@ -11,12 +11,13 @@ public class JsonDeserializerTest {
 	@Test
 	public void test() throws Exception {
 		JsonDeserializer jd = new JsonDeserializer();
-		ByteArrayInputStream inputStream = new ByteArrayInputStream("{\"name\":\"badqiu\"},{\"name\":\"jane\"}".getBytes());
+		ByteArrayInputStream inputStream = new ByteArrayInputStream("{\"name\":\"badqiu\"}\n{\"name\":\"jane\"}".getBytes());
 		Object obj = jd.deserialize(inputStream);
 		assertEquals("{name=badqiu}",obj.toString());
 		System.out.println(obj);
 		obj = jd.deserialize(inputStream);
-		assertEquals("{name=name}",obj.toString());
+		assertEquals("{name=jane}",obj.toString());
+		System.out.println(obj);
 	}
 
 }

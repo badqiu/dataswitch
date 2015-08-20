@@ -82,9 +82,13 @@ public class InputsOutputs {
 	public Output[] getOutputs() {
 		return outputs;
 	}
-
+	
 	public void setOutputs(Output... outputs) {
 		this.outputs = outputs;
+	}
+	
+	public void setOutput(Output output) {
+		setOutputs(output);
 	}
 	
 	public Processor[] getProcessors() {
@@ -95,16 +99,16 @@ public class InputsOutputs {
 		this.processors = processors;
 	}
 
+	public void setProcessor(Processor processor) {
+		setProcessors(processor);
+	}
+	
 	public int getBufferSize() {
 		return bufferSize;
 	}
 
 	public void setBufferSize(int bufferSize) {
 		this.bufferSize = bufferSize;
-	}
-
-	public void setOutput(Output output) {
-		setOutputs(output);
 	}
 
 	public void exec() {
