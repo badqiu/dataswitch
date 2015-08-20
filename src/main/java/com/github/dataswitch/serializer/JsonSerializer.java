@@ -16,7 +16,9 @@ public class JsonSerializer  extends BaseObject implements Serializer<Map>{
 			throws IOException {
 		if(object == null) return;
 		
-		objectMapper.writeValue(outputStream, object);
+		byte[] bytes = objectMapper.writeValueAsBytes(object);
+//		objectMapper.writeValue(outputStream, object);
+		outputStream.write(bytes);
 		outputStream.write("\n".getBytes());
 	}
 
