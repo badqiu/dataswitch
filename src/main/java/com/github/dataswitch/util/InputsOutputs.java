@@ -1,4 +1,4 @@
-package com.github.dataswitch.storage;
+package com.github.dataswitch.util;
 
 import java.io.File;
 import java.util.Arrays;
@@ -16,10 +16,10 @@ import com.github.dataswitch.output.Output;
 import com.github.dataswitch.output.ProxyOutput;
 import com.github.dataswitch.output.TeeOutput;
 import com.github.dataswitch.processor.DefaultProcessor;
+import com.github.dataswitch.processor.MultiProcessor;
 import com.github.dataswitch.processor.Processor;
 import com.github.dataswitch.serializer.ByteDeserializer;
 import com.github.dataswitch.serializer.ByteSerializer;
-import com.github.dataswitch.util.InputOutputUtil;
 
 /**
  * 输入输出类，一个输入可以配置多个输出
@@ -40,8 +40,7 @@ public class InputsOutputs {
 	private String author; // 作者
 	private Input[] inputs; //输入
 	private Output[] outputs; //输出
-	private Output[] filters;
-	private Processor processor;//数据处理器
+	private Processor[] processors;//数据处理器
 	private int bufferSize = 5000;
 	
 	public String getId() {
@@ -88,6 +87,14 @@ public class InputsOutputs {
 		this.outputs = outputs;
 	}
 	
+	public Processor[] getProcessors() {
+		return processors;
+	}
+
+	public void setProcessors(Processor... processors) {
+		this.processors = processors;
+	}
+
 	public int getBufferSize() {
 		return bufferSize;
 	}
@@ -99,27 +106,24 @@ public class InputsOutputs {
 	public void setOutput(Output output) {
 		setOutputs(output);
 	}
-	
 
 	public void exec() {
 		if(bufferSize <= 0) bufferSize = 5000;
-		if(processor == null) processor = new DefaultProcessor();
 		
 		MultiInput input = new MultiInput(inputs);
 		TeeOutput output = new TeeOutput(outputs);
-		
-		int rows = InputOutputUtil.copy(input, output,bufferSize,processor);
-		logger.info(id+" copy success,rows:" + rows + " bufferSize:"+ bufferSize +" inputs:" + Arrays.toString(inputs) + " outputs:" + Arrays.toString(outputs));
-		
-		InputOutputUtil.closeQuietly(input);
-		InputOutputUtil.closeQuietly(output);
-	}
-
-
-	private Output newFilterOutput(Output[] filters,Output lastOutput,int index) {
-		if(index > filters.length) {
-			return lastOutput;
+		Processor processor = null;
+		if(processors != null) {
+			processor = new MultiProcessor(processors);
 		}
-		return new ProxyOutput(newFilterOutput(filters,lastOutput,index + 1));
+		
+		try {
+			int rows = InputOutputUtil.copy(input, output,bufferSize,processor);
+			logger.info(id+" copy success,rows:" + rows + " bufferSize:"+ bufferSize +" inputs:" + Arrays.toString(inputs) + " outputs:" + Arrays.toString(outputs));
+		}finally {
+			InputOutputUtil.closeQuietly(input);
+			InputOutputUtil.closeQuietly(output);
+		}
 	}
+
 }

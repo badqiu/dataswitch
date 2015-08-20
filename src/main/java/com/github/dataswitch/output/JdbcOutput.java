@@ -90,7 +90,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		});
 	}
 
-	private TransactionTemplate getTransactionTemplate() {
+	public TransactionTemplate getTransactionTemplate() {
 		if(transactionTemplate == null) {
 			transactionTemplate = new TransactionTemplate(new DataSourceTransactionManager(getDataSource()));
 			transactionTemplate.setIsolationLevelName("ISOLATION_READ_UNCOMMITTED");
@@ -98,6 +98,10 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		return transactionTemplate;
 	}
 	
+	public void setTransactionTemplate(TransactionTemplate transactionTemplate) {
+		this.transactionTemplate = transactionTemplate;
+	}
+
 	private static SqlParameterSource[] newSqlParameterSource(final List<Object> rows) {
 		SqlParameterSource[] batchArgs = new SqlParameterSource[rows.size()];
 		int i = 0;
