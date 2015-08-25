@@ -22,6 +22,24 @@ public class FileInputTest {
 		int count = TestUtil.printInputReadRows(input);
 		assertEquals(count,106);
 	}
+	
+	@Test
+	public void test_filterByIncludeAndExclude() throws Exception {
+		FileInput input = newFileInput("name,age , sex","classpath:test/fileinput");
+		input.setInclude("*.txt");
+		int count = TestUtil.printInputReadRows(input);
+		assertEquals(count,6);
+		
+		input = newFileInput("name,age , sex","classpath:test/fileinput");
+		input.setInclude("*.txt");
+		input.setExclude("1.txt");
+		count = TestUtil.printInputReadRows(input);
+		assertEquals(count,3);
+		
+		input = newFileInput("name,age , sex","classpath:test/fileinput");
+		count = TestUtil.printInputReadRows(input);
+		assertEquals(count,106);
+	}
 
 	public static FileInput newFileInput(String columns,String file) throws FileNotFoundException {
 		FileInput input = new FileInput();

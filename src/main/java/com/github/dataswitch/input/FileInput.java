@@ -17,6 +17,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.serializer.Deserializer;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.Assert;
 import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
@@ -35,6 +36,11 @@ public class FileInput extends BaseInput implements Input{
 	private Deserializer deserializer = null;
 	
 	private List<File> files = null;
+	
+	private AntPathMatcher antPathMatcher = new AntPathMatcher();
+	private String include;
+	private String exclude;
+	
 	private transient boolean isInit = false;
 	private transient InputStream inputStream;
 	public List<String> getDirs() {
@@ -56,6 +62,22 @@ public class FileInput extends BaseInput implements Input{
 
 	public void setDeserializer(Deserializer deserializer) {
 		this.deserializer = deserializer;
+	}
+	
+	public String getInclude() {
+		return include;
+	}
+
+	public void setInclude(String include) {
+		this.include = include;
+	}
+
+	public String getExclude() {
+		return exclude;
+	}
+
+	public void setExclude(String exclude) {
+		this.exclude = exclude;
 	}
 
 	@Override
@@ -110,9 +132,27 @@ public class FileInput extends BaseInput implements Input{
 			List tempFiles = listAllFiles(newFile(dir));
 			files.addAll(tempFiles);
 		}
-		return files;
+		return filterByIncludeAndExclude(files);
 	}
 	
+	List<File> filterByIncludeAndExclude(List<File> files) {
+		if(org.apache.commons.lang.StringUtils.isBlank(include) && org.apache.commons.lang.StringUtils.isBlank(exclude) ) {
+			return files;
+		}
+		
+		List<File> result = new ArrayList<File>();
+		for(File file : files) {
+			if(org.apache.commons.lang.StringUtils.isNotBlank(exclude) &&  antPathMatcher.match(exclude, file.getName())) {
+				continue;
+			}
+			
+			if(org.apache.commons.lang.StringUtils.isBlank(include) || antPathMatcher.match(include,file.getName())) {
+				result.add(file);
+			}
+		}
+		return result;
+	}
+
 	protected File newFile(String dir) {
 		try {
 			return ResourceUtils.getFile(dir);
