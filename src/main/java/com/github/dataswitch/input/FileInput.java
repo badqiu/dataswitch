@@ -37,9 +37,9 @@ public class FileInput extends BaseInput implements Input{
 	
 	private List<File> files = null;
 	
-	private AntPathMatcher antPathMatcher = new AntPathMatcher();
 	private String include;
 	private String exclude;
+	private transient AntPathMatcher antPathMatcher = new AntPathMatcher();
 	
 	private transient boolean isInit = false;
 	private transient InputStream inputStream;
