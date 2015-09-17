@@ -42,13 +42,13 @@ public class InputOutputUtil {
 	/**
 	 * 将input全部读完,返回所有数据行
 	 * @param input
-	 * @param readSize 每次读的批量大小
+	 * @param bufferSize 每次读的批量大小
 	 * @return
 	 */
-	public static List<Object> readFully(Input input,int readSize) {
-		List<Object> result = new ArrayList<Object>(readSize);
+	public static List<Object> readFully(Input input,int bufferSize) {
+		List<Object> result = new ArrayList<Object>(bufferSize);
 		List<Object> rows = null;
-		while(CollectionUtils.isNotEmpty((rows = input.read(readSize)))) {
+		while((rows = input.read(bufferSize)) != null) {
 			result.addAll(rows);
 		}
 		return result;
@@ -101,6 +101,7 @@ public class InputOutputUtil {
 	public static int copy(Input input,Output output,int bufferSize,Processor processor) {
 		return copy(input,output,bufferSize,processor,false);
 	}
+	
 	/**
 	 * 
 	 * @param input
@@ -113,13 +114,9 @@ public class InputOutputUtil {
 		if(bufferSize <= 0) throw new IllegalArgumentException("readSize > 0 must be true");
 		List<Object> rows = null;
 		int count = 0;
-		while(CollectionUtils.isNotEmpty((rows = input.read(bufferSize)))) {
+		while((rows = input.read(bufferSize)) != null) {
 			try {
-				List<Object> processedRows = processor == null ? rows : processor.process(rows);
-				if(CollectionUtils.isNotEmpty(processedRows)) {
-					output.write(processedRows);
-					count += processedRows.size();
-				}
+				count += write(output, rows,processor);
 			}catch(Exception e) {
 				if(ignoreWriteError) {
 					continue;
@@ -128,6 +125,19 @@ public class InputOutputUtil {
 			}
 		}
 		return count;
+	}
+
+	/**
+	 * write数据
+	 * @return 写的数据量
+	 */
+	public static int write(Output output, List<Object> rows,Processor processor) throws Exception {
+		List<Object> processedRows = processor == null ? rows : processor.process(rows);
+		if(CollectionUtils.isNotEmpty(processedRows)) {
+			output.write(processedRows);
+			return processedRows.size();
+		}
+		return 0;
 	}
 	
 }

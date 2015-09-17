@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,6 +33,11 @@ public class TxtDeserializer extends BaseObject implements Deserializer<Map>{
 	 */
 	private String columns;
 	
+	/**
+	 * 忽略跳过的列数
+	 */
+	private int skipLines = 0;
+	
 	private String charset = null;
 	
 	private transient String[] columnNames;
@@ -48,6 +54,7 @@ public class TxtDeserializer extends BaseObject implements Deserializer<Map>{
 		this.setNullValue(in.getNullValue());
 		this.setColumnSplit(in.getColumnSplit());
 		this.setCharset(in.getCharset());
+		this.setSkipLines(in.getSkipLines());
 	}
 	
 	public String getColumnSplit() {
@@ -74,6 +81,14 @@ public class TxtDeserializer extends BaseObject implements Deserializer<Map>{
 		this.columns = columns;
 	}
 	
+	public int getSkipLines() {
+		return skipLines;
+	}
+
+	public void setSkipLines(int skipLines) {
+		this.skipLines = skipLines;
+	}
+
 	public String getCharset() {
 		return charset;
 	}
@@ -129,11 +144,24 @@ public class TxtDeserializer extends BaseObject implements Deserializer<Map>{
 		BufferedReader in = cache.get(inputStream);
 		if(in == null) {
 			synchronized (cache) {
-				in = new BufferedReader(new InputStreamReader(inputStream));
+				String defaultCharset = Charset.defaultCharset().name();
+				in = new BufferedReader(new InputStreamReader(inputStream,StringUtils.defaultIfBlank(charset, defaultCharset)));
+				execSkipLines(in,skipLines);
 				cache .put(inputStream,in);
 			}
 		}
 		return read(in);
+	}
+
+	private void execSkipLines(BufferedReader in, int skipLines) throws IOException {
+		if(skipLines <= 0) return;
+		
+		for(int i = 0; i < skipLines; i++) {
+			String skipedLine = in.readLine();
+			if(skipedLine == null) {
+				return;
+			}
+		}
 	}
 
 }

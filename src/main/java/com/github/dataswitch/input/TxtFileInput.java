@@ -4,42 +4,52 @@ import com.github.dataswitch.serializer.TxtDeserializer;
 
 public class TxtFileInput extends FileInput {
 
-	private TxtDeserializer txtDeserializer = new TxtDeserializer();
-
 	public TxtFileInput() {
-		setDeserializer(txtDeserializer);
+		setDeserializer(new TxtDeserializer());
+	}
+	
+	public TxtDeserializer getTxtDeserializer() {
+		return (TxtDeserializer)getDeserializer();
 	}
 
 	public String getColumnSplit() {
-		return txtDeserializer.getColumnSplit();
+		return getTxtDeserializer().getColumnSplit();
 	}
 
 	public void setColumnSplit(String columnSplit) {
-		txtDeserializer.setColumnSplit(columnSplit);
+		getTxtDeserializer().setColumnSplit(columnSplit);
 	}
 
 	public String getNullValue() {
-		return txtDeserializer.getNullValue();
+		return getTxtDeserializer().getNullValue();
 	}
 
 	public void setNullValue(String nullValue) {
-		txtDeserializer.setNullValue(nullValue);
+		getTxtDeserializer().setNullValue(nullValue);
 	}
 
 	public String getColumns() {
-		return txtDeserializer.getColumns();
+		return getTxtDeserializer().getColumns();
 	}
 
 	public void setColumns(String columns) {
-		txtDeserializer.setColumns(columns);
+		getTxtDeserializer().setColumns(columns);
 	}
 
 	public String getCharset() {
-		return txtDeserializer.getCharset();
+		return getTxtDeserializer().getCharset();
 	}
 
 	public void setCharset(String charset) {
-		txtDeserializer.setCharset(charset);
+		getTxtDeserializer().setCharset(charset);
+	}
+
+	public int getSkipLines() {
+		return getTxtDeserializer().getSkipLines();
+	}
+
+	public void setSkipLines(int skipLines) {
+		getTxtDeserializer().setSkipLines(skipLines);
 	}
 
 }
