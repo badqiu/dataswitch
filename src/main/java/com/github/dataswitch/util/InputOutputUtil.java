@@ -48,7 +48,7 @@ public class InputOutputUtil {
 	public static List<Object> readFully(Input input,int bufferSize) {
 		List<Object> result = new ArrayList<Object>(bufferSize);
 		List<Object> rows = null;
-		while((rows = input.read(bufferSize)) != null) {
+		while(CollectionUtils.isEmpty((rows = input.read(bufferSize)))) {
 			result.addAll(rows);
 		}
 		return result;
@@ -114,7 +114,7 @@ public class InputOutputUtil {
 		if(bufferSize <= 0) throw new IllegalArgumentException("readSize > 0 must be true");
 		List<Object> rows = null;
 		int count = 0;
-		while((rows = input.read(bufferSize)) != null) {
+		while(CollectionUtils.isEmpty((rows = input.read(bufferSize)))) {
 			try {
 				count += write(output, rows,processor);
 			}catch(Exception e) {
