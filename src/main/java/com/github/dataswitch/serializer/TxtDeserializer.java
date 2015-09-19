@@ -145,7 +145,7 @@ public class TxtDeserializer extends BaseObject implements Deserializer<Map>{
 		if(in == null) {
 			synchronized (cache) {
 				String defaultCharset = Charset.defaultCharset().name();
-				in = new BufferedReader(new InputStreamReader(inputStream,StringUtils.defaultIfBlank(charset, defaultCharset)));
+				in = new BufferedReader(new InputStreamReader(inputStream,StringUtils.defaultIfEmpty(charset, defaultCharset)));
 				execSkipLines(in,skipLines);
 				cache .put(inputStream,in);
 			}
