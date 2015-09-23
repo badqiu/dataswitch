@@ -97,6 +97,31 @@ public class TxtDeserializer extends BaseObject implements Deserializer<Map>{
 		this.charset = charset;
 	}
 	
+	public TxtDeserializer columnSplit(String columnSplit) {
+		setColumnSplit(columnSplit);
+		return this;
+	}
+	
+	public TxtDeserializer nullValue(String nullValue) {
+		setNullValue(nullValue);
+		return this;
+	}
+	
+	public TxtDeserializer columns(String columns) {
+		setColumns(columns);
+		return this;
+	}
+	
+	public TxtDeserializer skipLines(int skipLines) {
+		setSkipLines(skipLines);
+		return this;
+	}
+	
+	public TxtDeserializer charset(String charset) {
+		setCharset(charset);
+		return this;
+	}
+	
 	private Map toMap(String line,String[] columnNames) {
 		String[] columnValues = splitLine(line,columnSplit);
 		return MapUtil.toMap(columnValues, columnNames);

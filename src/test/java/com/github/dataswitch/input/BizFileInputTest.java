@@ -33,13 +33,11 @@ public class BizFileInputTest {
 		jdbcOutput.setDriverClass("com.mysql.jdbc.Driver");
 		jdbcOutput.setSql("insert st_app_kv(tdate,tdate_type,app_id,kpi_key,kpi_value) values(:日期,'day',:gameName,:key,:value) ON DUPLICATE KEY UPDATE kpi_value=values(kpi_value)");
 		for(File dir : new File("E:/tmp/金山云").listFiles()) {
-//			if(dir.getName().startsWith("暗黑"))
 			readFile2DataBase(dir,jdbcOutput);
 		}
 		for(File dir : new File("E:/tmp/金山云").listFiles()) {
 			System.out.println(dir.getName());
 		}
-//		InputOutputUtil.copy(input, output, processor)
 	}
 
 	private void readFile2DataBase(File dir,JdbcOutput jdbcOutput) throws Exception {
@@ -54,8 +52,8 @@ public class BizFileInputTest {
 			input.setSkipLines(1);
 			input.setColumnSplit("\t");
 			input.setCharset("GBK");
-			List<Map> rows = one2ManyRows(input.read(10000));
-			allPutAll(rows,MapUtil.newMap("gameName",gameName));
+			List<Map> rows = MapHelper.one2ManyRows(input.read(10000),"日期");
+			MapHelper.allPutAll(rows,MapUtil.newMap("gameName",gameName));
 			
 			Object[] finalRows = rows.stream().filter(new Predicate<Map>() {
 				public boolean test(Map t) {
@@ -81,18 +79,7 @@ public class BizFileInputTest {
 				List<Object> result = new ArrayList();
 				for(Map row : (List<Map>)datas) {
 					String value = (String)row.get("value");
-					if(StringUtils.isBlank(value)) {
-						row.put("value", ""+0);
-						continue;
-					}
-					int indexOf = value.indexOf("%");
-					if(indexOf>0) {
-						String tempNum = value.substring(0,indexOf);
-						value = String.valueOf(Double.parseDouble(tempNum) / 100);
-					}else {
-						value = ""+Double.parseDouble(value);
-					}
-					row.put("value", value);
+					row.put("value", ""+percentString2Number(value));
 					result.add(row);
 				}
 				return result;
@@ -101,57 +88,64 @@ public class BizFileInputTest {
 		return processor;
 	}
 
-	public static void allPutAll(List<Map> rows, Map commonMap) {
-		for(Map row : rows) {
-			row.putAll(commonMap);
+	public static double percentString2Number(String input) {
+		if(StringUtils.isBlank(input)) {
+			return 0;
+		}
+		double result = 0;
+		int indexOf = input.indexOf("%");
+		if(indexOf>0) {
+			String tempNum = input.substring(0,indexOf);
+			result = Double.parseDouble(tempNum) / 100;
+		}else {
+			result = Double.parseDouble(input);
+		}
+		return result;
+	}
+	
+	public static class MapHelper {
+		public static void allPutAll(List<Map> rows, Map commonMap) {
+			for(Map row : rows) {
+				row.putAll(commonMap);
+			}
+		}
+	
+		private static List<Map> one2ManyRows(List<Object> inputs,String... removeKeys) {
+			List<Map> outputs = new ArrayList<Map>();
+			for(Object obj : inputs) {
+				Map common = (Map)obj;
+				List<Map<String, Object>> rows = explode(mapRemove(common,removeKeys));
+				for(Map row : rows ){
+					Map output = new HashMap(common);
+					output.putAll(row);
+					outputs.add(output);
+				}
+			}
+			return outputs;
+		}
+		
+		public static Map<String,Object> mapRemove(Map<String, Object> input,String... keys) {
+			if(input == null) return null;
+			if(keys == null) return input;
+			
+			Map output = new HashMap(input);
+			for(String key : keys) {
+				output.remove(key);
+			}
+			return output;
+		}
+		
+		public static List<Map<String,Object>> explode(Map<String, Object> map) {
+			List<Map<String,Object>> rows = new ArrayList();
+			for (Map.Entry<String, Object> entry : map.entrySet()) {
+				String key = entry.getKey();
+				Object value = entry.getValue();
+				Map row = MapUtil.newMap("key",key,"value",value);
+				rows.add(row);
+			}
+			return rows;
 		}
 	}
 
-	private static List<Map> one2ManyRows(List<Object> inputs) {
-		List<Map> outputs = new ArrayList<Map>();
-		for(Object obj : inputs) {
-			Map common = (Map)obj;
-			List<Map<String, Object>> rows = explode(mapRemove(common,"日期"));
-			for(Map row : rows ){
-				Map output = new HashMap(common);
-				output.putAll(row);
-				outputs.add(output);
-			}
-		}
-		return outputs;
-	}
-	
-	public static Map<String,Object> mapRemove(Map<String, Object> input,String... keys) {
-		if(input == null) return null;
-		if(keys == null) return input;
-		
-		Map output = new HashMap(input);
-		for(String key : keys) {
-			output.remove(key);
-		}
-		return output;
-	}
-	
-	public static List<Map<String,Object>> explode(Map<String, Object> map) {
-		List<Map<String,Object>> rows = new ArrayList();
-		for (Map.Entry<String, Object> entry : map.entrySet()) {
-			String key = entry.getKey();
-			Object value = entry.getValue();
-			Map row = MapUtil.newMap("key",key,"value",value);
-			rows.add(row);
-		}
-		return rows;
-	}
-	
-//	public static List<Map<String,Object>> explode(List col) {
-//		List<Map<String,Object>> rows = new ArrayList();
-//		for (Object row : col) {
-//			String key = entry.getKey();
-//			Object value = entry.getValue();
-//			Map row = MapUtil.newMap("key",key,"value",value);
-//			rows.add(row);
-//		}
-//		return rows;
-//	}
 	
 }
