@@ -13,6 +13,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import com.github.dataswitch.TestUtil;
 import com.github.dataswitch.input.JdbcInputTest;
 import com.github.dataswitch.output.JdbcOutput;
+import com.github.dataswitch.util.NamedParameterUtils;
+import com.github.dataswitch.util.ParsedSql;
+import com.github.rapid.common.util.MapUtil;
 
 public class JdbcOutputTest {
 
@@ -31,4 +34,12 @@ public class JdbcOutputTest {
 		assertEquals(20,rows.size());
 	}
 
+	@Test
+	public void test_getReplacedSql() {
+		ParsedSql parsedSql = NamedParameterUtils.parseSqlStatement("select * from t1 where name=:name and sex=:sex");
+		String replacedSql = JdbcOutput.getReplacedSql(parsedSql, MapUtil.newMap("name","badqiu","sex","m"));
+		assertEquals("select * from t1 where name=badqiu and sex=m",replacedSql);
+		System.out.println(replacedSql);
+	}
+	
 }

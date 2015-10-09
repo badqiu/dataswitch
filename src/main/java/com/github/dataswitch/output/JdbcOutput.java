@@ -13,14 +13,18 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+
+import com.github.dataswitch.util.ParsedSql;
+
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.github.dataswitch.util.DataSourceProvider;
+import com.github.dataswitch.util.NamedParameterUtils;
+import com.github.rapid.common.beanutils.PropertyUtils;
 
 public class JdbcOutput extends DataSourceProvider implements Output {
 
@@ -30,8 +34,12 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	private String beforeSql;
 	private String afterSql;
 	
-	private transient boolean isInit = false;
+	/**
+	 * 是否将命名参数替换成实际值
+	 */
+	private boolean replaceSqlWithParams = false;
 	
+	private transient boolean isInit = false;
 	private TransactionTemplate transactionTemplate;
 	
 	public String getSql() {
@@ -74,20 +82,50 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 			}
 		}
 		
-		final String[] sqlArray = StringUtils.split(this.sql,";");
-		TransactionTemplate tt = getTransactionTemplate();
-		
-		tt.execute(new TransactionCallback<Object>() {
-			public Object doInTransaction(TransactionStatus status) {
-				for(final String updateSql : sqlArray) {
-					if(StringUtils.isBlank(updateSql)) 
-						continue;
-					SqlParameterSource[] batchArgs = newSqlParameterSource(rows);
-					new NamedParameterJdbcTemplate(getDataSource()).batchUpdate(updateSql, batchArgs);
-				}
-				return true;
+		executeWithJdbc(rows);
+	}
+
+	protected void executeWithJdbc(final List<Object> rows) {
+		if(replaceSqlWithParams) {
+			ParsedSql parsedSql = NamedParameterUtils.parseSqlStatement(sql);
+			for(Object row : rows) {
+				execWithReplacedSql(parsedSql, row);
 			}
-		});
+		}else {
+			final String[] sqlArray = StringUtils.split(this.sql,";");
+			TransactionTemplate tt = getTransactionTemplate();
+			
+			tt.execute(new TransactionCallback<Object>() {
+				public Object doInTransaction(TransactionStatus status) {
+					for(final String updateSql : sqlArray) {
+						if(StringUtils.isBlank(updateSql)) 
+							continue;
+						SqlParameterSource[] batchArgs = newSqlParameterSource(rows);
+						new NamedParameterJdbcTemplate(getDataSource()).batchUpdate(updateSql, batchArgs);
+					}
+					return true;
+				}
+			});
+		}
+	}
+
+	private void execWithReplacedSql(ParsedSql parsedSql, Object row) {
+		String replacedSql = getReplacedSql(parsedSql, row);
+//		new NamedParameterJdbcTemplate(getDataSource()).execute(replacedSql, paramMap, action)
+		new JdbcTemplate(getDataSource()).execute(replacedSql);
+	}
+
+	public static String getReplacedSql(ParsedSql parsedSql, Object row) {
+		String replacedSql = parsedSql.getOriginalSql();
+		for(String name : parsedSql.getParameterNames()) {
+			Object value = PropertyUtils.getSimpleProperty(row, name);
+			
+			if(value == null) throw new RuntimeException("not found value for name:"+name+" on sql:"+parsedSql.getOriginalSql()+",row:"+row);
+			
+			String strValue = value == null ? "" : String.valueOf(value);
+			replacedSql = StringUtils.replace(replacedSql, ":"+name, strValue);
+		}
+		return replacedSql;
 	}
 
 	public TransactionTemplate getTransactionTemplate() {
