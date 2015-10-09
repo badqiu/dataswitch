@@ -38,8 +38,17 @@ public class JdbcOutputTest {
 	public void test_getReplacedSql() {
 		ParsedSql parsedSql = NamedParameterUtils.parseSqlStatement("select * from t1 where name=:name and sex=:sex");
 		String replacedSql = JdbcOutput.getReplacedSql(parsedSql, MapUtil.newMap("name","badqiu","sex","m"));
-		assertEquals("select * from t1 where name=badqiu and sex=m",replacedSql);
+		assertEquals("select * from t1 where name='badqiu' and sex='m'",replacedSql);
 		System.out.println(replacedSql);
+		
+		
+	}
+	
+	@Test
+	public void test_getReplacedSql2() {
+		ParsedSql parsedSql = NamedParameterUtils.parseSqlStatement("select * from t1 where name=':name' and sex=':sex'");
+		String replacedSql = JdbcOutput.getReplacedSql(parsedSql, MapUtil.newMap("name","badqiu","sex","m"));
+		assertEquals("select * from t1 where name=':name' and sex=':sex'",replacedSql);
 	}
 	
 }

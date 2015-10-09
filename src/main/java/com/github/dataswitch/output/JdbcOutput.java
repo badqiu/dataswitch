@@ -130,10 +130,18 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 			
 			if(value == null) throw new RuntimeException("not found value for name:"+name+" on sql:"+parsedSql.getOriginalSql()+",row:"+row);
 			
-			String strValue = value == null ? "" : String.valueOf(value);
-			replacedSql = StringUtils.replace(replacedSql, ":"+name, strValue);
+			replacedSql = StringUtils.replace(replacedSql, ":"+name,getReplacedValue(value));
 		}
 		return replacedSql;
+	}
+
+	private static String getReplacedValue(Object value) {
+		if(value == null) return "";
+		
+		if(value instanceof String) {
+			return "'"+value+"'";
+		}
+		return String.valueOf(value);
 	}
 
 	public TransactionTemplate getTransactionTemplate() {
