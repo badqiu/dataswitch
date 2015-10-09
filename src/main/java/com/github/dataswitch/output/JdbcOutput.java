@@ -65,6 +65,14 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	public void setAfterSql(String afterSql) {
 		this.afterSql = afterSql;
 	}
+	
+	public boolean isReplaceSqlWithParams() {
+		return replaceSqlWithParams;
+	}
+
+	public void setReplaceSqlWithParams(boolean replaceSqlWithParams) {
+		this.replaceSqlWithParams = replaceSqlWithParams;
+	}
 
 	public void init() {
 		executeWithSemicolonComma(getDataSource(),beforeSql);
