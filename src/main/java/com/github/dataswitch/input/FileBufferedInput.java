@@ -52,10 +52,11 @@ public class FileBufferedInput extends ProxyInput{
 			bufferedOutput.setDir(dir);
 			bufferedOutput.setFilename(filename);
 			bufferedOutput.setSerializer(new ByteSerializer());
+			Input proxy = getProxy();
 			try {
-				InputOutputUtil.copy(getProxy(),bufferedOutput);
+				InputOutputUtil.copy(proxy,bufferedOutput);
 			}finally {
-				InputOutputUtil.close(getProxy());
+				InputOutputUtil.close(proxy);
 				InputOutputUtil.close(bufferedOutput);
 			}
 		}
