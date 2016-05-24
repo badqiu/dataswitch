@@ -147,7 +147,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	public TransactionTemplate getTransactionTemplate() {
 		if(transactionTemplate == null) {
 			transactionTemplate = new TransactionTemplate(new DataSourceTransactionManager(getDataSource()));
-			transactionTemplate.setIsolationLevelName("ISOLATION_READ_UNCOMMITTED");
+//			transactionTemplate.setIsolationLevelName("ISOLATION_READ_UNCOMMITTED");
 		}
 		return transactionTemplate;
 	}
