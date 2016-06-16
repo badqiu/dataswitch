@@ -29,7 +29,7 @@ import com.github.rapid.common.beanutils.PropertyUtils;
 public class JdbcOutput extends DataSourceProvider implements Output {
 
 	private static Logger logger = LoggerFactory.getLogger(JdbcOutput.class);
-	
+	private String lockSql;
 	private String sql;
 	private String beforeSql;
 	private String afterSql;
@@ -48,6 +48,14 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 
 	public void setSql(String sql) {
 		this.sql = sql;
+	}
+	
+	public String getLockSql() {
+		return lockSql;
+	}
+
+	public void setLockSql(String lockSql) {
+		this.lockSql = lockSql;
 	}
 
 	public String getBeforeSql() {
@@ -105,6 +113,8 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 			
 			tt.execute(new TransactionCallback<Object>() {
 				public Object doInTransaction(TransactionStatus status) {
+					executeWithSemicolonComma(getDataSource(),lockSql);
+					
 					for(final String updateSql : sqlArray) {
 						if(StringUtils.isBlank(updateSql)) 
 							continue;

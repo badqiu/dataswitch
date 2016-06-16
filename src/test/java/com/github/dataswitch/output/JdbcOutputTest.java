@@ -33,6 +33,21 @@ public class JdbcOutputTest {
 		TestUtil.printRows(rows);
 		assertEquals(20,rows.size());
 	}
+	
+	@Test
+	public void test_lock_sql() {
+		DataSource ds = JdbcInputTest.createDataSourceAndInsertData();
+		output.setDataSource(ds);
+		output.setLockSql("select * from user for update");
+		output.setBeforeSql("delete from user");
+		output.setSql("insert into user (id,username) values(:id,:username)");
+		List<Object> inputRows = TestUtil.newTestDatas(20);
+		output.write(inputRows);
+		
+		List<Map<String,Object>> rows = new JdbcTemplate(ds).queryForList("select * from user");
+		TestUtil.printRows(rows);
+		assertEquals(20,rows.size());
+	}
 
 	@Test
 	public void test_getReplacedSql() {
