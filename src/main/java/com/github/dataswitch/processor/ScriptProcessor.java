@@ -90,6 +90,10 @@ public class ScriptProcessor implements Processor {
 
 	@Override
 	public List<Object> process(List<Object> datas) throws Exception {
+		if(StringUtils.isBlank(script)) {
+			return datas;
+		}
+		
 		synchronized (this) {
 			if (!inited) {
 				inited = true;
