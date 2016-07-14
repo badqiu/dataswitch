@@ -5,13 +5,17 @@ import java.util.List;
 import java.util.Map;
 
 import javax.script.Bindings;
+import javax.script.Compilable;
+import javax.script.CompiledScript;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.util.Assert;
 
 import com.github.dataswitch.output.ScriptOutput;
+import com.github.rapid.common.util.ScriptEngineUtil;
 
 /**
  * 
@@ -30,7 +34,8 @@ public class ScriptProcessor implements Processor {
 	private transient ScriptEngine scriptEngine;
 	private boolean inited = false;
 	private Bindings initBinding;
-
+	private CompiledScript compiledScript;
+	
 	public ScriptProcessor() {
 	}
 
@@ -99,6 +104,11 @@ public class ScriptProcessor implements Processor {
 				inited = true;
 				lookupScriptEngine();
 				initBinding = ScriptOutput.evalIfNotBlank(scriptEngine, initScript);
+				
+				if(scriptEngine instanceof Compilable) {
+					Compilable compilable = (Compilable)scriptEngine;
+					compiledScript = compilable.compile(script);
+				}
 			}
 		}
 
@@ -107,8 +117,7 @@ public class ScriptProcessor implements Processor {
 			for (Object row : datas) {
 				javax.script.Bindings bindings = createBinding();
 				bindings.put("row", row);
-				Object result = scriptEngine.eval(script, bindings); // TODO script
-																// 性能优化,需要compiled
+				Object result = eval(bindings);
 				if (result != null) {
 					resultList.add(result);
 				}
@@ -117,8 +126,15 @@ public class ScriptProcessor implements Processor {
 		} else {
 			javax.script.Bindings bindings = createBinding();
 			bindings.put("rows", datas);
-			return (List<Object>) scriptEngine.eval(script, bindings); // TODO script
-																	// 性能优化,需要compiled
+			return (List<Object>)eval(bindings); 
+		}
+	}
+
+	private Object eval(javax.script.Bindings bindings)throws ScriptException {
+		if(compiledScript == null) {
+			return scriptEngine.eval(script, bindings);
+		}else {
+			return compiledScript.eval(bindings);
 		}
 	}
 
