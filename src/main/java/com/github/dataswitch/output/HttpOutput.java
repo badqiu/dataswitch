@@ -20,7 +20,7 @@ public class HttpOutput extends BaseOutput implements Output {
 	
 	private String url;
 	
-	private transient  Serializer serializer  = null;
+	private Serializer serializer  = null;
 	private transient  boolean isInit = false;
 
 	private OutputStream outputStream;
