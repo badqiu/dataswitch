@@ -29,8 +29,13 @@ public class TeeOutput  implements Output{
 
 	@Override
 	public void close() {
-		for(Output branch : branchs)
-			IOUtil.closeQuietly(branch);
+		for(Output branch : branchs) {
+			try {
+				IOUtil.close(branch);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 }

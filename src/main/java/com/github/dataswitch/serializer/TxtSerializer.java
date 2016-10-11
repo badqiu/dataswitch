@@ -95,18 +95,37 @@ public class TxtSerializer extends BaseObject implements Serializer<Object>,Flus
 		this.dateFormat = dateFormat;
 	}
 
-	public void write(Writer out,Object row) {
+//	public void write(Writer out,Object row) {
+//		try {
+//			List<String> values = new ArrayList<String>();
+//			for(String name : columnNames) {
+//				Object value = getValue(row, name);
+//				values.add(format(value));
+//			}
+//			out.write(StringUtils.join(values,columnSplit));
+//			out.write(lineSplit);
+//		}catch(IOException e) {
+//			throw new RuntimeException("write() error,id:"+getId(),e);
+//		}
+//	}
+	
+	public void write(OutputStream out,Object row) {
 		try {
-			List<String> values = new ArrayList<String>();
-			for(String name : columnNames) {
-				Object value = getValue(row, name);
-				values.add(format(value));
-			}
-			out.write(StringUtils.join(values,columnSplit));
-			out.write(lineSplit);
+			String str = toLineString(row);
+			out.write(charset == null ? str.getBytes() : str.getBytes(charset));
+			out.write(lineSplit.getBytes());
 		}catch(IOException e) {
 			throw new RuntimeException("write() error,id:"+getId(),e);
 		}
+	}
+
+	private String toLineString(Object row) {
+		List<String> values = new ArrayList<String>();
+		for(String name : columnNames) {
+			Object value = getValue(row, name);
+			values.add(format(value));
+		}
+		return StringUtils.join(values,columnSplit);
 	}
 
 	private Object getValue(Object row, String name) {
@@ -149,30 +168,31 @@ public class TxtSerializer extends BaseObject implements Serializer<Object>,Flus
 			init();
 		}
 		
-		Writer out = cache.get(outputStream);
-		if(out == null) {
-			synchronized (cache) {
-				if(StringUtils.isBlank(charset)) {
-					out = new OutputStreamWriter(outputStream);
-				}else {
-					out = new OutputStreamWriter(outputStream,charset);
-				}
-				cache.put(outputStream,out);
-			}
-		}
-		write(out,object);
+//		Writer out = cache.get(outputStream);
+//		if(out == null) {
+//			synchronized (cache) {
+//				if(StringUtils.isBlank(charset)) {
+//					out = new OutputStreamWriter(outputStream);
+//				}else {
+//					out = new OutputStreamWriter(outputStream,charset);
+//				}
+//				cache.put(outputStream,out);
+//			}
+//		}
+//		write(out,object);
+		write(outputStream,object);
 	}
 
 	@Override
 	public void flush() throws IOException {
-		for(Writer writer : cache.values()) {
-			try {
-				writer.flush();
-			}catch(Exception e) {
-				log.error("flosh error",e);
-				//ignore
-			}
-		}
+//		for(Writer writer : cache.values()) {
+//			try {
+//				writer.flush();
+//			}catch(Exception e) {
+//				log.error("flosh error",e);
+//				//ignore
+//			}
+//		}
 	}
 
 }

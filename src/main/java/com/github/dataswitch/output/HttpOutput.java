@@ -3,10 +3,9 @@ package com.github.dataswitch.output;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +22,8 @@ public class HttpOutput extends BaseOutput implements Output {
 	private Serializer serializer  = null;
 	private transient  boolean isInit = false;
 
-	private OutputStream outputStream;
+	private transient HttpURLConnection  conn;
+	private transient OutputStream outputStream;
 	
 	public String getUrl() {
 		return url;
@@ -49,26 +49,41 @@ public class HttpOutput extends BaseOutput implements Output {
 		URL url = new URL(this.url);
 		
         // 打开和URL之间的连接
-        URLConnection conn = url.openConnection();
+        conn = (HttpURLConnection)url.openConnection();
         // 设置通用的请求属性
-        conn.setRequestProperty("accept", "*/*");
-        conn.setRequestProperty("connection", "Keep-Alive");
-        conn.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)");
-
+        
+        // Post cannot use caches  
+        // Post 请求不能使用缓存  
+        conn.setUseCaches(false);
         // 发送POST请求必须设置如下两行
         conn.setDoOutput(true);
         conn.setDoInput(true);
+        
+        conn.setRequestProperty("accept", "*/*");
+        conn.setRequestProperty("connection", "Keep-Alive");
+        conn.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)");
+        conn.setRequestMethod("POST");  
+        conn.setRequestProperty( "Content-Type", "application/octet-stream"); 
+        
         outputStream = new BufferedOutputStream(conn.getOutputStream());
 	}
 
 	@Override
-	public void close() {
+	public void close() throws IOException {
 		try {
-			serializer.flush();
+			if(serializer != null) serializer.flush();
+			if(outputStream != null) outputStream.flush();
 		} catch (IOException e) {
 			throw new RuntimeException("flush error",e);
 		}
 		IOUtils.closeQuietly(outputStream);
+		
+		if(conn != null) {
+			String response = IOUtils.toString(conn.getInputStream());
+			log.info("responseCode:"+conn.getResponseCode()+" response::"+response);
+			
+			conn.disconnect();
+		}
 	}
 
 	@Override

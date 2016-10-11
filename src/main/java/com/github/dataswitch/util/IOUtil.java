@@ -61,6 +61,16 @@ public class IOUtil {
 		return null;
 	}
 	
+	public static void close(Closeable io) {
+		if(io != null) {
+			try {
+				io.close();
+			} catch (IOException e) {
+				throw new RuntimeException("close error",e);
+			}
+		}
+	}
+	
 	public static void closeQuietly(Closeable io) {
 		if(io != null) {
 			try {
