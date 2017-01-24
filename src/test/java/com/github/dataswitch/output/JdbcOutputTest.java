@@ -38,7 +38,7 @@ public class JdbcOutputTest {
 	public void test_lock_sql() {
 		DataSource ds = JdbcInputTest.createDataSourceAndInsertData();
 		output.setDataSource(ds);
-		output.setLockSql("select * from user for update");
+		output.setLockSql("select * from user");
 		output.setBeforeSql("delete from user");
 		output.setSql("insert into user (id,username) values(:id,:username)");
 		List<Object> inputRows = TestUtil.newTestDatas(20);
