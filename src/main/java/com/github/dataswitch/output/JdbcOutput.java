@@ -1,11 +1,14 @@
 package com.github.dataswitch.output;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ComparatorUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,9 +16,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-
-import com.github.dataswitch.util.ParsedSql;
-
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -24,6 +24,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.github.dataswitch.util.DataSourceProvider;
 import com.github.dataswitch.util.NamedParameterUtils;
+import com.github.dataswitch.util.ParsedSql;
 import com.github.rapid.common.beanutils.PropertyUtils;
 
 public class JdbcOutput extends DataSourceProvider implements Output {
@@ -135,7 +136,9 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 
 	public static String getReplacedSql(ParsedSql parsedSql, Object row) {
 		String replacedSql = parsedSql.getOriginalSql();
-		for(String name : parsedSql.getParameterNames()) {
+		List<String> parameterNames = new ArrayList(parsedSql.getParameterNames());
+		Collections.sort(parameterNames,ComparatorUtils.reversedComparator(null));
+		for(String name : parameterNames) {
 			Object value = PropertyUtils.getSimpleProperty(row, name);
 			
 			if(value == null) throw new RuntimeException("not found value for name:"+name+" on sql:"+parsedSql.getOriginalSql()+",row:"+row);

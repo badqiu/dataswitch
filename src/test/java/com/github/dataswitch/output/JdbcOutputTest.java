@@ -66,4 +66,14 @@ public class JdbcOutputTest {
 		assertEquals("select * from t1 where name=':name' and sex=':sex'",replacedSql);
 	}
 	
+	@Test
+	public void test_getReplacedSql_with_same_param() {
+		ParsedSql parsedSql = NamedParameterUtils.parseSqlStatement("select * from t1 where tdate=:tdate and tdate_type=:tdate_type");
+		String replacedSql = JdbcOutput.getReplacedSql(parsedSql, MapUtil.newMap("tdate","tdate","tdate_type","tdate_type"));
+		assertEquals("select * from t1 where tdate='tdate' and tdate_type='tdate_type'",replacedSql);
+		System.out.println(replacedSql);
+		
+		
+	}
+	
 }
