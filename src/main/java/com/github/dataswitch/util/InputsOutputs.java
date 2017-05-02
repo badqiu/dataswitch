@@ -100,7 +100,9 @@ public class InputsOutputs {
 	}
 
 	public void setProcessor(Processor processor) {
-		setProcessors(processor);
+		if(processor != null) {
+			setProcessors(processor);
+		}
 	}
 	
 	public int getBufferSize() {
