@@ -34,7 +34,7 @@ public class MailOutput implements Output{
 	private String contentFooter;
 	private String contentTemplate;
 	
-	private Configuration freemarkerConf;
+	private Configuration freemarkerConf = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
 	private int maxRows = 0;
 	
 	public void setTo(String... to) {
