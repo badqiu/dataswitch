@@ -158,15 +158,15 @@ public class MailOutput implements Output{
 		}
 		model.put("rows", tempRows);
 		
-		String text = contentTemplate;
+		String finalTemplate = contentTemplate;
 		if(StringUtils.isNotBlank(contentHead)) {
-			text = contentHead + text;
+			finalTemplate = contentHead + finalTemplate;
 		}
 		if(StringUtils.isNotBlank(contentFooter)) {
-			text = text + contentFooter;
+			finalTemplate = finalTemplate + contentFooter;
 		}
 		
-		String mailContent = FreeMarkerTemplateUtils.processTemplateIntoString(new Template("",text,freemarkerConf), model);
+		String mailContent = FreeMarkerTemplateUtils.processTemplateIntoString(new Template("",finalTemplate,freemarkerConf), model);
 		return mailContent;
 	}
 
