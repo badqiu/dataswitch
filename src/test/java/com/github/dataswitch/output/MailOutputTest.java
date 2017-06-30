@@ -19,7 +19,7 @@ public class MailOutputTest {
 		
 		output.setJavaMailSender(sender);
 		output.setSubject("subject from MailOutputTest");
-		output.setContentTemplate("<#list rows as row>hi ${row}, </#list>");
+		output.setContentTemplate("<h1>FROM</h1> <#list rows as row> hi ${row} </#list>");
 		output.setTo("qiubaichao1@kingsoft.com");
 		output.setFrom("xgsdkdata@126.com");
 		
@@ -35,6 +35,7 @@ public class MailOutputTest {
 //		sender.setPort(587);
 		sender.setUsername("xgsdkdata@126.com");
 		sender.setPassword("nxusvgumljntydoq");
+		
 		
 		Properties javaMailProperties = new Properties();
 		javaMailProperties.setProperty("mail.smtp.auth", "true");

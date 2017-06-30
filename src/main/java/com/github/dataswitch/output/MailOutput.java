@@ -2,14 +2,17 @@ package com.github.dataswitch.output;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.mail.SimpleMailMessage;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+
+import org.apache.commons.lang.StringUtils;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import freemarker.template.Configuration;
@@ -27,6 +30,8 @@ public class MailOutput implements Output{
 	private String[] bcc;
 	private String replyTo;
 	private String subject;
+	private String contentHead;
+	private String contentFooter;
 	private String contentTemplate;
 	
 	private Configuration freemarkerConf;
@@ -104,23 +109,45 @@ public class MailOutput implements Output{
 		this.freemarkerConf = conf;
 	}
 
-
-	private void doSendEmail() throws Exception {
-		SimpleMailMessage msg = buildSimpleMailMessage();
-		javaMailSender.send(msg);
+	public String getContentHead() {
+		return contentHead;
 	}
 
-	private SimpleMailMessage buildSimpleMailMessage() throws IOException,TemplateException {
-		SimpleMailMessage msg = new SimpleMailMessage();
+	public void setContentHead(String contentHead) {
+		this.contentHead = contentHead;
+	}
+
+	public String getContentFooter() {
+		return contentFooter;
+	}
+
+	public void setContentFooter(String contentFooter) {
+		this.contentFooter = contentFooter;
+	}
+
+	private void doSendEmail() throws Exception {
+		MimeMessage message = javaMailSender.createMimeMessage();
+		setMaiFields(message);
+		javaMailSender.send(message);
+	}
+
+	private void setMaiFields(MimeMessage mimeMessage) throws IOException,TemplateException, MessagingException {
+		MimeMessageHelper msg = new MimeMessageHelper(mimeMessage, true);
 		msg.setSentDate(new Date());
 		msg.setSubject(subject);
 		msg.setFrom(from);
 		msg.setTo(to);
-		msg.setReplyTo(replyTo);
-		msg.setCc(cc);
-		msg.setBcc(bcc);
-		msg.setText(processContentTemplate());
-		return msg;
+		if(StringUtils.isNotBlank(replyTo)) {
+			msg.setReplyTo(replyTo);
+		}
+		if(cc != null) {
+			msg.setCc(cc);
+		}
+		if(bcc != null) {
+			msg.setBcc(bcc);
+		}
+		
+		msg.setText(processContentTemplate(),true);
 	}
 
 	private String processContentTemplate() throws IOException,TemplateException {
@@ -130,7 +157,16 @@ public class MailOutput implements Output{
 			rows.subList(0, Math.min(rows.size(), maxRows));
 		}
 		model.put("rows", tempRows);
-		String mailContent = FreeMarkerTemplateUtils.processTemplateIntoString(new Template("",contentTemplate,freemarkerConf), model);
+		
+		String text = contentTemplate;
+		if(StringUtils.isNotBlank(contentHead)) {
+			text = contentHead + text;
+		}
+		if(StringUtils.isNotBlank(contentFooter)) {
+			text = text + contentFooter;
+		}
+		
+		String mailContent = FreeMarkerTemplateUtils.processTemplateIntoString(new Template("",text,freemarkerConf), model);
 		return mailContent;
 	}
 
