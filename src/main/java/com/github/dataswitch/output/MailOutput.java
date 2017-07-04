@@ -180,7 +180,7 @@ public class MailOutput implements Output{
 		try {
 			doSendEmail();
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			throw new RuntimeException("send email error. subject="+subject,e);
 		}
 	}
 }
