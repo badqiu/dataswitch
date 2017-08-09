@@ -121,7 +121,7 @@ public class InputOutputUtil {
 				if(ignoreWriteError) {
 					continue;
 				}
-				throw new RuntimeException("copy error",e);
+				throw new RuntimeException("copy error,input:"+input+" output:"+output+" processor:"+processor,e);
 			}
 		}
 		return count;

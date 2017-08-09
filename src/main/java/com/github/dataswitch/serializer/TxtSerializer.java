@@ -154,7 +154,7 @@ public class TxtSerializer extends BaseObject implements Serializer<Object>,Flus
 	}
 
 
-	private Map<OutputStream,Writer> cache = new HashMap<OutputStream,Writer>();
+//	private Map<OutputStream,Writer> cache = new HashMap<OutputStream,Writer>();
 
 	private void init() {
 		Assert.hasText(columns,"columns must be not empty");
