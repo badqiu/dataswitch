@@ -20,7 +20,7 @@ public class FileBufferedInput extends ProxyInput{
 	private Logger logger = LoggerFactory.getLogger(FileBufferedInput.class);
 	private String dir;
 	private String filename;
-	private FileOutput bufferedOutput;
+//	private FileOutput bufferedOutput;
 	private FileInput bufferedInput;
 	
 	public FileBufferedInput() {
@@ -33,12 +33,15 @@ public class FileBufferedInput extends ProxyInput{
 	public String getDir() {
 		return dir;
 	}
+	
 	public void setDir(String baseDir) {
 		this.dir = baseDir;
 	}
+	
 	public String getFilename() {
 		return filename;
 	}
+	
 	public void setFilename(String filename) {
 		this.filename = filename;
 	}
@@ -48,7 +51,7 @@ public class FileBufferedInput extends ProxyInput{
 		File file = new File(dir,filename);
 		if(!file.exists() || file.length() <= 0) {
 			logger.info("create buf file:"+file);
-			bufferedOutput = new FileOutput();
+			FileOutput bufferedOutput = new FileOutput();
 			bufferedOutput.setDir(dir);
 			bufferedOutput.setFilename(filename);
 			bufferedOutput.setSerializer(new ByteSerializer());
@@ -73,8 +76,8 @@ public class FileBufferedInput extends ProxyInput{
 	@Override
 	public void close() {
 		IOUtil.closeQuietly(bufferedInput);
-		IOUtil.closeQuietly(bufferedOutput);
-		IOUtil.closeQuietly(getProxy());
+//		IOUtil.closeQuietly(bufferedOutput);
+//		IOUtil.closeQuietly(getProxy());
 	}
 	
 }

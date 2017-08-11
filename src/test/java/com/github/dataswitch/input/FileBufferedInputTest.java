@@ -14,7 +14,7 @@ public class FileBufferedInputTest {
 		bufferedInput.setDir("/tmp");
 		bufferedInput.setFilename("FileBufferedInputTest.test");
 		
-		InputOutputUtil.copy(bufferedInput, output);
+		InputOutputUtil.copy(bufferedInput, output,1);
 		InputOutputUtil.close(bufferedInput);
 		InputOutputUtil.close(output);
 	}

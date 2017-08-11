@@ -111,7 +111,7 @@ public class InputOutputUtil {
 	 * @return 拷贝的数据量
 	 */
 	public static int copy(Input input,Output output,int bufferSize,Processor processor,boolean ignoreWriteError) {
-		if(bufferSize <= 0) throw new IllegalArgumentException("readSize > 0 must be true");
+		if(bufferSize <= 0) throw new IllegalArgumentException("bufferSize > 0 must be true");
 		List<Object> rows = null;
 		int count = 0;
 		while(CollectionUtils.isNotEmpty((rows = input.read(bufferSize)))) {
