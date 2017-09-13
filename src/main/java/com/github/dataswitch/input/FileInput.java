@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -100,6 +101,10 @@ public class FileInput extends BaseInput implements Input{
 				Assert.notNull(deserializer,"deserializer must be not null");
 				isInit = true;
 				this.files = listAllFiles();
+				if(CollectionUtils.isEmpty(this.files)) {
+					log.warn("not found any file by dirs:"+getDirs());
+				}
+				
 				if(errorOnEmptyFile) {
 					Assert.notEmpty(this.files,"not found any file by dirs:"+getDirs());
 				}
