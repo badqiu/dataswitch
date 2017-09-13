@@ -37,6 +37,11 @@ public class FileInput extends BaseInput implements Input{
 	
 	private List<File> files = null;
 	
+	/**
+	 * 检查是否有文件 ，不存在则报错
+	 */
+	private boolean errorOnEmptyFile = true;
+	
 	private String include;
 	private String exclude;
 	private transient AntPathMatcher antPathMatcher = new AntPathMatcher();
@@ -79,6 +84,14 @@ public class FileInput extends BaseInput implements Input{
 	public void setExclude(String exclude) {
 		this.exclude = exclude;
 	}
+	
+	public boolean isErrorOnEmptyFile() {
+		return errorOnEmptyFile;
+	}
+
+	public void setErrorOnEmptyFile(boolean errorOnEmptyFile) {
+		this.errorOnEmptyFile = errorOnEmptyFile;
+	}
 
 	@Override
 	public Object readObject() {
@@ -87,7 +100,9 @@ public class FileInput extends BaseInput implements Input{
 				Assert.notNull(deserializer,"deserializer must be not null");
 				isInit = true;
 				this.files = listAllFiles();
-				Assert.notEmpty(this.files,"not found any file by dirs:"+getDirs());
+				if(errorOnEmptyFile) {
+					Assert.notEmpty(this.files,"not found any file by dirs:"+getDirs());
+				}
 			}
 			
 			if(inputStream == null) {
