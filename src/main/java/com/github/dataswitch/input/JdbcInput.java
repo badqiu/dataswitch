@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.util.Assert;
@@ -20,6 +20,8 @@ import com.github.rapid.common.util.MapUtil;
 
 public class JdbcInput extends DataSourceProvider implements Input{
 
+	private static Logger logger = LoggerFactory.getLogger(JdbcInput.class);
+	
 	private String id;
 	private String sql;
 	private String table;
@@ -76,7 +78,12 @@ public class JdbcInput extends DataSourceProvider implements Input{
 			conn = getDataSource().getConnection();
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setFetchSize(fetchSize);
+			
+			long start = System.currentTimeMillis();
 			rs = ps.executeQuery();
+			long cost = System.currentTimeMillis() - start;
+			
+			logger.info("execute sql:"+sql+" cost time mills:"+cost);
 		}catch(Exception e) {
 			throw new RuntimeException("executeQuery error,sql:"+sql,e);
 		}
