@@ -3,11 +3,8 @@ package com.github.dataswitch.serializer;
 import java.io.Flushable;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +15,7 @@ import org.springframework.util.Assert;
 
 import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.Constants;
+import com.github.dataswitch.util.HiveEscapeUtil;
 import com.github.dataswitch.util.Util;
 import com.github.rapid.common.beanutils.PropertyUtils;
 import com.github.rapid.common.util.DateConvertUtil;
@@ -150,9 +148,11 @@ public class TxtSerializer extends BaseObject implements Serializer<Object>,Flus
 		if(value instanceof Date) {
 			return DateConvertUtil.format((Date)value, dateFormat);
 		}
+		if(value instanceof String) {
+			return HiveEscapeUtil.hiveEscaped((String)value);
+		}
 		return value.toString();
 	}
-
 
 //	private Map<OutputStream,Writer> cache = new HashMap<OutputStream,Writer>();
 
