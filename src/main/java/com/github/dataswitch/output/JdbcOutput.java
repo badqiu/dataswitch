@@ -102,7 +102,8 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		long start = System.currentTimeMillis();
 		executeWithJdbc(rows);
 		long cost = System.currentTimeMillis() - start;
-		logger.info("execute update sql with rows:"+rows.size()+" costTimeMills:"+cost+" for sql:"+sql);
+		long tps = rows.size() * 1000 / cost;
+		logger.info("execute update sql with rows:"+rows.size()+" costTimeMills:"+cost+" tps:"+ tps +"for sql:"+sql);
 	}
 
 	protected void executeWithJdbc(final List<Object> rows) {
