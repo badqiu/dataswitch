@@ -124,8 +124,10 @@ public class InputsOutputs {
 		}
 		
 		try {
+			long start = System.currentTimeMillis();
 			int rows = InputOutputUtil.copy(input, output,bufferSize,processor);
-			logger.info(id+" copy success,rows:" + rows + " bufferSize:"+ bufferSize +" inputs:" + Arrays.toString(inputs) + " outputs:" + Arrays.toString(outputs));
+			long cost = start - System.currentTimeMillis();
+			logger.info(id+" copy success,rows:" + rows +" costSeconds:"+(cost / 1000) + " tps:"+(rows * 1000.0 / cost) + " bufferSize:"+ bufferSize +" inputs:" + Arrays.toString(inputs) + " outputs:" + Arrays.toString(outputs));
 		}finally {
 			InputOutputUtil.closeQuietly(input);
 			InputOutputUtil.closeQuietly(output);
