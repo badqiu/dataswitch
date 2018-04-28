@@ -17,12 +17,12 @@ public abstract class ReadOnceInput implements Input {
 		read = true;
 		
 		try {
-			return readInternal(size);
+			return readOnce(size);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public abstract List<Object> readInternal(int size) throws Exception;
+	public abstract List<Object> readOnce(int size) throws Exception;
 
 }
