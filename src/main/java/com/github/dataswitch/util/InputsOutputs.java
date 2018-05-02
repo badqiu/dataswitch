@@ -42,6 +42,9 @@ public class InputsOutputs {
 	private Output[] outputs; //输出
 	private Processor[] processors;//数据处理器
 	private int bufferSize = 5000;
+//	private boolean ignoreWriteError = false;
+	
+	private String failMode = InputOutputUtil.FAIL_FAST; 
 	
 	public String getId() {
 		return id;
@@ -112,6 +115,14 @@ public class InputsOutputs {
 	public void setBufferSize(int bufferSize) {
 		this.bufferSize = bufferSize;
 	}
+	
+	public String getFailMode() {
+		return failMode;
+	}
+
+	public void setFailMode(String failMode) {
+		this.failMode = failMode;
+	}
 
 	public void exec() {
 		if(bufferSize <= 0) bufferSize = 5000;
@@ -125,8 +136,8 @@ public class InputsOutputs {
 		
 		try {
 			long start = System.currentTimeMillis();
-			int rows = InputOutputUtil.copy(input, output,bufferSize,processor);
-			long cost = start - System.currentTimeMillis();
+			int rows = InputOutputUtil.copy(input, output,bufferSize,processor,failMode);
+			long cost = System.currentTimeMillis() - start;
 			logger.info(id+" copy success,rows:" + rows +" costSeconds:"+(cost / 1000) + " tps:"+(rows * 1000.0 / cost) + " bufferSize:"+ bufferSize +" inputs:" + Arrays.toString(inputs) + " outputs:" + Arrays.toString(outputs));
 		}finally {
 			InputOutputUtil.closeQuietly(input);

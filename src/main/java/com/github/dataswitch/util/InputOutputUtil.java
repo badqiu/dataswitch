@@ -20,6 +20,10 @@ public class InputOutputUtil {
 	private static int DEFAULT_BUFFER_SIZE = 3000;
 	private static DefaultProcessor DEFAULT_PROCESSOR = new DefaultProcessor();
 	
+	public static String FAIL_FAST = "failFast";
+	public static String FAIL_AT_END = "failAtEnd";
+	public static String FAIL_NEVER = "failNever";
+	
 	public static void close(Closeable io) {
 		try {
 			if(io != null) 
@@ -110,23 +114,54 @@ public class InputOutputUtil {
 	 * @param ignoreWriteError
 	 * @return 拷贝的数据量
 	 */
-	public static int copy(Input input,Output output,int bufferSize,Processor processor,boolean ignoreWriteError) {
+	public static int copy(Input input,Output output,int bufferSize,Processor processor,boolean ignoreCopyError) {
+		String failMode = FAIL_NEVER;
+		if(!ignoreCopyError) {
+			failMode = FAIL_FAST;
+		}
+		return copy(input,output,bufferSize,processor,failMode);
+	}
+
+	
+	/**
+	 * 
+	 * @param input
+	 * @param output
+	 * @param bufferSize
+	 * @param failMode,取值: failFast,failAtEnd,failNever
+	 * @return 拷贝的数据量
+	 */
+	public static int copy(Input input,Output output,int bufferSize,Processor processor,String failMode) {
 		if(bufferSize <= 0) throw new IllegalArgumentException("bufferSize > 0 must be true");
+		if(!(FAIL_FAST.equals(failMode) || FAIL_AT_END.equals(failMode) || FAIL_NEVER.equals(failMode))) {
+			throw new RuntimeException("legal failMode is: "+FAIL_FAST+","+FAIL_AT_END+","+FAIL_NEVER+" current:"+failMode);
+		}
+		
 		List<Object> rows = null;
 		int count = 0;
-		while(CollectionUtils.isNotEmpty((rows = input.read(bufferSize)))) {
+		List<Exception> exceptions = new ArrayList<Exception>();
+		while(true) {
 			try {
+				rows = input.read(bufferSize);
+				if(CollectionUtils.isEmpty((rows))) {
+					break;
+				}
+				
 				count += write(output, rows,processor);
 			}catch(Exception e) {
-				if(ignoreWriteError) {
-					continue;
+				if(FAIL_FAST.equals(failMode)) {
+					throw new RuntimeException("copy error,input:"+input+" output:"+output+" processor:"+processor,e);
 				}
-				throw new RuntimeException("copy error,input:"+input+" output:"+output+" processor:"+processor,e);
+				logger.warn("copy warn,input:"+input+" output:"+output+" processor:"+processor,e);
+				exceptions.add(e);
 			}
+		}
+		if(!exceptions.isEmpty() && FAIL_AT_END.equals(failMode)) {
+			throw new RuntimeException("copy error,input:"+input+" output:"+output+" processor:"+processor+" exceptions:"+exceptions);
 		}
 		return count;
 	}
-
+	
 	/**
 	 * write数据
 	 * @return 写的数据量
