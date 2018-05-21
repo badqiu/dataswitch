@@ -44,7 +44,7 @@ public class InputsOutputs {
 	private int bufferSize = 5000;
 //	private boolean ignoreWriteError = false;
 	
-	private String failMode = InputOutputUtil.FAIL_FAST; 
+	private String failMode = InputOutputUtil.FAIL_AT_END; 
 	
 	public String getId() {
 		return id;
