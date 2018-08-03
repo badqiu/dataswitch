@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -28,6 +29,7 @@ import com.github.rapid.common.util.MapUtil;
 public class ObjectSqlQueryUtil {
 	private static Logger log = LoggerFactory.getLogger(ObjectSqlQueryUtil.class);
 	public static String TABLE_NAME = "t";
+	public static String initSqls = "";
 	
 	public static List<Map<String,Object>> query(final String sql,final List<Map<String,Object>> rows) {
 		return query(sql,rows,Collections.EMPTY_MAP);
@@ -45,6 +47,14 @@ public class ObjectSqlQueryUtil {
 			public List<Map<String,Object>> doInTransaction(TransactionStatus status) {
 				createTableAndInsertData(TABLE_NAME,rows,ds);
 				final JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
+				
+				String[] sqls = StringUtils.split(initSqls,";");
+				for(String sql : sqls) {
+					if(StringUtils.isNotBlank(sql)) {
+						jdbcTemplate.execute(sql);
+					}
+				}
+				
 //				jdbcTemplate.execute("CREATE AGGREGATE IF NOT EXISTS collect_map FOR \"com.github.reportengine.h2.functions.CollectMapAggrFunction\"");
 //				jdbcTemplate.execute("CREATE ALIAS IF NOT EXISTS map FOR \"com.github.reportengine.h2.functions.H2Functions.string_map\"");
 //				jdbcTemplate.execute("CREATE ALIAS IF NOT EXISTS string_map FOR \"com.github.reportengine.h2.functions.H2Functions.string_map\"");
