@@ -1,25 +1,16 @@
 package com.github.dataswitch.util;
 
-import java.io.File;
 import java.util.Arrays;
-import java.util.List;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.dataswitch.input.FileInput;
 import com.github.dataswitch.input.Input;
 import com.github.dataswitch.input.MultiInput;
-import com.github.dataswitch.output.FileOutput;
 import com.github.dataswitch.output.Output;
-import com.github.dataswitch.output.ProxyOutput;
 import com.github.dataswitch.output.TeeOutput;
-import com.github.dataswitch.processor.DefaultProcessor;
 import com.github.dataswitch.processor.MultiProcessor;
 import com.github.dataswitch.processor.Processor;
-import com.github.dataswitch.serializer.ByteDeserializer;
-import com.github.dataswitch.serializer.ByteSerializer;
 
 /**
  * 输入输出类，一个输入可以配置多个输出
@@ -44,7 +35,12 @@ public class InputsOutputs {
 	private int bufferSize = 5000;
 //	private boolean ignoreWriteError = false;
 	
-	private String failMode = InputOutputUtil.FAIL_AT_END; 
+	private String failMode = InputOutputUtil.FAIL_AT_END;
+	
+	/**
+	 * 是否同步拷贝数据
+	 */
+	private boolean async = false;
 	
 	public String getId() {
 		return id;
@@ -123,6 +119,14 @@ public class InputsOutputs {
 	public void setFailMode(String failMode) {
 		this.failMode = failMode;
 	}
+	
+	public boolean isAsync() {
+		return async;
+	}
+
+	public void setAsync(boolean async) {
+		this.async = async;
+	}
 
 	public void exec() {
 		if(bufferSize <= 0) bufferSize = 5000;
@@ -134,9 +138,14 @@ public class InputsOutputs {
 			processor = new MultiProcessor(processors);
 		}
 		
+		long start = System.currentTimeMillis();
+		int rows = 0;
 		try {
-			long start = System.currentTimeMillis();
-			int rows = InputOutputUtil.copy(input, output,bufferSize,processor,failMode);
+			if(async) {
+				rows = InputOutputUtil.asyncCopy(input,output,bufferSize,processor);
+			}else {
+				rows = InputOutputUtil.copy(input, output,bufferSize,processor,failMode);
+			}
 			long cost = System.currentTimeMillis() - start;
 			logger.info(id+" copy success,rows:" + rows +" costSeconds:"+(cost / 1000) + " tps:"+(rows * 1000.0 / cost) + " bufferSize:"+ bufferSize+" failMode:" + failMode +" inputs:" + Arrays.toString(inputs) + " outputs:" + Arrays.toString(outputs));
 		}finally {
@@ -144,5 +153,7 @@ public class InputsOutputs {
 			InputOutputUtil.closeQuietly(output);
 		}
 	}
+
+	
 
 }

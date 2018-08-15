@@ -3,6 +3,8 @@ package com.github.dataswitch.util;
 import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
@@ -56,6 +58,57 @@ public class InputOutputUtil {
 			result.addAll(rows);
 		}
 		return result;
+	}
+	
+	/**
+	 * 异步拷贝数据
+	 * @param input
+	 * @param output
+	 * @param processor
+	 */
+	public static int asyncCopy(Input input, final Output output,int bufferSize,Processor processor) {
+		final BlockingQueue<List> queue = new ArrayBlockingQueue(100);
+		
+		Thread thread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while(true) {
+					try {
+						List rows = queue.take();
+						if(CollectionUtils.isEmpty(rows)) {
+							return; //exit sign
+						}
+						output.write(rows);
+					}catch(InterruptedException e) {
+						logger.info("InterruptedException on write thread,exit thread",e);
+						return;
+					}catch(Exception e) {
+						logger.error("ignore error on write thread",e);
+					}
+				}
+			}
+		});
+		thread.setDaemon(true);
+		thread.start();
+		
+		int totalRows = 0;
+		try {
+			while(true) {
+				List rows = input.read(bufferSize);
+				if(CollectionUtils.isEmpty((rows))) {
+					break;
+				}
+				totalRows += rows.size();
+				queue.put(rows);
+			}
+			
+			queue.put(new ArrayList());//exit sign
+			thread.join();
+			
+			return totalRows;
+		}catch(Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	/**
