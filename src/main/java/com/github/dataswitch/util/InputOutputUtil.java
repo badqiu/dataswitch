@@ -91,6 +91,7 @@ public class InputOutputUtil {
 		thread.setDaemon(true);
 		thread.start();
 		
+		//List<Exception> exceptions = new ArrayList<Exception>();
 		int totalRows = 0;
 		try {
 			while(true) {
@@ -102,12 +103,18 @@ public class InputOutputUtil {
 				queue.put(rows);
 			}
 			
-			queue.put(new ArrayList());//exit sign
-			thread.join();
-			
 			return totalRows;
 		}catch(Exception e) {
-			throw new RuntimeException(e);
+			String msg = "read error,input:"+input+" output:"+output+" processor:"+processor;
+			logger.warn(msg,e);
+			throw new RuntimeException(msg,e);
+		}finally {
+			try {
+				queue.put(new ArrayList());//exit sign
+				thread.join();
+			}catch(Exception e) {
+				throw new RuntimeException(e);
+			}
 		}
 	}
 	
