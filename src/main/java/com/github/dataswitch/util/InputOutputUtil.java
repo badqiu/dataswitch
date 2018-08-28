@@ -66,8 +66,10 @@ public class InputOutputUtil {
 	 * @param output
 	 * @param processor
 	 */
-	public static int asyncCopy(Input input, final Output output,int bufferSize,Processor processor) {
+	public static int asyncCopy(Input input, final Output output,int bufferSize,Processor processor,String failMode) {
 		final BlockingQueue<List> queue = new ArrayBlockingQueue(100);
+		
+		final List<Exception> exceptions = new ArrayList<Exception>();
 		
 		Thread thread = new Thread(new Runnable() {
 			@Override
@@ -83,7 +85,8 @@ public class InputOutputUtil {
 						logger.info("InterruptedException on write thread,exit thread",e);
 						return;
 					}catch(Exception e) {
-						logger.error("ignore error on write thread",e);
+						exceptions.add(e);
+						logger.warn("ignore error on write thread",e);
 					}
 				}
 			}
@@ -91,29 +94,37 @@ public class InputOutputUtil {
 		thread.setDaemon(true);
 		thread.start();
 		
-		//List<Exception> exceptions = new ArrayList<Exception>();
 		int totalRows = 0;
 		try {
 			while(true) {
-				List rows = input.read(bufferSize);
-				if(CollectionUtils.isEmpty((rows))) {
-					break;
+				try {
+					List rows = input.read(bufferSize);
+					if(CollectionUtils.isEmpty((rows))) {
+						break;
+					}
+					totalRows += rows.size();
+					queue.put(rows);
+				}catch(Exception e) {
+					String msg = "read error,input:"+input+" output:"+output+" processor:"+processor;
+					logger.warn(msg,e);
+					if(FAIL_FAST.equals(failMode)) {
+						throw new RuntimeException(msg,e);
+					}
+					exceptions.add(e);
 				}
-				totalRows += rows.size();
-				queue.put(rows);
 			}
 			
 			return totalRows;
-		}catch(Exception e) {
-			String msg = "read error,input:"+input+" output:"+output+" processor:"+processor;
-			logger.warn(msg,e);
-			throw new RuntimeException(msg,e);
 		}finally {
 			try {
 				queue.put(new ArrayList());//exit sign
 				thread.join();
 			}catch(Exception e) {
 				throw new RuntimeException(e);
+			}
+			
+			if(!exceptions.isEmpty() && FAIL_AT_END.equals(failMode)) {
+				throw new RuntimeException("copy error,input:"+input+" output:"+output+" processor:"+processor+" exceptions:"+exceptions);
 			}
 		}
 	}

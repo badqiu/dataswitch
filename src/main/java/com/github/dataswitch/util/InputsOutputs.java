@@ -142,7 +142,7 @@ public class InputsOutputs {
 		int rows = 0;
 		try {
 			if(async) {
-				rows = InputOutputUtil.asyncCopy(input,output,bufferSize,processor);
+				rows = InputOutputUtil.asyncCopy(input,output,bufferSize,processor,failMode);
 			}else {
 				rows = InputOutputUtil.copy(input, output,bufferSize,processor,failMode);
 			}
