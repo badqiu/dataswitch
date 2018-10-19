@@ -38,7 +38,7 @@ public class InputsOutputs {
 	private String failMode = InputOutputUtil.FAIL_AT_END;
 	
 	/**
-	 * 是否同步拷贝数据
+	 * 是否异步拷贝数据，默认是false
 	 */
 	private boolean async = false;
 	
