@@ -14,7 +14,11 @@ public abstract class ReadOnceInput implements Input {
 
 	public List<Object> read(int size) {
 		if(read) return null;
-		read = true;
+		
+		synchronized (this) {
+			if(read) return null;
+			read = true;
+		}
 		
 		try {
 			return readOnce(size);
