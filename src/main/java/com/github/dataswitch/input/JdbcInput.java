@@ -113,7 +113,7 @@ public class JdbcInput extends DataSourceProvider implements Input{
 			init();
 		}
 		try {
-			if(rs.next()) {
+			if(rs != null && rs.next()) {
 				return rowMapper.mapRow(rs,0);
 			}
 			return null;
