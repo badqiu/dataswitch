@@ -51,7 +51,7 @@ public class BufferedOutput extends ProxyOutput{
 		}
 	}
 
-	private void flushBuffer() {
+	public void flushBuffer() {
 		if(buf == null || buf.isEmpty()) {
 			return;
 		}
@@ -61,6 +61,12 @@ public class BufferedOutput extends ProxyOutput{
 		List<Object> tempBuf = buf;
 		buf = new ArrayList<Object>(bufSize);
 		super.write(tempBuf);
+	}
+	
+	@Override
+	public void close() {
+		flushBuffer();
+		super.close();
 	}
 
 }
