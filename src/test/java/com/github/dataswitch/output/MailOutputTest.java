@@ -20,7 +20,7 @@ public class MailOutputTest {
 		output.setJavaMailSender(sender);
 		output.setSubject("subject from MailOutputTest");
 		output.setContentTemplate("<h1>FROM</h1> <#list rows as row> hi ${row} </#list>");
-		output.setTo("qiubaichao@lizhi.fm");
+		output.setTo("badqiu@qq.com");
 		output.setFrom("xgsdkdata@126.com");
 		
 		List rows = Arrays.asList("badqiu","jane","bruce","lee");
