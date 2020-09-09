@@ -41,7 +41,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	private boolean replaceSqlWithParams = false;
 	
 	private transient boolean isInit = false;
-	private TransactionTemplate transactionTemplate;
+	private transient TransactionTemplate transactionTemplate;
 	
 	public String getSql() {
 		return sql;
