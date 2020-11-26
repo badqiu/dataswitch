@@ -15,4 +15,12 @@ script 需要增加 context, beforeScript put var into context for init.
   --merge-key order_id //将后续新的记录与原有记录合并。
   --check-column time 
   --last-value “2014-11-09 21:00:00”
+ 
+ 支持其它:
+  MongoDB
+  ES
+  Hbase
+  ClickHouse
+  Kudu
+  Cassandra
   

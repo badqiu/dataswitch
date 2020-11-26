@@ -3,7 +3,7 @@ package com.github.dataswitch;
 public class Constants {
 
 	/**
-	 * 列分隔符
+	 * hive列分隔符
 	 **/
 	public static String COLUMN_SPLIT = "\001";
 	

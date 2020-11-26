@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -22,16 +23,15 @@ public class KafkaInput implements Input{
 
 	protected static Logger logger = LoggerFactory.getLogger(KafkaInput.class);
 	
-	
 	private volatile boolean running = true;
 	
 	private Properties properties;
 	private String topic;
 	private boolean sync = false;
 	
-	private List<ConsumerWorker> kafkaConsumerThreads = new ArrayList<ConsumerWorker>();
-	private LinkedBlockingQueue<Object> queue = new LinkedBlockingQueue(100);
-	
+	private transient List<ConsumerWorker> kafkaConsumerThreads = new ArrayList<ConsumerWorker>();
+	private transient LinkedBlockingQueue<Object> queue = new LinkedBlockingQueue(100);
+	private transient KafkaConsumer<Object,Object> kafkaConsumer = null;
 	public Properties getProperties() {
 		return properties;
 	}
@@ -77,19 +77,24 @@ public class KafkaInput implements Input{
 	
 	public void startConsumerKafkaData() {
 		
-		KafkaConsumer<String,String> kafkaConsumer = buildKafkaConsumer(properties);
-		List<PartitionInfo> partitions = kafkaConsumer.partitionsFor(topic);
-		for(PartitionInfo p : partitions) {
-			kafkaConsumer = buildKafkaConsumer(properties);
-			TopicPartition topicPartition= new TopicPartition(p.topic(),p.partition());
-			kafkaConsumer.assign(Arrays.asList(topicPartition));
-			ConsumerWorker worker = startConsumerThread(kafkaConsumer);
-			kafkaConsumerThreads.add(worker);
+		KafkaConsumer<Object,Object> kafkaConsumer = buildKafkaConsumer(properties);
+		if(sync) {
+			kafkaConsumer.subscribe(Arrays.asList(topic));
+			this.kafkaConsumer = kafkaConsumer;
+		}else {
+			List<PartitionInfo> partitions = kafkaConsumer.partitionsFor(topic);
+			for(PartitionInfo p : partitions) {
+				kafkaConsumer = buildKafkaConsumer(properties);
+				TopicPartition topicPartition= new TopicPartition(p.topic(),p.partition());
+				kafkaConsumer.assign(Arrays.asList(topicPartition));
+				ConsumerWorker worker = startConsumerThread(kafkaConsumer);
+				kafkaConsumerThreads.add(worker);
+			}
 		}
 		
 	}
 
-	private ConsumerWorker startConsumerThread(KafkaConsumer<String, String> kafkaConsumer) {
+	private ConsumerWorker startConsumerThread(KafkaConsumer<Object, Object> kafkaConsumer) {
 		ConsumerWorker task = new ConsumerWorker();
 		task.kafkaConsumer = kafkaConsumer;
 		
@@ -98,10 +103,8 @@ public class KafkaInput implements Input{
 		return task;
 	}
 
-
-//	private AtomicLong count = new AtomicLong();
 	public class ConsumerWorker implements Runnable{
-		private KafkaConsumer<String, String> kafkaConsumer;
+		private KafkaConsumer<Object, Object> kafkaConsumer;
 		
 		public void run() {
 			try {
@@ -109,15 +112,14 @@ public class KafkaInput implements Input{
 				
 				while(running) {
 					try {
-						ConsumerRecords<String, String> records = kafkaConsumer.poll(Duration.ofSeconds(3));
+						ConsumerRecords<Object, Object> records = kafkaConsumer.poll(Duration.ofSeconds(3));
 						if(records == null || records.isEmpty()) {
 							continue;
 						}
 						
-						for(ConsumerRecord<String,String> c : records) {
-							String line = c.value();
-							queue.offer(line);
-//							count.incrementAndGet();
+						for(ConsumerRecord<Object,Object> c : records) {
+							Object value = c.value();
+							queue.offer(value);
 						}
 						
 						kafkaConsumer.commitSync();
@@ -131,7 +133,7 @@ public class KafkaInput implements Input{
 		}
 		
 		public void close() {
-			kafkaConsumer.close();
+			IOUtils.closeQuietly(kafkaConsumer);
 		}
 
 	}
@@ -139,6 +141,8 @@ public class KafkaInput implements Input{
 	@Override
 	public void close() throws IOException {
 		running = false;
+		
+		IOUtils.closeQuietly(kafkaConsumer);
 		
 		for(ConsumerWorker w : kafkaConsumerThreads) {
 			w.close();
@@ -149,11 +153,32 @@ public class KafkaInput implements Input{
 	public List<Object> read(int size) {
 		initIfNeed();
 		
+		if(sync) {
+			return syncRead();
+		}else {
+			return asyncRead();
+		}
+	}
+
+	private List<Object> syncRead() {
+		while(true) {
+			ConsumerRecords<Object, Object> records = kafkaConsumer.poll(Duration.ofSeconds(3));
+			if(records == null || records.isEmpty()) {
+				continue;
+			}
+			
+			List<Object> result = new ArrayList(records.count());
+			for(ConsumerRecord<Object,Object> c : records) {
+				Object value = c.value();
+				result.add(value);
+			}
+			return result;
+		}
+	}
+
+	private List<Object> asyncRead() {
 		try {
 			Object object = queue.take();
-			if(object == null) return Collections.EMPTY_LIST;
-			
-			
 			return Arrays.asList(object);
 		}catch(InterruptedException e) {
 			throw new RuntimeException(e);
