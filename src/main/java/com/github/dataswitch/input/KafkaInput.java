@@ -18,6 +18,8 @@ import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.dataswitch.util.KafkaConfigUtil;
+
 
 public class KafkaInput implements Input{
 
@@ -49,6 +51,8 @@ public class KafkaInput implements Input{
 	}
 	
 	public KafkaConsumer buildKafkaConsumer(Properties kafkaProperties) {
+		KafkaConfigUtil.initJavaSecurityAuthLoginConfig(kafkaProperties);
+		
 		Properties properties = new Properties();
 		properties.put("client.id", KafkaInput.class.getSimpleName());
 		properties.put("acks", "1");
@@ -118,8 +122,10 @@ public class KafkaInput implements Input{
 						}
 						
 						for(ConsumerRecord<Object,Object> c : records) {
-							Object value = c.value();
-							queue.offer(value);
+							Object value = processOne(c);
+							if(value != null) {
+								queue.offer(value);
+							}
 						}
 						
 						kafkaConsumer.commitSync();
@@ -169,11 +175,18 @@ public class KafkaInput implements Input{
 			
 			List<Object> result = new ArrayList(records.count());
 			for(ConsumerRecord<Object,Object> c : records) {
-				Object value = c.value();
-				result.add(value);
+				Object value = processOne(c);
+				
+				if(value != null) {
+					result.add(value);
+				}
 			}
 			return result;
 		}
+	}
+
+	protected Object processOne(ConsumerRecord<Object, Object> c) {
+		return c.value();
 	}
 
 	private List<Object> asyncRead() {

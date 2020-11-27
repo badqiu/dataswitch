@@ -10,14 +10,14 @@ public abstract class BaseProcessor implements Processor{
 	public List<Object> process(List<Object> datas) throws Exception {
 		if(datas == null || datas.isEmpty()) return Collections.EMPTY_LIST;
 		
-		List<Object> result = new ArrayList<Object>(datas.size());
+		List<Object> results = new ArrayList<Object>(datas.size());
 		for(Object row : datas) {
-			Object processedRow = processOne(row);
-			if(processedRow != null) {
-				result.add(row);
+			Object result = processOne(row);
+			if(result != null) {
+				results.add(result);
 			}
 		}
-		return result;
+		return results;
 	}
 
 	protected abstract Object processOne(Object row) throws Exception;

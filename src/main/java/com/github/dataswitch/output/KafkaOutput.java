@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.dataswitch.util.KafkaConfigUtil;
 
 
 public class KafkaOutput implements Output {
@@ -43,6 +44,8 @@ public class KafkaOutput implements Output {
 	}
 
 	public KafkaProducer<Object, Object> buildKafkaProducer(Properties properties) {
+		KafkaConfigUtil.initJavaSecurityAuthLoginConfig(properties);
+		
 		Properties props = new Properties();
 		props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 		props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
