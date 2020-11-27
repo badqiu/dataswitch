@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dataswitch.util.KafkaConfigUtil;
+import com.github.dataswitch.util.PropertiesUtil;
 
 
 public class KafkaInput implements Input{
@@ -28,18 +29,29 @@ public class KafkaInput implements Input{
 	private volatile boolean running = true;
 	
 	private Properties properties;
+	private String propertiesString;
 	private String topic;
 	private boolean sync = false;
 	
 	private transient List<ConsumerWorker> kafkaConsumerThreads = new ArrayList<ConsumerWorker>();
 	private transient LinkedBlockingQueue<Object> queue = new LinkedBlockingQueue(100);
 	private transient KafkaConsumer<Object,Object> kafkaConsumer = null;
+	
+	
 	public Properties getProperties() {
 		return properties;
 	}
 
 	public void setProperties(Properties inputKafka) {
 		this.properties = inputKafka;
+	}
+	
+	public String getPropertiesString() {
+		return propertiesString;
+	}
+
+	public void setPropertiesString(String propertiesString) {
+		this.propertiesString = propertiesString;
 	}
 
 	public String getTopic() {
@@ -63,6 +75,7 @@ public class KafkaInput implements Input{
 		properties.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 		properties.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 		
+		properties.putAll(PropertiesUtil.createProperties(propertiesString));
 		properties.putAll(kafkaProperties);
 	        
 		KafkaConsumer<Object, Object> kafkaConsumer = null;

@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dataswitch.util.KafkaConfigUtil;
+import com.github.dataswitch.util.PropertiesUtil;
 
 
 public class KafkaOutput implements Output {
@@ -26,6 +27,8 @@ public class KafkaOutput implements Output {
 	private String topic;
 
 	private KafkaProducer<Object,Object> kafkaProducer;
+
+	private String propertiesString;
 	
 	public Properties getProperties() {
 		return properties;
@@ -33,6 +36,14 @@ public class KafkaOutput implements Output {
 
 	public void setProperties(Properties outputKafka) {
 		this.properties = outputKafka;
+	}
+	
+	public String getPropertiesString() {
+		return propertiesString;
+	}
+
+	public void setPropertiesString(String propertiesString) {
+		this.propertiesString = propertiesString;
 	}
 
 	public String getTopic() {
@@ -50,6 +61,7 @@ public class KafkaOutput implements Output {
 		props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 		props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 		props.putAll(properties);
+		props.putAll(PropertiesUtil.createProperties(propertiesString));
 		
 		logger.info("buildKafkaProducer() outputTopic:" + topic + " properties:"+props);
 		KafkaProducer<Object,Object> kafkaProducer = new KafkaProducer<Object,Object>(props);

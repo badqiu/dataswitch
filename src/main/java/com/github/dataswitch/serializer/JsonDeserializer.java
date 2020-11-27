@@ -4,15 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.core.serializer.Deserializer;
 
@@ -33,7 +28,7 @@ public class JsonDeserializer  extends BaseObject implements Deserializer<Map>{
 			if(StringUtils.isBlank(line)) {
 				continue;
 			}
-			return objectMapper.readValue(line, valueType);
+			return (Map)objectMapper.readValue(line, valueType);
 		}
 		return null;
 //		return readByJsonNode(inputStream);
