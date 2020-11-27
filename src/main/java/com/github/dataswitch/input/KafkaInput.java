@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -175,7 +174,7 @@ public class KafkaInput implements Input{
 		if(sync) {
 			return syncRead();
 		}else {
-			return asyncRead();
+			return asyncRead(size);
 		}
 	}
 
@@ -202,15 +201,31 @@ public class KafkaInput implements Input{
 		return c.value();
 	}
 
-	private List<Object> asyncRead() {
+	private long lastTaskTime = System.currentTimeMillis();
+	private List<Object> asyncRead(int size) {
 		try {
-			Object object = queue.take();
-			return Arrays.asList(object);
+			List<Object> results = new ArrayList();
+			
+			for(int i = 0; i < size; i++) {
+				Object object = queue.take();
+				results.add(object);
+				if(isTimeout(3000)) {
+					break;
+				}
+			}
+			
+			lastTaskTime = System.currentTimeMillis();
+			return results;
 		}catch(InterruptedException e) {
 			throw new RuntimeException(e);
 		}
 	}
 	
+	private boolean isTimeout(int timeout) {
+		long interval = System.currentTimeMillis() - lastTaskTime;
+		return interval > timeout;
+	}
+
 	private boolean init = false;
 	private void initIfNeed() {
 		if(init) return;
