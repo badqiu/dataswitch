@@ -75,7 +75,7 @@ public class KafkaInput implements Input{
 			
 			return kafkaConsumer;
 		}catch(Exception e) {
-			throw new RuntimeException("buildKafkaConsumer error,msg:"+e,e);
+			throw new RuntimeException("buildKafkaConsumer error,msg:"+e+" properties:"+properties,e);
 		}
 	}
 	
