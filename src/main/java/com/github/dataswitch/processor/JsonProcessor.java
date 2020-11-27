@@ -5,18 +5,28 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class JsonProcessor implements Processor{
+/**
+ * json序列化processor
+ * 
+ * @author badqiu
+ *
+ */
+public class JsonProcessor extends BaseProcessor implements Processor{
 
 	private ObjectMapper objectMapper = new ObjectMapper();
 	
+	public ObjectMapper getObjectMapper() {
+		return objectMapper;
+	}
+
+	public void setObjectMapper(ObjectMapper objectMapper) {
+		this.objectMapper = objectMapper;
+	}
+
 	@Override
-	public List<Object> process(List<Object> datas) throws Exception {
-		List result = new ArrayList();
-		for(Object object : datas) {
-			String str = objectMapper.writeValueAsString(object);
-			result.add(str);
-		}
-		return result;
+	protected Object processOne(Object row) throws Exception {
+		String str = objectMapper.writeValueAsString(row);
+		return str;
 	}
 
 }

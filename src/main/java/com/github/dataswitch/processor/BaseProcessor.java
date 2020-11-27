@@ -20,6 +20,6 @@ public abstract class BaseProcessor implements Processor{
 		return result;
 	}
 
-	protected abstract Object processOne(Object row);
+	protected abstract Object processOne(Object row) throws Exception;
 
 }
