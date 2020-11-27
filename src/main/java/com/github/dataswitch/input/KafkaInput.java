@@ -129,7 +129,7 @@ public class KafkaInput implements Input{
 				
 				while(running) {
 					try {
-						ConsumerRecords<Object, Object> records = kafkaConsumer.poll(Duration.ofSeconds(3));
+						ConsumerRecords<Object, Object> records = kafkaConsumer.poll(1000 * 3);
 						if(records == null || records.isEmpty()) {
 							continue;
 						}
