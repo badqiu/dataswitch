@@ -42,6 +42,9 @@ public class InputsOutputs {
 	 */
 	private boolean async = false;
 	
+	/** 是否激活 */
+	private boolean enabled = true;
+	
 	public String getId() {
 		return id;
 	}
@@ -127,9 +130,22 @@ public class InputsOutputs {
 	public void setAsync(boolean async) {
 		this.async = async;
 	}
+	
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
 
 	public void exec() {
 		if(bufferSize <= 0) bufferSize = 5000;
+		
+		if(!enabled) {
+			throw new IllegalStateException("enabled is false, id:"+id);
+		}
+		
 		
 		MultiInput input = new MultiInput(inputs);
 		TeeOutput output = new TeeOutput(outputs);
