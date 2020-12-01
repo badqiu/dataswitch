@@ -83,7 +83,6 @@ public class KafkaInput implements Input{
 			logger.info("buildKafkaConsumer() properties:"+properties);
 			
 			kafkaConsumer.listTopics();
-//			kafkaConsumer.subscribe(Arrays.asList(topic));
 			
 			return kafkaConsumer;
 		}catch(Exception e) {
