@@ -180,7 +180,7 @@ public class KafkaInput implements Input{
 
 	private List<Object> syncRead() {
 		while(true) {
-			ConsumerRecords<Object, Object> records = kafkaConsumer.poll(Duration.ofSeconds(3));
+			ConsumerRecords<Object, Object> records = kafkaConsumer.poll(3000);
 			if(records == null || records.isEmpty()) {
 				continue;
 			}
