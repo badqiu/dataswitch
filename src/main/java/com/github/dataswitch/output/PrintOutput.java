@@ -5,6 +5,16 @@ import java.util.List;
 
 public class PrintOutput implements Output{
 
+	private String prefix = "";
+	
+	public String getPrefix() {
+		return prefix;
+	}
+
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
+	}
+
 	@Override
 	public void close() throws IOException {
 	}
@@ -14,7 +24,7 @@ public class PrintOutput implements Output{
 		if(rows == null) return;
 		
 		for(Object row : rows) {
-			System.out.println(row);
+			System.out.println(prefix + row);
 		}
 		
 	}
