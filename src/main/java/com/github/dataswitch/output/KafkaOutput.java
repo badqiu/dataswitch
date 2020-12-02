@@ -87,7 +87,7 @@ public class KafkaOutput implements Output {
 				@Override
 				public void onCompletion(RecordMetadata metadata, Exception exception) {
 					if(exception != null) {
-						logger.info("send kafka msg error:"+exception);
+						logger.warn("send kafka msg error:"+exception+" data:" + row,exception);
 					}
 				} 
 			};
