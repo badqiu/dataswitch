@@ -203,7 +203,7 @@ public class KafkaInput implements Input{
 	private long lastTaskTime = System.currentTimeMillis();
 	private List<Object> asyncRead(int size) {
 		try {
-			List<Object> results = new ArrayList();
+			List<Object> results = new ArrayList(100);
 			
 			for(int i = 0; i < size; i++) {
 				Object object = queue.take();
