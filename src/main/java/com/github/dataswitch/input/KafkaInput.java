@@ -135,7 +135,7 @@ public class KafkaInput implements Input{
 						for(ConsumerRecord<Object,Object> c : records) {
 							Object value = processOne(c);
 							if(value != null) {
-								queue.offer(value);
+								queue.put(value);
 							}
 						}
 						
