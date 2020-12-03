@@ -3,8 +3,8 @@ package com.github.dataswitch.util;
 import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
@@ -66,12 +66,13 @@ public class InputOutputUtil {
 	 * @param output
 	 * @param processor
 	 */
+	static ArrayList exitSign = new ArrayList(0);
 	public static int asyncCopy(Input input, final Output output,int bufferSize,Processor processor,String failMode) {
-		final BlockingQueue<List> queue = new ArrayBlockingQueue(100);
+		final BlockingQueue<List> queue = new LinkedBlockingQueue(100);
 		
 		final List<Exception> exceptions = new ArrayList<Exception>();
 		
-		Thread thread = new Thread(new Runnable() {
+		Thread writeThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				while(true) {
@@ -90,9 +91,9 @@ public class InputOutputUtil {
 					}
 				}
 			}
-		});
-		thread.setDaemon(true);
-		thread.start();
+		},"asyncCopy_write");
+		writeThread.setDaemon(true);
+		writeThread.start();
 		
 		int totalRows = 0;
 		try {
@@ -117,12 +118,11 @@ public class InputOutputUtil {
 			return totalRows;
 		}finally {
 			try {
-				queue.put(new ArrayList());//exit sign
-				thread.join();
+				queue.put(exitSign);//exit sign
+				writeThread.join();
 			}catch(Exception e) {
 				throw new RuntimeException(e);
 			}
-			
 			if(!exceptions.isEmpty() && FAIL_AT_END.equals(failMode)) {
 				throw new RuntimeException("copy error,input:"+input+" output:"+output+" processor:"+processor+" exceptions:"+exceptions);
 			}
