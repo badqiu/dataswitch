@@ -7,6 +7,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,20 +76,24 @@ public class InputOutputUtil {
 		Thread writeThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				while(true) {
-					try {
-						List rows = queue.take();
-						if(CollectionUtils.isEmpty(rows)) {
-							return; //exit sign
+				try {
+					while(true) {
+						try {
+							List rows = queue.take();
+							if(CollectionUtils.isEmpty(rows)) {
+								return; //exit sign
+							}
+							output.write(rows);
+						}catch(InterruptedException e) {
+							logger.info("InterruptedException on write thread,exit thread",e);
+							return;
+						}catch(Exception e) {
+							exceptions.add(e);
+							logger.warn("ignore error on write thread",e);
 						}
-						output.write(rows);
-					}catch(InterruptedException e) {
-						logger.info("InterruptedException on write thread,exit thread",e);
-						return;
-					}catch(Exception e) {
-						exceptions.add(e);
-						logger.warn("ignore error on write thread",e);
 					}
+				}finally {
+					IOUtils.closeQuietly(output);
 				}
 			}
 		},"asyncCopy_write");
@@ -123,6 +128,9 @@ public class InputOutputUtil {
 			}catch(Exception e) {
 				throw new RuntimeException(e);
 			}
+			
+			IOUtils.closeQuietly(input);
+			
 			if(!exceptions.isEmpty() && FAIL_AT_END.equals(failMode)) {
 				throw new RuntimeException("copy error,input:"+input+" output:"+output+" processor:"+processor+" exceptions:"+exceptions);
 			}
@@ -211,22 +219,29 @@ public class InputOutputUtil {
 		List<Object> rows = null;
 		int count = 0;
 		List<Exception> exceptions = new ArrayList<Exception>();
-		while(true) {
-			try {
-				rows = input.read(bufferSize);
-				if(CollectionUtils.isEmpty((rows))) {
-					break;
+		
+		try {
+			while(true) {
+				try {
+					rows = input.read(bufferSize);
+					if(CollectionUtils.isEmpty((rows))) {
+						break;
+					}
+					
+					count += write(output, rows,processor);
+				}catch(Exception e) {
+					if(FAIL_FAST.equals(failMode)) {
+						throw new RuntimeException("copy error,input:"+input+" output:"+output+" processor:"+processor,e);
+					}
+					logger.warn("copy warn,input:"+input+" output:"+output+" processor:"+processor,e);
+					exceptions.add(e);
 				}
-				
-				count += write(output, rows,processor);
-			}catch(Exception e) {
-				if(FAIL_FAST.equals(failMode)) {
-					throw new RuntimeException("copy error,input:"+input+" output:"+output+" processor:"+processor,e);
-				}
-				logger.warn("copy warn,input:"+input+" output:"+output+" processor:"+processor,e);
-				exceptions.add(e);
 			}
+		}finally {
+			IOUtils.closeQuietly(input);
+			IOUtils.closeQuietly(output);
 		}
+		
 		if(!exceptions.isEmpty() && FAIL_AT_END.equals(failMode)) {
 			throw new RuntimeException("copy error,input:"+input+" output:"+output+" processor:"+processor+" exceptions:"+exceptions);
 		}
