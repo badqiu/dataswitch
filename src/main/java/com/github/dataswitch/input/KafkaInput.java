@@ -1,7 +1,6 @@
 package com.github.dataswitch.input;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,6 +16,7 @@ import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.dataswitch.util.BlockingQueueUtil;
 import com.github.dataswitch.util.KafkaConfigUtil;
 import com.github.dataswitch.util.PropertiesUtil;
 
@@ -202,29 +202,13 @@ public class KafkaInput implements Input{
 		return c.value();
 	}
 
-	private long lastTaskTime = System.currentTimeMillis();
 	private List<Object> asyncRead(int size) {
 		try {
-			List<Object> results = new ArrayList(100);
-			
-			for(int i = 0; i < size; i++) {
-				Object object = queue.take();
-				results.add(object);
-				if(isTimeout(3000)) {
-					break;
-				}
-			}
-			
-			lastTaskTime = System.currentTimeMillis();
-			return results;
+			int timeout = 3000;
+			return BlockingQueueUtil.batchTake(queue,size, timeout);
 		}catch(InterruptedException e) {
 			throw new RuntimeException(e);
 		}
-	}
-	
-	private boolean isTimeout(int timeout) {
-		long interval = System.currentTimeMillis() - lastTaskTime;
-		return interval > timeout;
 	}
 
 	private boolean init = false;
