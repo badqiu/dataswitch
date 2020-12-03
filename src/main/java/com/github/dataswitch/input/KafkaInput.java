@@ -33,7 +33,7 @@ public class KafkaInput implements Input{
 	private boolean sync = false;
 	
 	private transient List<ConsumerWorker> kafkaConsumerThreads = new ArrayList<ConsumerWorker>();
-	private transient LinkedBlockingQueue<Object> queue = new LinkedBlockingQueue(10000);
+	private transient LinkedBlockingQueue<Object> queue = new LinkedBlockingQueue<Object>(10000);
 	private transient KafkaConsumer<Object,Object> kafkaConsumer = null;
 	
 	
