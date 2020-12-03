@@ -30,6 +30,8 @@ public class KafkaInput implements Input{
 	private Properties properties;
 	private String propertiesString;
 	private String topic;
+	
+	/** 是否同步消费数据，同步单线程，异步多线程 */
 	private boolean sync = false;
 	
 	private transient List<ConsumerWorker> kafkaConsumerThreads = new ArrayList<ConsumerWorker>();
