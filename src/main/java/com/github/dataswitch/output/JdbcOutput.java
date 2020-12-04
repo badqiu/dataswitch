@@ -200,7 +200,8 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	
 	@Override
 	public void close() {
-		executeWithSemicolonComma(getDataSource(),afterSql);
+		DataSource dataSource = getDataSource();
+		executeWithSemicolonComma(dataSource,afterSql);
 		logger.info(" executed afterSql:"+afterSql);
 	}
 	

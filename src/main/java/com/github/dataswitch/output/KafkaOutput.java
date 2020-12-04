@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -70,9 +71,7 @@ public class KafkaOutput implements Output {
 	
 	@Override
 	public void close() throws IOException {
-		if(kafkaProducer == null) {
-			kafkaProducer.close();
-		}
+		IOUtils.closeQuietly(kafkaProducer);
 	}
 
 	@Override
