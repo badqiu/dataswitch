@@ -34,7 +34,7 @@ public class InputsOutputs {
 	private Processor[] processors;//数据处理器
 	private int bufferSize = 5000;
 	
-	private String failMode = InputOutputUtil.FAIL_AT_END;
+	private String failMode = FailMode.FAIL_AT_END.getShortName();
 	
 	/**
 	 * 是否异步拷贝数据，默认是false

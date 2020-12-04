@@ -23,9 +23,9 @@ public class InputOutputUtil {
 	private static int DEFAULT_BUFFER_SIZE = 3000;
 	private static DefaultProcessor DEFAULT_PROCESSOR = new DefaultProcessor();
 	
-	public static String FAIL_FAST = "failFast";
-	public static String FAIL_AT_END = "failAtEnd";
-	public static String FAIL_NEVER = "failNever";
+//	public static String FAIL_FAST = "failFast";
+//	public static String FAIL_AT_END = "failAtEnd";
+//	public static String FAIL_NEVER = "failNever";
 	
 	public static void close(Closeable io) {
 		try {
@@ -61,14 +61,8 @@ public class InputOutputUtil {
 		return result;
 	}
 	
-	/**
-	 * 异步拷贝数据
-	 * @param input
-	 * @param output
-	 * @param processor
-	 */
 	static ArrayList exitSign = new ArrayList(0);
-	public static int asyncCopy(Input input, final Output output,int bufferSize,Processor processor,String failMode) {
+	public static int asyncCopy(Input input, final Output output,int bufferSize,Processor processor,FailMode failMode) {
 		final BlockingQueue<List> queue = new LinkedBlockingQueue(100);
 		
 		final List<Exception> exceptions = new ArrayList<Exception>();
@@ -113,7 +107,7 @@ public class InputOutputUtil {
 				}catch(Exception e) {
 					String msg = "read error,input:"+input+" output:"+output+" processor:"+processor;
 					logger.warn(msg,e);
-					if(FAIL_FAST.equals(failMode)) {
+					if(FailMode.FAIL_FAST == failMode) {
 						throw new RuntimeException(msg,e);
 					}
 					exceptions.add(e);
@@ -131,10 +125,20 @@ public class InputOutputUtil {
 			
 			IOUtils.closeQuietly(input);
 			
-			if(!exceptions.isEmpty() && FAIL_AT_END.equals(failMode)) {
+			if(!exceptions.isEmpty() && FailMode.FAIL_AT_END ==failMode) {
 				throw new RuntimeException("copy error,input:"+input+" output:"+output+" processor:"+processor+" exceptions:"+exceptions);
 			}
 		}
+	}
+	/**
+	 * 异步拷贝数据
+	 * @param input
+	 * @param output
+	 * @param processor
+	 */
+	
+	public static int asyncCopy(Input input, final Output output,int bufferSize,Processor processor,String failMode) {
+		return asyncCopy(input,output,bufferSize,processor,FailMode.getRequiredByName(failMode));
 	}
 	
 	/**
@@ -194,13 +198,17 @@ public class InputOutputUtil {
 	 * @return 拷贝的数据量
 	 */
 	public static int copy(Input input,Output output,int bufferSize,Processor processor,boolean ignoreCopyError) {
-		String failMode = FAIL_NEVER;
+		FailMode failMode = FailMode.FAIL_NEVER;
 		if(!ignoreCopyError) {
-			failMode = FAIL_FAST;
+			failMode = FailMode.FAIL_FAST;
 		}
 		return copy(input,output,bufferSize,processor,failMode);
 	}
 
+	
+	public static int copy(Input input,Output output,int bufferSize,Processor processor,String failMode) {
+		return copy(input,output,bufferSize,processor,FailMode.getRequiredByName(failMode));
+	}
 	
 	/**
 	 * 
@@ -210,11 +218,9 @@ public class InputOutputUtil {
 	 * @param failMode,取值: failFast,failAtEnd,failNever
 	 * @return 拷贝的数据量
 	 */
-	public static int copy(Input input,Output output,int bufferSize,Processor processor,String failMode) {
+	public static int copy(Input input,Output output,int bufferSize,Processor processor,FailMode failMode) {
 		if(bufferSize <= 0) throw new IllegalArgumentException("bufferSize > 0 must be true");
-		if(!(FAIL_FAST.equals(failMode) || FAIL_AT_END.equals(failMode) || FAIL_NEVER.equals(failMode))) {
-			throw new RuntimeException("legal failMode is: "+FAIL_FAST+","+FAIL_AT_END+","+FAIL_NEVER+" current:"+failMode);
-		}
+
 		
 		List<Object> rows = null;
 		int count = 0;
@@ -230,7 +236,7 @@ public class InputOutputUtil {
 					
 					count += write(output, rows,processor);
 				}catch(Exception e) {
-					if(FAIL_FAST.equals(failMode)) {
+					if(FailMode.FAIL_FAST == failMode) {
 						throw new RuntimeException("copy error,input:"+input+" output:"+output+" processor:"+processor,e);
 					}
 					logger.warn("copy warn,input:"+input+" output:"+output+" processor:"+processor,e);
@@ -242,7 +248,7 @@ public class InputOutputUtil {
 			IOUtils.closeQuietly(output);
 		}
 		
-		if(!exceptions.isEmpty() && FAIL_AT_END.equals(failMode)) {
+		if(!exceptions.isEmpty() && FailMode.FAIL_AT_END == failMode) {
 			throw new RuntimeException("copy error,input:"+input+" output:"+output+" processor:"+processor+" exceptions:"+exceptions);
 		}
 		return count;

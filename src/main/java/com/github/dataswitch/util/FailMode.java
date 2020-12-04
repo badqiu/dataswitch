@@ -1,5 +1,28 @@
 package com.github.dataswitch.util;
 
 public enum FailMode {
-	FAIL_FAST,FAIL_AT_END,FAIL_NEVER;
+	FAIL_FAST("failFast"),FAIL_AT_END("failAtEnd"),FAIL_NEVER("failNever");
+	
+
+	private final String shortName;
+	
+	FailMode(String shortName) {
+		this.shortName = shortName;
+	}
+
+	public String getShortName() {
+		return shortName;
+	}
+	
+	public static FailMode getRequiredByName(String name) {
+		for(FailMode m : values()) {
+			if(m.getShortName().equalsIgnoreCase(name)) {
+				return m;
+			}
+			if(m.name().equalsIgnoreCase(name)) {
+				return m;
+			}
+		}
+		throw new RuntimeException("not found failMode by name:"+name);
+	}
 }
