@@ -125,7 +125,7 @@ public class KafkaInput implements Input{
 		
 		public void run() {
 			try {
-				logger.info("consumer thread start, work on partitions:" + kafkaConsumer.assignment());
+				logger.info("kafka consumer thread start, work on partitions:" + kafkaConsumer.assignment());
 				
 				while(running) {
 					try {
@@ -147,7 +147,7 @@ public class KafkaInput implements Input{
 					}
 				}
 			}finally {
-				logger.info("consumer thread exit");
+				logger.warn("kafka consumer thread exit");
 			}
 		}
 		
