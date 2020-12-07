@@ -24,6 +24,8 @@ import com.github.dataswitch.processor.Processor;
  */
 public class InputsOutputs {
 
+	private static final int DEFAULT_BUFFER_SIZE = 5000;
+
 	private static Logger logger = LoggerFactory.getLogger(InputsOutputs.class);
 
 	private String id; // ID
@@ -32,7 +34,7 @@ public class InputsOutputs {
 	private Input[] inputs; //输入
 	private Output[] outputs; //输出
 	private Processor[] processors;//数据处理器
-	private int bufferSize = 5000;
+	private int bufferSize = DEFAULT_BUFFER_SIZE;
 	
 	private String failMode = FailMode.FAIL_AT_END.getShortName();
 	
@@ -139,12 +141,11 @@ public class InputsOutputs {
 	}
 
 	public void exec() {
-		if(bufferSize <= 0) bufferSize = 5000;
+		if(bufferSize <= 0) bufferSize = DEFAULT_BUFFER_SIZE;
 		
 		if(!enabled) {
 			throw new IllegalStateException("enabled is false, id:"+id);
 		}
-		
 		
 		MultiInput input = new MultiInput(inputs);
 		TeeOutput output = new TeeOutput(outputs);
