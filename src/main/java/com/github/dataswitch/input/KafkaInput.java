@@ -37,7 +37,7 @@ public class KafkaInput implements Input{
 	private transient List<ConsumerWorker> kafkaConsumerThreads = new ArrayList<ConsumerWorker>();
 	private transient LinkedBlockingQueue<Object> queue = new LinkedBlockingQueue<Object>(10000);
 	private transient KafkaConsumer<Object,Object> kafkaConsumer = null;
-	
+	private int asyncReadTimeout = 500;
 	
 	public Properties getProperties() {
 		return properties;
@@ -204,8 +204,7 @@ public class KafkaInput implements Input{
 
 	private List<Object> asyncRead(int size) {
 		try {
-			int timeout = 3000;
-			return BlockingQueueUtil.batchTake(queue,size, timeout);
+			return BlockingQueueUtil.batchTake(queue,size, asyncReadTimeout);
 		}catch(InterruptedException e) {
 			throw new RuntimeException(e);
 		}
