@@ -129,7 +129,7 @@ public class KafkaInput implements Input{
 				
 				while(running) {
 					try {
-						ConsumerRecords<Object, Object> records = kafkaConsumer.poll(1000 * 3);
+						ConsumerRecords<Object, Object> records = kafkaConsumer.poll(asyncReadTimeout);
 						if(records == null || records.isEmpty()) {
 							continue;
 						}
@@ -181,7 +181,7 @@ public class KafkaInput implements Input{
 
 	private List<Object> syncRead() {
 		while(true) {
-			ConsumerRecords<Object, Object> records = kafkaConsumer.poll(3000);
+			ConsumerRecords<Object, Object> records = kafkaConsumer.poll(asyncReadTimeout);
 			if(records == null || records.isEmpty()) {
 				continue;
 			}
