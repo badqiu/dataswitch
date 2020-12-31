@@ -15,6 +15,7 @@ import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import com.github.dataswitch.util.BlockingQueueUtil;
 import com.github.dataswitch.util.KafkaConfigUtil;
@@ -84,6 +85,7 @@ public class KafkaInput implements Input{
 			kafkaConsumer = new KafkaConsumer<Object, Object>(properties);
 			logger.info("buildKafkaConsumer() properties:"+properties);
 			
+			//test kafka ping sucess
 			kafkaConsumer.listTopics();
 			
 			return kafkaConsumer;
@@ -95,17 +97,24 @@ public class KafkaInput implements Input{
 	public void startConsumerKafkaData() {
 		
 		KafkaConsumer<Object,Object> kafkaConsumer = buildKafkaConsumer(properties);
+		List<String> topicList = Arrays.asList(StringUtils.tokenizeToStringArray(topic,";, \n\t"));
 		if(sync) {
-			kafkaConsumer.subscribe(Arrays.asList(topic));
+			kafkaConsumer.subscribe(topicList);
 			this.kafkaConsumer = kafkaConsumer;
 		}else {
-			List<PartitionInfo> partitions = kafkaConsumer.partitionsFor(topic);
-			for(PartitionInfo p : partitions) {
-				kafkaConsumer = buildKafkaConsumer(properties);
-				TopicPartition topicPartition= new TopicPartition(p.topic(),p.partition());
-				kafkaConsumer.assign(Arrays.asList(topicPartition));
-				ConsumerWorker worker = startConsumerThread(kafkaConsumer);
-				kafkaConsumerThreads.add(worker);
+			for(String topic : topicList) {
+				if(!StringUtils.hasText(topic)) {
+					continue;
+				}
+				
+				List<PartitionInfo> partitions = kafkaConsumer.partitionsFor(topic);
+				for(PartitionInfo p : partitions) {
+					kafkaConsumer = buildKafkaConsumer(properties);
+					TopicPartition topicPartition= new TopicPartition(p.topic(),p.partition());
+					kafkaConsumer.assign(Arrays.asList(topicPartition));
+					ConsumerWorker worker = startConsumerThread(kafkaConsumer);
+					kafkaConsumerThreads.add(worker);
+				}
 			}
 		}
 		
