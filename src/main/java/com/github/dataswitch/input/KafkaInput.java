@@ -39,6 +39,7 @@ public class KafkaInput implements Input{
 	private transient LinkedBlockingQueue<Object> queue = new LinkedBlockingQueue<Object>(10000);
 	private transient KafkaConsumer<Object,Object> kafkaConsumer = null;
 	private int asyncReadTimeout = 500;
+	private int kafkaPollTimeout = 500;
 	
 	public Properties getProperties() {
 		return properties;
@@ -64,6 +65,14 @@ public class KafkaInput implements Input{
 		this.topic = inputTopic;
 	}
 	
+	public void setAsyncReadTimeout(int asyncReadTimeout) {
+		this.asyncReadTimeout = asyncReadTimeout;
+	}
+
+	public void setKafkaPollTimeout(int kafkaPollTimeout) {
+		this.kafkaPollTimeout = kafkaPollTimeout;
+	}
+
 	public KafkaConsumer buildKafkaConsumer(Properties kafkaProperties) {
 		KafkaConfigUtil.initJavaSecurityAuthLoginConfig(kafkaProperties);
 		
@@ -138,7 +147,7 @@ public class KafkaInput implements Input{
 				
 				while(running) {
 					try {
-						ConsumerRecords<Object, Object> records = kafkaConsumer.poll(asyncReadTimeout);
+						ConsumerRecords<Object, Object> records = kafkaConsumer.poll(kafkaPollTimeout);
 						if(records == null || records.isEmpty()) {
 							continue;
 						}
@@ -190,7 +199,7 @@ public class KafkaInput implements Input{
 
 	private List<Object> syncRead() {
 		while(true) {
-			ConsumerRecords<Object, Object> records = kafkaConsumer.poll(asyncReadTimeout);
+			ConsumerRecords<Object, Object> records = kafkaConsumer.poll(kafkaPollTimeout);
 			if(records == null || records.isEmpty()) {
 				continue;
 			}
