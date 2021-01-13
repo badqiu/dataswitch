@@ -13,9 +13,9 @@ public class HiveEscapeUtil {
 //		result = StringUtils.replace(result, "\003", "\\003");
 		
 		//OR
-//		result = StringUtils.replace(result, "\001", "\\1");
-//		result = StringUtils.replace(result, "\002", "\\2");
-//		result = StringUtils.replace(result, "\003", "\\3");
+		result = StringUtils.replace(result, "\1", "\\1");
+		result = StringUtils.replace(result, "\2", "\\2");
+		result = StringUtils.replace(result, "\3", "\\3");
 		return result;
 	}
 	
