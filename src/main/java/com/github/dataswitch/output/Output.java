@@ -13,3 +13,4 @@ public interface Output extends Closeable,Flushable{
 	}
 	
 }
+
