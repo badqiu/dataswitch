@@ -41,7 +41,7 @@ public class HttpOutput extends BaseOutput implements Output {
 		this.serializer = serializer;
 	}
 
-	private void init() throws Exception {
+	public void init() throws Exception {
 		log.info("write to url:"+url);
 		
 		Assert.hasText(url,"url must be not empty");

@@ -138,7 +138,7 @@ public class ScriptOutput extends BaseObject implements Output{
 	}
 
 	private Bindings beforeBinding;
-	private void init() throws ScriptException {
+	public void init() throws ScriptException {
 		Assert.hasText(script,"script must be not empty");
 		Assert.hasText(lang,"'lang' must be not null");
 		

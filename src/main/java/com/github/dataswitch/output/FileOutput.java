@@ -72,7 +72,7 @@ public class FileOutput extends BaseOutput implements Output {
 		this.serializer = serializer;
 	}
 	
-	private void init() throws IOException {
+	public void init() throws IOException {
 		Assert.notNull(serializer,"serializer must be not null");
 		File dirFile = newFile(dir);
 		
@@ -113,6 +113,11 @@ public class FileOutput extends BaseOutput implements Output {
 			throw new RuntimeException("flush error",e);
 		}
 		IOUtils.closeQuietly(outputStream);
+	}
+	
+	@Override
+	public void flush() throws IOException {
+		serializer.flush();
 	}
 
 	@Override
