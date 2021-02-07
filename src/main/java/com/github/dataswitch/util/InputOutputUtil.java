@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.function.Consumer;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
@@ -22,10 +23,6 @@ public class InputOutputUtil {
 	
 	private static int DEFAULT_BUFFER_SIZE = 3000;
 	private static DefaultProcessor DEFAULT_PROCESSOR = new DefaultProcessor();
-	
-//	public static String FAIL_FAST = "failFast";
-//	public static String FAIL_AT_END = "failAtEnd";
-//	public static String FAIL_NEVER = "failNever";
 	
 	public static void close(Closeable io) {
 		try {
@@ -202,14 +199,13 @@ public class InputOutputUtil {
 		if(!ignoreCopyError) {
 			failMode = FailMode.FAIL_FAST;
 		}
-		return copy(input,output,bufferSize,processor,failMode);
+		return copy(input,output,bufferSize,processor,failMode,null);
 	}
 
-	
 	public static int copy(Input input,Output output,int bufferSize,Processor processor,String failMode) {
-		return copy(input,output,bufferSize,processor,FailMode.getRequiredByName(failMode));
+		return copy(input,output,bufferSize,processor,FailMode.getRequiredByName(failMode),null);
 	}
-	
+
 	/**
 	 * 
 	 * @param input
@@ -218,7 +214,7 @@ public class InputOutputUtil {
 	 * @param failMode,取值: failFast,failAtEnd,failNever
 	 * @return 拷贝的数据量
 	 */
-	public static int copy(Input input,Output output,int bufferSize,Processor processor,FailMode failMode) {
+	public static int copy(Input input,Output output,int bufferSize,Processor processor,FailMode failMode,Consumer<Exception> exceptionHandler) {
 		if(bufferSize <= 0) throw new IllegalArgumentException("bufferSize > 0 must be true");
 
 		
@@ -239,8 +235,13 @@ public class InputOutputUtil {
 					if(FailMode.FAIL_FAST == failMode) {
 						throw new RuntimeException("copy error,input:"+input+" output:"+output+" processor:"+processor,e);
 					}
+					
 					logger.warn("copy warn,input:"+input+" output:"+output+" processor:"+processor,e);
 					exceptions.add(e);
+					
+					if(exceptionHandler != null) {
+						exceptionHandler.accept(e);
+					}
 				}
 			}
 		}finally {

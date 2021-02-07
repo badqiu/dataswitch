@@ -53,7 +53,7 @@ public class MultiInput implements Input{
 	@Override
 	public void close() throws IOException {
 		for(Input input : inputs) {
-			InputOutputUtil.close(input);
+			InputOutputUtil.closeQuietly(input);
 		}
 	}
 

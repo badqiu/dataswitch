@@ -8,11 +8,8 @@ public class HiveEscapeUtil {
 		if(str == null) return null;
 		
 		String result = StringUtils.replace(str, "\n", "\\n");
-//		result = StringUtils.replace(result, "\001", "\\001");
-//		result = StringUtils.replace(result, "\002", "\\002");
-//		result = StringUtils.replace(result, "\003", "\\003");
 		
-		//OR
+
 		result = StringUtils.replace(result, "\1", "\\1");
 		result = StringUtils.replace(result, "\2", "\\2");
 		result = StringUtils.replace(result, "\3", "\\3");
