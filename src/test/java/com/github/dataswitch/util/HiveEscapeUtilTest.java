@@ -17,4 +17,12 @@ public class HiveEscapeUtilTest {
 		Assert.assertEquals("a\\n\\n\\003b",HiveEscapeUtil.hiveEscaped("a\n\n\3b"));
 	}
 
+	
+	@Test
+	public void test2() {
+		Assert.assertEquals(null,HiveEscapeUtil.hiveEscaped(null));
+		Assert.assertEquals("a\\nb",HiveEscapeUtil.hiveEscaped("a\nb"));
+		System.out.println(HiveEscapeUtil.hiveEscaped("a\nb"));
+	}
+	
 }

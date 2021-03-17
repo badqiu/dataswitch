@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -77,7 +78,6 @@ public class KafkaInput implements Input{
 		KafkaConfigUtil.initJavaSecurityAuthLoginConfig(kafkaProperties);
 		
 		Properties properties = new Properties();
-		properties.put("client.id", KafkaInput.class.getSimpleName());
 		properties.put("acks", "1");
 		properties.put("retries", "1");
 		properties.put("compression.type", "snappy");
