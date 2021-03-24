@@ -148,7 +148,7 @@ public class KafkaInput implements Input{
 				while(running) {
 					try {
 						ConsumerRecords<Object, Object> records = kafkaConsumer.poll(kafkaPollTimeout);
-						if(records == null || records.isEmpty()) {
+						if(isEmpty(records)) {
 							continue;
 						}
 						
@@ -175,6 +175,10 @@ public class KafkaInput implements Input{
 
 	}
 
+	protected static boolean isEmpty(ConsumerRecords<Object, Object> records) {
+		return records == null || records.isEmpty();
+	}
+	
 	@Override
 	public void close() throws IOException {
 		running = false;
