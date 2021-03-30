@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.core.serializer.Deserializer;
 
@@ -28,11 +30,15 @@ public class JsonDeserializer  extends BaseObject implements Deserializer<Map>{
 			if(StringUtils.isBlank(line)) {
 				continue;
 			}
-			return (Map)objectMapper.readValue(line, valueType);
+			return (Map)deserializeLine(line);
 		}
 		return null;
 //		return readByJsonNode(inputStream);
 //		return objectMapper.readValue(inputStream, valueType);
+	}
+
+	protected Object deserializeLine(String line) throws IOException, JsonParseException, JsonMappingException {
+		return objectMapper.readValue(line, valueType);
 	}
 
 	private BufferedReader toBufferedReader(InputStream inputStream) {

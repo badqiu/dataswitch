@@ -111,7 +111,7 @@ public class FileInput extends BaseInput implements Input{
 			}
 			
 			if(inputStream == null) {
-				if(files.isEmpty()) {
+				if(CollectionUtils.isEmpty(files)) {
 					return null;
 				}
 				
