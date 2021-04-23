@@ -131,7 +131,7 @@ public class KafkaInput implements Input{
 
 	private ConsumerWorker startConsumerThread(KafkaConsumer<Object, Object> kafkaConsumer) {
 		ConsumerWorker task = new ConsumerWorker();
-		task.kafkaConsumer = kafkaConsumer;
+		task.workerKafkaConsumer = kafkaConsumer;
 		
 		Thread thread = new Thread(task,"kafka_consumer_"+topic);
 		thread.start();
@@ -139,15 +139,15 @@ public class KafkaInput implements Input{
 	}
 
 	public class ConsumerWorker implements Runnable{
-		private KafkaConsumer<Object, Object> kafkaConsumer;
+		private KafkaConsumer<Object, Object> workerKafkaConsumer;
 		
 		public void run() {
 			try {
-				logger.info("kafka consumer thread start, work on partitions:" + kafkaConsumer.assignment());
+				logger.info("kafka consumer thread start, work on partitions:" + workerKafkaConsumer.assignment());
 				
 				while(running) {
 					try {
-						ConsumerRecords<Object, Object> records = kafkaConsumer.poll(kafkaPollTimeout);
+						ConsumerRecords<Object, Object> records = workerKafkaConsumer.poll(kafkaPollTimeout);
 						if(isEmpty(records)) {
 							continue;
 						}
@@ -159,7 +159,7 @@ public class KafkaInput implements Input{
 							}
 						}
 						
-						kafkaConsumer.commitSync();
+						workerKafkaConsumer.commitSync();
 					}catch(Exception e) {
 						logger.error("consumer error",e);
 					}
@@ -170,7 +170,7 @@ public class KafkaInput implements Input{
 		}
 		
 		public void close() {
-			IOUtils.closeQuietly(kafkaConsumer);
+			IOUtils.closeQuietly(workerKafkaConsumer);
 		}
 
 	}
@@ -185,8 +185,10 @@ public class KafkaInput implements Input{
 		
 		IOUtils.closeQuietly(kafkaConsumer);
 		
-		for(ConsumerWorker w : kafkaConsumerThreads) {
-			w.close();
+		if(kafkaConsumerThreads != null) {
+			for(ConsumerWorker w : kafkaConsumerThreads) {
+				w.close();
+			}
 		}
 	}
 
