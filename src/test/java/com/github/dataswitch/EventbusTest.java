@@ -37,4 +37,13 @@ public class EventbusTest {
 		}
 		
 	}
+	
+	@Test
+	public void test_sqrt() {
+		System.out.println(""+Math.sqrt(150));
+		System.out.println(""+Math.sqrt(230));
+		System.out.println(""+Math.sqrt(500));
+		System.out.println(""+Math.sqrt(1000));
+		System.out.println("1111");
+	}
 }
