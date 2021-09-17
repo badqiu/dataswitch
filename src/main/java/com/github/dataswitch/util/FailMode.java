@@ -1,5 +1,7 @@
 package com.github.dataswitch.util;
 
+import org.apache.commons.lang.StringUtils;
+
 public enum FailMode {
 	FAIL_FAST("failFast"),FAIL_AT_END("failAtEnd"),FAIL_NEVER("failNever");
 	
@@ -15,6 +17,8 @@ public enum FailMode {
 	}
 	
 	public static FailMode getRequiredByName(String name) {
+		name = StringUtils.trim(name);
+		
 		for(FailMode m : values()) {
 			if(m.getShortName().equalsIgnoreCase(name)) {
 				return m;
