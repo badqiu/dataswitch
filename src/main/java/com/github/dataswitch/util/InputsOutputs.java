@@ -167,6 +167,7 @@ public class InputsOutputs {
 		}finally {
 			InputOutputUtil.closeQuietly(input);
 			InputOutputUtil.closeQuietly(output);
+			logger.info(id+" copy end,rows:" + rows + " bufferSize:"+ bufferSize+" failMode:" + failMode +" inputs:" + Arrays.toString(inputs) + " outputs:" + Arrays.toString(outputs));
 		}
 	}
 
