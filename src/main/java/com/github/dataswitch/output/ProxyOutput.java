@@ -11,8 +11,19 @@ public class ProxyOutput implements Output{
 	
 	private Output proxy;
 
+	public ProxyOutput() {
+	}
+	
 	public ProxyOutput(Output proxy) {
 		super();
+		this.proxy = proxy;
+	}
+
+	public Output getProxy() {
+		return proxy;
+	}
+
+	public void setProxy(Output proxy) {
 		this.proxy = proxy;
 	}
 
