@@ -173,7 +173,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		this.transactionTemplate = transactionTemplate;
 	}
 
-	private static SqlParameterSource[] newSqlParameterSource(final List<Object> rows) {
+	protected SqlParameterSource[] newSqlParameterSource(final List<Object> rows) {
 		SqlParameterSource[] batchArgs = new SqlParameterSource[rows.size()];
 		int i = 0;
 		for (Object row : rows) {
@@ -187,7 +187,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		return batchArgs;
 	}
 	
-	private static void executeWithSemicolonComma(DataSource ds, String sql) {
+	protected static void executeWithSemicolonComma(DataSource ds, String sql) {
 		if (StringUtils.isNotBlank(sql)) {
 			String[] sqls = sql.split(";");
 			for (String s : sqls) {
