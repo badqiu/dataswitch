@@ -103,6 +103,7 @@ public class KafkaInput implements Input{
 		}
 	}
 	
+	
 	public void startConsumerKafkaData() {
 		
 		KafkaConsumer<Object,Object> kafkaConsumer = buildKafkaConsumer(properties);
