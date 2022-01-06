@@ -42,6 +42,8 @@ public class KafkaInput implements Input{
 	private int asyncReadTimeout = 500;
 	private int kafkaPollTimeout = 500;
 	
+	private boolean manualAssignTopic = false; //手工分配partition及线程，使用该功能，将不能多机消费数据
+	
 	public Properties getProperties() {
 		return properties;
 	}
@@ -72,6 +74,14 @@ public class KafkaInput implements Input{
 
 	public void setKafkaPollTimeout(int kafkaPollTimeout) {
 		this.kafkaPollTimeout = kafkaPollTimeout;
+	}
+	
+	public boolean isManualAssignTopic() {
+		return manualAssignTopic;
+	}
+
+	public void setManualAssignTopic(boolean manualAssignTopic) {
+		this.manualAssignTopic = manualAssignTopic;
 	}
 
 	public KafkaConsumer buildKafkaConsumer(Properties kafkaProperties) {
@@ -117,13 +127,25 @@ public class KafkaInput implements Input{
 					continue;
 				}
 				
-				List<PartitionInfo> partitions = kafkaConsumer.partitionsFor(topic);
-				for(PartitionInfo p : partitions) {
-					kafkaConsumer = buildKafkaConsumer(properties);
-					TopicPartition topicPartition= new TopicPartition(p.topic(),p.partition());
-					kafkaConsumer.assign(Arrays.asList(topicPartition));
-					ConsumerWorker worker = startConsumerThread(kafkaConsumer);
-					kafkaConsumerThreads.add(worker);
+				if(manualAssignTopic) {
+					List<PartitionInfo> partitions = kafkaConsumer.partitionsFor(topic);
+					for(PartitionInfo p : partitions) {
+						kafkaConsumer = buildKafkaConsumer(properties);
+						TopicPartition topicPartition= new TopicPartition(p.topic(),p.partition());
+						kafkaConsumer.assign(Arrays.asList(topicPartition));
+						ConsumerWorker worker = startConsumerThread(kafkaConsumer);
+						kafkaConsumerThreads.add(worker);
+					}
+				}else {
+					
+					List<PartitionInfo> partitions = kafkaConsumer.partitionsFor(topic);
+					for(PartitionInfo p : partitions) {
+						kafkaConsumer = buildKafkaConsumer(properties);
+						kafkaConsumer.subscribe(topicList);
+						ConsumerWorker worker = startConsumerThread(kafkaConsumer);
+						kafkaConsumerThreads.add(worker);
+					}
+					
 				}
 			}
 		}
