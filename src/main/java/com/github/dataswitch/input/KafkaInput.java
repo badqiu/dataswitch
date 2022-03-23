@@ -37,7 +37,7 @@ public class KafkaInput implements Input{
 	private boolean sync = false;
 	
 	private transient List<ConsumerWorker> kafkaConsumerThreads = new ArrayList<ConsumerWorker>();
-	private transient LinkedBlockingQueue<Object> queue = new LinkedBlockingQueue<Object>(1000);
+	protected transient LinkedBlockingQueue<Object> queue = new LinkedBlockingQueue<Object>(1000);
 	private transient KafkaConsumer<Object,Object> kafkaConsumer = null;
 	private int asyncReadTimeout = 500;
 	private int kafkaPollTimeout = 500;
@@ -175,12 +175,7 @@ public class KafkaInput implements Input{
 							continue;
 						}
 						
-						for(ConsumerRecord<Object,Object> c : records) {
-							Object value = processOne(c);
-							if(value != null) {
-								queue.put(value);
-							}
-						}
+						processRecordsForQueue(records);
 						
 						workerKafkaConsumer.commitSync();
 					}catch(Exception e) {
@@ -191,6 +186,8 @@ public class KafkaInput implements Input{
 				logger.warn("kafka consumer thread exit");
 			}
 		}
+
+
 		
 		public void close() {
 			IOUtils.closeQuietly(workerKafkaConsumer);
@@ -198,6 +195,15 @@ public class KafkaInput implements Input{
 
 	}
 
+	protected void processRecordsForQueue(ConsumerRecords<Object, Object> records) throws InterruptedException {
+		for(ConsumerRecord<Object,Object> c : records) {
+			Object value = processOne(c);
+			if(value != null) {
+				queue.put(value);
+			}
+		}
+	}
+	
 	protected static boolean isEmpty(ConsumerRecords<Object, Object> records) {
 		return records == null || records.isEmpty();
 	}
