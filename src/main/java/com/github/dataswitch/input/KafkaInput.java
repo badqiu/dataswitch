@@ -37,7 +37,7 @@ public class KafkaInput implements Input{
 	private boolean sync = false;
 	
 	private transient List<ConsumerWorker> kafkaConsumerThreads = new ArrayList<ConsumerWorker>();
-	protected transient LinkedBlockingQueue<Object> queue = new LinkedBlockingQueue<Object>(50000);
+	protected transient LinkedBlockingQueue<Object> queue = new LinkedBlockingQueue<Object>(10000);
 	private transient KafkaConsumer<Object,Object> kafkaConsumer = null;
 	private int asyncReadTimeout = 500;
 	private int kafkaPollTimeout = 500;
