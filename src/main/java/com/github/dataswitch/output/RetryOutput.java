@@ -35,8 +35,8 @@ public class RetryOutput extends ProxyOutput {
 	@Override
 	public void write(List<Object> rows) {
 
-		Duration duration = Duration.ofSeconds(retryIntervalSeconds);
-		Retry.retry(retryTimes, duration, () -> {
+		long retryIntervalMills = retryIntervalSeconds * 1000;
+		Retry.retry(retryTimes, retryIntervalMills, () -> {
 			super.write(rows);
 			return null;
 		});
