@@ -1,6 +1,5 @@
 package com.github.dataswitch.output;
 
-import java.time.Duration;
 import java.util.List;
 
 import com.github.rapid.common.util.Retry;
@@ -35,7 +34,7 @@ public class RetryOutput extends ProxyOutput {
 	@Override
 	public void write(List<Object> rows) {
 
-		long retryIntervalMills = retryIntervalSeconds * 1000L;
+		int retryIntervalMills = retryIntervalSeconds * 1000;
 		Retry.retry(retryTimes, retryIntervalMills, () -> {
 			super.write(rows);
 			return null;
