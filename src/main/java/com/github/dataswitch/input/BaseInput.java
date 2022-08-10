@@ -1,6 +1,5 @@
 package com.github.dataswitch.input;
 
-import java.io.ObjectInput;
 import java.util.ArrayList;
 import java.util.List;
 
