@@ -155,19 +155,19 @@ public class InputsOutputs {
 		}
 		
 		long start = System.currentTimeMillis();
-		int rows = 0;
+		long rows = 0;
+		long cost = 0;
 		try {
 			if(async) {
 				rows = InputOutputUtil.asyncCopy(input,output,bufferSize,processor,failMode);
 			}else {
 				rows = InputOutputUtil.copy(input, output,bufferSize,processor,failMode);
 			}
-			long cost = System.currentTimeMillis() - start;
-			logger.info(id+" copy success,rows:" + rows +" costSeconds:"+(cost / 1000) + " tps:"+(rows * 1000.0 / cost) + " bufferSize:"+ bufferSize+" failMode:" + failMode +" inputs:" + Arrays.toString(inputs) + " outputs:" + Arrays.toString(outputs));
+			cost = System.currentTimeMillis() - start;
 		}finally {
 			InputOutputUtil.closeQuietly(input);
 			InputOutputUtil.closeQuietly(output);
-			logger.info(id+" copy end,rows:" + rows + " bufferSize:"+ bufferSize+" failMode:" + failMode +" inputs:" + Arrays.toString(inputs) + " outputs:" + Arrays.toString(outputs));
+			logger.info(id + " copy end,rows:" + rows +" costSeconds:"+(cost / 1000) + " tps:"+(rows * 1000.0 / cost) + " bufferSize:"+ bufferSize+" failMode:" + failMode +" inputs:" + Arrays.toString(inputs) + " outputs:" + Arrays.toString(outputs));
 		}
 	}
 

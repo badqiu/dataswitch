@@ -142,7 +142,7 @@ public class InputOutputUtil {
 	 * 拷贝数据
 	 * @return 拷贝的数据量
 	 */
-	public static int copy(Input input,Output output) {
+	public static long copy(Input input,Output output) {
 		return copy(input,output,DEFAULT_BUFFER_SIZE);
 	}
 	
@@ -150,7 +150,7 @@ public class InputOutputUtil {
 	 * 拷贝数据
 	 * @return 拷贝的数据量
 	 */
-	public static int copy(Input input,Output output,Processor processor) {
+	public static long copy(Input input,Output output,Processor processor) {
 		return copy(input,output,DEFAULT_BUFFER_SIZE,processor);
 	}
 	
@@ -158,7 +158,7 @@ public class InputOutputUtil {
 	 * 拷贝数据
 	 * @return 拷贝的数据量
 	 */
-	public static int copy(Input input,Output output,boolean ignoreWriteError) {
+	public static long copy(Input input,Output output,boolean ignoreWriteError) {
 		return copy(input,output,DEFAULT_BUFFER_SIZE,DEFAULT_PROCESSOR,ignoreWriteError);
 	}
 	
@@ -166,7 +166,7 @@ public class InputOutputUtil {
 	 * 拷贝数据
 	 * @return 拷贝的数据量
 	 */
-	public static int copy(Input input,Output output,Processor processor,boolean ignoreWriteError) {
+	public static long copy(Input input,Output output,Processor processor,boolean ignoreWriteError) {
 		return copy(input,output,DEFAULT_BUFFER_SIZE,processor,ignoreWriteError);
 	}
 	
@@ -174,7 +174,7 @@ public class InputOutputUtil {
 	 * 拷贝数据
 	 * @return 拷贝的数据量
 	 */
-	public static int copy(Input input,Output output,int bufferSize) {
+	public static long copy(Input input,Output output,int bufferSize) {
 		return copy(input,output,bufferSize,DEFAULT_PROCESSOR,false);
 	}
 	
@@ -182,7 +182,7 @@ public class InputOutputUtil {
 	 * 拷贝数据
 	 * @return 拷贝的数据量
 	 */
-	public static int copy(Input input,Output output,int bufferSize,Processor processor) {
+	public static long copy(Input input,Output output,int bufferSize,Processor processor) {
 		return copy(input,output,bufferSize,processor,false);
 	}
 	
@@ -194,7 +194,7 @@ public class InputOutputUtil {
 	 * @param ignoreWriteError
 	 * @return 拷贝的数据量
 	 */
-	public static int copy(Input input,Output output,int bufferSize,Processor processor,boolean ignoreCopyError) {
+	public static long copy(Input input,Output output,int bufferSize,Processor processor,boolean ignoreCopyError) {
 		FailMode failMode = FailMode.FAIL_NEVER;
 		if(!ignoreCopyError) {
 			failMode = FailMode.FAIL_FAST;
@@ -202,7 +202,7 @@ public class InputOutputUtil {
 		return copy(input,output,bufferSize,processor,failMode,null);
 	}
 
-	public static int copy(Input input,Output output,int bufferSize,Processor processor,String failMode) {
+	public static long copy(Input input,Output output,int bufferSize,Processor processor,String failMode) {
 		return copy(input,output,bufferSize,processor,FailMode.getRequiredByName(failMode),null);
 	}
 
@@ -214,12 +214,12 @@ public class InputOutputUtil {
 	 * @param failMode,取值: failFast,failAtEnd,failNever
 	 * @return 拷贝的数据量
 	 */
-	public static int copy(Input input,Output output,int bufferSize,Processor processor,FailMode failMode,Consumer<Exception> exceptionHandler) {
+	public static long copy(Input input,Output output,int bufferSize,Processor processor,FailMode failMode,Consumer<Exception> exceptionHandler) {
 		if(bufferSize <= 0) throw new IllegalArgumentException("bufferSize > 0 must be true");
 
 		
 		List<Object> rows = null;
-		int count = 0;
+		long count = 0;
 		List<Exception> exceptions = new ArrayList<Exception>();
 		
 		try {
