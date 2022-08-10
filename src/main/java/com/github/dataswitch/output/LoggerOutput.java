@@ -20,6 +20,14 @@ public class LoggerOutput implements Output {
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
 	}
+	
+	public String getLogger() {
+		return logger;
+	}
+
+	public void setLogger(String logger) {
+		this.logger = logger;
+	}
 
 	@Override
 	public void close() throws IOException {
