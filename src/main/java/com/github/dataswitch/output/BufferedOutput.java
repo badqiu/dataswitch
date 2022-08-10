@@ -41,14 +41,16 @@ public class BufferedOutput extends ProxyOutput{
 		if(CollectionUtils.isEmpty(rows)) return;
 		
 		buf.addAll(rows);
-		if(bufTimeout > 0) {
-			lastSendTime = System.currentTimeMillis();
-		}
+
 		if(buf.size() > bufSize) {
 			flushBuffer();
-		}else if(bufTimeout > 0 && (lastSendTime - System.currentTimeMillis() > bufTimeout)) {
+		}else if(bufTimeout > 0 && isTimeout()) {
 			flushBuffer();
 		}
+	}
+
+	private boolean isTimeout() {
+		return lastSendTime - System.currentTimeMillis() > bufTimeout;
 	}
 
 	public void flushBuffer() {
