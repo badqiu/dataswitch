@@ -50,7 +50,7 @@ public class BufferedOutput extends ProxyOutput{
 	}
 
 	private boolean isTimeout() {
-		return lastSendTime - System.currentTimeMillis() > bufTimeout;
+		return Math.abs(lastSendTime - System.currentTimeMillis()) > bufTimeout;
 	}
 
 	public void flushBuffer() {
