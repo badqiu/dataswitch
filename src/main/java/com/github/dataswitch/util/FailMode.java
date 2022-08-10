@@ -17,6 +17,10 @@ public enum FailMode {
 	}
 	
 	public static FailMode getRequiredByName(String name) {
+		if(StringUtils.isBlank(name)) {
+			return null;
+		}
+		
 		name = StringUtils.trim(name);
 		
 		for(FailMode m : values()) {
