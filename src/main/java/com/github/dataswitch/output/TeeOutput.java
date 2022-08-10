@@ -65,7 +65,7 @@ public class TeeOutput  implements Output{
 			try {
 				IOUtil.close(branch);
 			}catch(Exception e) {
-				e.printStackTrace();
+				logger.error("error on close output:" + branch,e);
 			}
 		}
 	}
