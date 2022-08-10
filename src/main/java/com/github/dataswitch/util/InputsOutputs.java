@@ -139,12 +139,16 @@ public class InputsOutputs {
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
+	
+	public String info() {
+		return "id:"+id;
+	}
 
 	public void exec() {
 		if(bufferSize <= 0) bufferSize = DEFAULT_BUFFER_SIZE;
 		
 		if(!enabled) {
-			throw new IllegalStateException("enabled is false, id:"+id);
+			throw new IllegalStateException("enabled is false, "+info());
 		}
 		
 		MultiInput input = new MultiInput(inputs);
@@ -167,7 +171,7 @@ public class InputsOutputs {
 		}finally {
 			InputOutputUtil.closeQuietly(input);
 			InputOutputUtil.closeQuietly(output);
-			logger.info(id + " copy end,rows:" + rows +" costSeconds:"+(cost / 1000) + " tps:"+(rows * 1000.0 / cost) + " bufferSize:"+ bufferSize+" failMode:" + failMode +" inputs:" + Arrays.toString(inputs) + " outputs:" + Arrays.toString(outputs));
+			logger.info(info() + " copy end,rows:" + rows +" costSeconds:"+(cost / 1000) + " tps:"+(rows * 1000.0 / cost) + " bufferSize:"+ bufferSize+" failMode:" + failMode +" inputs:" + Arrays.toString(inputs) + " outputs:" + Arrays.toString(outputs));
 		}
 	}
 
