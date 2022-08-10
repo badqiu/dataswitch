@@ -15,7 +15,7 @@ public class BufferedOutput extends ProxyOutput{
 	private static int DEFAULT_BUF_SIZE = 2000;
 	private int bufSize;
 	private int bufTimeout;
-	private long lastSendTime;
+	private long lastSendTime = System.currentTimeMillis();
 	private List<Object> buf = new ArrayList<Object>();
 	
 	public BufferedOutput(Output proxy) {
