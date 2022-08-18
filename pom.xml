@@ -63,6 +63,14 @@
       <optional>true</optional>
     </dependency>
     
+    
+    <dependency>
+	  <groupId>org.rocksdb</groupId>
+	  <artifactId>rocksdbjni</artifactId>
+	  <version>7.4.5</version>
+	  <optional>true</optional>
+	</dependency>
+    
     <!-- json -->
     <dependency>
 		  <groupId>com.fasterxml.jackson.core</groupId>
