@@ -12,4 +12,5 @@ public interface Input extends Closeable{
 	 */
 	public List<Object> read(int size) ;
 	
+	public default void commitInput() {};
 }

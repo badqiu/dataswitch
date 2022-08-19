@@ -101,6 +101,9 @@ public class InputOutputUtil {
 					}
 					totalRows += rows.size();
 					queue.put(rows);
+					
+					
+					input.commitInput();
 				}catch(Exception e) {
 					String msg = "read error,input:"+input+" output:"+output+" processor:"+processor;
 					logger.warn(msg,e);
@@ -231,6 +234,8 @@ public class InputOutputUtil {
 					}
 					
 					count += write(output, rows,processor);
+					
+					input.commitInput();
 				}catch(Exception e) {
 					if(FailMode.FAIL_FAST == failMode) {
 						throw new RuntimeException("copy error,input:"+input+" output:"+output+" processor:"+processor,e);

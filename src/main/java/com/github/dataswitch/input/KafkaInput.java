@@ -231,6 +231,17 @@ public class KafkaInput implements Input{
 			return asyncRead(size);
 		}
 	}
+	
+	@Override
+	public void commitInput() {
+		if(sync) {
+			kafkaConsumer.commitSync();
+		}else {
+//			if(kafkaConsumer != null) {
+//				kafkaConsumer.commitAsync();
+//			}
+		}
+	}
 
 	private List<Object> syncRead() {
 		while(true) {
