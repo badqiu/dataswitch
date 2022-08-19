@@ -162,7 +162,7 @@ public class KafkaInput implements Input{
 	}
 
 	public class ConsumerWorker implements Runnable{
-		private KafkaConsumer<Object, Object> workerKafkaConsumer;
+		public KafkaConsumer<Object, Object> workerKafkaConsumer;
 		
 		public void run() {
 			try {
@@ -176,8 +176,6 @@ public class KafkaInput implements Input{
 						}
 						
 						processRecordsForQueue(records);
-						
-						workerKafkaConsumer.commitSync();
 					}catch(Exception e) {
 						logger.error("consumer error",e);
 					}
@@ -237,9 +235,9 @@ public class KafkaInput implements Input{
 		if(sync) {
 			kafkaConsumer.commitSync();
 		}else {
-//			if(kafkaConsumer != null) {
-//				kafkaConsumer.commitAsync();
-//			}
+			for(ConsumerWorker worker : kafkaConsumerThreads) {
+				worker.workerKafkaConsumer.commitSync();
+			}
 		}
 	}
 
