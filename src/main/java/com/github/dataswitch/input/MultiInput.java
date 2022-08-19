@@ -51,6 +51,13 @@ public class MultiInput implements Input{
 	}
 	
 	@Override
+	public void commitInput() {
+		for(Input input : inputs) {
+			input.commitInput();
+		}
+	}
+	
+	@Override
 	public void close() throws IOException {
 		for(Input input : inputs) {
 			InputOutputUtil.closeQuietly(input);

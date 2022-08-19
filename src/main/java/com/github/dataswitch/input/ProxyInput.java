@@ -31,5 +31,10 @@ public class ProxyInput implements Input{
 	public void setProxy(Input proxy) {
 		this.proxy = proxy;
 	}
+	
+	@Override
+	public void commitInput() {
+		this.proxy.commitInput();
+	}
 
 }
