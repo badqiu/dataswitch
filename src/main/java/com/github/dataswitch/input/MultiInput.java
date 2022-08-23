@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import com.github.dataswitch.output.Output;
 import com.github.dataswitch.util.InputOutputUtil;
 
 /**
@@ -63,6 +65,14 @@ public class MultiInput implements Input{
 			InputOutputUtil.closeQuietly(input);
 		}
 	}
+	
+	@Override
+	public void open(Map<String, Object> params) throws Exception {
+		for(Input branch : inputs) {
+			branch.open(params);
+		}
+	}
+	
 
 	@Override
 	public List<Object> read(int size) {

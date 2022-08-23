@@ -2,6 +2,7 @@ package com.github.dataswitch.output;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 
@@ -42,5 +43,10 @@ public class ProxyOutput extends BaseObject implements Output{
 	public void flush() throws IOException {
 		proxy.flush();
 	}
+
+	public void open(Map<String, Object> params) throws Exception {
+		proxy.open(params);
+	}
+	
 
 }

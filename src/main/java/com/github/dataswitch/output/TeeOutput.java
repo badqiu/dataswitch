@@ -1,6 +1,7 @@
 package com.github.dataswitch.output;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
@@ -71,4 +72,11 @@ public class TeeOutput extends BaseObject  implements Output{
 		}
 	}
 
+	@Override
+	public void open(Map<String, Object> params) throws Exception {
+		for(Output branch : branchs) {
+			branch.open(params);
+		}
+	}
+	
 }

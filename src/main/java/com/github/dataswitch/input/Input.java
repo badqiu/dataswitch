@@ -2,8 +2,11 @@ package com.github.dataswitch.input;
 
 import java.io.Closeable;
 import java.util.List;
+import java.util.Map;
 
-public interface Input extends Closeable{
+import com.github.dataswitch.Openable;
+
+public interface Input extends Openable,Closeable{
 	
 	/**
 	 * 读取数据，
@@ -13,4 +16,7 @@ public interface Input extends Closeable{
 	public List<Object> read(int size) ;
 	
 	public default void commitInput() {};
+	
+	default void open(Map<String, Object> params) throws Exception {
+	}
 }

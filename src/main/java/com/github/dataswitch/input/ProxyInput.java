@@ -1,6 +1,7 @@
 package com.github.dataswitch.input;
 
 import java.util.List;
+import java.util.Map;
 
 import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.util.IOUtil;
@@ -36,6 +37,10 @@ public class ProxyInput extends BaseObject  implements Input{
 	@Override
 	public void commitInput() {
 		this.proxy.commitInput();
+	}
+
+	public void open(Map<String, Object> params) throws Exception {
+		proxy.open(params);
 	}
 
 }

@@ -1,6 +1,8 @@
 package com.github.dataswitch.util;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -138,6 +140,10 @@ public class InputsOutputs extends BaseObject {
 	}
 
 	public void exec() {
+		exec(Collections.EMPTY_MAP);
+	}
+	
+	public void exec(Map<String,Object> params) {
 		if(bufferSize <= 0) bufferSize = DEFAULT_BUFFER_SIZE;
 		
 		if(!enabled) {
@@ -155,12 +161,17 @@ public class InputsOutputs extends BaseObject {
 		long rows = 0;
 		long costTime = 0;
 		try {
+			input.open(params);
+			output.open(params);
+			
 			if(async) {
 				rows = InputOutputUtil.asyncCopy(input,output,bufferSize,processor,failMode);
 			}else {
 				rows = InputOutputUtil.copy(input, output,bufferSize,processor,failMode);
 			}
 			costTime = System.currentTimeMillis() - start;
+		}catch(Exception e) {
+			throw new RuntimeException(info() +" copy error",e);
 		}finally {
 			InputOutputUtil.closeQuietly(input);
 			InputOutputUtil.closeQuietly(output);
