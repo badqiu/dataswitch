@@ -3,6 +3,7 @@ package com.github.dataswitch.util;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +42,7 @@ public class InputsOutputs extends BaseObject {
 	private Output[] outputs; //输出
 	private Processor[] processors;//数据处理器
 	
+	private Consumer<Exception> exceptionHandler; //异常处理器
 	/**
 	 * 是否异步拷贝数据，默认是false
 	 */
@@ -164,10 +166,11 @@ public class InputsOutputs extends BaseObject {
 			input.open(params);
 			output.open(params);
 			
+			FailMode failModeEnum = FailMode.getRequiredByName(failMode);
 			if(async) {
-				rows = InputOutputUtil.asyncCopy(input,output,bufferSize,processor,failMode);
+				rows = InputOutputUtil.asyncCopy(input,output,bufferSize,processor,failModeEnum,exceptionHandler);
 			}else {
-				rows = InputOutputUtil.copy(input, output,bufferSize,processor,failMode);
+				rows = InputOutputUtil.copy(input, output,bufferSize,processor,failModeEnum,exceptionHandler);
 			}
 			costTime = System.currentTimeMillis() - start;
 		}catch(Exception e) {

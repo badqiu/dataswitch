@@ -60,6 +60,10 @@ public class InputOutputUtil {
 	
 	static ArrayList exitSign = new ArrayList(0);
 	public static int asyncCopy(Input input, final Output output,int bufferSize,Processor processor,FailMode failMode) {
+		return asyncCopy(input,output,bufferSize,processor,failMode,null);
+	}
+	
+	public static int asyncCopy(Input input, final Output output,int bufferSize,Processor processor,FailMode failMode,Consumer<Exception> exceptionHandler) {
 		final BlockingQueue<List> queue = new LinkedBlockingQueue(100);
 		
 		final List<Exception> exceptions = new ArrayList<Exception>();
@@ -79,8 +83,10 @@ public class InputOutputUtil {
 							logger.info("InterruptedException on write thread,exit thread",e);
 							return;
 						}catch(Exception e) {
-							exceptions.add(e);
 							logger.warn("ignore error on write thread",e);
+							exceptions.add(e);
+							
+							handleException(exceptionHandler, e);
 						}
 					}
 				}finally {
@@ -244,9 +250,7 @@ public class InputOutputUtil {
 					logger.warn("copy warn,input:"+input+" output:"+output+" processor:"+processor,e);
 					exceptions.add(e);
 					
-					if(exceptionHandler != null) {
-						exceptionHandler.accept(e);
-					}
+					handleException(exceptionHandler, e);
 				}
 			}
 		}finally {
@@ -258,6 +262,12 @@ public class InputOutputUtil {
 			throw new RuntimeException("copy error,input:"+input+" output:"+output+" processor:"+processor+" exceptions:"+exceptions);
 		}
 		return count;
+	}
+
+	private static void handleException(Consumer<Exception> exceptionHandler, Exception e) {
+		if(exceptionHandler != null) {
+			exceptionHandler.accept(e);
+		}
 	}
 	
 	/**
