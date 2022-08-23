@@ -15,7 +15,7 @@ public interface Output extends Closeable,Flushable,Openable{
 	public default void flush() throws IOException{
 	}
 	
-	default void open(Map<String, Object> params) throws Exception {
+	public default void open(Map<String, Object> params) throws Exception {
 	}
 	
 }
