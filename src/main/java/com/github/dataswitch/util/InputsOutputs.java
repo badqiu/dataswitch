@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dataswitch.BaseObject;
+import com.github.dataswitch.Constants;
 import com.github.dataswitch.input.Input;
 import com.github.dataswitch.input.MultiInput;
 import com.github.dataswitch.output.MultiOutput;
@@ -27,19 +28,18 @@ import com.github.dataswitch.processor.Processor;
  */
 public class InputsOutputs extends BaseObject {
 
-	private static final int DEFAULT_BUFFER_SIZE = 5000;
 
 	private static Logger logger = LoggerFactory.getLogger(InputsOutputs.class);
 
+	private int bufferSize = Constants.DEFAULT_BUFFER_SIZE;
+	private String failMode = FailMode.FAIL_AT_END.getShortName();
+
 	private String desc; // 描述
 	private String author; // 作者
+	
 	private Input[] inputs; //输入
 	private Output[] outputs; //输出
 	private Processor[] processors;//数据处理器
-	
-	private int bufferSize = DEFAULT_BUFFER_SIZE;
-	
-	private String failMode = FailMode.FAIL_AT_END.getShortName();
 	
 	/**
 	 * 是否异步拷贝数据，默认是false
@@ -144,7 +144,7 @@ public class InputsOutputs extends BaseObject {
 	}
 	
 	public void exec(Map<String,Object> params) {
-		if(bufferSize <= 0) bufferSize = DEFAULT_BUFFER_SIZE;
+		if(bufferSize <= 0) bufferSize = Constants.DEFAULT_BUFFER_SIZE;
 		
 		if(!enabled) {
 			throw new IllegalStateException("enabled is false, "+info());

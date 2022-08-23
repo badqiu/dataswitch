@@ -2,6 +2,8 @@ package com.github.dataswitch;
 
 public class Constants {
 
+	public static int DEFAULT_BUFFER_SIZE = 5000;
+	
 	/**
 	 * hive列分隔符
 	 **/
