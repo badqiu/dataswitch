@@ -7,7 +7,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public class ObjectMethodInput implements Input{
+import com.github.dataswitch.BaseObject;
+
+public class ObjectMethodInput extends BaseObject  implements Input{
 
 	private Object object;
 	private String method;

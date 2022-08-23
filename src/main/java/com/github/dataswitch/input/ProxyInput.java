@@ -2,9 +2,10 @@ package com.github.dataswitch.input;
 
 import java.util.List;
 
+import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.util.IOUtil;
 
-public class ProxyInput implements Input{
+public class ProxyInput extends BaseObject  implements Input{
 
 	private Input proxy;
 

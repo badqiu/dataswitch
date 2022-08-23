@@ -2,13 +2,15 @@ package com.github.dataswitch.input;
 
 import java.util.List;
 
+import com.github.dataswitch.BaseObject;
+
 /**
  * 只读一次的Input 
  * 
  * @author badqiu
  *
  */
-public abstract class ReadOnceInput implements Input {
+public abstract class ReadOnceInput extends BaseObject implements Input {
 
 	private boolean read = false;
 

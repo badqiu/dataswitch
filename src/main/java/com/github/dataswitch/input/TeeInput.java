@@ -2,6 +2,7 @@ package com.github.dataswitch.input;
 
 import java.util.List;
 
+import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.output.Output;
 import com.github.dataswitch.util.IOUtil;
 
