@@ -1,7 +1,5 @@
 package com.github.dataswitch.util;
 
-import java.util.Arrays;
-
 import org.springframework.util.StringUtils;
 
 public class Util {
