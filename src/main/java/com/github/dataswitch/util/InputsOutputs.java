@@ -5,10 +5,11 @@ import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.input.Input;
 import com.github.dataswitch.input.MultiInput;
+import com.github.dataswitch.output.MultiOutput;
 import com.github.dataswitch.output.Output;
-import com.github.dataswitch.output.TeeOutput;
 import com.github.dataswitch.processor.MultiProcessor;
 import com.github.dataswitch.processor.Processor;
 
@@ -22,18 +23,18 @@ import com.github.dataswitch.processor.Processor;
  * @author badqiu
  *
  */
-public class InputsOutputs {
+public class InputsOutputs extends BaseObject {
 
 	private static final int DEFAULT_BUFFER_SIZE = 5000;
 
 	private static Logger logger = LoggerFactory.getLogger(InputsOutputs.class);
 
-	private String id; // ID
 	private String desc; // 描述
 	private String author; // 作者
 	private Input[] inputs; //输入
 	private Output[] outputs; //输出
 	private Processor[] processors;//数据处理器
+	
 	private int bufferSize = DEFAULT_BUFFER_SIZE;
 	
 	private String failMode = FailMode.FAIL_AT_END.getShortName();
@@ -45,14 +46,6 @@ public class InputsOutputs {
 	
 	/** 是否激活 */
 	private boolean enabled = true;
-	
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
 	
 	public String getDesc() {
 		return desc;
@@ -141,7 +134,7 @@ public class InputsOutputs {
 	}
 	
 	public String info() {
-		return "id:"+id;
+		return "id:"+getId();
 	}
 
 	public void exec() {
@@ -152,7 +145,7 @@ public class InputsOutputs {
 		}
 		
 		MultiInput input = new MultiInput(inputs);
-		TeeOutput output = new TeeOutput(outputs);
+		MultiOutput output = new MultiOutput(outputs);
 		Processor processor = null;
 		if(processors != null) {
 			processor = new MultiProcessor(processors);
@@ -160,18 +153,18 @@ public class InputsOutputs {
 		
 		long start = System.currentTimeMillis();
 		long rows = 0;
-		long cost = 0;
+		long costTime = 0;
 		try {
 			if(async) {
 				rows = InputOutputUtil.asyncCopy(input,output,bufferSize,processor,failMode);
 			}else {
 				rows = InputOutputUtil.copy(input, output,bufferSize,processor,failMode);
 			}
-			cost = System.currentTimeMillis() - start;
+			costTime = System.currentTimeMillis() - start;
 		}finally {
 			InputOutputUtil.closeQuietly(input);
 			InputOutputUtil.closeQuietly(output);
-			logger.info(info() + " copy end,rows:" + rows +" costSeconds:"+(cost / 1000) + " tps:"+(rows * 1000.0 / cost) + " bufferSize:"+ bufferSize+" failMode:" + failMode +" inputs:" + Arrays.toString(inputs) + " outputs:" + Arrays.toString(outputs));
+			logger.info(info() + " copy end,rows:" + rows +" costSeconds:"+(costTime / 1000) + " tps:"+(rows * 1000.0 / costTime) + " bufferSize:"+ bufferSize+" failMode:" + failMode +" inputs:" + Arrays.toString(inputs) + " outputs:" + Arrays.toString(outputs));
 		}
 	}
 
