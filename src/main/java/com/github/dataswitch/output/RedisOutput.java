@@ -12,10 +12,11 @@ import org.springframework.util.Assert;
 
 import redis.clients.jedis.JedisPool;
 
+import com.github.dataswitch.BaseObject;
 import com.github.rapid.common.redis.RedisTemplate;
 import com.github.rapid.common.redis.RedisTransactionCallback;
 
-public class RedisOutput implements Output{
+public class RedisOutput extends BaseObject implements Output{
 
 	private JedisPool jedisPool;
 	private String script;

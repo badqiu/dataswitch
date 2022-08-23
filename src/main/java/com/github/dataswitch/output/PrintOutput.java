@@ -3,7 +3,9 @@ package com.github.dataswitch.output;
 import java.io.IOException;
 import java.util.List;
 
-public class PrintOutput implements Output{
+import com.github.dataswitch.BaseObject;
+
+public class PrintOutput extends BaseObject implements Output{
 
 	private String prefix = "";
 	

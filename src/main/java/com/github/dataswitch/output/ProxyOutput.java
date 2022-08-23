@@ -5,9 +5,10 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.util.IOUtil;
 
-public class ProxyOutput implements Output{
+public class ProxyOutput extends BaseObject implements Output{
 	
 	private Output proxy;
 

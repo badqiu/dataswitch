@@ -6,6 +6,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.util.FailMode;
 import com.github.dataswitch.util.IOUtil;
 /**
@@ -14,7 +15,7 @@ import com.github.dataswitch.util.IOUtil;
  * @author badqiu
  *
  */
-public class TeeOutput  implements Output{
+public class TeeOutput extends BaseObject  implements Output{
 	private static Logger logger = LoggerFactory.getLogger(TeeOutput.class);
 	private Output[] branchs;
 	private FailMode failMode = FailMode.FAIL_FAST;

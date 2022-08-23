@@ -6,7 +6,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LoggerOutput implements Output {
+import com.github.dataswitch.BaseObject;
+
+public class LoggerOutput extends BaseObject implements Output {
 	private String logger = LoggerOutput.class.getName();
 	private String prefix = "";
 	

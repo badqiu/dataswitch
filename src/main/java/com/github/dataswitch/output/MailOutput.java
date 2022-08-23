@@ -15,11 +15,13 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
+import com.github.dataswitch.BaseObject;
+
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
-public class MailOutput implements Output{
+public class MailOutput extends BaseObject implements Output{
 	private JavaMailSender javaMailSender;
 	
 	private List<Object> rows = new ArrayList();
