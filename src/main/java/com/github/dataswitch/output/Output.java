@@ -12,12 +12,15 @@ public interface Output extends Closeable,Flushable,Openable{
 
 	public void write(List<Object> rows);
 	
+	@Override
 	public default void flush() throws IOException{
 	}
 	
+	@Override
 	public default void open(Map<String, Object> params) throws Exception {
 	}
 	
+	@Override
 	public default void close() throws IOException {
 	}
 	

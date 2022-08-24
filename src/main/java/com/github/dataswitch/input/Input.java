@@ -1,6 +1,7 @@
 package com.github.dataswitch.input;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +18,11 @@ public interface Input extends Openable,Closeable{
 	
 	public default void commitInput() {};
 	
-	default void open(Map<String, Object> params) throws Exception {
+	@Override
+	public default void open(Map<String, Object> params) throws Exception {
+	}
+	
+	@Override
+	public default void close() throws IOException {
 	}
 }
