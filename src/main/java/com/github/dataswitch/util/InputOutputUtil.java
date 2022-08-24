@@ -2,7 +2,9 @@ package com.github.dataswitch.util;
 
 import java.io.Closeable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
@@ -12,6 +14,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.dataswitch.Openable;
 import com.github.dataswitch.input.Input;
 import com.github.dataswitch.output.Output;
 import com.github.dataswitch.processor.DefaultProcessor;
@@ -43,6 +46,32 @@ public class InputOutputUtil {
 		}
 	}
 	
+	public static void closeAllQuietly(Closeable... closeList) {
+		for(Closeable item : closeList) {
+			IOUtils.closeQuietly(item);
+		}
+	}
+
+	public static void openAll(Openable... openList) {
+		openAll(null,openList);
+	}
+	
+	public static void openAll(Map params,Openable... openList) {
+		if(openList == null) return;
+		
+		if(params == null) {
+			params = Collections.EMPTY_MAP;
+		}
+		
+		try {
+			for(Openable item : openList) {
+				item.open(params);
+			}
+		}catch(Exception e) {
+			throw new RuntimeException("open() error",e);
+		}
+	}
+	
 	/**
 	 * 将input全部读完,返回所有数据行
 	 * @param input
@@ -59,11 +88,13 @@ public class InputOutputUtil {
 	}
 	
 	static ArrayList exitSign = new ArrayList(0);
-	public static int asyncCopy(Input input, final Output output,int bufferSize,Processor processor,FailMode failMode) {
-		return asyncCopy(input,output,bufferSize,processor,failMode,null);
+	public static int asyncCopy(Input input, final Output output,int bufferSize,Processor processor,FailMode failMode, Consumer<Exception> exceptionHandler) {
+		return asyncCopy(input,output,bufferSize,processor,failMode,exceptionHandler);
 	}
 	
-	public static int asyncCopy(Input input, final Output output,int bufferSize,Processor processor,FailMode failMode,Consumer<Exception> exceptionHandler) {
+	public static int asyncCopy(Input input, final Output output,int bufferSize,Processor processor,Map<String, Object> params, FailMode failMode,Consumer<Exception> exceptionHandler) {
+		openAll(params,input, output, processor);
+		
 		final BlockingQueue<List> queue = new LinkedBlockingQueue(100);
 		
 		final List<Exception> exceptions = new ArrayList<Exception>();
@@ -129,7 +160,7 @@ public class InputOutputUtil {
 				throw new RuntimeException(e);
 			}
 			
-			IOUtils.closeQuietly(input);
+			closeAllQuietly(input, output, processor);
 			
 			if(!exceptions.isEmpty() && FailMode.FAIL_AT_END ==failMode) {
 				throw new RuntimeException("copy error,input:"+input+" output:"+output+" processor:"+processor+" exceptions:"+exceptions);
@@ -144,7 +175,7 @@ public class InputOutputUtil {
 	 */
 	
 	public static int asyncCopy(Input input, final Output output,int bufferSize,Processor processor,String failMode) {
-		return asyncCopy(input,output,bufferSize,processor,FailMode.getRequiredByName(failMode));
+		return asyncCopy(input,output,bufferSize,processor,FailMode.getRequiredByName(failMode),null);
 	}
 	
 	/**
@@ -208,11 +239,11 @@ public class InputOutputUtil {
 		if(!ignoreCopyError) {
 			failMode = FailMode.FAIL_FAST;
 		}
-		return copy(input,output,bufferSize,processor,failMode,null);
+		return copy(input,output,bufferSize,processor,null,failMode,null);
 	}
 
-	public static long copy(Input input,Output output,int bufferSize,Processor processor,String failMode) {
-		return copy(input,output,bufferSize,processor,FailMode.getRequiredByName(failMode),null);
+	public static long copy(Input input,Output output,int bufferSize,Processor processor,Map params,String failMode) {
+		return copy(input,output,bufferSize,processor,params,FailMode.getRequiredByName(failMode),null);
 	}
 
 	/**
@@ -223,15 +254,18 @@ public class InputOutputUtil {
 	 * @param failMode,取值: failFast,failAtEnd,failNever
 	 * @return 拷贝的数据量
 	 */
-	public static long copy(Input input,Output output,int bufferSize,Processor processor,FailMode failMode,Consumer<Exception> exceptionHandler) {
+	public static long copy(Input input,Output output,int bufferSize,Processor processor,Map params,FailMode failMode,Consumer<Exception> exceptionHandler) {
 		if(bufferSize <= 0) throw new IllegalArgumentException("bufferSize > 0 must be true");
-
 		
 		List<Object> rows = null;
 		long count = 0;
 		List<Exception> exceptions = new ArrayList<Exception>();
 		
+		openAll(params,input, output, processor);
+		
 		try {
+			
+			
 			while(true) {
 				try {
 					rows = input.read(bufferSize);
@@ -244,7 +278,8 @@ public class InputOutputUtil {
 					input.commitInput();
 				}catch(Exception e) {
 					if(FailMode.FAIL_FAST == failMode) {
-						throw new RuntimeException("copy error,input:"+input+" output:"+output+" processor:"+processor,e);
+						Object firstRow = CollectionUtils.get(rows, 0);
+						throw new RuntimeException("copy error,input:"+input+" output:"+output+" processor:"+processor+", one rowData:"+firstRow,e);
 					}
 					
 					logger.warn("copy warn,input:"+input+" output:"+output+" processor:"+processor,e);
@@ -254,8 +289,7 @@ public class InputOutputUtil {
 				}
 			}
 		}finally {
-			IOUtils.closeQuietly(input);
-			IOUtils.closeQuietly(output);
+			closeAllQuietly(input, output, processor);
 		}
 		
 		if(!exceptions.isEmpty() && FailMode.FAIL_AT_END == failMode) {
@@ -263,6 +297,7 @@ public class InputOutputUtil {
 		}
 		return count;
 	}
+
 
 	private static void handleException(Consumer<Exception> exceptionHandler, Exception e) {
 		if(exceptionHandler != null) {

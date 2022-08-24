@@ -168,24 +168,17 @@ public class InputsOutputs extends BaseObject {
 		long rows = 0;
 		long costTime = 0;
 		try {
-			output.open(params);
-			processor.open(params);
-			input.open(params);
 			
 			FailMode failModeEnum = FailMode.getRequiredByName(failMode);
 			if(async) {
-				rows = InputOutputUtil.asyncCopy(input,output,bufferSize,processor,failModeEnum,exceptionHandler);
+				rows = InputOutputUtil.asyncCopy(input,output,bufferSize,processor,params,failModeEnum,exceptionHandler);
 			}else {
-				rows = InputOutputUtil.copy(input, output,bufferSize,processor,failModeEnum,exceptionHandler);
+				rows = InputOutputUtil.copy(input, output,bufferSize,processor,params,failModeEnum,exceptionHandler);
 			}
 			costTime = System.currentTimeMillis() - start;
 		}catch(Exception e) {
 			throw new RuntimeException(info() +" copy error",e);
 		}finally {
-			InputOutputUtil.closeQuietly(input);
-			InputOutputUtil.closeQuietly(processor);
-			InputOutputUtil.closeQuietly(output);
-			
 			String msg = info() + " copy end,rows:" + rows +" costSeconds:"+(costTime / 1000) + " tps:"+(rows * 1000.0 / costTime) + " bufferSize:"+ bufferSize+" failMode:" + failMode +" inputs:" + Arrays.toString(inputs) + " outputs:" + Arrays.toString(outputs);
 			logger.info(msg);
 		}
