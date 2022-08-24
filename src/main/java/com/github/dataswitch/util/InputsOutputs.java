@@ -147,6 +147,8 @@ public class InputsOutputs extends BaseObject {
 	
 	public void exec(Map<String,Object> params) {
 		if(bufferSize <= 0) bufferSize = Constants.DEFAULT_BUFFER_SIZE;
+		if(params == null) params = Collections.EMPTY_MAP;
+		
 		
 		if(!enabled) {
 			throw new IllegalStateException("enabled is false, "+info());
