@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.util.FailMode;
 import com.github.dataswitch.util.IOUtil;
+import com.github.dataswitch.util.InputOutputUtil;
 /**
  * 将一个输入copy一份输出在branch上
  * 
@@ -63,20 +64,12 @@ public class TeeOutput extends BaseObject  implements Output{
 
 	@Override
 	public void close() {
-		for(Output branch : branchs) {
-			try {
-				IOUtil.close(branch);
-			}catch(Exception e) {
-				logger.error("error on close output:" + branch,e);
-			}
-		}
+		InputOutputUtil.closeAllQuietly(branchs);
 	}
 
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
-		for(Output branch : branchs) {
-			branch.open(params);
-		}
+		InputOutputUtil.openAll(params,branchs);
 	}
 	
 }

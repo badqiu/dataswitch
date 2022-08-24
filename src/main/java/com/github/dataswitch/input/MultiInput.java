@@ -45,6 +45,8 @@ public class MultiInput implements Input{
 	}
 	
 	public void setInputs(Input... inputs) {
+		if(inputs == null) return;
+		
 		this.inputs = new ArrayList<Input>(Arrays.asList(inputs));
 	}
 	

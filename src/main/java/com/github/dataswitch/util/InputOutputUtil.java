@@ -47,6 +47,8 @@ public class InputOutputUtil {
 	}
 	
 	public static void closeAllQuietly(Closeable... closeList) {
+		if(closeList == null) return;
+		
 		for(Closeable item : closeList) {
 			IOUtils.closeQuietly(item);
 		}
