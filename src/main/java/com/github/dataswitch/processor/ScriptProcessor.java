@@ -32,7 +32,6 @@ public class ScriptProcessor implements Processor {
 	private Map context; /* 脚本上下文 */
 
 	private transient ScriptEngine scriptEngine;
-	private boolean inited = false;
 	private Bindings initBinding;
 	private CompiledScript compiledScript;
 	
@@ -99,18 +98,6 @@ public class ScriptProcessor implements Processor {
 			return datas;
 		}
 		
-		synchronized (this) {
-			if (!inited) {
-				inited = true;
-				lookupScriptEngine();
-				initBinding = ScriptOutput.evalIfNotBlank(scriptEngine, initScript);
-				
-				if(scriptEngine instanceof Compilable) {
-					Compilable compilable = (Compilable)scriptEngine;
-					compiledScript = compilable.compile(script);
-				}
-			}
-		}
 
 		if (rowEval) {
 			List<Object> resultList = new ArrayList<Object>();
@@ -127,6 +114,22 @@ public class ScriptProcessor implements Processor {
 			javax.script.Bindings bindings = createBinding();
 			bindings.put("rows", datas);
 			return (List<Object>)eval(bindings); 
+		}
+	}
+	
+	@Override
+	public void open(Map<String, Object> params) throws Exception {
+		Processor.super.open(params);
+		init();
+	}
+
+	private synchronized void init() throws ScriptException {
+		lookupScriptEngine();
+		initBinding = ScriptOutput.evalIfNotBlank(scriptEngine, initScript);
+		
+		if(scriptEngine instanceof Compilable) {
+			Compilable compilable = (Compilable)scriptEngine;
+			compiledScript = compilable.compile(script);
 		}
 	}
 
