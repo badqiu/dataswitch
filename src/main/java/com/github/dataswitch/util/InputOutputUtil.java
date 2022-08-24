@@ -104,8 +104,9 @@ public class InputOutputUtil {
 			public void run() {
 				try {
 					while(true) {
+						List rows = null;
 						try {
-							List rows = queue.take();
+							rows = queue.take();
 							if(CollectionUtils.isEmpty(rows)) {
 								return; //exit sign
 							}
@@ -114,7 +115,8 @@ public class InputOutputUtil {
 							logger.info("InterruptedException on write thread,exit thread",e);
 							return;
 						}catch(Exception e) {
-							logger.warn("ignore error on write thread",e);
+							Object firstRow = CollectionUtils.get(rows, 0);
+							logger.warn("ignore error on write thread, one dataRow:"+firstRow,e);
 							
 							collectExceptionIfFailAtEnd(failMode, exceptions, e);
 							
