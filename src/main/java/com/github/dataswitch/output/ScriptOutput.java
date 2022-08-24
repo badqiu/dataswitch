@@ -25,7 +25,6 @@ public class ScriptOutput extends BaseObject implements Output{
 	
 	private boolean rowEval = true; //是否每一行数据单独eval,不然将会传递rows参数,以作为数据引用
 	
-	private transient boolean isInit = false;
 	private transient ScriptEngine engine;
 	private Map context;
 	private Output output;
@@ -92,16 +91,18 @@ public class ScriptOutput extends BaseObject implements Output{
 	public void setRowEval(boolean perRowEval) {
 		this.rowEval = perRowEval;
 	}
+	
+	@Override
+	public void open(Map<String, Object> params) throws Exception {
+		Output.super.open(params);
+		init();
+	}
 
 	@Override
 	public void write(List<Object> rows) {
 		if(CollectionUtils.isEmpty(rows)) return;
 		
 		try {
-			if(!isInit) {
-				isInit = true;
-				init();
-			}
 			
 			if(rowEval) { //还可以支持每三种,script生成for循环,再eval
 				for(Object row : rows) {

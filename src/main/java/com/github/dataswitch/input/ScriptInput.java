@@ -18,7 +18,6 @@ public class ScriptInput extends BaseInput{
 	private String afterScript; // script执行之后的脚本
 	
 	private transient ScriptEngine engine;
-	private transient boolean isInit = false;
 	private Map context;
 	
 	public String getLang() {
@@ -63,10 +62,6 @@ public class ScriptInput extends BaseInput{
 
 	@Override
 	public Object readObject() {
-		if(!isInit) {
-			isInit = true;
-			init();
-		}
 		try {
 			javax.script.Bindings bindings = createBindings();
 			return eval(bindings);
@@ -92,6 +87,12 @@ public class ScriptInput extends BaseInput{
 			map.putAll(beforeBindings);
 		}
 		return map;
+	}
+	
+	@Override
+	public void open(Map<String, Object> params) throws Exception {
+		super.open(params);
+		init();
 	}
 
 	private Bindings beforeBindings;

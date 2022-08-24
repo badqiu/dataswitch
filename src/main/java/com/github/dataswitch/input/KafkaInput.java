@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -221,7 +222,6 @@ public class KafkaInput implements Input{
 
 	@Override
 	public List<Object> read(int size) {
-		initIfNeed();
 		
 		if(sync) {
 			return syncRead();
@@ -271,17 +271,14 @@ public class KafkaInput implements Input{
 			throw new RuntimeException(e);
 		}
 	}
+	@Override
+	public void open(Map<String, Object> params) throws Exception {
+		Input.super.open(params);
+		init();
+	}
 
-	private boolean init = false;
-	private void initIfNeed() {
-		if(init) return;
-		
-		synchronized (this) {
-			if(init) return;
-			init = true;
-			
-			startConsumerKafkaData();
-		}
+	public synchronized void init() {
+		startConsumerKafkaData();
 	}
 
 

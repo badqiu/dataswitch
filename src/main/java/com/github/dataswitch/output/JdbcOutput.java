@@ -40,7 +40,6 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	 */
 	private boolean replaceSqlWithParams = false;
 	
-	private transient boolean isInit = false;
 	private transient TransactionTemplate transactionTemplate;
 	
 	public String getSql() {
@@ -89,15 +88,14 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	}
 	
 	@Override
+	public void open(Map<String, Object> params) throws Exception {
+		Output.super.open(params);
+		init();
+	}
+	
+	@Override
 	public void write(final List<Object> rows) {
 		if(CollectionUtils.isEmpty(rows)) return;
-		
-		if(!isInit) {
-			synchronized(this) {
-				isInit = true;
-				init();
-			}
-		}
 		
 		long start = System.currentTimeMillis();
 		executeWithJdbc(rows);

@@ -31,7 +31,6 @@ public class JdbcInput extends DataSourceProvider implements Input{
 	private transient ResultSet rs;
 	private transient Connection conn;
 	private transient ColumnMapRowMapper rowMapper = new ColumnMapRowMapper();
-	private transient boolean isInit = false;
 	
 	public String getId() {
 		return id;
@@ -63,6 +62,12 @@ public class JdbcInput extends DataSourceProvider implements Input{
 
 	public void setMapKey2lowerCase(boolean mapKey2lowerCase) {
 		this.mapKey2lowerCase = mapKey2lowerCase;
+	}
+	
+	@Override
+	public void open(Map<String, Object> params) throws Exception {
+		Input.super.open(params);
+		init();
 	}
 
 	public void init() {
@@ -108,10 +113,8 @@ public class JdbcInput extends DataSourceProvider implements Input{
 	}
 	
 	public Map read() {
-		if(!isInit) {
-			isInit = true;
-			init();
-		}
+
+		
 		try {
 			if(rs != null && rs.next()) {
 				return rowMapper.mapRow(rs,0);

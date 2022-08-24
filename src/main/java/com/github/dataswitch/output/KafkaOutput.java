@@ -2,6 +2,7 @@ package com.github.dataswitch.output;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -73,13 +74,18 @@ public class KafkaOutput implements Output {
 	public void close() throws IOException {
 		IOUtils.closeQuietly(kafkaProducer);
 	}
+	
+	@Override
+	public void open(Map<String, Object> params) throws Exception {
+		Output.super.open(params);
+		init();
+	}
 
 	@Override
 	public void write(List<Object> rows) {
 		if(CollectionUtils.isEmpty(rows)) {
 			return;
 		}
-		initIfNeed();
 		
 		for(Object row : rows) {
 			Callback callback = new Callback() {
@@ -94,7 +100,7 @@ public class KafkaOutput implements Output {
 		}
 	}
 
-	private void initIfNeed() {
+	private void init() {
 		if(kafkaProducer == null) {
 			synchronized (this) {
 				if(kafkaProducer == null) {

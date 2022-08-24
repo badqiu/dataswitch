@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
@@ -47,7 +48,6 @@ public class FileInput extends BaseInput implements Input{
 	private String exclude;
 	private transient AntPathMatcher antPathMatcher = new AntPathMatcher();
 	
-	private transient boolean isInit = false;
 	private transient InputStream inputStream;
 	public List<String> getDirs() {
 		return dirs;
@@ -97,18 +97,6 @@ public class FileInput extends BaseInput implements Input{
 	@Override
 	public Object readObject() {
 		try {
-			if(!isInit) {
-				Assert.notNull(deserializer,"deserializer must be not null");
-				isInit = true;
-				this.files = listAllFiles();
-				if(CollectionUtils.isEmpty(this.files)) {
-					log.warn("not found any file by dirs:"+getDirs());
-				}
-				
-				if(errorOnEmptyFile) {
-					Assert.notEmpty(this.files,"not found any file by dirs:"+getDirs());
-				}
-			}
 			
 			if(inputStream == null) {
 				if(CollectionUtils.isEmpty(files)) {
@@ -129,6 +117,24 @@ public class FileInput extends BaseInput implements Input{
 			return object;
 		}catch(IOException e) {
 			throw new RuntimeException("read error,id:"+getId()+" inputDirs:"+dirs,e);
+		}
+	}
+	
+	@Override
+	public void open(Map<String, Object> params) throws Exception {
+		super.open(params);
+		init();
+	}
+
+	private void init() {
+		Assert.notNull(deserializer,"deserializer must be not null");
+		this.files = listAllFiles();
+		if(CollectionUtils.isEmpty(this.files)) {
+			log.warn("not found any file by dirs:"+getDirs());
+		}
+		
+		if(errorOnEmptyFile) {
+			Assert.notEmpty(this.files,"not found any file by dirs:"+getDirs());
 		}
 	}
 

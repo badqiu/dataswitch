@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -29,7 +30,6 @@ public class FileOutput extends BaseOutput implements Output {
 	private String filename = "fileoutput_0000_";
 	
 	private transient  Serializer serializer;
-	private transient  boolean isInit = false;
 	private transient OutputStream outputStream;
 	
 	public String getDir() {
@@ -70,6 +70,12 @@ public class FileOutput extends BaseOutput implements Output {
 
 	public void setSerializer(Serializer serializer) {
 		this.serializer = serializer;
+	}
+	
+	@Override
+	public void open(Map<String, Object> params) throws Exception {
+		super.open(params);
+		init();
 	}
 	
 	public void init() throws IOException {
@@ -123,11 +129,6 @@ public class FileOutput extends BaseOutput implements Output {
 	@Override
 	public void writeObject(Object object) {
 		try {
-			if(!isInit) {
-				isInit = true;
-				init();
-			}
-			
 			serializer.serialize(object, outputStream);
 		}catch(IOException e) {
 			throw new RuntimeException("write error,id:"+getId(),e);

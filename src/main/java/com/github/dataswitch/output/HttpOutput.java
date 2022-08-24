@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -20,7 +21,6 @@ public class HttpOutput extends BaseOutput implements Output {
 	private String url;
 	
 	private Serializer serializer  = null;
-	private transient  boolean isInit = false;
 
 	private transient HttpURLConnection  conn;
 	private transient OutputStream outputStream;
@@ -39,6 +39,12 @@ public class HttpOutput extends BaseOutput implements Output {
 
 	public void setSerializer(Serializer serializer) {
 		this.serializer = serializer;
+	}
+	
+	@Override
+	public void open(Map<String, Object> params) throws Exception {
+		super.open(params);
+		init();
 	}
 
 	public void init() throws Exception {
@@ -90,10 +96,7 @@ public class HttpOutput extends BaseOutput implements Output {
 	public void writeObject(Object object) {
 		try {
 			
-			if(!isInit) {
-				isInit = true;
-				init();
-			}
+
 			serializer.serialize(object, outputStream);
 		}catch(Exception e) {
 			throw new RuntimeException("write error,id:"+getId(),e);

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
@@ -26,7 +27,6 @@ public class HttpInput extends BaseInput implements Input{
 	
 	private transient InputStream inputStream;
 	private transient List<String> readUrls;
-	private transient boolean isInit = false;
 	
 	public List<String> getUrls() {
 		return urls;
@@ -48,18 +48,19 @@ public class HttpInput extends BaseInput implements Input{
 		setUrls(Arrays.asList(url));
 	}
 	
+	@Override
+	public void open(Map<String, Object> params) throws Exception {
+		super.open(params);
+		init();
+	}
+	
 	public void init() {
 		Assert.notNull(deserializer,"deserializer must be not null");
 		readUrls = new ArrayList<String>(urls);
 	}
 	
-	
 	@Override
 	public Object readObject() {
-		if(!isInit) {
-			isInit = true;
-			init();
-		}
 		try {
 			return read0(readUrls);
 		} catch (IOException e) {
