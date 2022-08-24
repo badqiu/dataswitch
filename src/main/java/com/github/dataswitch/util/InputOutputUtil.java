@@ -121,7 +121,9 @@ public class InputOutputUtil {
 							if(CollectionUtils.isEmpty(rows)) {
 								return; //exit sign
 							}
-							output.write(rows);
+							
+							
+							write(output, rows, processor);
 						}catch(InterruptedException e) {
 							logger.info("InterruptedException on write thread,exit thread",e);
 							return;
