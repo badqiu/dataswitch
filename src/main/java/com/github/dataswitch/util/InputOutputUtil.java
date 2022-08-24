@@ -115,7 +115,8 @@ public class InputOutputUtil {
 							return;
 						}catch(Exception e) {
 							logger.warn("ignore error on write thread",e);
-							exceptions.add(e);
+							
+							collectExceptionIfFailAtEnd(failMode, exceptions, e);
 							
 							handleException(exceptionHandler, e);
 						}
@@ -124,6 +125,8 @@ public class InputOutputUtil {
 					IOUtils.closeQuietly(output);
 				}
 			}
+
+
 		},"asyncCopy_write");
 		writeThread.setDaemon(true);
 		writeThread.start();
@@ -147,7 +150,10 @@ public class InputOutputUtil {
 					if(FailMode.FAIL_FAST == failMode) {
 						throw new RuntimeException(msg,e);
 					}
-					exceptions.add(e);
+					
+					collectExceptionIfFailAtEnd(failMode, exceptions, e);
+					
+					handleException(exceptionHandler, e);
 				}
 			}
 			
@@ -165,6 +171,13 @@ public class InputOutputUtil {
 			if(!exceptions.isEmpty() && FailMode.FAIL_AT_END ==failMode) {
 				throw new RuntimeException("copy error,input:"+input+" output:"+output+" processor:"+processor+" exceptions:"+exceptions);
 			}
+		}
+	}
+	
+	private static void collectExceptionIfFailAtEnd(FailMode failMode, final List<Exception> exceptions,
+			Exception e) {
+		if(failMode == FailMode.FAIL_AT_END) {
+			exceptions.add(e);
 		}
 	}
 	/**
@@ -282,7 +295,8 @@ public class InputOutputUtil {
 					}
 					
 					logger.warn("copy warn,input:"+input+" output:"+output+" processor:"+processor+" one rowData:"+firstRow,e);
-					exceptions.add(e);
+					
+					collectExceptionIfFailAtEnd(failMode, exceptions, e);
 					
 					handleException(exceptionHandler, e);
 				}
