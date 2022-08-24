@@ -180,7 +180,9 @@ public class InputsOutputs extends BaseObject {
 		}finally {
 			InputOutputUtil.closeQuietly(input);
 			InputOutputUtil.closeQuietly(output);
-			logger.info(info() + " copy end,rows:" + rows +" costSeconds:"+(costTime / 1000) + " tps:"+(rows * 1000.0 / costTime) + " bufferSize:"+ bufferSize+" failMode:" + failMode +" inputs:" + Arrays.toString(inputs) + " outputs:" + Arrays.toString(outputs));
+			
+			String msg = info() + " copy end,rows:" + rows +" costSeconds:"+(costTime / 1000) + " tps:"+(rows * 1000.0 / costTime) + " bufferSize:"+ bufferSize+" failMode:" + failMode +" inputs:" + Arrays.toString(inputs) + " outputs:" + Arrays.toString(outputs);
+			logger.info(msg);
 		}
 	}
 
