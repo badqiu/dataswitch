@@ -18,10 +18,6 @@ public class PrintOutput extends BaseObject implements Output{
 	}
 
 	@Override
-	public void close() throws IOException {
-	}
-
-	@Override
 	public void write(List<Object> rows) {
 		if(rows == null) return;
 		

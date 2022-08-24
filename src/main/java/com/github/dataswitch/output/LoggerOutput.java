@@ -14,7 +14,6 @@ public class LoggerOutput extends BaseObject implements Output {
 	
 	private Logger _logger = null;
 	
-	
 	public String getPrefix() {
 		return prefix;
 	}
@@ -29,10 +28,6 @@ public class LoggerOutput extends BaseObject implements Output {
 
 	public void setLogger(String logger) {
 		this.logger = logger;
-	}
-
-	@Override
-	public void close() throws IOException {
 	}
 
 	@Override

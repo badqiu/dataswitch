@@ -186,13 +186,17 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	}
 	
 	protected static void executeWithSemicolonComma(DataSource ds, String sql) {
-		if (StringUtils.isNotBlank(sql)) {
-			String[] sqls = sql.split(";");
-			for (String s : sqls) {
-				if(StringUtils.isNotBlank(s)) {
-					new JdbcTemplate(ds).execute(s);
-				}
+		if (StringUtils.isBlank(sql)) {
+			return;
+		}
+		
+		String[] sqls = sql.split(";");
+		for (String s : sqls) {
+			if(StringUtils.isBlank(s)) {
+				continue;
 			}
+			
+			new JdbcTemplate(ds).execute(s);
 		}
 	}
 	

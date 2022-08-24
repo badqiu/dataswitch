@@ -35,8 +35,8 @@ public class ProxyOutput extends BaseObject implements Output{
 	}
 
 	@Override
-	public void close() {
-		IOUtil.closeQuietly(proxy);
+	public void close() throws IOException {
+		proxy.close();
 	}
 	
 	@Override

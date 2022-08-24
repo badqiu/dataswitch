@@ -1,5 +1,6 @@
 package com.github.dataswitch.output;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +53,11 @@ public class BufferedOutput extends ProxyOutput{
 	private boolean isTimeout() {
 		return Math.abs(lastSendTime - System.currentTimeMillis()) > bufTimeout;
 	}
+	
+	@Override
+	public void flush() throws IOException {
+		flushBuffer();
+	}
 
 	public void flushBuffer() {
 		if(buf == null || buf.isEmpty()) {
@@ -66,7 +72,7 @@ public class BufferedOutput extends ProxyOutput{
 	}
 	
 	@Override
-	public void close() {
+	public void close() throws IOException {
 		flushBuffer();
 		super.close();
 	}

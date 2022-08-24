@@ -5,6 +5,7 @@ import java.util.List;
 import com.github.rapid.common.util.Retry;
 
 public class RetryOutput extends ProxyOutput {
+	
 	private int retryTimes = 5;
 	private int retryIntervalSeconds = 3;
 

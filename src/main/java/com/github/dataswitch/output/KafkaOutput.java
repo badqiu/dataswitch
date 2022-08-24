@@ -81,6 +81,16 @@ public class KafkaOutput implements Output {
 		init();
 	}
 
+	private void init() {
+		if(kafkaProducer == null) {
+			synchronized (this) {
+				if(kafkaProducer == null) {
+					kafkaProducer = buildKafkaProducer(properties);
+				}
+			}
+		}
+	}
+	
 	@Override
 	public void write(List<Object> rows) {
 		if(CollectionUtils.isEmpty(rows)) {
@@ -97,16 +107,6 @@ public class KafkaOutput implements Output {
 				} 
 			};
 			kafkaProducer.send(new ProducerRecord<Object, Object>(topic, row), callback );
-		}
-	}
-
-	private void init() {
-		if(kafkaProducer == null) {
-			synchronized (this) {
-				if(kafkaProducer == null) {
-					kafkaProducer = buildKafkaProducer(properties);
-				}
-			}
 		}
 	}
 

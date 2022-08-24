@@ -22,7 +22,7 @@ public class One2ManyRowProcessor implements Processor {
 		
 		List<Object> results = new ArrayList<Object>(datas.size());
 		for(Object row : datas) {
-			Collection list = processOne(row);
+			Collection list = toList(row);
 			if(list == null || list.isEmpty()) {
 				continue;
 			}
@@ -31,7 +31,7 @@ public class One2ManyRowProcessor implements Processor {
 		return results;
 	}
 
-	protected Collection processOne(Object row) throws Exception {
+	protected Collection toList(Object row) throws Exception {
 		if(row == null) return null;
 		
 		if(row instanceof Collection) {

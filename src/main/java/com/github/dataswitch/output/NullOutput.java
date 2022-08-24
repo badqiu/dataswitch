@@ -11,9 +11,6 @@ import com.github.dataswitch.BaseObject;
  */
 public class NullOutput extends BaseObject implements Output{
 
-	public void close() throws IOException {
-	}
-
 	public void write(List<Object> rows) {
 	}
 

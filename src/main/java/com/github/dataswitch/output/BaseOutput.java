@@ -1,6 +1,5 @@
 package com.github.dataswitch.output;
 
-import java.io.ObjectOutput;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
