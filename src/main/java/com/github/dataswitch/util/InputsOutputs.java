@@ -129,6 +129,14 @@ public class InputsOutputs extends BaseObject {
 		this.async = async;
 	}
 	
+	public void setSync(boolean sync) {
+		this.async = !sync;
+	}
+	
+	public boolean isSync() {
+		return !isAsync();
+	}
+	
 	public boolean isEnabled() {
 		return enabled;
 	}
