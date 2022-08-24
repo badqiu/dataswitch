@@ -63,18 +63,13 @@ public class MultiInput implements Input{
 	
 	@Override
 	public void close() throws IOException {
-		for(Input input : inputs) {
-			InputOutputUtil.closeQuietly(input);
-		}
+		InputOutputUtil.closeAllQuietly(inputs);
 	}
 	
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
-		for(Input branch : inputs) {
-			branch.open(params);
-		}
+		InputOutputUtil.openAll(params, inputs);
 	}
-	
 
 	@Override
 	public List<Object> read(int size) {

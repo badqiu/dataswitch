@@ -46,6 +46,14 @@ public class InputOutputUtil {
 		}
 	}
 	
+	public static void closeAllQuietly(List<? extends Closeable> closeList) {
+		if(closeList == null) return;
+		
+		for(Closeable item : closeList) {
+			IOUtils.closeQuietly(item);
+		}
+	}
+	
 	public static void closeAllQuietly(Closeable... closeList) {
 		if(closeList == null) return;
 		
@@ -56,6 +64,19 @@ public class InputOutputUtil {
 
 	public static void openAll(Openable... openList) {
 		openAll(null,openList);
+	}
+	
+	public static void openAll(Map params,List<? extends Openable> openList) {
+		if(openList == null) return;
+		
+		if(params == null) {
+			params = Collections.EMPTY_MAP;
+		}
+		
+		for(Openable item : openList) {
+			open(params, item);
+		}
+		
 	}
 	
 	public static void openAll(Map params,Openable... openList) {
