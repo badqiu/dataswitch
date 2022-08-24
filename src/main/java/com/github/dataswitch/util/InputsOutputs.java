@@ -149,7 +149,6 @@ public class InputsOutputs extends BaseObject {
 		if(bufferSize <= 0) bufferSize = Constants.DEFAULT_BUFFER_SIZE;
 		if(params == null) params = Collections.EMPTY_MAP;
 		
-		
 		if(!enabled) {
 			throw new IllegalStateException("enabled is false, "+info());
 		}
@@ -161,6 +160,10 @@ public class InputsOutputs extends BaseObject {
 			processor = new MultiProcessor(processors);
 		}
 		
+		exec(params, input, output, processor);
+	}
+
+	private void exec(Map<String, Object> params, MultiInput input, MultiOutput output, Processor processor) {
 		long start = System.currentTimeMillis();
 		long rows = 0;
 		long costTime = 0;
