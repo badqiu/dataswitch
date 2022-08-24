@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 import org.apache.hadoop.fs.FileSystem;
 
@@ -18,17 +19,12 @@ public class HdfsInput extends FileInput{
 	private String hdfsUser; // hdfs ugi: hadoop:hadoop
 
 //	private FileSystem fs;
-//	private boolean isInit = false;
 //	private List<HdfsFile> files;
 //	private ReaderInput currentInput;
 	
 //	@Override
 //	public List<Map> read(int size) {
 //		try {
-//			if(!isInit) {
-//				isInit = true;
-//				init();
-//			}
 //			
 //			if(currentInput == null) {
 //				if(files.isEmpty()) {
@@ -70,6 +66,12 @@ public class HdfsInput extends FileInput{
 //		}
 //		return files;
 //	}
+	
+	@Override
+	public void open(Map<String, Object> params) throws Exception {
+		super.open(params);
+//		init();
+	}
 	
 	private FileSystem fs = null;
 	@Override
