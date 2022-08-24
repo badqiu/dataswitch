@@ -265,7 +265,6 @@ public class InputOutputUtil {
 		
 		try {
 			
-			
 			while(true) {
 				try {
 					rows = input.read(bufferSize);
@@ -277,12 +276,12 @@ public class InputOutputUtil {
 					
 					input.commitInput();
 				}catch(Exception e) {
+					Object firstRow = CollectionUtils.get(rows, 0);
 					if(FailMode.FAIL_FAST == failMode) {
-						Object firstRow = CollectionUtils.get(rows, 0);
 						throw new RuntimeException("copy error,input:"+input+" output:"+output+" processor:"+processor+", one rowData:"+firstRow,e);
 					}
 					
-					logger.warn("copy warn,input:"+input+" output:"+output+" processor:"+processor,e);
+					logger.warn("copy warn,input:"+input+" output:"+output+" processor:"+processor+" one rowData:"+firstRow,e);
 					exceptions.add(e);
 					
 					handleException(exceptionHandler, e);
