@@ -63,12 +63,23 @@ public class InputOutputUtil {
 			params = Collections.EMPTY_MAP;
 		}
 		
+		for(Openable item : openList) {
+			open(params, item);
+		}
+		
+	}
+
+	public static void open(Map params, Openable openable) {
+		if(params == null) {
+			params = Collections.EMPTY_MAP;
+		}
+		
 		try {
-			for(Openable item : openList) {
-				item.open(params);
+			if(openable != null) {
+				openable.open(params);
 			}
 		}catch(Exception e) {
-			throw new RuntimeException("open() error",e);
+			throw new RuntimeException("open() error,openable:"+openable,e);
 		}
 	}
 	

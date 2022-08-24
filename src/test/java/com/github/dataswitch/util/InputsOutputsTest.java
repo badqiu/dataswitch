@@ -11,7 +11,7 @@ import com.github.dataswitch.output.Output;
 
 public class InputsOutputsTest {
 
-	@Test
+	@Test(expected = NullPointerException.class)
 	public void test() {
 		InputsOutputs job = new InputsOutputs();
 		job.exec();
