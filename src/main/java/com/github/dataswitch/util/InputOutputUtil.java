@@ -70,14 +70,14 @@ public class InputOutputUtil {
 	}
 
 	public static void open(Map params, Openable openable) {
+		if(openable == null) return;
+		
 		if(params == null) {
 			params = Collections.EMPTY_MAP;
 		}
 		
 		try {
-			if(openable != null) {
-				openable.open(params);
-			}
+			openable.open(params);
 		}catch(Exception e) {
 			throw new RuntimeException("open() error,openable:"+openable,e);
 		}
