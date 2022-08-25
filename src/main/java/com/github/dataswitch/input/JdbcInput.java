@@ -127,8 +127,8 @@ public class JdbcInput extends DataSourceProvider implements Input{
 	
 	@Override
 	public void close() {
-		JdbcUtils.closeConnection(conn);
 		JdbcUtils.closeResultSet(rs);
+		JdbcUtils.closeConnection(conn);
 	}
 	
 }
