@@ -9,7 +9,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.github.dataswitch.BaseObject;
-import com.github.dataswitch.util.CollectionTool;
+import com.github.dataswitch.util.Util;
 
 public class FunctionInput <RESULT> extends BaseObject implements Input{
 
@@ -37,38 +37,19 @@ public class FunctionInput <RESULT> extends BaseObject implements Input{
 	}
 	
 	public void setSupplier(Supplier<RESULT> supplier) {
-		setFunction(toFunction(supplier));
+		setFunction(Util.toFunction(supplier));
 	}
 	
 	private void setCallable(Callable<RESULT> callable) {
-		setFunction(toFunction(callable));
+		setFunction(Util.toFunction(callable));
 	}
 
 	@Override
 	public List<Object> read(int size) {
 		Object result = function.apply(size);
-		Collection collection = CollectionTool.oneToList(result);
+		Collection collection = Util.oneToList(result);
 		return new ArrayList(collection);
 	}
 	
-	public static Function toFunction(Supplier supplier) {
-		return new Function() {
-			public Object apply(Object size) {
-				return supplier.get();
-			}
-		};
-	}
-	
-	public static Function toFunction(Callable callable) {
-		return new Function() {
-			public Object apply(Object size) {
-				try {
-					return callable.call();
-				} catch (Exception e) {
-					throw new RuntimeException("callable error",e);
-				}
-			}
-		};
-	}
 	
 }

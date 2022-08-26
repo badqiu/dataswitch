@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import com.github.dataswitch.util.CollectionTool;
+import com.github.dataswitch.util.Util;
 
 /**
  * 1行变多行的processor
@@ -31,7 +31,7 @@ public class One2ManyRowProcessor implements Processor {
 	}
 
 	protected Collection toList(Object row) throws Exception {
-		return CollectionTool.oneToList(row);
+		return Util.oneToList(row);
 	}
 
 	
