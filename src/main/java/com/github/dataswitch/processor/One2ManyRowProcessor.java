@@ -1,12 +1,11 @@
 package com.github.dataswitch.processor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import com.github.dataswitch.processor.Processor;
+import com.github.dataswitch.util.CollectionTool;
 
 /**
  * 1行变多行的processor
@@ -32,16 +31,8 @@ public class One2ManyRowProcessor implements Processor {
 	}
 
 	protected Collection toList(Object row) throws Exception {
-		if(row == null) return null;
-		
-		if(row instanceof Collection) {
-			return (Collection)row;
-		}else if(row.getClass().isArray()) {
-			Object[] array = (Object[])row;
-			return Arrays.asList(array);
-		}else {
-			return Arrays.asList(row);
-		}
+		return CollectionTool.oneToList(row);
 	}
 
+	
 }
