@@ -22,6 +22,7 @@ public class InputsOutputsTest {
 	public void test_async() {
 		InputsOutputs job = new InputsOutputs();
 		job.setAsync(true);
+		
 		job.setInput(new Input() {
 			@Override
 			public void close() throws IOException {
@@ -34,6 +35,7 @@ public class InputsOutputsTest {
 				return Arrays.asList(count);
 			}
 		});
+		
 		job.setOutput(new Output() {
 			@Override
 			public void close() throws IOException {
@@ -46,6 +48,7 @@ public class InputsOutputsTest {
 				}
 			}
 		});
+		
 		job.exec();
 	}
 

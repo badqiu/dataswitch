@@ -12,6 +12,7 @@ import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.Constants;
 import com.github.dataswitch.input.Input;
 import com.github.dataswitch.input.MultiInput;
+import com.github.dataswitch.output.BufferedOutput;
 import com.github.dataswitch.output.MultiOutput;
 import com.github.dataswitch.output.Output;
 import com.github.dataswitch.processor.MultiProcessor;
@@ -33,7 +34,8 @@ public class InputsOutputs extends BaseObject {
 	private static Logger logger = LoggerFactory.getLogger(InputsOutputs.class);
 
 	private int bufferSize = Constants.DEFAULT_BUFFER_SIZE;
-	private int bufferTimeout = 0;
+	private int bufferTimeout = 500;
+	
 	private String failMode = FailMode.FAIL_AT_END.getShortName();
 
 	private String desc; // 描述
@@ -114,6 +116,14 @@ public class InputsOutputs extends BaseObject {
 		this.bufferSize = bufferSize;
 	}
 	
+	public int getBufferTimeout() {
+		return bufferTimeout;
+	}
+
+	public void setBufferTimeout(int bufferTimeout) {
+		this.bufferTimeout = bufferTimeout;
+	}
+
 	public String getFailMode() {
 		return failMode;
 	}
@@ -162,8 +172,10 @@ public class InputsOutputs extends BaseObject {
 			throw new IllegalStateException("enabled is false, "+info());
 		}
 		
-		MultiInput input = new MultiInput(inputs);
-		MultiOutput output = new MultiOutput(outputs);
+		Input input = new MultiInput(inputs);
+		Output output = new MultiOutput(outputs);
+		output = new BufferedOutput(output, bufferSize, bufferTimeout);
+		
 		Processor processor = null;
 		if(processors != null) {
 			processor = new MultiProcessor(processors);
@@ -172,7 +184,7 @@ public class InputsOutputs extends BaseObject {
 		exec(params, input, output, processor);
 	}
 
-	private void exec(Map<String, Object> params, MultiInput input, MultiOutput output, Processor processor) {
+	private void exec(Map<String, Object> params, Input input, Output output, Processor processor) {
 		long start = System.currentTimeMillis();
 		long rows = 0;
 		long costTime = 0;
