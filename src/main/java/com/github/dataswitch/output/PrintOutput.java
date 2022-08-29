@@ -2,6 +2,7 @@ package com.github.dataswitch.output;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.List;
 
 import com.github.dataswitch.BaseObject;
@@ -9,14 +10,14 @@ import com.github.dataswitch.BaseObject;
 public class PrintOutput extends BaseObject implements Output{
 
 	private String prefix = "";
-	private OutputStream out = System.out;
+	private PrintStream out = System.out;
 	
 	public OutputStream getOut() {
 		return out;
 	}
 
 	public void setOut(OutputStream out) {
-		this.out = out;
+		this.out = new PrintStream(out);
 	}
 
 	public String getPrefix() {
@@ -32,12 +33,8 @@ public class PrintOutput extends BaseObject implements Output{
 		if(rows == null) return;
 		
 		for(Object row : rows) {
-			String string = prefix + row + "\n";
-			try {
-				out.write(string.getBytes());
-			} catch (IOException e) {
-				throw new RuntimeException("write error on line:"+string,e);
-			}
+			String string = prefix + row;
+			out.println(string);
 		}
 		
 	}
