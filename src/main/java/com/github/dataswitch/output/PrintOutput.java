@@ -11,6 +11,18 @@ public class PrintOutput extends BaseObject implements Output{
 	private String prefix = "";
 	private PrintStream out = System.out;
 	
+	public PrintOutput() {
+	}
+	
+	public PrintOutput(PrintStream out, String prefix) {
+		this.out = out;
+		this.prefix = prefix;
+	}
+	
+	public PrintOutput(PrintStream out) {
+		this.out = out;
+	}
+
 	public OutputStream getOut() {
 		return out;
 	}
