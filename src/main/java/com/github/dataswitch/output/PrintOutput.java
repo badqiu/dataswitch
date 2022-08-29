@@ -1,6 +1,5 @@
 package com.github.dataswitch.output;
 
-import java.io.IOException;
 import java.util.List;
 
 import com.github.dataswitch.BaseObject;
