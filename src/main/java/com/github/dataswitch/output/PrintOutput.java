@@ -1,5 +1,6 @@
 package com.github.dataswitch.output;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.List;
@@ -48,6 +49,16 @@ public class PrintOutput extends BaseObject implements Output{
 			out.println(string);
 		}
 		
+	}
+	
+	@Override
+	public void flush() throws IOException {
+		out.flush();
+	}
+	
+	@Override
+	public void close() throws IOException {
+		out.close();
 	}
 
 }
