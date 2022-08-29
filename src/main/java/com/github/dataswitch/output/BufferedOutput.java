@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 /**
- * 提供缓冲功能的Output,缓冲池大小根据bufSize设置
+ * 提供缓冲功能的Output,缓冲池大小根据bufferSize设置
  * 
  * @author badqiu
  *
@@ -14,44 +14,45 @@ import org.apache.commons.collections.CollectionUtils;
 public class BufferedOutput extends ProxyOutput{
 
 	private static int DEFAULT_BUF_SIZE = 2000;
-	private int bufSize;
-	private int bufTimeout;
+	
+	private int bufferSize;
+	private int bufferTimeout;
 	private long lastSendTime = System.currentTimeMillis();
-	private List<Object> buf = new ArrayList<Object>();
+	private List<Object> bufferList = new ArrayList<Object>();
 	
 	public BufferedOutput(Output proxy) {
 		this(proxy,DEFAULT_BUF_SIZE,0);
 	}
 	
-	public BufferedOutput(Output proxy,int bufSize) {
-		this(proxy,bufSize,0);
+	public BufferedOutput(Output proxy,int bufferSize) {
+		this(proxy,bufferSize,0);
 	}
 	
-	public BufferedOutput(Output proxy,int bufSize,int bufTimeout) {
+	public BufferedOutput(Output proxy,int bufferSize,int bufTimeout) {
 		super(proxy);
-		if(bufSize <= 0) {
-			throw new IllegalArgumentException("bufSize > 0 must be true");
+		if(bufferSize <= 0) {
+			throw new IllegalArgumentException("bufferSize > 0 must be true");
 		}
-		this.bufSize = bufSize;
-		this.bufTimeout = bufTimeout;
-		buf = new ArrayList<Object>(bufSize);
+		this.bufferSize = bufferSize;
+		this.bufferTimeout = bufTimeout;
+		bufferList = new ArrayList<Object>(bufferSize);
 	}
 	
 	@Override
 	public void write(List<Object> rows) {
 		if(CollectionUtils.isEmpty(rows)) return;
 		
-		buf.addAll(rows);
+		bufferList.addAll(rows);
 
-		if(buf.size() > bufSize) {
+		if(bufferList.size() > bufferSize) {
 			flushBuffer();
-		}else if(bufTimeout > 0 && isTimeout()) {
+		}else if(bufferTimeout > 0 && isTimeout()) {
 			flushBuffer();
 		}
 	}
 
 	private boolean isTimeout() {
-		return Math.abs(lastSendTime - System.currentTimeMillis()) > bufTimeout;
+		return Math.abs(lastSendTime - System.currentTimeMillis()) > bufferTimeout;
 	}
 	
 	@Override
@@ -60,14 +61,14 @@ public class BufferedOutput extends ProxyOutput{
 	}
 
 	public void flushBuffer() {
-		if(buf == null || buf.isEmpty()) {
+		if(bufferList == null || bufferList.isEmpty()) {
 			return;
 		}
-		if(bufTimeout > 0) {
+		if(bufferTimeout > 0) {
 			lastSendTime = System.currentTimeMillis();
 		}
-		List<Object> tempBuf = buf;
-		buf = new ArrayList<Object>(bufSize);
+		List<Object> tempBuf = bufferList;
+		bufferList = new ArrayList<Object>(bufferSize);
 		super.write(tempBuf);
 	}
 	

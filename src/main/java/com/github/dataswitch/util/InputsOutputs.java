@@ -33,6 +33,7 @@ public class InputsOutputs extends BaseObject {
 	private static Logger logger = LoggerFactory.getLogger(InputsOutputs.class);
 
 	private int bufferSize = Constants.DEFAULT_BUFFER_SIZE;
+	private int bufferTimeout = 0;
 	private String failMode = FailMode.FAIL_AT_END.getShortName();
 
 	private String desc; // 描述
