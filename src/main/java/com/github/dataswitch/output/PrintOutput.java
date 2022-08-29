@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.List;
+import java.util.Objects;
 
 import com.github.dataswitch.BaseObject;
 
@@ -29,6 +30,7 @@ public class PrintOutput extends BaseObject implements Output{
 	}
 
 	public void setOut(OutputStream out) {
+		Objects.requireNonNull(out, "out must be not null");
 		this.out = new PrintStream(out);
 	}
 
