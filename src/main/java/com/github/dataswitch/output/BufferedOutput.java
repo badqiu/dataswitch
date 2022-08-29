@@ -74,7 +74,7 @@ public class BufferedOutput extends ProxyOutput{
 	
 	@Override
 	public void close() throws IOException {
-		flushBuffer();
+		flush();
 		super.close();
 	}
 
