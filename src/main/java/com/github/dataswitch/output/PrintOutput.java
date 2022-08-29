@@ -14,13 +14,13 @@ public class PrintOutput extends BaseObject implements Output{
 	public PrintOutput() {
 	}
 	
-	public PrintOutput(PrintStream out, String prefix) {
-		this.out = out;
+	public PrintOutput(OutputStream out, String prefix) {
+		setOut(out);
 		this.prefix = prefix;
 	}
 	
 	public PrintOutput(PrintStream out) {
-		this.out = out;
+		setOut(out);
 	}
 
 	public OutputStream getOut() {
