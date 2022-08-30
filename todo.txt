@@ -20,7 +20,7 @@ script 需要增加 context, beforeScript put var into context for init.
   MongoDB
   ES
   Hbase
-  ClickHouse
   Kudu
   Cassandra
+  #ClickHouse
   

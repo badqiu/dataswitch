@@ -30,6 +30,10 @@ public class LoggerOutput extends BaseObject implements Output {
 	public void setLogger(String logger) {
 		this.logger = logger;
 	}
+	
+	public void setLogger(Class logger) {
+		this.logger = logger.getName();
+	}
 
 	@Override
 	public void write(List<Object> rows) {
