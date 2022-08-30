@@ -361,6 +361,10 @@ public class InputOutputUtil {
 	 * @return 写的数据量
 	 */
 	public static int write(Output output, List<Object> rows,Processor processor) throws Exception {
+		if(CollectionUtils.isEmpty((rows))) {
+			return 0;
+		}
+		
 		List<Object> processedRows = processor == null ? rows : processor.process(rows);
 		if(CollectionUtils.isNotEmpty(processedRows)) {
 			output.write(processedRows);
