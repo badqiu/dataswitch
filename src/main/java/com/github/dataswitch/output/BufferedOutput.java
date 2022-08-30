@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+
+import com.github.rapid.common.util.SystemTimer;
 /**
  * 提供缓冲功能的Output,缓冲池大小根据bufferSize设置
  * 
@@ -53,7 +55,7 @@ public class BufferedOutput extends ProxyOutput{
 	}
 
 	private boolean isTimeout() {
-		return Math.abs(lastSendTime - System.currentTimeMillis()) > bufferTimeout;
+		return Math.abs(lastSendTime - SystemTimer.currentTimeMillis()) > bufferTimeout;
 	}
 	
 	@Override
@@ -66,7 +68,7 @@ public class BufferedOutput extends ProxyOutput{
 			return;
 		}
 		if(bufferTimeout > 0) {
-			lastSendTime = System.currentTimeMillis();
+			lastSendTime = SystemTimer.currentTimeMillis();
 		}
 		List<Object> tempBuf = bufferList;
 		bufferList = new ArrayList<Object>(bufferSize);
