@@ -105,7 +105,7 @@
 			<dependency>
 				<groupId>com.github.rapid.common</groupId>
 				<artifactId>rapid-common-util</artifactId>
-				<version>1.0.0</version>	
+				<version>1.0.1</version>	
 			</dependency>
 			<dependency>
 				<groupId>com.github.rapid.common</groupId>
