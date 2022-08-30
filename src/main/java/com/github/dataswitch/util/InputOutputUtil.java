@@ -366,11 +366,12 @@ public class InputOutputUtil {
 		}
 		
 		List<Object> processedRows = processor == null ? rows : processor.process(rows);
-		if(CollectionUtils.isNotEmpty(processedRows)) {
-			output.write(processedRows);
-			return processedRows.size();
+		if(CollectionUtils.isEmpty(processedRows)) {
+			return 0;
 		}
-		return 0;
+		
+		output.write(processedRows);
+		return processedRows.size();
 	}
 	
 }
