@@ -15,6 +15,11 @@ public class LockUtil {
 		Assert.hasText(lockId,"lockId must be not blank");
 		
 		String lockKey = lockGroup + "|" + lockId;
+		return getReentrantLock(lockKey);
+	}
+
+	private static synchronized ReentrantLock getReentrantLock(String lockKey) {
+		Assert.hasText(lockKey,"lockKey must be not blank");
 		ReentrantLock lock = lockMap.get(lockKey);
 		if(lock == null) {
 			lock = new ReentrantLock();
