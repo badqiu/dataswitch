@@ -8,7 +8,7 @@ import com.github.dataswitch.util.LockUtil;
 
 public class LockOutput extends ProxyOutput {
 
-	private String lockGroup = "default";
+	private String lockGroup = "defaultGroup";
 	private String lockId;
 	
 	private Lock lock;
