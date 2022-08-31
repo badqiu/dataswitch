@@ -16,6 +16,7 @@ public interface Input extends Openable,Closeable{
 	 */
 	public List<Object> read(int size) ;
 	
+	/** 一般用于kafka的offset commit */
 	public default void commitInput() {};
 	
 	@Override
