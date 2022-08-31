@@ -37,10 +37,20 @@ public class LockOutput extends ProxyOutput {
 		this.lockId = lockId;
 	}
 	
+	public Lock getLock() {
+		return lock;
+	}
+
+	public void setLock(Lock lock) {
+		this.lock = lock;
+	}
+
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
 		super.open(params);
-		lock = newLock(lockGroup,lockId);
+		if(lock == null) {
+			lock = newLock(lockGroup,lockId);
+		}
 	}
 
 	protected Lock newLock(String lockGroup,String lockId) {
