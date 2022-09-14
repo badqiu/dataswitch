@@ -1,9 +1,11 @@
 package com.github.dataswitch.input;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.github.dataswitch.BaseObject;
+import com.github.dataswitch.util.Util;
 
 public abstract class BaseInput extends BaseObject implements Input{
 
@@ -19,7 +21,9 @@ public abstract class BaseInput extends BaseObject implements Input{
 			if(obj == null) {
 				break;
 			}
-			result.add(obj);
+			
+			Collection collection = Util.oneToList(obj);
+			result.addAll(collection);
 		}
 		return result;
 	}

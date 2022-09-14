@@ -23,9 +23,5 @@ public class RandomStringInput extends BaseInput implements Input{
 		}
 		return null;
 	}
-
-	@Override
-	public void close() throws IOException {
-	}
 		
 }
