@@ -1,6 +1,7 @@
 package com.github.dataswitch.util;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -103,6 +104,19 @@ public class InputOutputUtil {
 			openable.open(params);
 		}catch(Exception e) {
 			throw new RuntimeException("open() error,openable:"+openable,e);
+		}
+	}
+	
+	public static void flushAll(Output... branchs) {
+		if(branchs == null) return;
+		for(Output output : branchs) {
+			if(output == null) continue;
+			
+			try {
+				output.flush();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
 		}
 	}
 	
@@ -373,5 +387,6 @@ public class InputOutputUtil {
 		output.write(processedRows);
 		return processedRows.size();
 	}
+
 	
 }

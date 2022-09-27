@@ -1,5 +1,6 @@
 package com.github.dataswitch.output;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -65,6 +66,11 @@ public class TeeOutput extends BaseObject  implements Output{
 	@Override
 	public void close() {
 		InputOutputUtil.closeAllQuietly(branchs);
+	}
+	
+	@Override
+	public void flush() throws IOException {
+		InputOutputUtil.flushAll(branchs);
 	}
 
 	@Override
