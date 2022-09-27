@@ -55,12 +55,14 @@ public class InputsOutputsTest {
 		
 		job.exec();
 		
+		assertEquals(100,count);
 		assertEquals(99,writeCount);
 		
 		
 		count = 0;
 		job.setSync(true);
 		job.exec();
+		assertEquals(100,count);
 		assertEquals(198,writeCount);
 	}
 
