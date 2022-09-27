@@ -109,5 +109,10 @@ public class KafkaOutput implements Output {
 			kafkaProducer.send(new ProducerRecord<Object, Object>(topic, row), callback );
 		}
 	}
+	
+	@Override
+	public void flush() throws IOException {
+		kafkaProducer.flush();
+	}
 
 }
