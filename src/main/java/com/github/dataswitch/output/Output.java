@@ -22,6 +22,7 @@ public interface Output extends Closeable,Flushable,Openable{
 	
 	@Override
 	public default void close() throws IOException {
+		flush();
 	}
 	
 }
