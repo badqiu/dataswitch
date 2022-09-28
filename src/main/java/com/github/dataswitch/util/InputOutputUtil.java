@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dataswitch.Openable;
+import com.github.dataswitch.enums.FailMode;
 import com.github.dataswitch.input.Input;
 import com.github.dataswitch.output.Output;
 import com.github.dataswitch.processor.DefaultProcessor;

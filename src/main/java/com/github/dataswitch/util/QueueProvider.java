@@ -6,8 +6,8 @@ import java.util.concurrent.BlockingQueue;
 
 import org.springframework.util.Assert;
 
-import com.github.dataswitch.Constants;
 import com.github.dataswitch.Openable;
+import com.github.dataswitch.enums.Constants;
 
 public class QueueProvider implements Openable {
 	private int queueSize = 100000 / Constants.DEFAULT_BUFFER_SIZE;

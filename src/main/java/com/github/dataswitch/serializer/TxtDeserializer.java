@@ -13,7 +13,7 @@ import org.springframework.core.serializer.Deserializer;
 import org.springframework.util.Assert;
 
 import com.github.dataswitch.BaseObject;
-import com.github.dataswitch.Constants;
+import com.github.dataswitch.enums.Constants;
 import com.github.dataswitch.util.MapUtil;
 import com.github.dataswitch.util.Util;
 

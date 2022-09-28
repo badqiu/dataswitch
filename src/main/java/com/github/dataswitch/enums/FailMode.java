@@ -1,4 +1,4 @@
-package com.github.dataswitch.util;
+package com.github.dataswitch.enums;
 
 import org.apache.commons.lang.StringUtils;
 

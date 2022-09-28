@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dataswitch.BaseObject;
-import com.github.dataswitch.util.FailMode;
+import com.github.dataswitch.enums.FailMode;
 import com.github.dataswitch.util.IOUtil;
 import com.github.dataswitch.util.InputOutputUtil;
 /**

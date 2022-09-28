@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import com.github.dataswitch.BaseObject;
-import com.github.dataswitch.Constants;
+import com.github.dataswitch.enums.Constants;
 import com.github.dataswitch.util.HiveEscapeUtil;
 import com.github.dataswitch.util.Util;
 import com.github.rapid.common.beanutils.PropertyUtils;

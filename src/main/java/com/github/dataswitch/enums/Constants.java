@@ -1,4 +1,4 @@
-package com.github.dataswitch;
+package com.github.dataswitch.enums;
 
 public class Constants {
 
