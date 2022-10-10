@@ -52,6 +52,10 @@ public class ScriptProcessor implements Processor {
 		this.lang = lang;
 	}
 	
+	public void setLanguage(String lang) {
+		setLang(lang);
+	}
+	
 	public String getScript() {
 		return script;
 	}
