@@ -18,7 +18,7 @@ public class LockUtil {
 		return getReentrantLock(lockKey);
 	}
 
-	private static synchronized ReentrantLock getReentrantLock(String lockKey) {
+	public static synchronized ReentrantLock getReentrantLock(String lockKey) {
 		Assert.hasText(lockKey,"lockKey must be not blank");
 		ReentrantLock lock = lockMap.get(lockKey);
 		if(lock == null) {
