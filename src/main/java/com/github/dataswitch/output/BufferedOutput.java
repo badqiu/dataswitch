@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
 import com.github.rapid.common.util.SystemTimer;
 
@@ -27,6 +28,8 @@ public class BufferedOutput extends ProxyOutput{
 	
 	private long lastSendTime = System.currentTimeMillis();
 	private List<Object> bufferList = new ArrayList<Object>();
+	
+	private boolean init = false;
 	
 	public BufferedOutput(Output proxy) {
 		this(proxy,DEFAULT_BUF_SIZE,0);
@@ -88,7 +91,10 @@ public class BufferedOutput extends ProxyOutput{
 	}
 	
 	private void init() {
+		Assert.isTrue(!init,"already init");
+		
 		startAutoFlushThread();
+		init = true;
 	}
 
 	private void startAutoFlushThread() {
