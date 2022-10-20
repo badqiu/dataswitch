@@ -24,7 +24,7 @@ public class MultiInput implements Input{
 	private List<Input> inputs = new ArrayList<Input>();
 	
 	private Input currentInput;
-	private AtomicInteger currentIndex;
+	private AtomicInteger currentIndex = new AtomicInteger();
 	
 	public MultiInput() {
 	}
