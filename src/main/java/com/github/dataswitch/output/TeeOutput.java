@@ -38,7 +38,7 @@ public class TeeOutput extends BaseObject  implements Output{
 		return branchs;
 	}
 
-	public void setBranchs(Output[] branchs) {
+	public void setBranchs(Output... branchs) {
 		this.branchs = branchs;
 	}
 
