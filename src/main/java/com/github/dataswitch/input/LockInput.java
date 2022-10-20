@@ -1,4 +1,4 @@
-package com.github.dataswitch.output;
+package com.github.dataswitch.input;
 
 import java.util.List;
 import java.util.Map;
@@ -7,18 +7,18 @@ import java.util.concurrent.locks.Lock;
 import com.github.dataswitch.enums.Constants;
 import com.github.dataswitch.util.LockUtil;
 
-public class LockOutput extends ProxyOutput {
+public class LockInput extends ProxyInput {
 
 	private String lockGroup = Constants.DEFAULT_LOCK_GROUP;
 	private String lockId;
 	
 	private Lock lock;
 	
-	public LockOutput() {
+	public LockInput() {
 		super();
 	}
 	
-	public LockOutput(Output proxy) {
+	public LockInput(Input proxy) {
 		super(proxy);
 	}
 	
@@ -57,12 +57,12 @@ public class LockOutput extends ProxyOutput {
 	protected Lock newLock(String lockGroup,String lockId) {
 		return LockUtil.getReentrantLock(lockGroup, lockId);
 	}
-	
+
 	@Override
-	public void write(List<Object> rows) {
+	public List<Object> read(int size) {
 		try {
 			lock.lock();
-			super.write(rows);
+			return super.read(size);
 		}finally {
 			lock.unlock();
 		}

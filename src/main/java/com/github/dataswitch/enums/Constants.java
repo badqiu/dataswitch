@@ -2,7 +2,9 @@ package com.github.dataswitch.enums;
 
 public class Constants {
 
-	public static final int DEFAULT_BUFFER_SIZE = 1000;
+	public static int DEFAULT_BUFFER_SIZE = 1000;
+
+	public static String DEFAULT_LOCK_GROUP = System.getProperty("DEFAULT_LOCK_GROUP","default");
 	
 	/**
 	 * hive列分隔符
