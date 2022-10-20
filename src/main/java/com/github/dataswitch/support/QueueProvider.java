@@ -3,6 +3,7 @@ package com.github.dataswitch.support;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.function.BiFunction;
 
 import org.springframework.util.Assert;
 
@@ -18,6 +19,8 @@ public class QueueProvider extends BaseObject implements Openable {
 	private String queueName;
 	
 	private BlockingQueue<List<Object>> queue = null;
+	
+	private BiFunction<String, Integer, BlockingQueue> newQueueFunction;
 	
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
@@ -36,7 +39,11 @@ public class QueueProvider extends BaseObject implements Openable {
 	}
 	
 	protected BlockingQueue newBlockingQueue(String queueId,int queueSize) {
-		return QueueUtil.getBlockingQueue(queueId, queueSize);
+		if(newQueueFunction == null) {
+			return QueueUtil.getBlockingQueue(queueId, queueSize);
+		}else {
+			return newQueueFunction.apply(queueId, queueSize);
+		}
 	}
 	
 	public int getQueueSize() {
@@ -69,6 +76,14 @@ public class QueueProvider extends BaseObject implements Openable {
 
 	public void setQueue(BlockingQueue<List<Object>> queue) {
 		this.queue = queue;
+	}
+
+	public BiFunction<String, Integer, BlockingQueue> getNewQueueFunction() {
+		return newQueueFunction;
+	}
+
+	public void setNewQueueFunction(BiFunction<String, Integer, BlockingQueue> newQueueFunction) {
+		this.newQueueFunction = newQueueFunction;
 	}
 	
 }
