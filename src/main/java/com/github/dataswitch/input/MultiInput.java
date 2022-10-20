@@ -74,6 +74,10 @@ public class MultiInput implements Input{
 
 	@Override
 	public List<Object> read(int size) {
+		return sequenceRead(size);
+	}
+
+	private List<Object> sequenceRead(int size) {
 		if(currentInput == null) {
 			int i = currentIndex.get();
 			if(i >= inputs.size()) {
