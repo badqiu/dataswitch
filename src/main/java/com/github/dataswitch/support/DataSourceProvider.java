@@ -20,7 +20,6 @@ public abstract class DataSourceProvider extends BaseObject{
 
 	public DataSource getDataSource() {
 		if (dataSource == null) {
-			Assert.notNull(url,"jdbc url must be not empty");
 			this.dataSource = getDataSource(username,password,url,driverClass);
 		}
 		return dataSource;
@@ -63,7 +62,9 @@ public abstract class DataSourceProvider extends BaseObject{
 	}
 	
 	private static Map<String,DataSource> dataSourceCache = new HashMap<String,DataSource>();
-	private static DataSource getDataSource(String username, String password, String url,String driverClass) {
+	private static synchronized DataSource getDataSource(String username, String password, String url,String driverClass) {
+		Assert.hasText(url,"jdbc url must be not empty");
+		
 		String dataSourceKey = url+username+password;
 		DataSource result = dataSourceCache.get(dataSourceKey);
 		if(result == null) {
