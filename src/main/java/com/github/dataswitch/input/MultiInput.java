@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.collections.CollectionUtils;
 
@@ -23,7 +24,7 @@ public class MultiInput implements Input{
 	private List<Input> inputs = new ArrayList<Input>();
 	
 	private Input currentInput;
-	private int currentIndex;
+	private AtomicInteger currentIndex;
 	
 	public MultiInput() {
 	}
@@ -74,12 +75,13 @@ public class MultiInput implements Input{
 	@Override
 	public List<Object> read(int size) {
 		if(currentInput == null) {
-			if(currentIndex >= inputs.size()) {
+			int i = currentIndex.get();
+			if(i >= inputs.size()) {
 				return Collections.EMPTY_LIST;
 			}
 			
-			currentInput = inputs.get(currentIndex);
-			currentIndex++;
+			currentInput = inputs.get(i);
+			currentIndex.incrementAndGet();
 		}
 		
 		List<Object> result = currentInput.read(size);

@@ -23,12 +23,23 @@ public class TeeOutput extends BaseObject  implements Output{
 	private Output[] branchs;
 	private FailMode failMode = FailMode.FAIL_FAST;
 	
+	public TeeOutput() {
+	}
+	
 	public TeeOutput(Output... branchs) {
 		this.branchs = branchs;
 	}
 	
 	public FailMode getFailMode() {
 		return failMode;
+	}
+	
+	public Output[] getBranchs() {
+		return branchs;
+	}
+
+	public void setBranchs(Output[] branchs) {
+		this.branchs = branchs;
 	}
 
 	public void setFailMode(FailMode failMode) {
