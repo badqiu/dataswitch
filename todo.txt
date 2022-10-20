@@ -4,6 +4,15 @@ script 需要增加 context, beforeScript put var into context for init.
 	script user context
 
 增加提供中间交换使用的 storage
+增加存储状态(如offset)的storage
+
+数据库增量同步
+	天
+		按时间：日期，同步昨天数据，需要数据有last_update_time，参数要有: start_time & end_time
+	分钟
+		按时间：分钟，同步上一分钟的数据，需要数据有last_update_time，参数要有: start_time & end_time
+		按主键，主键 > last_value,开始数据同步，同步完，更新last_value
+		
 	
 数据库增量同步,sqoop方式：
   // –incremental 参数为append，–last-value参数为5201314即可。表示只从order_id大于5201314后开始导入。

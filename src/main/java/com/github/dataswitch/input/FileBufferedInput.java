@@ -20,7 +20,7 @@ public class FileBufferedInput extends ProxyInput{
 	private Logger logger = LoggerFactory.getLogger(FileBufferedInput.class);
 	private String dir;
 	private String filename;
-//	private FileOutput bufferedOutput;
+	
 	private FileInput bufferedInput;
 	
 	public FileBufferedInput() {
@@ -76,8 +76,7 @@ public class FileBufferedInput extends ProxyInput{
 	@Override
 	public void close() {
 		IOUtil.closeQuietly(bufferedInput);
-//		IOUtil.closeQuietly(bufferedOutput);
-//		IOUtil.closeQuietly(getProxy());
+		IOUtil.closeQuietly(getProxy());
 	}
 	
 }
