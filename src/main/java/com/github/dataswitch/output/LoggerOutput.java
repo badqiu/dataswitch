@@ -11,7 +11,8 @@ import com.github.dataswitch.BaseObject;
 
 public class LoggerOutput extends BaseObject implements Output {
 	private String logger = LoggerOutput.class.getName();
-	private String prefix = "";
+	
+	private String prefix = null;
 	
 	private Logger _logger = null;
 	
@@ -40,7 +41,11 @@ public class LoggerOutput extends BaseObject implements Output {
 		if(rows == null) return;
 		
 		for(Object row : rows) {
-			_logger.info(prefix+row);
+			if(prefix == null) {
+				_logger.info(String.valueOf(row));
+			}else {
+				_logger.info(prefix + row);
+			}
 		}
 	}
 	
