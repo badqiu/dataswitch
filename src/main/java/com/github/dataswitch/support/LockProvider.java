@@ -4,11 +4,12 @@ import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.function.BiFunction;
 
+import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.Openable;
 import com.github.dataswitch.enums.Constants;
 import com.github.dataswitch.util.LockUtil;
 
-public class LockProvider implements Openable {
+public class LockProvider extends BaseObject implements Openable {
 
 	private String lockGroup = Constants.DEFAULT_LOCK_GROUP;
 	private String lockId;
