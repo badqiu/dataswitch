@@ -1,12 +1,15 @@
 package com.github.dataswitch.output;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.rapid.common.util.SystemTimer;
+
 /**
  * 提供缓冲功能的Output,缓冲池大小根据bufferSize设置
  * 
@@ -15,6 +18,8 @@ import com.github.rapid.common.util.SystemTimer;
  */
 public class BufferedOutput extends ProxyOutput{
 
+	private static Logger logger = LoggerFactory.getLogger(BufferedOutput.class);
+	
 	private static int DEFAULT_BUF_SIZE = 2000;
 	
 	private int bufferSize;
@@ -59,7 +64,7 @@ public class BufferedOutput extends ProxyOutput{
 	}
 	
 	@Override
-	public void flush() throws IOException {
+	public void flush()  {
 		flushBuffer();
 	}
 
@@ -75,6 +80,50 @@ public class BufferedOutput extends ProxyOutput{
 		super.write(tempBuf);
 	}
 	
+	@Override
+	public void open(Map<String, Object> params) throws Exception {
+		super.open(params);
+		
+		init();
+	}
+	
+	private void init() {
+		startAutoFlushThread();
+	}
+
+	private void startAutoFlushThread() {
+		if(bufferTimeout <= 0) {
+			return;
+		}
+		
+		String threadName = getClass().getSimpleName() + "_auto_flush";
+		
+		Thread t = new Thread(() -> {
+			
+			logger.info("flush thread started,bufferTimeout:"+bufferTimeout);
+			try {
+				while(true) {
+					try {
+						Thread.sleep(bufferTimeout);
+					} catch (InterruptedException e) {
+						return;
+					}
+					
+					try {
+						flush();
+					}catch(Exception e) {
+						logger.error("flush error",e);
+					}
+				}
+			}finally {
+				logger.info("flush thread exit");
+			}
+			
+		},threadName);
+		
+		t.start();
+	}
+
 	@Override
 	public void close() throws Exception {
 		flush();
