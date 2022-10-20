@@ -25,6 +25,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import com.github.dataswitch.support.DataSourceProvider;
 import com.github.dataswitch.util.NamedParameterUtils;
 import com.github.dataswitch.util.ParsedSql;
+import com.github.dataswitch.util.Util;
 import com.github.rapid.common.beanutils.PropertyUtils;
 
 public class JdbcOutput extends DataSourceProvider implements Output {
@@ -99,9 +100,9 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		
 		long start = System.currentTimeMillis();
 		executeWithJdbc(rows);
-		long cost = System.currentTimeMillis() - start;
-		long tps = rows.size() * 1000 / cost;
-		logger.info("execute update sql with rows:"+rows.size()+" costTimeMills:"+cost+" tps:"+ tps +" for sql:"+sql);
+		long costTime = System.currentTimeMillis() - start;
+		long tps = Util.getTPS(rows.size(), costTime);
+		logger.info("execute update sql with rows:"+rows.size()+" costTimeMills:"+costTime+" tps:"+ tps +" for sql:"+sql);
 	}
 
 	protected void executeWithJdbc(final List<Object> rows) {

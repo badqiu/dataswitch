@@ -47,4 +47,9 @@ public class Util {
 			}
 		};
 	}
+	
+	public static long getTPS(long loopCount,long costTimeMills) {
+		long tps = loopCount * 1000 / costTimeMills;
+		return tps;
+	}
 }
