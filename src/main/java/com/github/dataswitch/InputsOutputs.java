@@ -193,7 +193,10 @@ public class InputsOutputs extends BaseObject implements Runnable,Callable<Long>
 		
 		Input input = new MultiInput(inputs);
 		Output output = new MultiOutput(outputs);
-		output = new BufferedOutput(output, bufferSize, bufferTimeout);
+		
+		if(bufferSize > 0) {
+			output = new BufferedOutput(output, bufferSize, bufferTimeout);
+		}
 		
 		Processor processor = null;
 		if(processors != null) {
