@@ -12,12 +12,12 @@ import com.github.dataswitch.util.InputOutputUtil;
 public class SpringInputOutputTest {
 
 	@Test
-	public void test() throws IOException {
+	public void test() throws Exception {
 		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("classpath:/test/spring/*.xml");
 		copy(context,"fileInput","fileOutput");
 	}
 
-	private void copy(ClassPathXmlApplicationContext context, String inputId,String outputId) throws IOException {
+	private void copy(ClassPathXmlApplicationContext context, String inputId,String outputId) throws Exception {
 		Input input = (Input)context.getBean(inputId);
 		Output output = (Output)context.getBean(outputId);
 		InputOutputUtil.copy(input,output);

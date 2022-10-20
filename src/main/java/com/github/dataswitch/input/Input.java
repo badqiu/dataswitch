@@ -1,13 +1,11 @@
 package com.github.dataswitch.input;
 
-import java.io.Closeable;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import com.github.dataswitch.Openable;
 
-public interface Input extends Openable,Closeable{
+public interface Input extends Openable,AutoCloseable{
 	
 	/**
 	 * 读取数据，
@@ -24,6 +22,6 @@ public interface Input extends Openable,Closeable{
 	}
 	
 	@Override
-	public default void close() throws IOException {
+	public default void close() throws Exception {
 	}
 }

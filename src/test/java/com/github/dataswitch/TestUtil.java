@@ -12,7 +12,7 @@ import com.github.dataswitch.input.Input;
 
 public class TestUtil {
 
-	public static int printInputReadRows(Input input) throws IOException {
+	public static int printInputReadRows(Input input) throws Exception {
 		boolean empty = true;
 		int count = 0;
 		for(int i = 0; i < 10000; i++) {

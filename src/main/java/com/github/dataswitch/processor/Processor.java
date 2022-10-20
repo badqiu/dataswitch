@@ -1,13 +1,12 @@
 package com.github.dataswitch.processor;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import com.github.dataswitch.Openable;
 
-public interface Processor extends Closeable,Openable{
+public interface Processor extends AutoCloseable,Openable{
 
 	public List<Object> process(List<Object> datas) throws Exception;
 	
@@ -16,6 +15,6 @@ public interface Processor extends Closeable,Openable{
 	}
 	
 	@Override
-	public default void close() throws IOException {
+	public default void close() throws Exception {
 	}
 }

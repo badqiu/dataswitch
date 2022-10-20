@@ -35,7 +35,7 @@ public class ProxyOutput extends BaseObject implements Output{
 	}
 
 	@Override
-	public void close() throws IOException {
+	public void close() throws Exception {
 		proxy.close();
 	}
 	

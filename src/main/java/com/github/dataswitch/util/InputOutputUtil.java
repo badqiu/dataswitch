@@ -1,6 +1,5 @@
 package com.github.dataswitch.util;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,7 +10,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +27,7 @@ public class InputOutputUtil {
 	private static int DEFAULT_BUFFER_SIZE = 3000;
 	private static DefaultProcessor DEFAULT_PROCESSOR = new DefaultProcessor();
 	
-	public static void close(Closeable io) {
+	public static void close(AutoCloseable io) {
 		try {
 			if(io != null) 
 				io.close();
@@ -38,7 +36,7 @@ public class InputOutputUtil {
 		}
 	}
 	
-	public static void closeQuietly(Closeable io) {
+	public static void closeQuietly(AutoCloseable io) {
 		try {
 			if(io != null) 
 				io.close();
@@ -48,19 +46,19 @@ public class InputOutputUtil {
 		}
 	}
 	
-	public static void closeAllQuietly(List<? extends Closeable> closeList) {
+	public static void closeAllQuietly(List<? extends AutoCloseable> closeList) {
 		if(closeList == null) return;
 		
-		for(Closeable item : closeList) {
-			IOUtils.closeQuietly(item);
+		for(AutoCloseable item : closeList) {
+			closeQuietly(item);
 		}
 	}
 	
-	public static void closeAllQuietly(Closeable... closeList) {
+	public static void closeAllQuietly(AutoCloseable... closeList) {
 		if(closeList == null) return;
 		
-		for(Closeable item : closeList) {
-			IOUtils.closeQuietly(item);
+		for(AutoCloseable item : closeList) {
+			closeQuietly(item);
 		}
 	}
 
@@ -175,7 +173,7 @@ public class InputOutputUtil {
 						}
 					}
 				}finally {
-					IOUtils.closeQuietly(output);
+					InputOutputUtil.closeQuietly(output);
 				}
 			}
 

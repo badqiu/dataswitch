@@ -15,7 +15,7 @@ public class JdbcInputTest {
 
 	JdbcInput input = new JdbcInput();
 	@Test
-	public void test() throws IOException {
+	public void test() throws Exception {
 		DriverManagerDataSource ds = createDataSourceAndInsertData();
 		
 		input.setDataSource(ds);

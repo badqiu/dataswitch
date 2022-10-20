@@ -12,7 +12,7 @@ public class HttpInputTest {
 
 	HttpInput input = new HttpInput();
 	@Test
-	public void test() throws IOException {
+	public void test() throws Exception {
 		input.setUrl("http://www.163.com","http://www.baidu.com");
 		TxtDeserializer deserializer = new TxtDeserializer();
 		deserializer.setColumns("username, age");

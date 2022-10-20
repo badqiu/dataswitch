@@ -62,7 +62,7 @@ public class MultiInput implements Input{
 	}
 	
 	@Override
-	public void close() throws IOException {
+	public void close() throws Exception {
 		InputOutputUtil.closeAllQuietly(inputs);
 	}
 	

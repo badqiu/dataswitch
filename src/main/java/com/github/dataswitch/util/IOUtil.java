@@ -2,7 +2,6 @@ package com.github.dataswitch.util;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -10,8 +9,6 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.commons.io.IOUtils;
 
 public class IOUtil {
 
@@ -61,21 +58,21 @@ public class IOUtil {
 		return null;
 	}
 	
-	public static void close(Closeable io) {
+	public static void close(AutoCloseable io) {
 		if(io != null) {
 			try {
 				io.close();
-			} catch (IOException e) {
+			} catch (Exception e) {
 				throw new RuntimeException("close error",e);
 			}
 		}
 	}
 	
-	public static void closeQuietly(Closeable io) {
+	public static void closeQuietly(AutoCloseable io) {
 		if(io != null) {
 			try {
 				io.close();
-			} catch (IOException e) {
+			} catch (Exception e) {
 				//ignore
 			}
 		}

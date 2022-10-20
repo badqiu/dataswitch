@@ -45,7 +45,7 @@ public class MultiProcessor implements Processor{
 	}
 
 	@Override
-	public void close() throws IOException {
+	public void close() throws Exception {
 		for(Processor p : processors) {
 			p.close();
 		}
