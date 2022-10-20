@@ -332,12 +332,11 @@ public class InputOutputUtil {
 	public static long copy(Input input,Output output,int bufferSize,Processor processor,Map params,FailMode failMode,Consumer<Exception> exceptionHandler) {
 		if(bufferSize <= 0) throw new IllegalArgumentException("bufferSize > 0 must be true");
 		
-		List<Object> rows = null;
-		long count = 0;
-		List<Exception> exceptions = new ArrayList<Exception>();
-		
 		openAll(params,input, output, processor);
 		
+		List<Exception> exceptions = new ArrayList<Exception>();
+		long count = 0;
+		List<Object> rows = null;
 		try {
 			
 			while(true) {
