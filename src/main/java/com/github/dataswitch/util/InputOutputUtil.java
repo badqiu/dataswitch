@@ -1,5 +1,6 @@
 package com.github.dataswitch.util;
 
+import java.io.Flushable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +27,15 @@ public class InputOutputUtil {
 	
 	private static int DEFAULT_BUFFER_SIZE = 3000;
 	private static DefaultProcessor DEFAULT_PROCESSOR = new DefaultProcessor();
+	
+	public static void flush(Flushable io) {
+		try {
+			if(io != null) 
+				io.flush();
+		}catch(Exception e) {
+			throw new RuntimeException("flush error",e);
+		}
+	}
 	
 	public static void close(AutoCloseable io) {
 		try {
@@ -106,15 +116,16 @@ public class InputOutputUtil {
 		}
 	}
 	
-	public static void flushAll(Output... branchs) {
+	public static void flushAll(Flushable... branchs) {
 		if(branchs == null) return;
-		for(Output output : branchs) {
-			if(output == null) continue;
+		
+		for(Flushable item : branchs) {
+			if(item == null) continue;
 			
 			try {
-				output.flush();
+				item.flush();
 			} catch (IOException e) {
-				throw new RuntimeException(e);
+				throw new RuntimeException("flush error,Flushable:"+item,e);
 			}
 		}
 	}
