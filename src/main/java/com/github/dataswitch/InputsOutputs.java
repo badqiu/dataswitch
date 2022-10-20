@@ -3,7 +3,9 @@ package com.github.dataswitch;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +31,7 @@ import com.github.dataswitch.util.InputOutputUtil;
  * @author badqiu
  *
  */
-public class InputsOutputs extends BaseObject {
+public class InputsOutputs extends BaseObject implements Runnable,Callable<Long>,Function<Map<String,Object>, Long> {
 
 
 	private static Logger logger = LoggerFactory.getLogger(InputsOutputs.class);
@@ -161,11 +163,16 @@ public class InputsOutputs extends BaseObject {
 		return "id:"+getId();
 	}
 
-	public void exec() {
-		exec(Collections.EMPTY_MAP);
+	public long exec() {
+		return exec(Collections.EMPTY_MAP);
 	}
 	
-	public void exec(Map<String,Object> params) {
+	/**
+	 *  执行任务
+	 * @param params 任务参数
+	 * @return 数据行数
+	 */
+	public long exec(Map<String,Object> params) {
 		if(bufferSize <= 0) bufferSize = Constants.DEFAULT_BUFFER_SIZE;
 		if(params == null) params = Collections.EMPTY_MAP;
 		
@@ -182,12 +189,13 @@ public class InputsOutputs extends BaseObject {
 			processor = new MultiProcessor(processors);
 		}
 		
-		exec(params, input, output, processor);
+		return exec(params, input, output, processor);
 	}
 
-	private void exec(Map<String, Object> params, Input input, Output output, Processor processor) {
-		long start = System.currentTimeMillis();
+	private long exec(Map<String, Object> params, Input input, Output output, Processor processor) {
 		long rows = 0;
+
+		long start = System.currentTimeMillis();
 		long costTime = 0;
 		try {
 			
@@ -198,12 +206,29 @@ public class InputsOutputs extends BaseObject {
 				rows = InputOutputUtil.copy(input, output,bufferSize,processor,params,failModeEnum,exceptionHandler);
 			}
 			costTime = System.currentTimeMillis() - start;
+			
+			return rows;
 		}catch(Exception e) {
 			throw new RuntimeException(info() +" copy error",e);
 		}finally {
 			String msg = info() + " copy end,rows:" + rows +" costSeconds:"+(costTime / 1000) + " tps:"+(rows * 1000.0 / costTime) + " bufferSize:"+ bufferSize+" failMode:" + failMode +" inputs:" + Arrays.toString(inputs) + " outputs:" + Arrays.toString(outputs);
 			logger.info(msg);
 		}
+	}
+
+	@Override
+	public void run() {
+		exec(null);
+	}
+	
+	@Override
+	public Long call() throws Exception {
+		return exec(null);
+	}
+
+	@Override
+	public Long apply(Map<String, Object> param) {
+		return exec(param);
 	}
 
 
