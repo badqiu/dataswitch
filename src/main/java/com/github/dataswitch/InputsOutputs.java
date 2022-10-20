@@ -164,7 +164,7 @@ public class InputsOutputs extends BaseObject implements Runnable,Callable<Long>
 	}
 
 	public long exec() {
-		return exec(Collections.EMPTY_MAP);
+		return exec(null);
 	}
 	
 	/**
