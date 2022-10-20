@@ -1,71 +1,58 @@
 package com.github.dataswitch.output;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 
-import com.github.dataswitch.enums.Constants;
-import com.github.dataswitch.util.LockUtil;
+import org.apache.commons.collections.CollectionUtils;
 
-public class LockOutput extends ProxyOutput {
+import com.github.dataswitch.support.LockProvider;
 
-	private String lockGroup = Constants.DEFAULT_LOCK_GROUP;
-	private String lockId;
-	
-	private Lock lock;
+public class LockOutput extends LockProvider implements Output {
+
+	private Output proxy;
 	
 	public LockOutput() {
-		super();
 	}
 	
 	public LockOutput(Output proxy) {
-		super(proxy);
-	}
-	
-	public String getLockGroup() {
-		return lockGroup;
-	}
-	
-	public void setLockGroup(String lockGroup) {
-		this.lockGroup = lockGroup;
-	}
-	
-	public String getLockId() {
-		return lockId;
-	}
-	
-	public void setLockId(String lockId) {
-		this.lockId = lockId;
-	}
-	
-	public Lock getLock() {
-		return lock;
+		super();
+		this.proxy = proxy;
 	}
 
-	public void setLock(Lock lock) {
-		this.lock = lock;
+	public Output getProxy() {
+		return proxy;
 	}
 
-	@Override
-	public void open(Map<String, Object> params) throws Exception {
-		super.open(params);
-		if(lock == null) {
-			lock = newLock(lockGroup,lockId);
-		}
+	public void setProxy(Output proxy) {
+		this.proxy = proxy;
 	}
 
-	protected Lock newLock(String lockGroup,String lockId) {
-		return LockUtil.getReentrantLock(lockGroup, lockId);
-	}
-	
-	@Override
 	public void write(List<Object> rows) {
+		if(CollectionUtils.isEmpty(rows)) return;
+		
+		Lock lock = getLock();
 		try {
 			lock.lock();
-			super.write(rows);
+			proxy.write(rows);
 		}finally {
 			lock.unlock();
 		}
+	}
+
+	@Override
+	public void close() throws Exception {
+		proxy.close();
+	}
+	
+	@Override
+	public void flush() throws IOException {
+		proxy.flush();
+	}
+
+	public void open(Map<String, Object> params) throws Exception {
+		proxy.open(params);
 	}
 	
 }
