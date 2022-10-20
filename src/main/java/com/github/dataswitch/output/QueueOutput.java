@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import com.github.dataswitch.util.QueueProvider;
+import com.github.dataswitch.support.QueueProvider;
 
 public class QueueOutput extends QueueProvider implements Output{
 

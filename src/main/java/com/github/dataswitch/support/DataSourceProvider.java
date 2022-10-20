@@ -1,4 +1,4 @@
-package com.github.dataswitch.util;
+package com.github.dataswitch.support;
 
 import java.util.HashMap;
 import java.util.Map;

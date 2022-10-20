@@ -14,7 +14,7 @@ import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.util.Assert;
 
-import com.github.dataswitch.util.DataSourceProvider;
+import com.github.dataswitch.support.DataSourceProvider;
 import com.github.rapid.common.util.MapUtil;
 
 

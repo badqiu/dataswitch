@@ -1,4 +1,4 @@
-package com.github.dataswitch.util;
+package com.github.dataswitch.support;
 
 import java.util.List;
 import java.util.Map;
@@ -8,6 +8,7 @@ import org.springframework.util.Assert;
 
 import com.github.dataswitch.Openable;
 import com.github.dataswitch.enums.Constants;
+import com.github.dataswitch.util.QueueUtil;
 
 public class QueueProvider implements Openable {
 	private int queueSize = 100000 / Constants.DEFAULT_BUFFER_SIZE;
