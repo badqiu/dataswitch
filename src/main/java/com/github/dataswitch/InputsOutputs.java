@@ -2,6 +2,7 @@ package com.github.dataswitch;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
@@ -56,6 +57,8 @@ public class InputsOutputs extends BaseObject implements Runnable,Callable<Long>
 	
 	/** 是否激活 */
 	private boolean enabled = true;
+	
+	private Map<String,Object> params = new HashMap<String,Object>();
 	
 	public String getDesc() {
 		return desc;
@@ -159,12 +162,20 @@ public class InputsOutputs extends BaseObject implements Runnable,Callable<Long>
 		this.enabled = enabled;
 	}
 	
+	public Map<String, Object> getParams() {
+		return params;
+	}
+
+	public void setParams(Map<String, Object> params) {
+		this.params = params;
+	}
+
 	public String info() {
 		return "id:"+getId();
 	}
 
 	public long exec() {
-		return exec(null);
+		return exec(this.params);
 	}
 	
 	/**
@@ -218,12 +229,12 @@ public class InputsOutputs extends BaseObject implements Runnable,Callable<Long>
 
 	@Override
 	public void run() {
-		exec(null);
+		exec(this.params);
 	}
 	
 	@Override
 	public Long call() throws Exception {
-		return exec(null);
+		return exec(this.params);
 	}
 
 	@Override
