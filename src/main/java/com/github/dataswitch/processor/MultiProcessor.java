@@ -3,6 +3,8 @@ package com.github.dataswitch.processor;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import com.github.dataswitch.util.InputOutputUtil;
 /**
  * 多个Processor合成一个Processor,按顺序处理数据
  * 
@@ -47,7 +49,7 @@ public class MultiProcessor implements Processor{
 	@Override
 	public void close() throws Exception {
 		for(Processor p : processors) {
-			p.close();
+			InputOutputUtil.close(p);
 		}
 	}
 
