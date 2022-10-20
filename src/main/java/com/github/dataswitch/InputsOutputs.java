@@ -35,7 +35,7 @@ public class InputsOutputs extends BaseObject {
 	private static Logger logger = LoggerFactory.getLogger(InputsOutputs.class);
 
 	private int bufferSize = Constants.DEFAULT_BUFFER_SIZE;
-	private int bufferTimeout = 500; //超时时间，时间单位毫秒
+	private int bufferTimeout = Constants.DEFAULT_BUFFER_TIMEOUT; //超时时间，时间单位毫秒
 	
 	private String failMode = FailMode.FAIL_AT_END.getShortName();
 
