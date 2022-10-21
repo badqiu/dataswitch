@@ -40,7 +40,16 @@ public class AsyncInput extends ProxyInput{
 			throw new RuntimeException("has exception" + lastException,lastException);
 		}
 		
+		
+		
 		try {
+			if(!running) {
+				if(!queue.isEmpty()) {
+					return queue.take();
+				}
+			}
+			
+			
 			List rows = queue.take();
 			
 			return rows;
