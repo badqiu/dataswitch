@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dataswitch.BaseObject;
+import com.github.dataswitch.Enabled;
 import com.github.dataswitch.enums.FailMode;
 import com.github.dataswitch.util.IOUtil;
 import com.github.dataswitch.util.InputOutputUtil;
@@ -86,6 +87,7 @@ public class TeeOutput extends BaseObject  implements Output{
 
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
+		branchs = Enabled.filterByEnabled(branchs);
 		InputOutputUtil.openAll(params,branchs);
 	}
 	

@@ -32,7 +32,7 @@ import com.github.dataswitch.util.InputOutputUtil;
  * @author badqiu
  *
  */
-public class InputsOutputs extends BaseObject implements Runnable,Callable<Long>,Function<Map<String,Object>, Long> {
+public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callable<Long>,Function<Map<String,Object>, Long> {
 
 
 	private static Logger logger = LoggerFactory.getLogger(InputsOutputs.class);

@@ -2,7 +2,7 @@ package com.github.dataswitch;
 
 import java.util.Properties;
 
-public class BaseObject {
+public class BaseObject implements Enabled {
 
 	private String id; // 对象ID
 	private String remarks; // 对象备注
@@ -12,6 +12,8 @@ public class BaseObject {
 //	private String author; //作者
 //	private String version; //版本
 //	private String changelog; //修改日志
+	
+	private boolean enabled;
 
 	public String getId() {
 		return id;
@@ -36,5 +38,20 @@ public class BaseObject {
 	public void setProps(Properties props) {
 		this.props = props;
 	}
+	
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+	
+	@Override
+	public boolean enabled() {
+		return isEnabled();
+	}
+	
+	
 
 }

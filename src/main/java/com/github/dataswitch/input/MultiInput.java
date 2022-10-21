@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import com.github.dataswitch.Enabled;
 import com.github.dataswitch.output.Output;
 import com.github.dataswitch.util.InputOutputUtil;
 
@@ -38,7 +39,7 @@ public class MultiInput implements Input{
 	}
 	
 	public void setInput(Input input) {
-		this.inputs = new ArrayList<Input>(Arrays.asList(input));
+		setInputs(input);
 	}
 	
 	public void setInputs(List<Input> inputs) {
@@ -48,7 +49,7 @@ public class MultiInput implements Input{
 	public void setInputs(Input... inputs) {
 		if(inputs == null) return;
 		
-		this.inputs = new ArrayList<Input>(Arrays.asList(inputs));
+		setInputs(new ArrayList<Input>(Arrays.asList(inputs)));
 	}
 	
 	public void addInput(Input input) {
@@ -69,6 +70,7 @@ public class MultiInput implements Input{
 	
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
+		inputs = Enabled.filterByEnabled(inputs);
 		InputOutputUtil.openAll(params, inputs);
 	}
 

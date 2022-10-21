@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import com.github.dataswitch.Enabled;
 import com.github.dataswitch.util.InputOutputUtil;
 /**
  * 多个Processor合成一个Processor,按顺序处理数据
@@ -35,8 +36,6 @@ public class MultiProcessor implements Processor{
 		this.processors = processors.toArray(new Processor[0]);
 	}
 	
-	
-	
 	@Override
 	public List<Object> process(List<Object> datas) throws Exception {
 		List<Object> tempDatas = datas;
@@ -55,9 +54,9 @@ public class MultiProcessor implements Processor{
 
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
-		for(Processor p : processors) {
-			p.open(params);
-		}
+		processors = Enabled.filterByEnabled(processors);
+		
+		InputOutputUtil.openAll(params, processors);
 	}
 	
 	
