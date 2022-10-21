@@ -1,5 +1,6 @@
 package com.github.dataswitch.input;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -92,12 +93,15 @@ public class AsyncInput extends ProxyInput{
 						List rows = null;
 						try {
 							rows = input.read(readSize);
-							queue.put(rows);
-							
 							if(CollectionUtils.isEmpty(rows)) {
 								running = false;
+								queue.put(Collections.EMPTY_LIST);
 								return; //exit for no data
 							}
+							
+							queue.put(rows);
+							
+							
 							
 						}catch(InterruptedException e) {
 							logger.info("InterruptedException on read thread,exit thread",e);
