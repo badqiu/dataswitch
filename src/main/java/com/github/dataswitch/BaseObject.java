@@ -11,6 +11,7 @@ public class BaseObject {
 //	private String createDate; //创建日期
 //	private String author; //作者
 //	private String version; //版本
+//	private String changelog; //修改日志
 
 	public String getId() {
 		return id;
