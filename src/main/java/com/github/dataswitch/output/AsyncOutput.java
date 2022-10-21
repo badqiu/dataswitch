@@ -96,6 +96,7 @@ public class AsyncOutput extends ProxyOutput{
 					}
 				}finally {
 					InputOutputUtil.closeQuietly(output);
+					logger.info("exit write thread,threadName:"+threadName);
 				}
 			}
 
