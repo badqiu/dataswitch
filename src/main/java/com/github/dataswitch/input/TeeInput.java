@@ -39,7 +39,7 @@ public class TeeInput extends ProxyInput{
 	}
 	
 	@Override
-	public void close() {
+	public void close() throws Exception {
 		try {
 			super.close();
 		}finally {

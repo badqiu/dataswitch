@@ -22,7 +22,7 @@ public class ProxyInput extends BaseObject  implements Input{
 		return proxy.read(size);
 	}
 
-	public void close() {
+	public void close() throws Exception {
 		IOUtil.closeQuietly(proxy);
 	}
 
