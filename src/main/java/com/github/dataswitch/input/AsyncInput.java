@@ -69,12 +69,17 @@ public class AsyncInput extends ProxyInput{
 							rows = input.read(readSize);
 							queue.put(rows);
 							
+							if(CollectionUtils.isEmpty(rows)) {
+								running = false;
+								return; //exit for no data
+							}
+							
 						}catch(InterruptedException e) {
-							logger.info("InterruptedException on write thread,exit thread",e);
+							logger.info("InterruptedException on read thread,exit thread",e);
 							return;
 						}catch(Exception e) {
 							Object firstRow = CollectionUtils.get(rows, 0);
-							logger.warn("ignore error on write thread, one dataRow:"+firstRow,e);
+							logger.warn("ignore error on read thread, one dataRow:"+firstRow,e);
 							lastException = e;
 						}
 					}
