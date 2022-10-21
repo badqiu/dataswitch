@@ -232,12 +232,12 @@ public class InputsOutputs extends BaseObject implements Runnable,Callable<Long>
 
 	@Override
 	public void run() {
-		exec(this.params);
+		exec();
 	}
 	
 	@Override
 	public Long call() throws Exception {
-		return exec(this.params);
+		return exec();
 	}
 
 	@Override
