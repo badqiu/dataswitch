@@ -41,7 +41,9 @@ public class AsyncInput extends ProxyInput{
 		}
 		
 		try {
-			return queue.take();
+			List rows = queue.take();
+			
+			return rows;
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		}
