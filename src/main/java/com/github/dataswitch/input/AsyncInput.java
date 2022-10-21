@@ -97,12 +97,15 @@ public class AsyncInput extends ProxyInput{
 	
 	@Override
 	public void close() throws Exception  {
+		
 		running = false;
 		
 		if(thread != null) {
 			thread.interrupt();
 			thread.join();
 		}
+		
+		
 		
 		super.close();
 	}
