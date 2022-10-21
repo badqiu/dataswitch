@@ -31,6 +31,22 @@ public class AsyncInput extends ProxyInput{
 	public AsyncInput(Input proxy) {
 		super(proxy);
 	}
+	
+	public BlockingQueue<List> getQueue() {
+		return queue;
+	}
+
+	public void setQueue(BlockingQueue<List> queue) {
+		this.queue = queue;
+	}
+
+	public FailMode getFailMode() {
+		return failMode;
+	}
+
+	public void setFailMode(FailMode failMode) {
+		this.failMode = failMode;
+	}
 
 	@Override
 	public List<Object> read(int size) {
@@ -39,8 +55,6 @@ public class AsyncInput extends ProxyInput{
 		if(FailMode.FAIL_FAST == failMode && lastException != null) {
 			throw new RuntimeException("has exception" + lastException,lastException);
 		}
-		
-		
 		
 		try {
 			if(!running) {
@@ -115,8 +129,6 @@ public class AsyncInput extends ProxyInput{
 			thread.interrupt();
 			thread.join();
 		}
-		
-		
 		
 		super.close();
 	}
