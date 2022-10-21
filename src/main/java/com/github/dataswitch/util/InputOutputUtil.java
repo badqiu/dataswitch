@@ -239,7 +239,9 @@ public class InputOutputUtil {
 	private static void collectExceptionIfFailAtEnd(FailMode failMode, final List<Exception> exceptions,
 			Exception e) {
 		if(failMode == FailMode.FAIL_AT_END) {
-			exceptions.add(e);
+			if(exceptions.size() < 100) { // limit size for OutOfMemoryError
+				exceptions.add(e);
+			}
 		}
 	}
 	/**
