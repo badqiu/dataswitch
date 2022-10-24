@@ -9,6 +9,14 @@ public interface Enabled {
 		return true;
 	}
 	
+	public static void assertEnabled(Enabled item) {
+		if(item == null) return;
+		
+		if(!item.enabled()) {
+			throw new IllegalStateException("not yet enabled:"+item);
+		}
+	}
+	
 	public static <T> T[] filterByEnabled(T... items) {
 		List<T> results = new ArrayList();
 		for(T item : items) {
