@@ -24,7 +24,7 @@ public class BufferedOutput extends ProxyOutput{
 	
 	
 	private int bufferSize = Constants.DEFAULT_BUFFER_SIZE;
-	private int bufferTimeout;
+	private int bufferTimeout = Constants.DEFAULT_BUFFER_TIMEOUT;
 	
 	private long lastSendTime = System.currentTimeMillis();
 	private List<Object> bufferList = new ArrayList<Object>();
@@ -32,11 +32,11 @@ public class BufferedOutput extends ProxyOutput{
 	private boolean init = false;
 	
 	public BufferedOutput(Output proxy) {
-		this(proxy,Constants.DEFAULT_BUFFER_SIZE,0);
+		this(proxy,Constants.DEFAULT_BUFFER_SIZE);
 	}
 	
 	public BufferedOutput(Output proxy,int bufferSize) {
-		this(proxy,bufferSize,0);
+		this(proxy,bufferSize,Constants.DEFAULT_BUFFER_TIMEOUT);
 	}
 	
 	public BufferedOutput(Output proxy,int bufferSize,int bufferTimeout) {
@@ -49,6 +49,14 @@ public class BufferedOutput extends ProxyOutput{
 		bufferList = new ArrayList<Object>(bufferSize);
 	}
 	
+	public void setBufferSize(int bufferSize) {
+		this.bufferSize = bufferSize;
+	}
+
+	public void setBufferTimeout(int bufferTimeout) {
+		this.bufferTimeout = bufferTimeout;
+	}
+
 	@Override
 	public void write(List<Object> rows) {
 		if(CollectionUtils.isEmpty(rows)) return;

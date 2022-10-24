@@ -26,7 +26,7 @@ public class MultiFunctionOutput extends ProxyOutput {
 	
 	private boolean buffered = false; // done
 	private int bufferSize = Constants.DEFAULT_BUFFER_SIZE;
-	private int bufferTimeout;
+	private int bufferTimeout = Constants.DEFAULT_BUFFER_TIMEOUT;
 	
 	private boolean retry = false;  //done
 	private int retryTimes = 0; //重试次数
