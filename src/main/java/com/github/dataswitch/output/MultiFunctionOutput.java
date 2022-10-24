@@ -59,6 +59,66 @@ public class MultiFunctionOutput extends ProxyOutput {
 	public void setLogger(String logger) {
 		this.logger = logger;
 	}
+	
+	public void setAsync(boolean async) {
+		this.async = async;
+	}
+
+	public void setSync(boolean sync) {
+		this.sync = sync;
+	}
+
+	public void setLock(boolean lock) {
+		this.lock = lock;
+	}
+
+	public void setLockGroup(String lockGroup) {
+		this.lockGroup = lockGroup;
+	}
+
+	public void setLockId(String lockId) {
+		this.lockId = lockId;
+	}
+
+	public void setNewLockFunction(BiFunction<String, String, Lock> newLockFunction) {
+		this.newLockFunction = newLockFunction;
+	}
+
+	public void setBuffered(boolean buffered) {
+		this.buffered = buffered;
+	}
+
+	public void setBufferSize(int bufferSize) {
+		this.bufferSize = bufferSize;
+	}
+
+	public void setBufferTimeout(int bufferTimeout) {
+		this.bufferTimeout = bufferTimeout;
+	}
+
+	public void setRetry(boolean retry) {
+		this.retry = retry;
+	}
+
+	public void setRetryTimes(int retryTimes) {
+		this.retryTimes = retryTimes;
+	}
+
+	public void setRetryIntervalMills(long retryIntervalMills) {
+		this.retryIntervalMills = retryIntervalMills;
+	}
+
+	public void setRetryTimeoutMills(long retryTimeoutMills) {
+		this.retryTimeoutMills = retryTimeoutMills;
+	}
+
+	public void setNullOutput(boolean nullOutput) {
+		this.nullOutput = nullOutput;
+	}
+
+	public void setPrint(boolean print) {
+		this.print = print;
+	}
 
 	private Output newMultiFunctionProxy(Output proxy) {
 		Output output = proxy;
