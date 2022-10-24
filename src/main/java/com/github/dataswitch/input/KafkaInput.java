@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -19,9 +18,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
-import com.github.dataswitch.util.BlockingQueueUtil;
 import com.github.dataswitch.util.KafkaConfigUtil;
 import com.github.dataswitch.util.PropertiesUtil;
+import com.github.dataswitch.util.QueueUtil;
 
 
 public class KafkaInput implements Input{
@@ -266,7 +265,7 @@ public class KafkaInput implements Input{
 
 	private List<Object> asyncRead(int size) {
 		try {
-			return BlockingQueueUtil.batchTake(queue,size, asyncReadTimeout);
+			return QueueUtil.batchTake(queue,size, asyncReadTimeout);
 		}catch(InterruptedException e) {
 			throw new RuntimeException(e);
 		}
