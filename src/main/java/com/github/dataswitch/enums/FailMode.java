@@ -52,7 +52,7 @@ public enum FailMode {
 					throw new RuntimeException("failFast at:"+e+" on data:"+item,e);
 				}
 				
-				logger.warn(this.name() + " at:"+e+" on item:"+item,e);
+				logger.warn(this.name() + " at:"+e+" on data:"+item,e);
 			}
 		}
 		
