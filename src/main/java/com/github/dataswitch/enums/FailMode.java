@@ -37,7 +37,7 @@ public enum FailMode {
 		forEach(action,Arrays.asList(items));
 	}
 	
-	public <T> void  forEach(Consumer<T> action,List<T> items) {
+	public <T> void  forEach(Consumer<T> action,Iterable<T> items) {
 		Exception lastException = null;
 		T lastExceptionObject = null;
 		
