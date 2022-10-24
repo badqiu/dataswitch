@@ -13,7 +13,7 @@ public interface Enabled {
 		if(item == null) return;
 		
 		if(!item.enabled()) {
-			throw new IllegalStateException("not yet enabled:"+item);
+			throw new IllegalStateException("enabled is false, " + item);
 		}
 	}
 	
