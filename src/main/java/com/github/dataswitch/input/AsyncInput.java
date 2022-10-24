@@ -21,6 +21,7 @@ public class AsyncInput extends ProxyInput{
 
 	private boolean running = true;
 	private Exception lastException;
+	private Object lastExceptionData;
 	private Thread thread = null;
 	private FailMode failMode = FailMode.FAIL_FAST;
 	private int readSize = Constants.DEFAULT_BUFFER_SIZE;
@@ -54,7 +55,7 @@ public class AsyncInput extends ProxyInput{
 		readSize = size;
 		
 		if(FailMode.FAIL_FAST == failMode && lastException != null) {
-			throw new RuntimeException("has exception" + lastException,lastException);
+			throw new RuntimeException("has exception" + lastException+" lastExceptionData:"+lastExceptionData,lastException);
 		}
 		
 		try {
@@ -111,6 +112,7 @@ public class AsyncInput extends ProxyInput{
 							Object firstRow = CollectionUtils.get(rows, 0);
 							logger.warn("ignore error on read thread, one dataRow:"+firstRow,e);
 							lastException = e;
+							lastExceptionData = firstRow;
 						}
 					}
 				}finally {

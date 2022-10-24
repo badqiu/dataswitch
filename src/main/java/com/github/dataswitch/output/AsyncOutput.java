@@ -25,6 +25,7 @@ public class AsyncOutput extends ProxyOutput{
 
 	private boolean running = true;
 	private Exception lastException;
+	private Object lastExceptionData;
 	private Thread thread = null;
 	private FailMode failMode = FailMode.FAIL_FAST;
 	
@@ -49,7 +50,7 @@ public class AsyncOutput extends ProxyOutput{
 		if(CollectionUtils.isEmpty(rows)) return;
 		
 		if(FailMode.FAIL_FAST == failMode && lastException != null) {
-			throw new RuntimeException("has exception" + lastException,lastException);
+			throw new RuntimeException("has exception" + lastException+" lastExceptionData:"+lastExceptionData,lastException);
 		}
 		
 		try {
@@ -92,6 +93,7 @@ public class AsyncOutput extends ProxyOutput{
 							Object firstRow = CollectionUtils.get(rows, 0);
 							logger.warn("ignore error on write thread, one dataRow:"+firstRow,e);
 							lastException = e;
+							lastExceptionData = firstRow;
 						}
 					}
 				}finally {

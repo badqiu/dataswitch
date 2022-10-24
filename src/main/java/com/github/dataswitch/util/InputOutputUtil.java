@@ -181,6 +181,7 @@ public class InputOutputUtil {
 							collectExceptionIfFailAtEnd(failMode, exceptions, e);
 							
 							handleException(exceptionHandler, e);
+							
 						}
 					}
 				}finally {
@@ -340,6 +341,8 @@ public class InputOutputUtil {
 		openAll(params,input, output, processor);
 		
 		List<Exception> exceptions = new ArrayList<Exception>();
+		Object lastExceptionData = null;
+		
 		long count = 0;
 		List<Object> rows = null;
 		try {
@@ -360,6 +363,8 @@ public class InputOutputUtil {
 						throw new RuntimeException("copy error,input:"+input+" output:"+output+" processor:"+processor+", one rowData:"+firstRow,e);
 					}
 					
+					lastExceptionData = firstRow;
+					
 					logger.warn("copy warn,input:"+input+" output:"+output+" processor:"+processor+" one rowData:"+firstRow,e);
 					
 					collectExceptionIfFailAtEnd(failMode, exceptions, e);
@@ -372,7 +377,7 @@ public class InputOutputUtil {
 		}
 		
 		if(!exceptions.isEmpty() && FailMode.FAIL_AT_END == failMode) {
-			throw new RuntimeException("copy error,input:"+input+" output:"+output+" processor:"+processor+" exceptions:"+exceptions);
+			throw new RuntimeException("copy error,input:"+input+" output:"+output+" processor:"+processor+" lastExceptionData:"+lastExceptionData + " exceptions:"+exceptions);
 		}
 		return count;
 	}
