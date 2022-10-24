@@ -270,6 +270,7 @@ public class KafkaInput implements Input{
 			throw new RuntimeException(e);
 		}
 	}
+	
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
 		Input.super.open(params);
