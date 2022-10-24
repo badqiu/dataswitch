@@ -14,8 +14,13 @@ import org.slf4j.LoggerFactory;
 public class HadoopConfUtil {
 	
 	private static Logger logger = LoggerFactory.getLogger(HadoopConfUtil.class);
+	
 	public static FileSystem getFileSystem(String uri,String user) throws IOException {
 		Configuration conf = HadoopConfUtil.newConf();
+		return getFileSystem(uri, user, conf);
+	}
+
+	public static FileSystem getFileSystem(String uri, String user, Configuration conf) throws IOException {
 		try {
 			if(StringUtils.isBlank(uri)) {
 				return FileSystem.get(conf);
