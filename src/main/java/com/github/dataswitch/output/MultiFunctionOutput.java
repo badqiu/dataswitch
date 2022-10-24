@@ -1,6 +1,10 @@
 package com.github.dataswitch.output;
 
+import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
+
+import org.apache.commons.lang.StringUtils;
 
 public class MultiFunctionOutput extends ProxyOutput {
 
@@ -9,6 +13,9 @@ public class MultiFunctionOutput extends ProxyOutput {
 	private boolean lock = false;
 	private boolean buffered = false;
 	private boolean retry = false;
+	
+	private Consumer<List<Object>> consumer;
+	private String logger = null;
 	
 	public MultiFunctionOutput() {
 		super();
@@ -23,23 +30,43 @@ public class MultiFunctionOutput extends ProxyOutput {
 		super.setProxy(proxy);
 	}
 	
+	public void setConsumer(Consumer<List<Object>> consumer) {
+		this.consumer = consumer;
+	}
+
+	public void setLogger(String logger) {
+		this.logger = logger;
+	}
+
 	private Output newProxy(Output proxy) {
 		Output output = proxy;
-		if(sync) {
-			output = new SyncOutput(output);
+		
+		if(consumer != null) {
+			output = new ComsumerOutput(consumer);
 		}
+		
+		if(StringUtils.isNotBlank(logger)) {
+			LoggerOutput loggerOutput = new LoggerOutput();
+			loggerOutput.setLogger(logger);
+			output = loggerOutput;
+		}
+		
 		if(buffered) {
 			output = new BufferedOutput(output);
 		}
 		if(retry) {
 			output = new RetryOutput(output);
 		}
-		if(async) {
-			output = new AsyncOutput(output);
-		}
 		if(lock) {
 			output = new LockOutput(output);
 		}
+		if(sync) {
+			output = new SyncOutput(output);
+		}
+		if(async) {
+			output = new AsyncOutput(output);
+		}
+		
 		return output;
 	}
 	
