@@ -6,6 +6,10 @@ import java.util.function.Consumer;
 
 import org.apache.commons.lang.StringUtils;
 
+/**
+ * 多功能是Output
+ * 
+ **/
 public class MultiFunctionOutput extends ProxyOutput {
 
 	private boolean async = false;
@@ -13,6 +17,8 @@ public class MultiFunctionOutput extends ProxyOutput {
 	private boolean lock = false;
 	private boolean buffered = false;
 	private boolean retry = false;
+	private boolean nullOutput = false;
+	private boolean print = false;
 	
 	private Consumer<List<Object>> consumer;
 	private String logger = null;
@@ -38,7 +44,7 @@ public class MultiFunctionOutput extends ProxyOutput {
 		this.logger = logger;
 	}
 
-	private Output newProxy(Output proxy) {
+	private Output newMultiFunctionProxy(Output proxy) {
 		Output output = proxy;
 		
 		if(consumer != null) {
@@ -66,6 +72,12 @@ public class MultiFunctionOutput extends ProxyOutput {
 		if(async) {
 			output = new AsyncOutput(output);
 		}
+		if(nullOutput) {
+			output = new NullOutput();
+		}
+		if(print) {
+			output = new PrintOutput();
+		}
 		
 		return output;
 	}
@@ -74,7 +86,7 @@ public class MultiFunctionOutput extends ProxyOutput {
 	public void open(Map<String, Object> params) throws Exception {
 		super.open(params);
 		
-		Output newProxy = newProxy(getProxy());
+		Output newProxy = newMultiFunctionProxy(getProxy());
 		setProxy(newProxy);
 	}
 	

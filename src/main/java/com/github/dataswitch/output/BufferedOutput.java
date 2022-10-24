@@ -39,13 +39,13 @@ public class BufferedOutput extends ProxyOutput{
 		this(proxy,bufferSize,0);
 	}
 	
-	public BufferedOutput(Output proxy,int bufferSize,int bufTimeout) {
+	public BufferedOutput(Output proxy,int bufferSize,int bufferTimeout) {
 		super(proxy);
 		if(bufferSize <= 0) {
 			throw new IllegalArgumentException("bufferSize > 0 must be true");
 		}
 		this.bufferSize = bufferSize;
-		this.bufferTimeout = bufTimeout;
+		this.bufferTimeout = bufferTimeout;
 		bufferList = new ArrayList<Object>(bufferSize);
 	}
 	
