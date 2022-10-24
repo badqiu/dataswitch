@@ -2,9 +2,13 @@ package com.github.dataswitch.output;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 import org.apache.commons.lang.StringUtils;
+
+import com.github.dataswitch.enums.Constants;
 
 /**
  * 多功能的Output
@@ -14,9 +18,21 @@ public class MultiFunctionOutput extends ProxyOutput {
 
 	private boolean async = false; //done
 	private boolean sync = false; //done
-	private boolean lock = false;
-	private boolean buffered = false; 
-	private boolean retry = false; 
+	
+	private boolean lock = false; //done
+	private String lockGroup = Constants.DEFAULT_LOCK_GROUP;
+	private String lockId;
+	private BiFunction<String, String, Lock> newLockFunction;
+	
+	private boolean buffered = false; // done
+	private int bufferSize = Constants.DEFAULT_BUFFER_SIZE;
+	private int bufferTimeout;
+	
+	private boolean retry = false;  //done
+	private int retryTimes = 0; //重试次数
+	private long retryIntervalMills = RetryOutput.DEFAULT_RETRY_INTERVAL_MILLS; //重试间隔(毫秒)
+	private long retryTimeoutMills = 0; //重试超时时间
+	
 	private boolean nullOutput = false; //done
 	private boolean print = false; //done
 	
@@ -63,13 +79,21 @@ public class MultiFunctionOutput extends ProxyOutput {
 		}
 		
 		if(buffered) {
-			output = new BufferedOutput(output);
+			output = new BufferedOutput(output,bufferSize,bufferTimeout);
 		}
 		if(retry) {
-			output = new RetryOutput(output);
+			RetryOutput retryOutput = new RetryOutput(output);
+			retryOutput.setRetryIntervalMills(retryIntervalMills);
+			retryOutput.setRetryTimeoutMills(retryTimeoutMills);
+			retryOutput.setRetryTimes(retryTimes);
+			output = retryOutput;
 		}
 		if(lock) {
-			output = new LockOutput(output);
+			LockOutput lockOutput = new LockOutput(output);
+			lockOutput.setLockGroup(lockGroup);
+			lockOutput.setLockId(lockId);
+			lockOutput.setNewLockFunction(newLockFunction);
+			output = lockOutput;
 		}
 		if(sync) {
 			output = new SyncOutput(output);
@@ -84,10 +108,10 @@ public class MultiFunctionOutput extends ProxyOutput {
 	
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
-		super.open(params);
-		
 		Output newProxy = newMultiFunctionProxy(getProxy());
 		setProxy(newProxy);
+		
+		super.open(params);
 	}
 	
 

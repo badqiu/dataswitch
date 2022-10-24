@@ -8,8 +8,10 @@ import com.github.rapid.common.util.Retry;
 
 public class RetryOutput extends ProxyOutput {
 	
+	public static final int DEFAULT_RETRY_INTERVAL_MILLS = 3000;
+	
 	private int retryTimes = 0; //重试次数
-	private long retryIntervalMills = 3000; //重试间隔(毫秒)
+	private long retryIntervalMills = DEFAULT_RETRY_INTERVAL_MILLS; //重试间隔(毫秒)
 	private long retryTimeoutMills = 0; //重试超时时间
 
 	public RetryOutput() {

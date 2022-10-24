@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
+import com.github.dataswitch.enums.Constants;
 import com.github.rapid.common.util.SystemTimer;
 
 /**
@@ -21,9 +22,8 @@ public class BufferedOutput extends ProxyOutput{
 
 	private static Logger logger = LoggerFactory.getLogger(BufferedOutput.class);
 	
-	private static int DEFAULT_BUF_SIZE = 2000;
 	
-	private int bufferSize;
+	private int bufferSize = Constants.DEFAULT_BUFFER_SIZE;
 	private int bufferTimeout;
 	
 	private long lastSendTime = System.currentTimeMillis();
@@ -32,7 +32,7 @@ public class BufferedOutput extends ProxyOutput{
 	private boolean init = false;
 	
 	public BufferedOutput(Output proxy) {
-		this(proxy,DEFAULT_BUF_SIZE,0);
+		this(proxy,Constants.DEFAULT_BUFFER_SIZE,0);
 	}
 	
 	public BufferedOutput(Output proxy,int bufferSize) {
