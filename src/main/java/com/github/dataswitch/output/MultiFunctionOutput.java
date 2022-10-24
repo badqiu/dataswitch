@@ -12,16 +12,16 @@ import org.apache.commons.lang.StringUtils;
  **/
 public class MultiFunctionOutput extends ProxyOutput {
 
-	private boolean async = false;
-	private boolean sync = false;
+	private boolean async = false; //done
+	private boolean sync = false; //done
 	private boolean lock = false;
-	private boolean buffered = false;
-	private boolean retry = false;
-	private boolean nullOutput = false;
-	private boolean print = false;
+	private boolean buffered = false; 
+	private boolean retry = false; 
+	private boolean nullOutput = false; //done
+	private boolean print = false; //done
 	
-	private Consumer<List<Object>> consumer;
-	private String logger = null;
+	private Consumer<List<Object>> consumer; //done
+	private String logger = null; //done
 	
 	public MultiFunctionOutput() {
 		super();
