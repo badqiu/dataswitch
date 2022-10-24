@@ -1,7 +1,6 @@
 package com.github.dataswitch.enums;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.function.Consumer;
 
 import org.apache.commons.lang.StringUtils;
