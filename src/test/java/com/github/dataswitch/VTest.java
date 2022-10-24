@@ -1,10 +1,22 @@
 package com.github.dataswitch;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
+
+import org.junit.Test;
 
 public class VTest {
 
 	volatile static int count = 0;
+	
+	@Test
+	public void testArray() {
+		List list = new ArrayList();
+		list.forEach((item) -> {
+			
+		});
+	}
 	
 	public static void main(String[] args) throws InterruptedException {
 		final int loopCount = 1000;

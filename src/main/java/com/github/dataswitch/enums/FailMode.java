@@ -33,17 +33,17 @@ public enum FailMode {
 		return desc;
 	}
 	
-	public <T> void  forEach(Consumer<T> consumer,T... items) {
-		forEach(consumer,Arrays.asList(items));
+	public <T> void  forEach(Consumer<T> action,T... items) {
+		forEach(action,Arrays.asList(items));
 	}
 	
-	public <T> void  forEach(Consumer<T> consumer,List<T> items) {
+	public <T> void  forEach(Consumer<T> action,List<T> items) {
 		Exception lastException = null;
 		T lastExceptionObject = null;
 		
 		for(T item : items) {
 			try {
-				consumer.accept(item);
+				action.accept(item);
 			}catch(Exception e) {
 				lastException = e;
 				lastExceptionObject = item;
