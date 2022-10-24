@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * 多功能是Output
+ * 多功能的Output
  * 
  **/
 public class MultiFunctionOutput extends ProxyOutput {
@@ -50,11 +50,16 @@ public class MultiFunctionOutput extends ProxyOutput {
 		if(consumer != null) {
 			output = new ComsumerOutput(consumer);
 		}
-		
 		if(StringUtils.isNotBlank(logger)) {
 			LoggerOutput loggerOutput = new LoggerOutput();
 			loggerOutput.setLogger(logger);
 			output = loggerOutput;
+		}
+		if(nullOutput) {
+			output = new NullOutput();
+		}
+		if(print) {
+			output = new PrintOutput();
 		}
 		
 		if(buffered) {
@@ -72,12 +77,7 @@ public class MultiFunctionOutput extends ProxyOutput {
 		if(async) {
 			output = new AsyncOutput(output);
 		}
-		if(nullOutput) {
-			output = new NullOutput();
-		}
-		if(print) {
-			output = new PrintOutput();
-		}
+		
 		
 		return output;
 	}
