@@ -1,5 +1,6 @@
 package com.github.dataswitch.output;
 
+import java.time.Duration;
 import java.util.List;
 
 import org.springframework.util.Assert;
@@ -37,6 +38,10 @@ public class RetryOutput extends ProxyOutput {
 	public void setRetryIntervalSeconds(long value) {
 		setRetryIntervalMills(value * 1000);
 	}
+
+	public void setRetryInterval(Duration duration) {
+		setRetryIntervalMills(duration.toMillis());
+	}
 	
 	public void setRetryIntervalMills(long retryIntervalMills) {
 		Assert.isTrue(retryIntervalMills > 0 ,"retryIntervalMills > 0 must be true");
@@ -53,6 +58,10 @@ public class RetryOutput extends ProxyOutput {
 	
 	public void setRetryTimeoutMinutes(long value) {
 		setRetryTimeoutMills(value * 1000 * 60);
+	}
+	
+	public void setRetryTimeout(Duration duration) {
+		setRetryTimeoutMills(duration.toMillis());
 	}
 	
 	@Override
