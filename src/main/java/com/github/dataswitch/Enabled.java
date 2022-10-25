@@ -19,6 +19,8 @@ public interface Enabled {
 	}
 	
 	public static <T> T[] filterByEnabled(T... items) {
+		if(items == null) return null;
+		
 		List<T> results = new ArrayList<T>();
 		for(T item : items) {
 			if(item == null) continue;
@@ -41,6 +43,8 @@ public interface Enabled {
 	}
 	
 	public static <T> List<T> filterByEnabled(List<T> items) {
+		if(items == null) return null;
+		
 		List<T> results = new ArrayList();
 		for(T item : items) {
 			if(item == null) continue;
