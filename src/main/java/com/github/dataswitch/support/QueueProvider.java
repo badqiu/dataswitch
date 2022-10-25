@@ -13,14 +13,16 @@ import com.github.dataswitch.enums.Constants;
 import com.github.dataswitch.util.QueueUtil;
 
 public class QueueProvider extends BaseObject implements Openable {
+	
 	private int queueSize = 100000 / Constants.DEFAULT_BUFFER_SIZE;
 	
 	private String queueGroup = "default";
 	private String queueName;
 	
+	private BiFunction<String, Integer, BlockingQueue> newQueueFunction;
+
 	private BlockingQueue<List<Object>> queue = null;
 	
-	private BiFunction<String, Integer, BlockingQueue> newQueueFunction;
 	
 	@Override
 	public void open(Map<String, Object> params) throws Exception {

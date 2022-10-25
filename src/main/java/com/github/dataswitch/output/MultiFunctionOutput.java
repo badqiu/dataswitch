@@ -2,6 +2,7 @@ package com.github.dataswitch.output;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.locks.Lock;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -38,6 +39,7 @@ public class MultiFunctionOutput extends ProxyOutput {
 	
 	private Consumer<List<Object>> consumer; //done
 	private String logger = null; //done
+	
 	
 	public MultiFunctionOutput() {
 		super();
