@@ -94,6 +94,10 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		init();
 	}
 	
+	private String getRealSql() {
+		return getSql();
+	}
+	
 	@Override
 	public void write(final List<Object> rows) {
 		if(CollectionUtils.isEmpty(rows)) return;
@@ -102,17 +106,19 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		executeWithJdbc(rows);
 		long costTime = System.currentTimeMillis() - start;
 		long tps = Util.getTPS(rows.size(), costTime);
-		logger.info("execute update sql with rows:"+rows.size()+" costTimeMills:"+costTime+" tps:"+ tps +" for sql:"+sql);
+		logger.info("execute update sql with rows:"+rows.size()+" costTimeMills:"+costTime+" tps:"+ tps +" for sql:"+getRealSql());
 	}
 
 	protected void executeWithJdbc(final List<Object> rows) {
+		String realSql = getRealSql();
+		
 		if(replaceSqlWithParams) {
-			ParsedSql parsedSql = NamedParameterUtils.parseSqlStatement(sql);
+			ParsedSql parsedSql = NamedParameterUtils.parseSqlStatement(realSql);
 			for(Object row : rows) {
 				execWithReplacedSql(parsedSql, row);
 			}
 		}else {
-			final String[] sqlArray = StringUtils.split(this.sql,";");
+			final String[] sqlArray = StringUtils.split(realSql,";");
 			TransactionTemplate tt = getTransactionTemplate();
 			
 			tt.execute(new TransactionCallback<Object>() {
