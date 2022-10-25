@@ -37,6 +37,16 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	private String afterSql;
 	
 	/**
+	 * 要插入数据的表
+	 */
+	private String table;
+	
+	/**
+	 * 自动增加列
+	 */
+	private boolean autoAlterTableAddColumn = false;
+	
+	/**
 	 * 是否将命名参数替换成实际值
 	 */
 	private boolean replaceSqlWithParams = false;
