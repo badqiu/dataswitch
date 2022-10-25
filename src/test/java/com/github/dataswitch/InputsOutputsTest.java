@@ -1,4 +1,4 @@
-package com.github.dataswitch.util;
+package com.github.dataswitch;
 
 import static org.junit.Assert.assertEquals;
 
