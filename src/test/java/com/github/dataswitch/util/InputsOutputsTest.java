@@ -64,6 +64,14 @@ public class InputsOutputsTest {
 		job.exec();
 		assertEquals(100,count);
 		assertEquals(198,writeCount);
+		
+		
+		count = 0;
+		job.setSync(true);
+		job.setBufferSize(50);
+		job.exec();
+		assertEquals(100,count);
+		assertEquals(297,writeCount);
 	}
 
 }
