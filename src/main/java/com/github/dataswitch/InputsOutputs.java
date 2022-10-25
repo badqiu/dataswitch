@@ -195,12 +195,14 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 		Input input = new MultiInput(inputs);
 		Output output = new MultiOutput(outputs);
 		
-		if(bufferSize > 0) {
-			output = new BufferedOutput(output, bufferSize, bufferTimeout);
-		}
 		if(async) {
 			output = new AsyncOutput(output);
 		}
+		
+		if(bufferSize > 0) {
+			output = new BufferedOutput(output, bufferSize, bufferTimeout);
+		}
+		
 		
 		Processor processor = null;
 		if(processors != null) {
