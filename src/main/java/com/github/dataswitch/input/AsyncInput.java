@@ -96,15 +96,11 @@ public class AsyncInput extends ProxyInput{
 							rows = input.read(readSize);
 							if(CollectionUtils.isEmpty(rows)) {
 								running = false;
-								queue.put(Collections.EMPTY_LIST);
-								input.commitInput();
+								queuePutAndCommitInput(input,Collections.EMPTY_LIST);
 								return; //exit for no data
 							}
 							
-							queue.put(rows);
-							
-							
-							input.commitInput();
+							queuePutAndCommitInput(input, rows);
 						}catch(InterruptedException e) {
 							logger.info("InterruptedException on read thread,exit thread",e);
 							return;
@@ -119,6 +115,11 @@ public class AsyncInput extends ProxyInput{
 					InputOutputUtil.closeQuietly(input);
 					logger.info("exit read thread,threadName:"+threadName);
 				}
+			}
+
+			private void queuePutAndCommitInput(Input input, List rows) throws InterruptedException {
+				queue.put(rows);
+				input.commitInput();
 			}
 
 

@@ -1,5 +1,6 @@
 package com.github.dataswitch;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public interface Enabled {
 	}
 	
 	public static <T> T[] filterByEnabled(T... items) {
-		List<T> results = new ArrayList();
+		List<T> results = new ArrayList<T>();
 		for(T item : items) {
 			if(item == null) continue;
 			
@@ -32,7 +33,11 @@ public interface Enabled {
 			}
 		}
 		
-		return (T[])results.toArray(new Object[0]);
+		if(results.isEmpty()) return null;
+		
+		T[] array = (T[])Array.newInstance(items.getClass().getComponentType(), results.size());
+		
+		return (T[])results.toArray(array);
 	}
 	
 	public static <T> List<T> filterByEnabled(List<T> items) {

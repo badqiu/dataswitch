@@ -15,6 +15,7 @@ import com.github.dataswitch.enums.Constants;
 import com.github.dataswitch.enums.FailMode;
 import com.github.dataswitch.input.Input;
 import com.github.dataswitch.input.MultiInput;
+import com.github.dataswitch.output.AsyncOutput;
 import com.github.dataswitch.output.BufferedOutput;
 import com.github.dataswitch.output.MultiOutput;
 import com.github.dataswitch.output.Output;
@@ -197,6 +198,9 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 		if(bufferSize > 0) {
 			output = new BufferedOutput(output, bufferSize, bufferTimeout);
 		}
+		if(async) {
+			output = new AsyncOutput(output);
+		}
 		
 		Processor processor = null;
 		if(processors != null) {
@@ -214,11 +218,13 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 		try {
 			
 			FailMode failModeEnum = FailMode.getRequiredByName(failMode);
-			if(async) {
-				rows = InputOutputUtil.asyncCopy(input,output,bufferSize,processor,params,failModeEnum,exceptionHandler);
-			}else {
-				rows = InputOutputUtil.copy(input, output,bufferSize,processor,params,failModeEnum,exceptionHandler);
-			}
+//			if(async) {
+//				rows = InputOutputUtil.asyncCopy(input,output,bufferSize,processor,params,failModeEnum,exceptionHandler);
+//			}else {
+//				rows = InputOutputUtil.copy(input, output,bufferSize,processor,params,failModeEnum,exceptionHandler);
+//			}
+			
+			rows = InputOutputUtil.copy(input, output,bufferSize,processor,params,failModeEnum,exceptionHandler);
 			costTime = System.currentTimeMillis() - start;
 			
 			return rows;
