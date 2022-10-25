@@ -38,14 +38,14 @@ public enum FailMode {
 	
 	public <T> void  forEach(Consumer<T> action,Iterable<T> items) {
 		Exception lastException = null;
-		T lastExceptionObject = null;
+		T lastExceptionData = null;
 		
 		for(T item : items) {
 			try {
 				action.accept(item);
 			}catch(Exception e) {
 				lastException = e;
-				lastExceptionObject = item;
+				lastExceptionData = item;
 				
 				if(this == FAIL_FAST) {
 					throw new RuntimeException("failFast at:"+e+" on data:"+item,e);
@@ -56,7 +56,7 @@ public enum FailMode {
 		}
 		
 		if(this == FAIL_AT_END && lastException != null) {
-			throw new RuntimeException("failAtEnd at:"+lastException+" on data:"+lastExceptionObject,lastException);
+			throw new RuntimeException("failAtEnd at:"+lastException+" on data:"+lastExceptionData,lastException);
 		}
 		
 	}
