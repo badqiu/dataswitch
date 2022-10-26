@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.util.Util;
 
@@ -23,7 +25,15 @@ public abstract class BaseInput extends BaseObject implements Input{
 			}
 			
 			Collection collection = Util.oneToList(obj);
+			if(CollectionUtils.isEmpty(collection)) {
+				break;
+			}
+			
 			result.addAll(collection);
+			
+			if(result.size() > size) {
+				break;
+			}
 		}
 		return result;
 	}

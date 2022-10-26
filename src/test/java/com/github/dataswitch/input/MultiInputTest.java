@@ -21,6 +21,20 @@ public class MultiInputTest {
 	}
 	
 	@Test
+	public void test_multi_by_setConcurrentRead() throws Exception {
+		FileInput fileInput1 = FileInputTest.newFileInput("name,age , sex", "classpath:test/fileinput/abc");
+		FileInput fileInput2 = FileInputTest.newFileInput("name,age , sex", "classpath:test/fileinput/2.txt");
+		MultiInput mi = new MultiInput(fileInput1,fileInput2);
+		mi.setConcurrentRead(true);
+		mi.open(null);
+//		Thread.sleep(1000);
+		
+		int rows = TestUtil.printInputReadRows(mi,0);
+		
+		assertEquals(rows,6);
+	}
+	
+	@Test
 	public void test() throws Exception {
 		FileInput fileInput1 = FileInputTest.newFileInput("name,age , sex", "classpath:test/fileinput/abc");
 		MultiInput mi = new MultiInput(fileInput1);

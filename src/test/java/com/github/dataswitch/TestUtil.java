@@ -13,17 +13,23 @@ import com.github.dataswitch.input.Input;
 public class TestUtil {
 
 	public static int printInputReadRows(Input input) throws Exception {
+		return printInputReadRows(input,1);
+	}
+	
+	public static int printInputReadRows(Input input,int expectedSize) throws Exception {
 		boolean empty = true;
 		int count = 0;
 		for(int i = 0; i < 10000; i++) {
 			List<Object> rows = input.read(1);
 			if(!rows.isEmpty()) {
 				empty = false;
-				Assert.assertEquals(rows.size(),1);
+				if(expectedSize > 0)
+					Assert.assertEquals(expectedSize,rows.size());
 			}
 			printRows(rows);
 			count += rows.size();
 		}
+		
 		Assert.assertFalse("must be not empty",empty);
 		input.close();
 		return count;

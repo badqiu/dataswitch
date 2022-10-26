@@ -68,6 +68,12 @@ public class AsyncInput extends ProxyInput{
 			
 			List rows = queue.take();
 			
+			if(CollectionUtils.isEmpty(rows)) {
+				//exit sign
+				
+			}
+			
+			
 			return rows;
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
@@ -89,6 +95,7 @@ public class AsyncInput extends ProxyInput{
 			@Override
 			public void run() {
 				try {
+					logger.info(threadName+" started");
 					
 					while(running) {
 						List rows = null;

@@ -1,6 +1,5 @@
 package com.github.dataswitch.input;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -10,8 +9,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.Enabled;
-import com.github.dataswitch.output.Output;
 import com.github.dataswitch.util.InputOutputUtil;
 
 /**
@@ -20,11 +19,11 @@ import com.github.dataswitch.util.InputOutputUtil;
  * @author badqiu
  *
  */
-public class MultiInput implements Input{
+public class MultiInput extends BaseObject implements Input{
 
 	private List<Input> inputs = new ArrayList<Input>();
 	
-	private Input currentInput;
+	private transient Input currentInput;
 	private AtomicInteger currentIndex = new AtomicInteger();
 	
 	private boolean concurrentRead = false; //并发读
@@ -82,22 +81,24 @@ public class MultiInput implements Input{
 	
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
-		inputs = Enabled.filterByEnabled(inputs);
-		InputOutputUtil.openAll(params, inputs);
+		this.inputs = Enabled.filterByEnabled(inputs);
+		
+		if(concurrentRead) {
+			List<Input> asyncInputs = new ArrayList<Input>();
+			for(int i = 0; i < inputs.size(); i++) {
+				asyncInputs.add(new AsyncInput(inputs.get(i)));
+			}
+			this.inputs = asyncInputs;
+		}
+		
+		InputOutputUtil.openAll(params, this.inputs);
 	}
 
 	@Override
 	public List<Object> read(int size) {
-		if(concurrentRead) {
-			return concurrentRead(size);
-		}else {
-			return sequenceRead(size);
-		}
+		return sequenceRead(size);
 	}
 	
-	private List<Object> concurrentRead(int size) {
-		throw new UnsupportedOperationException();
-	}
 
 	private List<Object> sequenceRead(int size) {
 		if(currentInput == null) {
