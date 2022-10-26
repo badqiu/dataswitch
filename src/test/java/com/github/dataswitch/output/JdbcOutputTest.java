@@ -1,7 +1,8 @@
 package com.github.dataswitch.output;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,7 +13,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.github.dataswitch.TestUtil;
 import com.github.dataswitch.input.JdbcInputTest;
-import com.github.dataswitch.output.JdbcOutput;
 import com.github.dataswitch.util.NamedParameterUtils;
 import com.github.dataswitch.util.ParsedSql;
 import com.github.rapid.common.util.MapUtil;
@@ -21,11 +21,12 @@ public class JdbcOutputTest {
 
 	JdbcOutput output = new JdbcOutput();
 	@Test
-	public void test() {
+	public void test_sql() throws Exception {
 		DataSource ds = JdbcInputTest.createDataSourceAndInsertData();
 		output.setDataSource(ds);
 		output.setBeforeSql("delete from user");
 		output.setSql("insert into user (id,username) values(:id,:username)");
+		output.open(new HashMap());
 		List<Object> inputRows = TestUtil.newTestDatas(20);
 		output.write(inputRows);
 		
@@ -35,12 +36,13 @@ public class JdbcOutputTest {
 	}
 	
 	@Test
-	public void test_lock_sql() {
+	public void test_lock_sql() throws Exception {
 		DataSource ds = JdbcInputTest.createDataSourceAndInsertData();
 		output.setDataSource(ds);
-		output.setLockSql("select * from user");
+		output.setLockSql("select * from user for update");
 		output.setBeforeSql("delete from user");
 		output.setSql("insert into user (id,username) values(:id,:username)");
+		output.open(new HashMap());
 		List<Object> inputRows = TestUtil.newTestDatas(20);
 		output.write(inputRows);
 		
@@ -76,4 +78,20 @@ public class JdbcOutputTest {
 		
 	}
 	
+	
+	@Test
+	public void test_table() throws Exception {
+		DataSource ds = JdbcInputTest.createDataSourceAndInsertData();
+		output.setDataSource(ds);
+		output.setBeforeSql("delete from user");
+		output.setTable("user");
+		output.setAutoAlterTableAddColumn(true);
+		output.open(new HashMap());
+		List<Object> inputRows = TestUtil.newTestDatas(20);
+		output.write(inputRows);
+		
+		List<Map<String,Object>> rows = new JdbcTemplate(ds).queryForList("select * from user");
+		TestUtil.printRows(rows);
+		assertEquals(20,rows.size());
+	}
 }

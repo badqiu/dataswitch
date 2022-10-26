@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 
 public class MapUtil {
 
@@ -35,6 +36,16 @@ public class MapUtil {
         return result;
     }
 	
+	public static Map<String, Object> keyToLowerCase(Map<String, Object> properties) {
+		if (properties == null) {
+			return Collections.emptyMap();
+		}
+
+		Map result = new HashMap(properties.size() * 2);
+		properties.forEach((key, value) -> result.put(StringUtils.lowerCase(key), value));
+
+		return result;
+	}
     
     public static Map getDifferenceMap(Map mainMap, Map compareMap) {
         Map result = new HashMap();

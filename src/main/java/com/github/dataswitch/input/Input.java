@@ -2,10 +2,11 @@ package com.github.dataswitch.input;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import com.github.dataswitch.Openable;
 
-public interface Input extends Openable,AutoCloseable{
+public interface Input extends Function<Integer, List<Object>>,Openable,AutoCloseable{
 	
 	/**
 	 * 读取数据，
@@ -23,5 +24,10 @@ public interface Input extends Openable,AutoCloseable{
 	
 	@Override
 	public default void close() throws Exception {
+	}
+	
+	@Override
+	default List<Object> apply(Integer t) {
+		return read(t);
 	}
 }

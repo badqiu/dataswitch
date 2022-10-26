@@ -164,15 +164,18 @@ public class JdbcUtil {
         return "STRING";
 	}    
     
+	public static String getH2DataType(Object value) {
+        return getMysqlDataType(value);
+	}
 	
 	
 	public static String generateInsertSqlByColumns(String table, Collection<String> allColumns) {
 		if(CollectionUtils.isEmpty(allColumns))
 			return null;
 		
-		StringJoiner valueJoiner = new StringJoiner(",", ":", "");
+		StringJoiner valueJoiner = new StringJoiner(",", "", "");
 		allColumns.forEach((item) -> {
-			valueJoiner.add(item);
+			valueJoiner.add(":"+item);
 		});
 		
 		String sql = "insert into " + table + " ("+joinColumns(allColumns)+") values ("+valueJoiner.toString()+")";
@@ -195,4 +198,6 @@ public class JdbcUtil {
 		}
 		return sb.toString();
 	}
+
+
 }

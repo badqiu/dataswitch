@@ -121,6 +121,10 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	}
 
 	public void init() {
+		if(StringUtils.isBlank(sql) && StringUtils.isBlank(table)) {
+			throw new IllegalStateException("table or sql must be not blank");
+		}
+		
 		executeWithSemicolonComma(getDataSource(),beforeSql);
 		logger.info("executed beforeSql:"+beforeSql);
 	}
@@ -158,15 +162,18 @@ public class JdbcOutput extends DataSourceProvider implements Output {
         if (missColumns == null) return;
         
         missColumns.forEach((key, value) -> {
-        	String sql = "ALTER TABLE "+table+"  ADD COLUMN `"+key+"` "+getDatabaseDataType(value);
+        	long start = System.currentTimeMillis();
+        	String sql = "ALTER TABLE "+table+"  ADD COLUMN "+key+" "+getDatabaseDataType(value);
         	jdbcTemplate.execute(sql);
+        	long cost = start - System.currentTimeMillis();
+        	logger.info("executed alter_table_add_column sql:["+sql+"], costSeconds:"+(cost/1000));
         });
         
         String cacheKey = JdbcUtil.getTableCacheKey(table, getJdbcUrl());
         JdbcUtil.tableColumnsCache.remove(cacheKey);
 	}
 
-	String _jdbcUrl = null;
+	String _cacheJdbcUrl = null;
 	private String getDatabaseDataType(Object value) {
 		String url = getJdbcUrl();
 		
@@ -182,22 +189,24 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 			return JdbcUtil.getPostgreSQLDataType(value);	
 		}else if(url.contains("hive2")) {
 			return JdbcUtil.getHiveDataType(value);
+		}else if(url.contains("jdbc:h2:")) {
+			return JdbcUtil.getH2DataType(value);			
 		}else {
 			throw new UnsupportedOperationException("cannot get database type by url:"+url);
 		}
 	}
 
 	private String getJdbcUrl()  {
-		if(StringUtils.isBlank(_jdbcUrl)) {
-			_jdbcUrl = getUrl();
+		if(StringUtils.isBlank(_cacheJdbcUrl)) {
+			_cacheJdbcUrl = getUrl();
 		}
 		
-		if(StringUtils.isBlank(_jdbcUrl)) {
+		if(StringUtils.isBlank(_cacheJdbcUrl)) {
 			try {
 				Connection connection = null;
 				try {
 					connection = getDataSource().getConnection();
-					_jdbcUrl = connection.getMetaData().getURL();
+					_cacheJdbcUrl = connection.getMetaData().getURL();
 				}finally {
 					if(connection != null) {
 						connection.close();
@@ -207,13 +216,14 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 				throw new RuntimeException("cannot get jdbc url by jdbc connection",e);
 			}
 		}
-		return _jdbcUrl;
+		
+		return _cacheJdbcUrl;
 	}
 
     
 	private Map getMissColumns(JdbcTemplate jdbcTemplate, Map allMap, String table) {
         Map tableColumns = JdbcUtil.getTableColumns(jdbcTemplate, table,getJdbcUrl());
-        return MapUtil.getDifferenceMap(tableColumns, allMap);
+        return MapUtil.getDifferenceMap(MapUtil.keyToLowerCase(tableColumns), MapUtil.keyToLowerCase(allMap));
 	}
 
 	@Override
@@ -228,6 +238,8 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	}
 
 	protected String executeWithJdbc(final List<Object> rows) {
+		if(CollectionUtils.isEmpty(rows)) return null;
+		
 		String realSql = getRealSql(rows);
 		
 		if(replaceSqlWithParams) {
@@ -247,8 +259,12 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 					for(final String updateSql : sqlArray) {
 						if(StringUtils.isBlank(updateSql)) 
 							continue;
-						SqlParameterSource[] batchArgs = newSqlParameterSource(rows);
-						new NamedParameterJdbcTemplate(getDataSource()).batchUpdate(updateSql, batchArgs);
+						try {
+							SqlParameterSource[] batchArgs = newSqlParameterSource(rows);
+							new NamedParameterJdbcTemplate(getDataSource()).batchUpdate(updateSql, batchArgs);
+						}catch(Exception e) {
+							throw new RuntimeException("execute sql error,sql:"+updateSql+" firstRow:"+rows.get(0),e);
+						}
 					}
 					return true;
 				}
