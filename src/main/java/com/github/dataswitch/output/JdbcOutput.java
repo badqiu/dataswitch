@@ -152,8 +152,18 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 			JdbcUtil.alterTableIfColumnMiss(jdbcTemplate, allMap,table,cacheJdbcUrl());
 			sql = generateInsertSql2ByColumns(table, allMap);
 		}else {
-			sql = generateInsertSqlByTargetTable(jdbcTemplate,table);
-			setSql(sql);
+			
+			if("insert".equals(outputMode)) {
+				sql = generateInsertSqlByTargetTable(jdbcTemplate,table);
+				setSql(sql);
+			}else if("replace".equals(outputMode)) {
+				throw new UnsupportedOperationException("error outputMode:"+outputMode);
+			}else if("update".equals(outputMode)) {
+				throw new UnsupportedOperationException("error outputMode:"+outputMode);
+			}else {
+				throw new UnsupportedOperationException("error outputMode:"+outputMode);
+			}
+			
 		}
 		
 		return sql;
