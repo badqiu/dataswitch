@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -15,7 +16,7 @@ import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.util.Assert;
 
 import com.github.dataswitch.support.DataSourceProvider;
-import com.github.rapid.common.util.MapUtil;
+import com.github.dataswitch.util.MapUtil;
 
 
 public class JdbcInput extends DataSourceProvider implements Input{
@@ -106,15 +107,15 @@ public class JdbcInput extends DataSourceProvider implements Input{
 		}
 		
 		if(mapKey2lowerCase) {
-			return (List)MapUtil.allMapKey2LowerCase(result);
+			List collect = (List)result.stream().map(item -> {return MapUtil.keyToLowerCase((Map)item);}).collect(Collectors.toList());
+			return collect;
+//			return (List)MapUtil.allMapKey2LowerCase(result);
 		}else {
 			return (List)result;
 		}
 	}
 	
 	public Map read() {
-
-		
 		try {
 			if(rs != null && rs.next()) {
 				return rowMapper.mapRow(rs,0);

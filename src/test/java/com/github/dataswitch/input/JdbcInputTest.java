@@ -26,6 +26,20 @@ public class JdbcInputTest {
 		assertEquals(6,count);
 	}
 	
+	@Test
+	public void test_setMapKey2lowerCase() throws Exception {
+		DriverManagerDataSource ds = createDataSourceAndInsertData();
+		
+		input.setDataSource(ds);
+		input.setSql("select * from user");
+		input.setMapKey2lowerCase(false);
+		input.init();
+		
+		int count = TestUtil.printInputReadRows(input);
+		assertEquals(6,count);
+	}
+	
+	
 	public static DriverManagerDataSource createDataSourceAndInsertData() {
 		DriverManagerDataSource ds = new DriverManagerDataSource();
 		ds.setUser("sa");

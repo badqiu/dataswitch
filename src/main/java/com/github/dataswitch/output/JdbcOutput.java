@@ -42,6 +42,10 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	private String sql;
 	private String beforeSql;
 	private String afterSql;
+
+	private String sessionSql; //在获取Mysql连接时，执行session指定的SQL语句，修改当前connection session属性
+	private String outputMode = "insert"; //insert/replace/update, 控制写入数据到目标表采用 insert into 或者 replace into 或者 ON DUPLICATE KEY UPDATE 语句
+
 	
 	/**
 	 * 要插入数据的表
@@ -145,7 +149,10 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		Assert.hasText(table,"table or sql must be not blank");
 		
 		Map allMap = MapUtil.mergeAllMap((List) rows);
+		
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(getDataSource());
+		executeWithSemicolonComma(getDataSource(), sessionSql);
+		
 		if(autoAlterTableAddColumn) {
 			alterTableIfColumnMiss(jdbcTemplate, allMap,table);
 			sql = generateInsertSql2ByColumns(table, allMap);

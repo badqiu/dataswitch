@@ -27,6 +27,8 @@ public class MultiInput implements Input{
 	private Input currentInput;
 	private AtomicInteger currentIndex = new AtomicInteger();
 	
+	private boolean concurrentRead = false; //并发读
+	
 	public MultiInput() {
 	}
 	
@@ -56,6 +58,14 @@ public class MultiInput implements Input{
 		inputs.add(input);
 	}
 	
+	public boolean isConcurrentRead() {
+		return concurrentRead;
+	}
+
+	public void setConcurrentRead(boolean concurrentRead) {
+		this.concurrentRead = concurrentRead;
+	}
+
 	@Override
 	public void commitInput() {
 		for(Input input : inputs) {
@@ -68,6 +78,8 @@ public class MultiInput implements Input{
 		InputOutputUtil.closeAllQuietly(inputs);
 	}
 	
+	
+	
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
 		inputs = Enabled.filterByEnabled(inputs);
@@ -76,7 +88,15 @@ public class MultiInput implements Input{
 
 	@Override
 	public List<Object> read(int size) {
-		return sequenceRead(size);
+		if(concurrentRead) {
+			return concurrentRead(size);
+		}else {
+			return sequenceRead(size);
+		}
+	}
+	
+	private List<Object> concurrentRead(int size) {
+		throw new UnsupportedOperationException();
 	}
 
 	private List<Object> sequenceRead(int size) {
