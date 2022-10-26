@@ -26,7 +26,7 @@ public class MultiInput extends BaseObject implements Input{
 	private transient Input currentInput;
 	private AtomicInteger currentIndex = new AtomicInteger();
 	
-	private boolean concurrentRead = false; //并发读
+	private boolean concurrent = false; //并发读
 	
 	public MultiInput() {
 	}
@@ -57,12 +57,12 @@ public class MultiInput extends BaseObject implements Input{
 		inputs.add(input);
 	}
 	
-	public boolean isConcurrentRead() {
-		return concurrentRead;
+	public boolean isConcurrent() {
+		return concurrent;
 	}
 
-	public void setConcurrentRead(boolean concurrentRead) {
-		this.concurrentRead = concurrentRead;
+	public void setConcurrent(boolean concurrent) {
+		this.concurrent = concurrent;
 	}
 
 	@Override
@@ -83,7 +83,7 @@ public class MultiInput extends BaseObject implements Input{
 	public void open(Map<String, Object> params) throws Exception {
 		this.inputs = Enabled.filterByEnabled(inputs);
 		
-		if(concurrentRead) {
+		if(concurrent) {
 			this.inputs = toAsyncInputs(inputs);
 		}
 		

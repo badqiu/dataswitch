@@ -25,7 +25,7 @@ public class MultiInputTest {
 		FileInput fileInput1 = FileInputTest.newFileInput("name,age , sex", "classpath:test/fileinput/abc");
 		FileInput fileInput2 = FileInputTest.newFileInput("name,age , sex", "classpath:test/fileinput/2.txt");
 		MultiInput mi = new MultiInput(fileInput1,fileInput2);
-		mi.setConcurrentRead(true);
+		mi.setConcurrent(true);
 		mi.open(null);
 //		Thread.sleep(1000);
 		
