@@ -12,14 +12,14 @@ import java.util.List;
 
 public class IOUtil {
 
-	public static List<String> readLines(BufferedReader reader ,int size) throws IOException {
+	public static List<String> readLines(BufferedReader reader ,int maxLineCount) throws IOException {
 		List<String> lines = new ArrayList<String>();
 		String line = null;
 		int count = 1;
 		while((line = reader.readLine()) != null) {
 			count++;
 			lines.add(line);
-			if(count > size) {
+			if(count > maxLineCount) {
 				break;
 			}
 		}

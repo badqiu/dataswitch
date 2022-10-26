@@ -96,7 +96,8 @@ public class AsyncInput extends ProxyInput{
 							rows = input.read(readSize);
 							if(CollectionUtils.isEmpty(rows)) {
 								running = false;
-								queuePutAndCommitInput(input,Collections.EMPTY_LIST);
+								List exitSign = Collections.EMPTY_LIST;
+								queuePutAndCommitInput(input,exitSign);
 								return; //exit for no data
 							}
 							
