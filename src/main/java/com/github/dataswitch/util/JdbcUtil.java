@@ -49,30 +49,15 @@ public class JdbcUtil {
 		if(CollectionUtils.isEmpty(allColumns))
 			return null;
 		
-		StringJoiner valueJoiner = new StringJoiner(",", "", "");
-		allColumns.forEach((item) -> {
-			valueJoiner.add(":"+item);
+		StringJoiner valueJoiner = new StringJoiner(",");
+		StringJoiner keyJoiner = new StringJoiner(",");
+		allColumns.forEach((columnName) -> {
+			valueJoiner.add(":"+columnName);
+			keyJoiner.add("`"+columnName+"`");
 		});
 		
-		String sql = "insert into " + table + " ("+joinColumns(allColumns)+") values ("+valueJoiner.toString()+")";
+		String sql = "insert into " + table + " ("+keyJoiner.toString()+") values ("+valueJoiner.toString()+")";
 		return sql;
-	}
-
-	public static String joinColumns(Collection<String> list) {
-		if(CollectionUtils.isEmpty(list)) return "";
-		
-		StringBuilder sb = new StringBuilder();
-		boolean isFirst = true;
-		for(String item : list) {
-			item = "`"+item+"`";
-			if(isFirst) {
-				isFirst = false;
-				sb.append(item);
-			}else {
-				sb.append(",").append(item);
-			}
-		}
-		return sb.toString();
 	}
 
 
