@@ -5,10 +5,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import com.github.dataswitch.Openable;
 
-public interface Output extends Consumer<List<Object>>,AutoCloseable,Flushable,Openable{
+public interface Output extends Function<List<Object>,Void>,Consumer<List<Object>>,AutoCloseable,Flushable,Openable{
 
 	public void write(List<Object> rows);
 	
@@ -28,6 +29,12 @@ public interface Output extends Consumer<List<Object>>,AutoCloseable,Flushable,O
 	@Override
 	default void accept(List<Object> t) {
 		write(t);
+	}
+	
+	@Override
+	default Void apply(List<Object> t) {
+		accept(t);
+		return null;
 	}
 	
 }
