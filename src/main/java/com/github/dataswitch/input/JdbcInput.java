@@ -26,12 +26,13 @@ public class JdbcInput extends DataSourceProvider implements Input{
 	private String id;
 	private String sql;
 	private String table;
-	private int fetchSize = 10000;
+	private int fetchSize = 1000;
 	private boolean mapKey2lowerCase = true;
 	
 	private transient ResultSet rs;
 	private transient Connection conn;
 	private transient ColumnMapRowMapper rowMapper = new ColumnMapRowMapper();
+	private int rowNumber = 0;
 	
 	public String getId() {
 		return id;
@@ -117,8 +118,12 @@ public class JdbcInput extends DataSourceProvider implements Input{
 	
 	public Map read() {
 		try {
-			if(rs != null && rs.next()) {
-				return rowMapper.mapRow(rs,0);
+			if(rs == null) return null;
+			
+			if(rs.next()) {
+				Map<String, Object> mapRow = rowMapper.mapRow(rs,rowNumber++);
+				mapRow = processRow(mapRow);
+				return mapRow;
 			}
 			return null;
 		}catch(Exception e) {
@@ -126,6 +131,10 @@ public class JdbcInput extends DataSourceProvider implements Input{
 		}
 	}
 	
+	protected Map<String, Object> processRow(Map<String, Object> mapRow) {
+		return mapRow;
+	}
+
 	@Override
 	public void close() {
 		JdbcUtils.closeResultSet(rs);
