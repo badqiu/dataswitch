@@ -140,9 +140,7 @@ public class MultiFunctionOutput extends ProxyOutput {
 			output = new PrintOutput();
 		}
 		
-		if(buffered) {
-			output = new BufferedOutput(output,bufferSize,bufferTimeout);
-		}
+		
 		if(retry) {
 			RetryOutput retryOutput = new RetryOutput(output);
 			retryOutput.setRetryIntervalMills(retryIntervalMills);
@@ -162,6 +160,10 @@ public class MultiFunctionOutput extends ProxyOutput {
 		}
 		if(async) {
 			output = new AsyncOutput(output);
+		}
+		
+		if(buffered) {
+			output = new BufferedOutput(output,bufferSize,bufferTimeout);
 		}
 		
 		
