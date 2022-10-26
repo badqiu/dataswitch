@@ -164,7 +164,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	}
 	
 	private String generateInsertSqlByTargetTable(JdbcTemplate jdbcTemplate,String table) {
-		Map tableColumns = JdbcUtil.getTableColumns(jdbcTemplate, table, getJdbcUrl());
+		Map tableColumns = JdbcUtil.getTableColumns(jdbcTemplate, table, cacheJdbcUrl());
 		ArrayList columns = new ArrayList(MapUtil.keyToLowerCase(tableColumns).keySet());
 		return JdbcUtil.generateInsertSqlByColumns(table,columns);
 	}
@@ -185,17 +185,17 @@ public class JdbcOutput extends DataSourceProvider implements Output {
         	logger.info("executed alter_table_add_column sql:["+sql+"], costSeconds:"+(cost/1000));
         });
         
-        String cacheKey = JdbcUtil.getTableCacheKey(table, getJdbcUrl());
+        String cacheKey = JdbcUtil.getTableCacheKey(table, cacheJdbcUrl());
         JdbcUtil.tableColumnsCache.remove(cacheKey);
 	}
 
 	String _cacheJdbcUrl = null;
 	public String getDatabaseDataType(Object value) {
-		String url = getJdbcUrl();
+		String url = cacheJdbcUrl();
 		return JdbcDataTypeUtil.getDatabaseDataType(url, value);
 	}
 
-	private String getJdbcUrl()  {
+	private String cacheJdbcUrl()  {
 		if(StringUtils.isBlank(_cacheJdbcUrl)) {
 			_cacheJdbcUrl = getUrl();
 		}
@@ -221,7 +221,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 
     
 	private Map getMissColumns(JdbcTemplate jdbcTemplate, Map allMap, String table) {
-        Map tableColumns = JdbcUtil.getTableColumns(jdbcTemplate, table,getJdbcUrl());
+        Map tableColumns = JdbcUtil.getTableColumns(jdbcTemplate, table,cacheJdbcUrl());
         return MapUtil.getDifferenceMap(MapUtil.keyToLowerCase(tableColumns), MapUtil.keyToLowerCase(allMap));
 	}
 
@@ -336,7 +336,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	}
 	
 	private boolean isClickhouseDatabase() {
-		return getJdbcUrl().contains("clickhouse");
+		return cacheJdbcUrl().contains("clickhouse");
 	}
 
 	protected static void executeWithSemicolonComma(DataSource ds, String sql) {
