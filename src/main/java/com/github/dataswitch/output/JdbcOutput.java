@@ -1,15 +1,12 @@
 package com.github.dataswitch.output;
 
-import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.ComparatorUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,13 +22,11 @@ import org.springframework.util.Assert;
 
 import com.github.dataswitch.support.DataSourceProvider;
 import com.github.dataswitch.util.DefaultValueMapSqlParameterSource;
-import com.github.dataswitch.util.JdbcDataTypeUtil;
 import com.github.dataswitch.util.JdbcUtil;
 import com.github.dataswitch.util.MapUtil;
 import com.github.dataswitch.util.NamedParameterUtils;
 import com.github.dataswitch.util.ParsedSql;
 import com.github.dataswitch.util.Util;
-import com.github.rapid.common.beanutils.PropertyUtils;
 
 
 public class JdbcOutput extends DataSourceProvider implements Output {
@@ -140,7 +135,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		init();
 	}
 	
-	private String getRealSql(final List<Object> rows) {
+	private String getRealSqlOrAlterTable(final List<Object> rows) {
 		String sql = getSql();
 		if(StringUtils.isNotBlank(sql)) {
 			return sql;
@@ -154,7 +149,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		executeWithSemicolonComma(getDataSource(), sessionSql);
 		
 		if(autoAlterTableAddColumn) {
-			alterTableIfColumnMiss(jdbcTemplate, allMap,table);
+			JdbcUtil.alterTableIfColumnMiss(jdbcTemplate, allMap,table,cacheJdbcUrl());
 			sql = generateInsertSql2ByColumns(table, allMap);
 		}else {
 			sql = generateInsertSqlByTargetTable(jdbcTemplate,table);
@@ -175,56 +170,16 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		return JdbcUtil.generateInsertSqlByColumns(table,columns);
 	}
 
-	private void alterTableIfColumnMiss(JdbcTemplate jdbcTemplate, Map allMap, String table) {
-		Map missColumns = getMissColumns(jdbcTemplate, allMap, table);
-        if (missColumns == null) return;
-        
-        missColumns.forEach((key, value) -> {
-        	long start = System.currentTimeMillis();
-        	String sql = "ALTER TABLE "+table+"  ADD COLUMN `"+key+"` "+getDatabaseDataType(value);
-        	jdbcTemplate.execute(sql);
-        	long cost = start - System.currentTimeMillis();
-        	logger.info("executed alter_table_add_column sql:["+sql+"], costSeconds:"+(cost/1000));
-        });
-        
-        String cacheKey = JdbcUtil.getTableCacheKey(table, cacheJdbcUrl());
-        JdbcUtil.tableColumnsCache.remove(cacheKey);
-	}
 
 	String _cacheJdbcUrl = null;
-	public String getDatabaseDataType(Object value) {
-		String url = cacheJdbcUrl();
-		return JdbcDataTypeUtil.getDatabaseDataType(url, value);
-	}
-
 	private String cacheJdbcUrl()  {
 		if(StringUtils.isBlank(_cacheJdbcUrl)) {
 			_cacheJdbcUrl = getUrl();
 		}
-		
 		if(StringUtils.isBlank(_cacheJdbcUrl)) {
-			try {
-				Connection connection = null;
-				try {
-					connection = getDataSource().getConnection();
-					_cacheJdbcUrl = connection.getMetaData().getURL();
-				}finally {
-					if(connection != null) {
-						connection.close();
-					}
-				}
-			}catch(Exception e) {
-				throw new RuntimeException("cannot get jdbc url by jdbc connection",e);
-			}
+			_cacheJdbcUrl = JdbcUtil.getJdbcUrl(getDataSource());
 		}
-		
 		return _cacheJdbcUrl;
-	}
-
-    
-	private Map getMissColumns(JdbcTemplate jdbcTemplate, Map allMap, String table) {
-        Map tableColumns = JdbcUtil.getTableColumns(jdbcTemplate, table,cacheJdbcUrl());
-        return MapUtil.getDifferenceMap(MapUtil.keyToLowerCase(tableColumns), MapUtil.keyToLowerCase(allMap));
 	}
 
 	@Override
@@ -241,7 +196,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	protected String executeWithJdbc(final List<Object> rows) {
 		if(CollectionUtils.isEmpty(rows)) return null;
 		
-		String realSql = getRealSql(rows);
+		String realSql = getRealSqlOrAlterTable(rows);
 		
 		if(replaceSqlWithParams) {
 			ParsedSql parsedSql = NamedParameterUtils.parseSqlStatement(realSql);
@@ -250,14 +205,14 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 			}
 		}else {
 			
-			final String[] sqlArray = StringUtils.split(realSql,SQL_SEPARATOR_CHAR);
+			final String[] updateSqls = StringUtils.split(realSql,SQL_SEPARATOR_CHAR);
 			TransactionTemplate tt = getTransactionTemplate();
 			
 			tt.execute(new TransactionCallback<Object>() {
 				public Object doInTransaction(TransactionStatus status) {
 					executeWithSemicolonComma(getDataSource(),lockSql);
 					
-					for(final String updateSql : sqlArray) {
+					for(final String updateSql : updateSqls) {
 						if(StringUtils.isBlank(updateSql)) 
 							continue;
 						
@@ -277,33 +232,10 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	}
 
 	private void execWithReplacedSql(ParsedSql parsedSql, Object row) {
-		String replacedSql = getReplacedSql(parsedSql, row);
-//		new NamedParameterJdbcTemplate(getDataSource()).execute(replacedSql, paramMap, action)
+		String replacedSql = JdbcUtil.getReplacedSql(parsedSql, row);
 		new JdbcTemplate(getDataSource()).execute(replacedSql);
 	}
 
-	public static String getReplacedSql(ParsedSql parsedSql, Object row) {
-		String replacedSql = parsedSql.getOriginalSql();
-		List<String> parameterNames = new ArrayList(parsedSql.getParameterNames());
-		Collections.sort(parameterNames,ComparatorUtils.reversedComparator(null));
-		for(String name : parameterNames) {
-			Object value = PropertyUtils.getSimpleProperty(row, name);
-			
-			if(value == null) throw new RuntimeException("not found value for name:"+name+" on sql:"+parsedSql.getOriginalSql()+",row:"+row);
-			
-			replacedSql = StringUtils.replace(replacedSql, ":"+name,getReplacedValue(value));
-		}
-		return replacedSql;
-	}
-
-	private static String getReplacedValue(Object value) {
-		if(value == null) return "";
-		
-		if(value instanceof String) {
-			return "'"+value+"'";
-		}
-		return String.valueOf(value);
-	}
 
 	public TransactionTemplate getTransactionTemplate() {
 		if(transactionTemplate == null) {
@@ -320,6 +252,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	protected SqlParameterSource[] newSqlParameterSource(final List<Object> rows) {
 		SqlParameterSource[] batchArgs = new SqlParameterSource[rows.size()];
 		int i = 0;
+		
 		boolean isClickhouseDatabase = isClickhouseDatabase();
 		for (Object row : rows) {
 			if(row instanceof Map) {

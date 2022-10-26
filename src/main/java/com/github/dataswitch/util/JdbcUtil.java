@@ -1,21 +1,53 @@
 package com.github.dataswitch.util;
 
+import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
+import javax.sql.DataSource;
+
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ComparatorUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.jdbc.support.rowset.SqlRowSetMetaData;
 
-public class JdbcUtil {
+import com.github.rapid.common.beanutils.PropertyUtils;
 
+public class JdbcUtil {
+	private static Logger logger = LoggerFactory.getLogger(JdbcUtil.class);
+	
     public static Map<String,Map> tableColumnsCache = new HashMap<String,Map>();
     
+	private static Map getMissColumns(JdbcTemplate jdbcTemplate, Map allMap, String table,String jdbcUrl) {
+        Map tableColumns = JdbcUtil.getTableColumns(jdbcTemplate, table,jdbcUrl);
+        return MapUtil.getDifferenceMap(MapUtil.keyToLowerCase(tableColumns), MapUtil.keyToLowerCase(allMap));
+	}
+	
+	public static void alterTableIfColumnMiss(JdbcTemplate jdbcTemplate, Map allMap, String table,String jdbcUrl) {
+		Map missColumns = getMissColumns(jdbcTemplate, allMap, table,jdbcUrl);
+        if (missColumns == null) return;
+        
+        missColumns.forEach((key, value) -> {
+        	long start = System.currentTimeMillis();
+        	String sql = "ALTER TABLE "+table+"  ADD COLUMN `"+key+"` "+JdbcDataTypeUtil.getDatabaseDataType(jdbcUrl,value);
+        	jdbcTemplate.execute(sql);
+        	long cost = start - System.currentTimeMillis();
+        	logger.info("executed alter_table_add_column sql:["+sql+"], costSeconds:"+(cost/1000));
+        });
+        
+        String cacheKey = JdbcUtil.getTableCacheKey(table, jdbcUrl);
+        JdbcUtil.tableColumnsCache.remove(cacheKey);
+	}
+	
 	public static String getTableCacheKey(String tableName, String jdbcUrl) {
 		String cacheKey = jdbcUrl + tableName;
 		return cacheKey;
@@ -69,6 +101,50 @@ public class JdbcUtil {
 		String sql = "insert into " + table + " ("+keyJoiner.toString()+") values ("+valueJoiner.toString()+")";
 		return sql;
 	}
+	
+	public static String getJdbcUrl(DataSource dataSource)  {
+		String result = null;
+		if(StringUtils.isBlank(result)) {
+			try {
+				Connection connection = null;
+				try {
+					connection = dataSource.getConnection();
+					result = connection.getMetaData().getURL();
+				}finally {
+					if(connection != null) {
+						connection.close();
+					}
+				}
+			}catch(Exception e) {
+				throw new RuntimeException("cannot get jdbc url by jdbc connection",e);
+			}
+		}
+		
+		return result;
+	}
+	
+	public static String getReplacedSql(ParsedSql parsedSql, Object row) {
+		String replacedSql = parsedSql.getOriginalSql();
+		List<String> parameterNames = new ArrayList(parsedSql.getParameterNames());
+		Collections.sort(parameterNames,ComparatorUtils.reversedComparator(null));
+		
+		for(String name : parameterNames) {
+			Object value = PropertyUtils.getSimpleProperty(row, name);
+			
+			if(value == null) throw new RuntimeException("not found value for name:"+name+" on sql:"+parsedSql.getOriginalSql()+",row:"+row);
+			
+			replacedSql = StringUtils.replace(replacedSql, ":"+name,getReplacedValue(value));
+		}
+		return replacedSql;
+	}
 
-
+	private static String getReplacedValue(Object value) {
+		if(value == null) return "";
+		
+		if(value instanceof String) {
+			return "'"+value+"'";
+		}
+		return String.valueOf(value);
+	}
+	
 }

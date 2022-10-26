@@ -2,9 +2,13 @@ package com.github.dataswitch.util;
 
 import java.util.Date;
 
+import org.springframework.util.Assert;
+
 public class JdbcDataTypeUtil {
 
 	public static String getDatabaseDataType(String url,Object value) {
+		Assert.hasText(url,"jdbc url must be not blank");
+		
 		if(url.contains("mysql") || url.contains("mariadb")) {
 			return JdbcDataTypeUtil.getMysqlDataType(value);
 		}else if(url.contains("clickhouse")) {

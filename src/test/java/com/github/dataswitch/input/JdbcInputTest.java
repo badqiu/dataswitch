@@ -39,12 +39,14 @@ public class JdbcInputTest {
 		assertEquals(6,count);
 	}
 	
-	
+	static int dbCount = 0;
 	public static DriverManagerDataSource createDataSourceAndInsertData() {
+		dbCount++;
 		DriverManagerDataSource ds = new DriverManagerDataSource();
+		
 		ds.setUser("sa");
 		ds.setPassword("");
-		ds.setJdbcUrl("jdbc:h2:mem:object_sql_query;MODE=MYSQL;DB_CLOSE_DELAY=-1");
+		ds.setJdbcUrl("jdbc:h2:mem:object_sql_query_"+dbCount+";MODE=MYSQL;DB_CLOSE_DELAY=-1");
 		ds.setDriverClass("org.h2.Driver");
 		
 		new JdbcTemplate(ds).execute("create table user(id int primary key,username varchar(20),password varchar(20),age int,sex varchar(1))");
