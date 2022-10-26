@@ -12,14 +12,14 @@ import com.github.dataswitch.BaseObject;
  */
 public abstract class ReadOnceInput extends BaseObject implements Input {
 
-	private boolean read = false;
+	private boolean readOnce = false;
 
 	public List<Object> read(int size) {
-		if(read) return null;
+		if(readOnce) return null;
 		
 		synchronized (this) {
-			if(read) return null;
-			read = true;
+			if(readOnce) return null;
+			readOnce = true;
 		}
 		
 		try {
