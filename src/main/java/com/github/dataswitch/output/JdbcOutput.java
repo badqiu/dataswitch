@@ -1,5 +1,6 @@
 package com.github.dataswitch.output;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -21,15 +22,20 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.Assert;
 
 import com.github.dataswitch.support.DataSourceProvider;
+import com.github.dataswitch.util.JdbcUtil;
+import com.github.dataswitch.util.MapUtil;
 import com.github.dataswitch.util.NamedParameterUtils;
 import com.github.dataswitch.util.ParsedSql;
 import com.github.dataswitch.util.Util;
 import com.github.rapid.common.beanutils.PropertyUtils;
 
-public class JdbcOutput extends DataSourceProvider implements Output {
 
+public class JdbcOutput extends DataSourceProvider implements Output {
+	private static final String SQL_SEPARATOR_CHAR = ";";
+	
 	private static Logger logger = LoggerFactory.getLogger(JdbcOutput.class);
 	private String lockSql;
 	private String sql;
@@ -45,6 +51,11 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	 * 自动增加列
 	 */
 	private boolean autoAlterTableAddColumn = false;
+	
+	/**
+	 * 自动创建表
+	 */
+	private boolean autoCreateTable = false;
 	
 	/**
 	 * 是否将命名参数替换成实际值
@@ -92,6 +103,22 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	public void setReplaceSqlWithParams(boolean replaceSqlWithParams) {
 		this.replaceSqlWithParams = replaceSqlWithParams;
 	}
+	
+	public String getTable() {
+		return table;
+	}
+
+	public void setTable(String table) {
+		this.table = table;
+	}
+
+	public void setAutoAlterTableAddColumn(boolean autoAlterTableAddColumn) {
+		this.autoAlterTableAddColumn = autoAlterTableAddColumn;
+	}
+
+	public void setAutoCreateTable(boolean autoCreateTable) {
+		this.autoCreateTable = autoCreateTable;
+	}
 
 	public void init() {
 		executeWithSemicolonComma(getDataSource(),beforeSql);
@@ -104,23 +131,104 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		init();
 	}
 	
-	private String getRealSql() {
-		return getSql();
+	private String getRealSql(final List<Object> rows) {
+		String sql = getSql();
+		if(StringUtils.isNotBlank(sql)) {
+			return sql;
+		}
+		
+		Assert.hasText(table,"table or sql must be not blank");
+		
+		Map allMap = MapUtil.mergeAllMap((List) rows);
+		if(autoAlterTableAddColumn) {
+			alterTableIfColumnMiss(new JdbcTemplate(getDataSource()), allMap,table);
+		}
+		
+		sql = generateInsertSql2ByColumns(table, allMap);
+		
+		return sql;
 	}
 	
+	private String generateInsertSql2ByColumns(String table, Map allMap) {
+		return JdbcUtil.generateInsertSqlByColumns(table,new ArrayList(allMap.keySet()));
+	}
+
+	private void alterTableIfColumnMiss(JdbcTemplate jdbcTemplate, Map allMap, String table) {
+		Map missColumns = getMissColumns(jdbcTemplate, allMap, table);
+        if (missColumns == null) return;
+        
+        missColumns.forEach((key, value) -> {
+        	String sql = "ALTER TABLE "+table+"  ADD COLUMN `"+key+"` "+getDatabaseDataType(value);
+        	jdbcTemplate.execute(sql);
+        });
+        
+        String cacheKey = JdbcUtil.getTableCacheKey(table, getJdbcUrl());
+        JdbcUtil.tableColumnsCache.remove(cacheKey);
+	}
+
+	String _jdbcUrl = null;
+	private String getDatabaseDataType(Object value) {
+		String url = getJdbcUrl();
+		
+		if(url.contains("mysql") || url.contains("mariadb")) {
+			return JdbcUtil.getMysqlDataType(value);
+		}else if(url.contains("clickhouse")) {
+			return JdbcUtil.getClickHouseDataType(value);
+		}else if(url.contains("sqlserver")) {
+			return JdbcUtil.getSqlServerDataType(value);
+		}else if(url.contains("oracle")) {
+			return JdbcUtil.getOracleDataType(value);	
+		}else if(url.contains("postgresql")) {
+			return JdbcUtil.getPostgreSQLDataType(value);	
+		}else if(url.contains("hive2")) {
+			return JdbcUtil.getHiveDataType(value);
+		}else {
+			throw new UnsupportedOperationException("cannot get database type by url:"+url);
+		}
+	}
+
+	private String getJdbcUrl()  {
+		if(StringUtils.isBlank(_jdbcUrl)) {
+			_jdbcUrl = getUrl();
+		}
+		
+		if(StringUtils.isBlank(_jdbcUrl)) {
+			try {
+				Connection connection = null;
+				try {
+					connection = getDataSource().getConnection();
+					_jdbcUrl = connection.getMetaData().getURL();
+				}finally {
+					if(connection != null) {
+						connection.close();
+					}
+				}
+			}catch(Exception e) {
+				throw new RuntimeException("cannot get jdbc url by jdbc connection",e);
+			}
+		}
+		return _jdbcUrl;
+	}
+
+    
+	private Map getMissColumns(JdbcTemplate jdbcTemplate, Map allMap, String table) {
+        Map tableColumns = JdbcUtil.getTableColumns(jdbcTemplate, table,getJdbcUrl());
+        return MapUtil.getDifferenceMap(tableColumns, allMap);
+	}
+
 	@Override
 	public void write(final List<Object> rows) {
 		if(CollectionUtils.isEmpty(rows)) return;
 		
 		long start = System.currentTimeMillis();
-		executeWithJdbc(rows);
+		String sql = executeWithJdbc(rows);
 		long costTime = System.currentTimeMillis() - start;
 		long tps = Util.getTPS(rows.size(), costTime);
-		logger.info("execute update sql with rows:"+rows.size()+" costTimeMills:"+costTime+" tps:"+ tps +" for sql:"+getRealSql());
+		logger.info("execute update sql with rows:"+rows.size()+" costTimeMills:"+costTime+" tps:"+ tps +" for sql:"+sql);
 	}
 
-	protected void executeWithJdbc(final List<Object> rows) {
-		String realSql = getRealSql();
+	protected String executeWithJdbc(final List<Object> rows) {
+		String realSql = getRealSql(rows);
 		
 		if(replaceSqlWithParams) {
 			ParsedSql parsedSql = NamedParameterUtils.parseSqlStatement(realSql);
@@ -128,7 +236,8 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 				execWithReplacedSql(parsedSql, row);
 			}
 		}else {
-			final String[] sqlArray = StringUtils.split(realSql,";");
+			
+			final String[] sqlArray = StringUtils.split(realSql,SQL_SEPARATOR_CHAR);
 			TransactionTemplate tt = getTransactionTemplate();
 			
 			tt.execute(new TransactionCallback<Object>() {
@@ -145,6 +254,8 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 				}
 			});
 		}
+		
+		return realSql;
 	}
 
 	private void execWithReplacedSql(ParsedSql parsedSql, Object row) {
@@ -207,7 +318,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 			return;
 		}
 		
-		String[] sqls = sql.split(";");
+		final String[] sqls = StringUtils.split(sql,SQL_SEPARATOR_CHAR);;
 		for (String s : sqls) {
 			if(StringUtils.isBlank(s)) {
 				continue;
