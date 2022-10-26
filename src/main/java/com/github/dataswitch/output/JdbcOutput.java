@@ -158,6 +158,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 			sql = generateInsertSql2ByColumns(table, allMap);
 		}else {
 			sql = generateInsertSqlByTargetTable(jdbcTemplate,table);
+			setSql(sql);
 		}
 		
 		return sql;
