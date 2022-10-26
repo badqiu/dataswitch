@@ -18,7 +18,9 @@ public class JdbcDataTypeUtil {
 		}else if(url.contains("hive2")) {
 			return JdbcDataTypeUtil.getHiveDataType(value);
 		}else if(url.contains("jdbc:h2:")) {
-			return JdbcDataTypeUtil.getH2DataType(value);			
+			return JdbcDataTypeUtil.getH2DataType(value);	
+		}else if(url.contains("jdbc:hsqldb:")) {
+			return JdbcDataTypeUtil.getHSQLDataType(value);			
 		}else {
 			throw new UnsupportedOperationException("cannot get database type by url:"+url);
 		}
@@ -163,5 +165,44 @@ public class JdbcDataTypeUtil {
 
         return "VARCHAR(200)";		
 	}
+
+	public static String getHSQLDataType(Object value) {
+        if (value == null) {
+            return "VARCHAR(200)";
+        }
+
+        if (value instanceof String) {
+            return "VARCHAR(200)";
+        }
+
+		if(value instanceof Double) return "REAL";
+		if(value instanceof Float) return "REAL";
+		if(value.getClass() == double.class) return "REAL";
+		if(value.getClass() == float.class) return "REAL";
+		
+		if(value instanceof Number) return "BIGINT";
+		if(value instanceof Date) return "DATETIME";
+
+        return "VARCHAR(200)";		
+	}
 	
+	public static String getSybaseDataType(Object value) {
+        if (value == null) {
+            return "VARCHAR(200)";
+        }
+
+        if (value instanceof String) {
+            return "VARCHAR(200)";
+        }
+
+		if(value instanceof Double) return "REAL";
+		if(value instanceof Float) return "REAL";
+		if(value.getClass() == double.class) return "REAL";
+		if(value.getClass() == float.class) return "REAL";
+		
+		if(value instanceof Number) return "BIGINT";
+		if(value instanceof Date) return "datetime";
+
+        return "VARCHAR(200)";		
+	}
 }

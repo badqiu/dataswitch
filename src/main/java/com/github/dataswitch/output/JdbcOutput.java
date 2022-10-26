@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -25,6 +24,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.Assert;
 
 import com.github.dataswitch.support.DataSourceProvider;
+import com.github.dataswitch.util.DefaultValueMapSqlParameterSource;
 import com.github.dataswitch.util.JdbcDataTypeUtil;
 import com.github.dataswitch.util.JdbcUtil;
 import com.github.dataswitch.util.MapUtil;
@@ -145,15 +145,23 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		Assert.hasText(table,"table or sql must be not blank");
 		
 		Map allMap = MapUtil.mergeAllMap((List) rows);
+		JdbcTemplate jdbcTemplate = new JdbcTemplate(getDataSource());
 		if(autoAlterTableAddColumn) {
-			alterTableIfColumnMiss(new JdbcTemplate(getDataSource()), allMap,table);
+			alterTableIfColumnMiss(jdbcTemplate, allMap,table);
+			sql = generateInsertSql2ByColumns(table, allMap);
+		}else {
+			sql = generateInsertSqlByTargetTable(jdbcTemplate,table);
 		}
-		
-		sql = generateInsertSql2ByColumns(table, allMap);
 		
 		return sql;
 	}
 	
+	private String generateInsertSqlByTargetTable(JdbcTemplate jdbcTemplate,String table) {
+		Map tableColumns = JdbcUtil.getTableColumns(jdbcTemplate, table, getJdbcUrl());
+		ArrayList columns = new ArrayList(MapUtil.keyToLowerCase(tableColumns).keySet());
+		return JdbcUtil.generateInsertSqlByColumns(table,columns);
+	}
+
 	private String generateInsertSql2ByColumns(String table, Map allMap) {
 		return JdbcUtil.generateInsertSqlByColumns(table,new ArrayList(allMap.keySet()));
 	}
@@ -164,7 +172,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
         
         missColumns.forEach((key, value) -> {
         	long start = System.currentTimeMillis();
-        	String sql = "ALTER TABLE "+table+"  ADD COLUMN "+key+" "+getDatabaseDataType(value);
+        	String sql = "ALTER TABLE `"+table+"`  ADD COLUMN `"+key+"` "+getDatabaseDataType(value);
         	jdbcTemplate.execute(sql);
         	long cost = start - System.currentTimeMillis();
         	logger.info("executed alter_table_add_column sql:["+sql+"], costSeconds:"+(cost/1000));
@@ -243,6 +251,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 					for(final String updateSql : sqlArray) {
 						if(StringUtils.isBlank(updateSql)) 
 							continue;
+						
 						try {
 							SqlParameterSource[] batchArgs = newSqlParameterSource(rows);
 							new NamedParameterJdbcTemplate(getDataSource()).batchUpdate(updateSql, batchArgs);
@@ -304,7 +313,12 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		int i = 0;
 		for (Object row : rows) {
 			if(row instanceof Map) {
-				batchArgs[i] = new MapSqlParameterSource((Map)row);
+				Map rowMap = (Map)row;
+				Object defaultValue = null;
+				DefaultValueMapSqlParameterSource defaultValueMapSqlParameterSource = new DefaultValueMapSqlParameterSource(rowMap);
+				defaultValueMapSqlParameterSource.setDefaultValue(defaultValue);
+				
+				batchArgs[i] = defaultValueMapSqlParameterSource;
 			}else {
 				batchArgs[i] = new BeanPropertySqlParameterSource(row);
 			}

@@ -20,9 +20,9 @@ public class JdbcUtil {
 		return cacheKey;
 	}
     
-    public static Map getTableColumns(JdbcTemplate jdbcTemplate, String tableName,String jdbcUrl) {
+    public static Map<String,String> getTableColumns(JdbcTemplate jdbcTemplate, String tableName,String jdbcUrl) {
     	String cacheKey = getTableCacheKey(tableName, jdbcUrl);
-    	Map tableColumns = tableColumnsCache.get(cacheKey);
+    	Map<String,String> tableColumns = tableColumnsCache.get(cacheKey);
         if (tableColumns == null) {
             String sql = "select * from  " + tableName + " limit 1 ";
             SqlRowSet srs = jdbcTemplate.queryForRowSet(sql);
