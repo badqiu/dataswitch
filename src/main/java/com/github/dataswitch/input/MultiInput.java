@@ -84,14 +84,18 @@ public class MultiInput extends BaseObject implements Input{
 		this.inputs = Enabled.filterByEnabled(inputs);
 		
 		if(concurrentRead) {
-			List<Input> asyncInputs = new ArrayList<Input>();
-			for(int i = 0; i < inputs.size(); i++) {
-				asyncInputs.add(new AsyncInput(inputs.get(i)));
-			}
-			this.inputs = asyncInputs;
+			this.inputs = toAsyncInputs(inputs);
 		}
 		
 		InputOutputUtil.openAll(params, this.inputs);
+	}
+
+	public static List<Input> toAsyncInputs(List<Input> inputs) {
+		List<Input> asyncInputs = new ArrayList<Input>();
+		for(int i = 0; i < inputs.size(); i++) {
+			asyncInputs.add(new AsyncInput(inputs.get(i)));
+		}
+		return asyncInputs;
 	}
 
 	@Override
