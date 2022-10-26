@@ -80,17 +80,19 @@ public class BufferedOutput extends ProxyOutput{
 	}
 
 	public void flushBuffer() {
-		if(bufferTimeout > 0) {
-			lastSendTime = SystemTimer.currentTimeMillis();
-		}
-		
 		if(bufferList == null || bufferList.isEmpty()) {
 			return;
 		}
 		
 		List<Object> tempBuf = bufferList;
 		bufferList = new ArrayList<Object>(bufferSize);
-		super.write(tempBuf);
+		try {
+			super.write(tempBuf);
+		}finally {
+			if(bufferTimeout > 0) {
+				lastSendTime = SystemTimer.currentTimeMillis();
+			}
+		}
 	}
 	
 	@Override
