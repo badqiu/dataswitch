@@ -318,10 +318,11 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	protected SqlParameterSource[] newSqlParameterSource(final List<Object> rows) {
 		SqlParameterSource[] batchArgs = new SqlParameterSource[rows.size()];
 		int i = 0;
+		boolean isClickhouseDatabase = isClickhouseDatabase();
 		for (Object row : rows) {
 			if(row instanceof Map) {
 				Map rowMap = (Map)row;
-				Object defaultValue = null;
+				Object defaultValue = isClickhouseDatabase ? "" : null; //clickhouse不能插入null值
 				DefaultValueMapSqlParameterSource defaultValueMapSqlParameterSource = new DefaultValueMapSqlParameterSource(rowMap);
 				defaultValueMapSqlParameterSource.setDefaultValue(defaultValue);
 				
@@ -334,6 +335,10 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		return batchArgs;
 	}
 	
+	private boolean isClickhouseDatabase() {
+		return getJdbcUrl().contains("clickhouse");
+	}
+
 	protected static void executeWithSemicolonComma(DataSource ds, String sql) {
 		if (StringUtils.isBlank(sql)) {
 			return;
