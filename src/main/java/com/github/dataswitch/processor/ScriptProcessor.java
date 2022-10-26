@@ -124,12 +124,12 @@ public class ScriptProcessor implements Processor {
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
 		Processor.super.open(params);
-		init();
+		init(params);
 	}
 
-	private synchronized void init() throws ScriptException {
+	private synchronized void init(Map<String, Object> params) throws ScriptException {
 		lookupScriptEngine();
-		initBinding = ScriptOutput.evalIfNotBlank(scriptEngine, initScript);
+		initBinding = ScriptOutput.evalIfNotBlank(scriptEngine, initScript,params);
 		
 		if(scriptEngine instanceof Compilable) {
 			Compilable compilable = (Compilable)scriptEngine;

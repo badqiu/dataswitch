@@ -28,6 +28,10 @@ public class ScriptInput extends BaseInput{
 		this.lang = lang;
 	}
 
+	public void setLanguage(String lang) {
+		setLang(lang);
+	}
+	
 	public String getBeforeScript() {
 		return beforeScript;
 	}
@@ -92,22 +96,22 @@ public class ScriptInput extends BaseInput{
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
 		super.open(params);
-		init();
+		init(params);
 	}
 
 	private Bindings beforeBindings;
-	private void init() {
+	private void init(Map<String, Object> params) {
 		ScriptEngineManager scriptEngineMgr = new ScriptEngineManager();
 		Assert.hasText(lang,"'lang' must be not null");
 		engine = scriptEngineMgr.getEngineByName(lang);
 		
 		Assert.hasText(script,"script must be not empty");
-		beforeBindings = ScriptOutput.evalIfNotBlank(engine,beforeScript);
+		beforeBindings = ScriptOutput.evalIfNotBlank(engine,beforeScript,params);
 	}
 
 	
 	public void close() {
-		ScriptOutput.evalIfNotBlank(engine,afterScript);
+		ScriptOutput.evalIfNotBlank(engine,afterScript,null);
 	}
 
 }

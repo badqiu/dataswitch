@@ -51,6 +51,10 @@ public class ScriptOutput extends BaseObject implements Output{
 	public void setLang(String lang) {
 		this.lang = lang;
 	}
+	
+	public void setLanguage(String lang) {
+		setLang(lang);
+	}
 
 	public String getScript() {
 		return script;
@@ -95,7 +99,7 @@ public class ScriptOutput extends BaseObject implements Output{
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
 		Output.super.open(params);
-		init();
+		init(params);
 	}
 
 	@Override
@@ -139,19 +143,22 @@ public class ScriptOutput extends BaseObject implements Output{
 	}
 
 	private Bindings beforeBinding;
-	public void init() throws ScriptException {
+	public void init(Map<String, Object> params) throws ScriptException {
 		Assert.hasText(script,"script must be not empty");
 		Assert.hasText(lang,"'lang' must be not null");
 		
 		ScriptEngineManager scriptEngineMgr = new ScriptEngineManager();
 		engine = scriptEngineMgr.getEngineByName(lang);
-		beforeBinding = evalIfNotBlank(engine,beforeScript);
+		beforeBinding = evalIfNotBlank(engine,beforeScript,params);
 	}
 
-	public static Bindings evalIfNotBlank(ScriptEngine engine,String script) {
+	public static Bindings evalIfNotBlank(ScriptEngine engine,String script,Map<String,Object> params) {
 		try {
 			if(StringUtils.isNotBlank(script)) {
 				javax.script.Bindings bindings = engine.createBindings();
+				if(params != null) {
+					bindings.putAll(params);
+				}
 				engine.eval(script,bindings);
 				return bindings;
 			}
@@ -164,7 +171,7 @@ public class ScriptOutput extends BaseObject implements Output{
 	@Override
 	public void close() {
 		try {
-			evalIfNotBlank(engine,afterScript);
+			evalIfNotBlank(engine,afterScript,null);
 		}catch(Exception e) {
 			throw new RuntimeException("eval error,id:"+getId()+" script:"+afterScript,e);
 		}
