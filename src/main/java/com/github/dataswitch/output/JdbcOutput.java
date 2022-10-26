@@ -179,7 +179,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
         
         missColumns.forEach((key, value) -> {
         	long start = System.currentTimeMillis();
-        	String sql = "ALTER TABLE `"+table+"`  ADD COLUMN `"+key+"` "+getDatabaseDataType(value);
+        	String sql = "ALTER TABLE "+table+"  ADD COLUMN `"+key+"` "+getDatabaseDataType(value);
         	jdbcTemplate.execute(sql);
         	long cost = start - System.currentTimeMillis();
         	logger.info("executed alter_table_add_column sql:["+sql+"], costSeconds:"+(cost/1000));
