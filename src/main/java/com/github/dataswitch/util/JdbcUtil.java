@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.StringJoiner;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.jdbc.support.rowset.SqlRowSetMetaData;
@@ -34,12 +35,19 @@ public class JdbcUtil {
         return tableColumns;
     }
     
-    
     public static Map<String,String> getSqlColumnsNameType(SqlRowSet srs) {
+        return getSqlColumnsNameType(srs,false);
+    }
+    
+    public static Map<String,String> getSqlColumnsNameType(SqlRowSet srs,boolean nameToLowerCase) {
         SqlRowSetMetaData metaData = srs.getMetaData();
         Map result = new HashMap();
         for (int i = 1; i <= metaData.getColumnCount(); i++) {
-            result.put(metaData.getColumnName(i), metaData.getColumnTypeName(i));
+            String columnName = metaData.getColumnName(i);
+            if(nameToLowerCase) {
+            	columnName = columnName.toLowerCase();
+            }
+			result.put(columnName, metaData.getColumnTypeName(i));
         }
         return result;
     }
@@ -52,6 +60,8 @@ public class JdbcUtil {
 		StringJoiner valueJoiner = new StringJoiner(",");
 		StringJoiner keyJoiner = new StringJoiner(",");
 		allColumns.forEach((columnName) -> {
+			if(StringUtils.isBlank(columnName)) return;
+			
 			valueJoiner.add(":"+columnName);
 			keyJoiner.add("`"+columnName+"`");
 		});
