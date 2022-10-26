@@ -24,7 +24,7 @@ public class BufferedOutput extends ProxyOutput{
 	
 	
 	private int bufferSize = Constants.DEFAULT_BUFFER_SIZE;
-	private int bufferTimeout = Constants.DEFAULT_BUFFER_TIMEOUT;
+	private int bufferTimeout = 0;
 	
 	private long lastSendTime = System.currentTimeMillis();
 	private List<Object> bufferList = new ArrayList<Object>();
