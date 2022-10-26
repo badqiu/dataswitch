@@ -25,6 +25,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.Assert;
 
 import com.github.dataswitch.support.DataSourceProvider;
+import com.github.dataswitch.util.JdbcDataTypeUtil;
 import com.github.dataswitch.util.JdbcUtil;
 import com.github.dataswitch.util.MapUtil;
 import com.github.dataswitch.util.NamedParameterUtils;
@@ -174,26 +175,9 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	}
 
 	String _cacheJdbcUrl = null;
-	private String getDatabaseDataType(Object value) {
+	public String getDatabaseDataType(Object value) {
 		String url = getJdbcUrl();
-		
-		if(url.contains("mysql") || url.contains("mariadb")) {
-			return JdbcUtil.getMysqlDataType(value);
-		}else if(url.contains("clickhouse")) {
-			return JdbcUtil.getClickHouseDataType(value);
-		}else if(url.contains("sqlserver")) {
-			return JdbcUtil.getSqlServerDataType(value);
-		}else if(url.contains("oracle")) {
-			return JdbcUtil.getOracleDataType(value);	
-		}else if(url.contains("postgresql")) {
-			return JdbcUtil.getPostgreSQLDataType(value);	
-		}else if(url.contains("hive2")) {
-			return JdbcUtil.getHiveDataType(value);
-		}else if(url.contains("jdbc:h2:")) {
-			return JdbcUtil.getH2DataType(value);			
-		}else {
-			throw new UnsupportedOperationException("cannot get database type by url:"+url);
-		}
+		return JdbcDataTypeUtil.getDatabaseDataType(url, value);
 	}
 
 	private String getJdbcUrl()  {
