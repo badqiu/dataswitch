@@ -170,7 +170,8 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	}
 
 	private String generateInsertSql2ByColumns(String table, Map allMap) {
-		return JdbcUtil.generateInsertSqlByColumns(table,new ArrayList(allMap.keySet()));
+		ArrayList columns = new ArrayList(allMap.keySet());
+		return JdbcUtil.generateInsertSqlByColumns(table,columns);
 	}
 
 	private void alterTableIfColumnMiss(JdbcTemplate jdbcTemplate, Map allMap, String table) {
