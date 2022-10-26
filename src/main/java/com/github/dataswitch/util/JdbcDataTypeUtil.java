@@ -145,7 +145,23 @@ public class JdbcDataTypeUtil {
 	}    
     
 	public static String getH2DataType(Object value) {
-        return getMysqlDataType(value);
+        if (value == null) {
+            return "VARCHAR(200)";
+        }
+
+        if (value instanceof String) {
+            return "VARCHAR(200)";
+        }
+
+		if(value instanceof Double) return "NUMERIC(20, 2)";
+		if(value instanceof Float) return "NUMERIC(20, 2)";
+		if(value.getClass() == double.class) return "NUMERIC(20, 2)";
+		if(value.getClass() == float.class) return "NUMERIC(20, 2)";
+		
+		if(value instanceof Number) return "BIGINT";
+		if(value instanceof Date) return "TIMESTAMP";
+
+        return "VARCHAR(200)";		
 	}
 	
 }
