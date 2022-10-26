@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import com.github.dataswitch.Enabled;
 import com.github.dataswitch.Openable;
 
 public interface Input extends Function<Integer, List<Object>>,Openable,AutoCloseable{
@@ -20,6 +21,7 @@ public interface Input extends Function<Integer, List<Object>>,Openable,AutoClos
 	
 	@Override
 	public default void open(Map<String, Object> params) throws Exception {
+		Enabled.assertEnabled(this);
 	}
 	
 	@Override

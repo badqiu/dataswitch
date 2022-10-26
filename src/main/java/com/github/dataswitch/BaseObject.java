@@ -13,7 +13,7 @@ public class BaseObject implements Enabled {
 //	private String version; //版本
 //	private String changelog; //修改日志
 	
-	private boolean enabled;
+	private boolean enabled = true;
 
 	public String getId() {
 		return id;

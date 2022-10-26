@@ -15,6 +15,7 @@ public class MultiInputTest {
 		FileInput fileInput1 = FileInputTest.newFileInput("name,age , sex", "classpath:test/fileinput/abc");
 		FileInput fileInput2 = FileInputTest.newFileInput("name,age , sex", "classpath:test/fileinput/2.txt");
 		MultiInput mi = new MultiInput(fileInput1,fileInput2);
+		mi.open(null);
 		int rows = TestUtil.printInputReadRows(mi);
 		assertEquals(rows,6);
 	}
@@ -23,6 +24,7 @@ public class MultiInputTest {
 	public void test() throws Exception {
 		FileInput fileInput1 = FileInputTest.newFileInput("name,age , sex", "classpath:test/fileinput/abc");
 		MultiInput mi = new MultiInput(fileInput1);
+		mi.open(null);
 		int rows = TestUtil.printInputReadRows(mi);
 		assertEquals(rows,3);
 	}

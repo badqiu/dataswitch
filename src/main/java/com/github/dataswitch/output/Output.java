@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import com.github.dataswitch.Enabled;
 import com.github.dataswitch.Openable;
 
 public interface Output extends Function<List<Object>,Void>,Consumer<List<Object>>,AutoCloseable,Flushable,Openable{
@@ -19,6 +20,7 @@ public interface Output extends Function<List<Object>,Void>,Consumer<List<Object
 	
 	@Override
 	public default void open(Map<String, Object> params) throws Exception {
+		Enabled.assertEnabled(this);
 	}
 	
 	@Override

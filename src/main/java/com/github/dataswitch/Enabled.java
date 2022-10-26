@@ -10,6 +10,13 @@ public interface Enabled {
 		return true;
 	}
 	
+	public static void assertEnabled(Object item) {
+		if(item == null) return;
+		if(item instanceof Enabled) {
+			assertEnabled((Enabled)item);
+		}
+	}
+	
 	public static void assertEnabled(Enabled item) {
 		if(item == null) return;
 		
