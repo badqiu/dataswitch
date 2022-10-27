@@ -288,7 +288,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 			
 			_primaryKeyArray = JdbcUtil.splitTableColumns(primaryKeys);
 			
-			Assert.notEmpty(_primaryKeyArray,"not found primary key on table:"+table);
+			Assert.notEmpty(_primaryKeyArray,"not found primary key on table:"+table+",your can config by:primaryKeys");
 		}
 		return _primaryKeyArray;
 	}
