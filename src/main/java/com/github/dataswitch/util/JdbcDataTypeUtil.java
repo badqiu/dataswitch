@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.util.Assert;
 
 public class JdbcDataTypeUtil {
@@ -15,10 +16,15 @@ public class JdbcDataTypeUtil {
 	 * @param inputData
 	 * @return
 	 */
-	public static Map<String,String> getDatabaseDataType(String jdbcUrl,Map<String,Object> inputData) {
+	public static Map<String,String> getDatabaseDataType(String jdbcUrl,Map<String,Object> inputData,Map<String,String> columnsSqlType) {
 		Map<String,String> result = new LinkedHashMap<String,String>();
 		inputData.forEach((key,value) -> {
-			result.put(key, getDatabaseDataType(jdbcUrl,value));
+			String sqlType = columnsSqlType != null ? columnsSqlType.get(key) : null;
+			
+			if(StringUtils.isBlank(sqlType)) {
+				sqlType = getDatabaseDataType(jdbcUrl,value);
+			}
+			result.put(key, sqlType);
 		});
 		return result;
 	}

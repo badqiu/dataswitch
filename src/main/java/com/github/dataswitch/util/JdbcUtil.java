@@ -36,11 +36,11 @@ public class JdbcUtil {
         return MapUtil.getDifferenceMap(MapUtil.keyToLowerCase(tableColumns), MapUtil.keyToLowerCase(columnsWithData));
 	}
 	
-	public static void alterTableIfColumnMiss(JdbcTemplate jdbcTemplate, Map columnsWithData, String table,String jdbcUrl) {
+	public static void alterTableIfColumnMiss(JdbcTemplate jdbcTemplate, Map columnsWithData, String table,String jdbcUrl,Map<String,String> columnsSqlType) {
 		Map missColumns = getMissColumns(jdbcTemplate, columnsWithData, table,jdbcUrl);
         if (missColumns == null) return;
         
-        Map sqlTypes = JdbcDataTypeUtil.getDatabaseDataType(jdbcUrl, missColumns);
+        Map sqlTypes = JdbcDataTypeUtil.getDatabaseDataType(jdbcUrl, missColumns,columnsSqlType);
         sqlTypes.forEach((key, jdbcType) -> {
         	long start = System.currentTimeMillis();
         	String sql = "ALTER TABLE "+table+"  ADD COLUMN `"+key+"` "+jdbcType;
@@ -62,6 +62,9 @@ public class JdbcUtil {
 		return cacheKey;
 	}
     
+	/**
+	 * 获得table的列名及列类型
+	 *  */
     public static Map<String,String> getTableColumns(JdbcTemplate jdbcTemplate, String tableName,String jdbcUrl) {
     	String cacheKey = getTableCacheKey(tableName, jdbcUrl);
     	Map<String,String> tableColumns = tableColumnsCache.get(cacheKey);

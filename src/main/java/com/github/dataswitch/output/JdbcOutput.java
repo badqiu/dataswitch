@@ -2,6 +2,7 @@ package com.github.dataswitch.output;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -85,6 +86,9 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	
 	private String columnsFrom = ColumnsFrom.input.name(); //输入列来源: table or input or config
 	private String columns; //要更新的列
+	
+	private Map<String,String> columnsSqlType = new HashMap(); //列的sql类型
+	private Map<String,String> columnsComment = new HashMap(); //列的注释
 	
 	public String getSql() {
 		return sql;
@@ -177,6 +181,14 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	public void columnsFrom(ColumnsFrom columnsFrom) {
 		this.columnsFrom = columnsFrom.name();
 	}
+	
+	public void setColumnsSqlType(Map<String, String> columnsSqlType) {
+		this.columnsSqlType = columnsSqlType;
+	}
+
+	public void setColumnsComment(Map<String, String> columnsComment) {
+		this.columnsComment = columnsComment;
+	}
 
 	public void setColumns(String columns) {
 		this.columns = columns;
@@ -217,15 +229,15 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 
 		Map allColumnsWithValue = MapUtil.mergeAllMapWithNotNullValue((List) rows);
 		
-		Map<String,String> columnsSqlType = JdbcDataTypeUtil.getDatabaseDataType(cacheJdbcUrl(), allColumnsWithValue);
+		Map<String,String> localColumnsSqlType = JdbcDataTypeUtil.getDatabaseDataType(cacheJdbcUrl(), allColumnsWithValue,this.columnsSqlType);
 		if(autoCreateTable) {
-			executeCreateTableSql(jdbcTemplate,columnsSqlType);
+			executeCreateTableSql(jdbcTemplate,localColumnsSqlType);
 		}
 		
-		Set<String> tableColumnNames = columnsSqlType.keySet();
+		Set<String> tableColumnNames = localColumnsSqlType.keySet();
 		
 		if(autoAlterTableAddColumn) {
-			JdbcUtil.alterTableIfColumnMiss(jdbcTemplate, allColumnsWithValue,table,cacheJdbcUrl());
+			JdbcUtil.alterTableIfColumnMiss(jdbcTemplate, allColumnsWithValue,table,cacheJdbcUrl(),this.columnsSqlType);
 		}
 		
 		return generateSql(jdbcTemplate, tableColumnNames);
@@ -265,7 +277,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	private void executeCreateTableSql(JdbcTemplate jdbcTemplate,Map<String,String> columnsSqlType) {
 		if(_executedCreateTable) return;
 		
-		String createTableSql = JdbcCreateTableSqlUtil.buildCreateTableSql(table, null, columnsSqlType, getPrimaryKeysArray());
+		String createTableSql = JdbcCreateTableSqlUtil.buildCreateTableSql(table, columnsComment, columnsSqlType, getPrimaryKeysArray());
 		
 		try {
 			if(StringUtils.isNotBlank(createTableSql)) {
@@ -398,5 +410,10 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		logger.info(" executed afterSql:"+afterSql);
 	}
 
+	public static enum IfExists {
+		error, //Raise a ValueError.
+		replace, //Drop the table before inserting new values.
+		append //Insert new values to the existing table.
+	}
 	
 }
