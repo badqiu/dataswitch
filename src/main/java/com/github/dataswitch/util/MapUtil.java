@@ -1,5 +1,6 @@
 package com.github.dataswitch.util;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -57,4 +58,22 @@ public class MapUtil {
         });
         return result;
     }
+    
+	/**
+	 * 将所有key 转换为小写
+	 * @param list
+	 * @return
+	 */
+	public static List<Map<String, Object>> allMapKey2LowerCase(
+			List<Map<String, Object>> list) {
+		List<Map<String,Object>> result = new ArrayList(list.size());
+		for(Map<String,Object> row : list) {
+			Map newRow = new HashMap();
+			for(Map.Entry<String, Object> entry : row.entrySet()) {
+				newRow.put(StringUtils.lowerCase(entry.getKey()), entry.getValue());
+			}
+			result.add(newRow);
+		}
+		return result;
+	}
 }

@@ -104,6 +104,26 @@ public class JdbcOutputTest {
 		output.setTable("user");
 		output.setAutoAlterTableAddColumn(false);
 		output.open(new HashMap());
+		
+		List<Object> inputRows = TestUtil.newTestDatas(20);
+		output.write(inputRows);
+		
+		List<Map<String,Object>> rows = new JdbcTemplate(ds).queryForList("select * from user");
+		TestUtil.printRows(rows);
+		assertEquals(20,rows.size());
+	}
+	
+	@Test
+	public void test_table_with_AutoCreateTable() throws Exception {
+		DataSource ds = JdbcInputTest.createDataSourceAndInsertData();
+		output.setDataSource(ds);
+		output.setBeforeSql("delete from user");
+		output.setTable("user");
+		output.setAutoCreateTable(true);
+		output.setAutoAlterTableAddColumn(false);
+//		output.setPrimaryKeys("id");
+		output.open(new HashMap());
+		
 		List<Object> inputRows = TestUtil.newTestDatas(20);
 		output.write(inputRows);
 		

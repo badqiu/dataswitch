@@ -1,22 +1,26 @@
 package com.github.dataswitch.util;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringJoiner;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ComparatorUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.ColumnMapRowMapper;
+import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.jdbc.support.rowset.SqlRowSetMetaData;
 
@@ -36,9 +40,10 @@ public class JdbcUtil {
 		Map missColumns = getMissColumns(jdbcTemplate, allMap, table,jdbcUrl);
         if (missColumns == null) return;
         
-        missColumns.forEach((key, value) -> {
+        Map sqlTypes = JdbcDataTypeUtil.getDatabaseDataType(jdbcUrl, missColumns);
+        sqlTypes.forEach((key, jdbcType) -> {
         	long start = System.currentTimeMillis();
-        	String sql = "ALTER TABLE "+table+"  ADD COLUMN `"+key+"` "+JdbcDataTypeUtil.getDatabaseDataType(jdbcUrl,value);
+        	String sql = "ALTER TABLE "+table+"  ADD COLUMN `"+key+"` "+jdbcType;
         	jdbcTemplate.execute(sql);
         	long cost = start - System.currentTimeMillis();
         	logger.info("executed alter_table_add_column sql:["+sql+"], costSeconds:"+(cost/1000));
@@ -67,13 +72,75 @@ public class JdbcUtil {
         return tableColumns;
     }
     
+	private static Map<String, Object> getTableColumns(String tableName, JdbcTemplate jt) {
+		final Map<String,Object> columnMap = new LinkedHashMap();
+		jt.execute(new ConnectionCallback<Object>() {
+			@Override
+			public Object doInConnection(Connection con) throws SQLException, DataAccessException {
+				ResultSet rs = con.getMetaData().getColumns(null, null, tableName, null);
+				
+				rs2ColumnsMap(tableName, columnMap, rs);
+				return null;
+			}
+		});
+		
+		return columnMap;
+	}
+	
+	public static Map<String, Object> getTablePrimaryKeys(String tableName, JdbcTemplate jt) {
+		final Map<String,Object> columnMap = new LinkedHashMap();
+		jt.execute(new ConnectionCallback<Object>() {
+			@Override
+			public Object doInConnection(Connection con) throws SQLException, DataAccessException {
+				ResultSet rs = con.getMetaData().getPrimaryKeys(null, null, tableName);
+				rs2ColumnsMap(tableName, columnMap, rs);
+				return null;
+			}
+
+		});
+		
+		return columnMap;
+	}
+	
+	public static List<String> getTablePrimaryKeysList(String tableName, JdbcTemplate jt) {
+		return new ArrayList(getTablePrimaryKeys(tableName,jt).keySet());
+	}
+	
+	private static void rs2ColumnsMap(String tableName, final Map<String, Object> columnMap, ResultSet rs)
+			throws SQLException {
+		List<Map<String,Object>> columns = resultSet2List(rs);
+		
+		for(Map column : columns) {
+			String TABLE_NAME = (String)column.get("TABLE_NAME");
+			if(!tableName.equalsIgnoreCase(TABLE_NAME)) {
+				continue;
+			}
+			
+			String TYPE_NAME = (String)column.get("TYPE_NAME");
+			String COLUMN_NAME = (String)column.get("COLUMN_NAME");
+			Integer DATA_TYPE = (Integer)column.get("DATA_TYPE");
+			Integer COLUMN_SIZE = (Integer)column.get("COLUMN_SIZE");
+			String IS_NULLABLE = (String)column.get("IS_NULLABLE");
+			Integer DECIMAL_DIGITS = (Integer)column.get("DECIMAL_DIGITS");
+			columnMap.put(COLUMN_NAME.toLowerCase(), TYPE_NAME);
+		}
+	}
+	
+	public static List<Map<String,Object>> resultSet2List(ResultSet rs) throws SQLException {
+		RowMapperResultSetExtractor<Map<String, Object>> rse =
+				new RowMapperResultSetExtractor<Map<String, Object>>(new ColumnMapRowMapper());
+		List<Map<String,Object>> rows = rse.extractData(rs);
+		return rows;
+	}
+	
+    
     public static Map<String,String> getSqlColumnsNameType(SqlRowSet srs) {
         return getSqlColumnsNameType(srs,false);
     }
     
     public static Map<String,String> getSqlColumnsNameType(SqlRowSet srs,boolean nameToLowerCase) {
         SqlRowSetMetaData metaData = srs.getMetaData();
-        Map result = new HashMap();
+        Map result = new LinkedHashMap();
         for (int i = 1; i <= metaData.getColumnCount(); i++) {
             String columnName = metaData.getColumnName(i);
             if(nameToLowerCase) {
@@ -84,23 +151,6 @@ public class JdbcUtil {
         return result;
     }
     
-	
-	public static String generateInsertSqlByColumns(String table, Collection<String> allColumns) {
-		if(CollectionUtils.isEmpty(allColumns))
-			return null;
-		
-		StringJoiner valueJoiner = new StringJoiner(",");
-		StringJoiner keyJoiner = new StringJoiner(",");
-		allColumns.forEach((columnName) -> {
-			if(StringUtils.isBlank(columnName)) return;
-			
-			valueJoiner.add(":"+columnName);
-			keyJoiner.add("`"+columnName+"`");
-		});
-		
-		String sql = "insert into " + table + " ("+keyJoiner.toString()+") values ("+valueJoiner.toString()+")";
-		return sql;
-	}
 	
 	public static String getJdbcUrl(DataSource dataSource)  {
 		String result = null;
@@ -146,5 +196,8 @@ public class JdbcUtil {
 		}
 		return String.valueOf(value);
 	}
+	
+	
+	
 	
 }

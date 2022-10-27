@@ -1,39 +1,54 @@
 package com.github.dataswitch.util;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.springframework.util.Assert;
 
 public class JdbcDataTypeUtil {
 
 	private static final String VARCHAR = "VARCHAR(4000)";
-
-	public static String getDatabaseDataType(String url,Object value) {
-		Assert.hasText(url,"jdbc url must be not blank");
+	/**
+	 * 根据输入数据，输出数据类型
+	 * @param jdbcUrl
+	 * @param inputData
+	 * @return
+	 */
+	public static Map<String,String> getDatabaseDataType(String jdbcUrl,Map<String,Object> inputData) {
+		Map<String,String> result = new LinkedHashMap<String,String>();
+		inputData.forEach((key,value) -> {
+			result.put(key, getDatabaseDataType(jdbcUrl,value));
+		});
+		return result;
+	}
+	
+	public static String getDatabaseDataType(String jdbcUrl,Object value) {
+		Assert.hasText(jdbcUrl,"jdbcUrl must be not blank");
 		
-		if(isMysqlJdbcUrl(url)) {
+		if(isMysqlJdbcUrl(jdbcUrl)) {
 			return JdbcDataTypeUtil.getMysqlDataType(value);
-		}else if(url.contains("clickhouse")) {
+		}else if(jdbcUrl.contains("clickhouse")) {
 			return JdbcDataTypeUtil.getClickHouseDataType(value);
-		}else if(url.contains("sqlserver")) {
+		}else if(jdbcUrl.contains("sqlserver")) {
 			return JdbcDataTypeUtil.getSqlServerDataType(value);
-		}else if(url.contains("oracle")) {
+		}else if(jdbcUrl.contains("oracle")) {
 			return JdbcDataTypeUtil.getOracleDataType(value);	
-		}else if(url.contains("postgresql")) {
+		}else if(jdbcUrl.contains("postgresql")) {
 			return JdbcDataTypeUtil.getPostgreSQLDataType(value);	
-		}else if(url.contains("hive2")) {
+		}else if(jdbcUrl.contains("hive2")) {
 			return JdbcDataTypeUtil.getHiveDataType(value);
-		}else if(url.contains("jdbc:h2:")) {
+		}else if(jdbcUrl.contains("jdbc:h2:")) {
 			return JdbcDataTypeUtil.getH2DataType(value);	
-		}else if(url.contains("jdbc:hsqldb:")) {
+		}else if(jdbcUrl.contains("jdbc:hsqldb:")) {
 			return JdbcDataTypeUtil.getHSQLDataType(value);			
 		}else {
-			throw new UnsupportedOperationException("cannot get database type by url:"+url);
+			throw new UnsupportedOperationException("cannot get database type by url:"+jdbcUrl);
 		}
 	}
 
-	public static boolean isMysqlJdbcUrl(String url) {
-		return url.contains("mysql") || url.contains("mariadb");
+	public static boolean isMysqlJdbcUrl(String jdbcUrl) {
+		return jdbcUrl.contains("mysql") || jdbcUrl.contains("mariadb");
 	}
 	
     public static String getClickHouseDataType(Object value) {

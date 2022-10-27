@@ -3,6 +3,7 @@ package com.github.dataswitch.output;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -22,6 +23,9 @@ import org.springframework.util.Assert;
 
 import com.github.dataswitch.support.DataSourceProvider;
 import com.github.dataswitch.util.DefaultValueMapSqlParameterSource;
+import com.github.dataswitch.util.JdbcCreateTableSqlUtil;
+import com.github.dataswitch.util.JdbcDataTypeUtil;
+import com.github.dataswitch.util.JdbcSqlUtil;
 import com.github.dataswitch.util.JdbcUtil;
 import com.github.dataswitch.util.MapUtil;
 import com.github.dataswitch.util.NamedParameterUtils;
@@ -39,7 +43,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	private String afterSql;
 
 	private String sessionSql; //在获取Mysql连接时，执行session指定的SQL语句，修改当前connection session属性
-	private String outputMode = "insert"; //insert/replace/update, 控制写入数据到目标表采用 insert into 或者 replace into 或者 ON DUPLICATE KEY UPDATE 语句
+	private String outputMode = OutputMode.insert.name(); //insert/replace/update, 控制写入数据到目标表采用 insert into 或者 replace into 或者 ON DUPLICATE KEY UPDATE 语句
 
 	
 	/**
@@ -57,12 +61,16 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	 */
 	private boolean autoCreateTable = false;
 	
+	private boolean _executedCreateTable = false;
+	
 	/**
 	 * 是否将命名参数替换成实际值
 	 */
 	private boolean replaceSqlWithParams = false;
 	
 	private transient TransactionTemplate transactionTemplate;
+	
+	private String primaryKeys; //主键字段
 	
 	public String getSql() {
 		return sql;
@@ -111,6 +119,22 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	public void setTable(String table) {
 		this.table = table;
 	}
+	
+	public String getSessionSql() {
+		return sessionSql;
+	}
+
+	public void setSessionSql(String sessionSql) {
+		this.sessionSql = sessionSql;
+	}
+
+	public String getPrimaryKeys() {
+		return primaryKeys;
+	}
+
+	public void setPrimaryKeys(String primaryKeys) {
+		this.primaryKeys = primaryKeys;
+	}
 
 	public void setAutoAlterTableAddColumn(boolean autoAlterTableAddColumn) {
 		this.autoAlterTableAddColumn = autoAlterTableAddColumn;
@@ -118,6 +142,18 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 
 	public void setAutoCreateTable(boolean autoCreateTable) {
 		this.autoCreateTable = autoCreateTable;
+	}
+	
+	public String getOutputMode() {
+		return outputMode;
+	}
+
+	public void setOutputMode(String outputMode) {
+		this.outputMode = outputMode;
+	}
+	
+	public void outputMode(OutputMode outputMode) {
+		this.outputMode = outputMode.name();
 	}
 
 	public void init() {
@@ -143,45 +179,78 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		
 		Assert.hasText(table,"table or sql must be not blank");
 		
-		Map allMap = MapUtil.mergeAllMap((List) rows);
-		
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(getDataSource());
 		executeWithSemicolonComma(getDataSource(), sessionSql);
+
+		Map allMap = MapUtil.mergeAllMap((List) rows);
+		
+		Map<String,String> columnsSqlType = JdbcDataTypeUtil.getDatabaseDataType(cacheJdbcUrl(), allMap);
+		if(autoCreateTable) {
+			executeCreateTableSql(jdbcTemplate,columnsSqlType);
+		}
+		
+		Set<String> columns = columnsSqlType.keySet();
 		
 		if(autoAlterTableAddColumn) {
 			JdbcUtil.alterTableIfColumnMiss(jdbcTemplate, allMap,table,cacheJdbcUrl());
-			sql = generateInsertSql2ByColumns(table, allMap);
+			sql = JdbcSqlUtil.buildInsertSql(table, columns);
 		}else {
 			
-			if("insert".equals(outputMode)) {
+			if(OutputMode.insert.name().equals(outputMode)) {
 				sql = generateInsertSqlByTargetTable(jdbcTemplate,table);
 				setSql(sql);
-			}else if("replace".equals(outputMode)) {
-				throw new UnsupportedOperationException("error outputMode:"+outputMode);
-			}else if("update".equals(outputMode)) {
-				throw new UnsupportedOperationException("error outputMode:"+outputMode);
-			}else {
-				throw new UnsupportedOperationException("error outputMode:"+outputMode);
+			} else {
+				if(OutputMode.replace.name().equals(outputMode)) {
+					sql = JdbcSqlUtil.buildMysqlInsertOrUpdateSql(table, columns, getPrimaryKeysArray());
+				}else if(OutputMode.update.name().equals(outputMode)) {
+					sql = JdbcSqlUtil.buildUpdateSql(table, columns, getPrimaryKeysArray());
+				}else {
+					throw new UnsupportedOperationException("error outputMode:"+outputMode);
+				}
 			}
 			
 		}
 		
 		return sql;
 	}
+
+	private void executeCreateTableSql(JdbcTemplate jdbcTemplate,Map<String,String> columnsSqlType) {
+		if(_executedCreateTable) return;
+		
+		String createTableSql = JdbcCreateTableSqlUtil.buildMysqlCreateTableSql(table, null, columnsSqlType, getPrimaryKeysArray());
+		if(StringUtils.isNotBlank(createTableSql)) {
+			jdbcTemplate.execute(createTableSql);
+			logger.info("executeCreateTableSql() "+ createTableSql);
+		}
+		
+		_executedCreateTable = true;
+	}
 	
+	private String[] _primaryKeyArray;
+	private String[] getPrimaryKeysArray() {
+		if(_primaryKeyArray == null) {
+			if(StringUtils.isBlank(primaryKeys)) {
+				List<String> tablePrimaryKeysList = JdbcUtil.getTablePrimaryKeysList(table,new JdbcTemplate(getDataSource()));
+				primaryKeys = StringUtils.join(tablePrimaryKeysList,",");
+				logger.info("get primary key:["+primaryKeys +"] from database metadata for table:"+table);
+			}
+			
+			_primaryKeyArray = org.springframework.util.StringUtils.tokenizeToStringArray(primaryKeys, " ,\t\n");
+			
+			Assert.notEmpty(_primaryKeyArray,"not found primary key on table:"+table);
+		}
+		return _primaryKeyArray;
+	}
+
 	private String generateInsertSqlByTargetTable(JdbcTemplate jdbcTemplate,String table) {
 		Map tableColumns = JdbcUtil.getTableColumns(jdbcTemplate, table, cacheJdbcUrl());
 		ArrayList columns = new ArrayList(MapUtil.keyToLowerCase(tableColumns).keySet());
-		return JdbcUtil.generateInsertSqlByColumns(table,columns);
-	}
-
-	private String generateInsertSql2ByColumns(String table, Map allMap) {
-		ArrayList columns = new ArrayList(allMap.keySet());
-		return JdbcUtil.generateInsertSqlByColumns(table,columns);
+		return JdbcSqlUtil.buildInsertSql(table,columns);
 	}
 
 
-	String _cacheJdbcUrl = null;
+
+	private String _cacheJdbcUrl = null;
 	private String cacheJdbcUrl()  {
 		if(StringUtils.isBlank(_cacheJdbcUrl)) {
 			_cacheJdbcUrl = getUrl();
@@ -304,6 +373,10 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		DataSource dataSource = getDataSource();
 		executeWithSemicolonComma(dataSource,afterSql);
 		logger.info(" executed afterSql:"+afterSql);
+	}
+	
+	public static enum OutputMode {
+		insert,update,replace
 	}
 	
 }
