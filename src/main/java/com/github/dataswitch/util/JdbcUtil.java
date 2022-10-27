@@ -49,7 +49,11 @@ public class JdbcUtil {
         	logger.info("executed alter_table_add_column sql:["+sql+"], costSeconds:"+(cost/1000));
         });
         
-        String cacheKey = JdbcUtil.getTableCacheKey(table, jdbcUrl);
+        removeTableColumnsCache(table, jdbcUrl);
+	}
+
+	private static void removeTableColumnsCache(String tableName, String jdbcUrl) {
+		String cacheKey = JdbcUtil.getTableCacheKey(tableName, jdbcUrl);
         JdbcUtil.tableColumnsCache.remove(cacheKey);
 	}
 	
@@ -70,6 +74,7 @@ public class JdbcUtil {
         	
             SqlRowSet srs = jdbcTemplate.queryForRowSet(sql);
             tableColumns = JdbcUtil.getSqlColumnsNameType(srs);
+            
             synchronized (tableColumnsCache) {
             	tableColumnsCache.put(cacheKey, tableColumns);
 			}
