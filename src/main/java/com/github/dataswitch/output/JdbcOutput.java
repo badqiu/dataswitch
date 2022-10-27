@@ -79,7 +79,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	
 	private int batchSize = Constants.DEFAULT_BUFFER_SIZE; //批量大小
 	
-	private String columnsFrom = ColumnsFrom.input.name(); //输入列来源: table or inputData or columns field
+	private String columnsFrom = ColumnsFrom.input.name(); //输入列来源: table or input or config
 	private String columns; //要更新的列
 	
 	public String getSql() {
@@ -177,7 +177,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	public void setColumns(String columns) {
 		this.columns = columns;
 		if(StringUtils.isNotBlank(columns)) {
-			columnsFrom(ColumnsFrom.property);
+			columnsFrom(ColumnsFrom.config);
 		}
 	}
 
@@ -251,7 +251,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 			return tableColumnNames;
 		}else if(ColumnsFrom.table.name().equals(columnsFrom)) {
 			return JdbcUtil.getTableColumnsName(jdbcTemplate, table, cacheJdbcUrl());
-		}else if(ColumnsFrom.property.name().equals(columnsFrom)) {
+		}else if(ColumnsFrom.config.name().equals(columnsFrom)) {
 			return Arrays.asList(splitTableColumns(columns));
 		}else {
 			throw new UnsupportedOperationException("error ColumnsFrom:" + columnsFrom);
@@ -422,7 +422,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	public static enum ColumnsFrom {
 		table, //来自表
 		input, //来自输入数据
-		property //来自设置属性
+		config //来自设置属性
 	}
 	
 }
