@@ -77,6 +77,13 @@ public class JdbcUtil {
         return tableColumns;
     }
     
+    public static List<String> getTableColumnsName(JdbcTemplate jdbcTemplate, String tableName,String jdbcUrl) {
+    	Map tableColumns = JdbcUtil.getTableColumns(jdbcTemplate, tableName, jdbcUrl);
+    	ArrayList columns = new ArrayList(MapUtil.keyToLowerCase(tableColumns).keySet());
+    	return columns;
+    }
+   
+	
 //	private static Map<String, Object> getTableColumns(String tableName, JdbcTemplate jt) {
 //		final Map<String,Object> columnMap = new LinkedHashMap();
 //		jt.execute(new ConnectionCallback<Object>() {

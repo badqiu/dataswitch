@@ -120,7 +120,7 @@ public class JdbcOutputTest {
 		output.setBeforeSql("delete from user");
 		output.setTable("user");
 		output.setAutoCreateTable(true);
-		output.setAutoAlterTableAddColumn(false);
+		output.setAutoAlterTableAddColumn(true);
 //		output.setPrimaryKeys("id");
 		output.open(new HashMap());
 		

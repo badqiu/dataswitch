@@ -1,6 +1,7 @@
 package com.github.dataswitch.output;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -78,7 +79,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	
 	private int batchSize = Constants.DEFAULT_BUFFER_SIZE; //批量大小
 	
-	private boolean columnsFromTable = false; //输入列来源: table or inputData or columns field
+	private String columnsFrom = ColumnsFrom.input.name(); //输入列来源: table or inputData or columns field
 	private String columns; //要更新的列
 	
 	public String getSql() {
@@ -165,6 +166,21 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		this.outputMode = outputMode.name();
 	}
 	
+	public void setColumnsFrom(String columnsFrom) {
+		this.columnsFrom = columnsFrom;
+	}
+	
+	public void columnsFrom(ColumnsFrom columnsFrom) {
+		this.columnsFrom = columnsFrom.name();
+	}
+
+	public void setColumns(String columns) {
+		this.columns = columns;
+		if(StringUtils.isNotBlank(columns)) {
+			columnsFrom(ColumnsFrom.property);
+		}
+	}
+
 	public void setBatchSize(int batchSize) {
 		this.batchSize = batchSize;
 	}
@@ -212,24 +228,34 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	}
 
 	private String generateSql(JdbcTemplate jdbcTemplate, Set<String> tableColumnNames) {
+		Collection<String> columns = processColumns(jdbcTemplate,tableColumnNames);
+		Assert.notEmpty(columns,"columns must be not empty");
+		
 		String sql = null;
 		if(OutputMode.insert.name().equals(outputMode)) {
-			if(autoAlterTableAddColumn) {
-				sql = JdbcSqlUtil.buildInsertSql(table, tableColumnNames);
-			}else {
-				sql = generateInsertSqlByTargetTable(jdbcTemplate,table);
-				setSql(sql);
-			}
+			sql = JdbcSqlUtil.buildInsertSql(table, columns);
 		} else {
 			if(OutputMode.replace.name().equals(outputMode)) {
-				sql = JdbcSqlUtil.buildMysqlInsertOrUpdateSql(table, tableColumnNames, getPrimaryKeysArray());
+				sql = JdbcSqlUtil.buildMysqlInsertOrUpdateSql(table, columns, getPrimaryKeysArray());
 			}else if(OutputMode.update.name().equals(outputMode)) {
-				sql = JdbcSqlUtil.buildUpdateSql(table, tableColumnNames, getPrimaryKeysArray());
+				sql = JdbcSqlUtil.buildUpdateSql(table, columns, getPrimaryKeysArray());
 			}else {
 				throw new UnsupportedOperationException("error outputMode:"+outputMode);
 			}
 		}
 		return sql;
+	}
+
+	private Collection<String> processColumns(JdbcTemplate jdbcTemplate,Set<String> tableColumnNames) {
+		if(ColumnsFrom.input.name().equals(columnsFrom)) {
+			return tableColumnNames;
+		}else if(ColumnsFrom.table.name().equals(columnsFrom)) {
+			return JdbcUtil.getTableColumnsName(jdbcTemplate, table, cacheJdbcUrl());
+		}else if(ColumnsFrom.property.name().equals(columnsFrom)) {
+			return Arrays.asList(splitTableColumns(columns));
+		}else {
+			throw new UnsupportedOperationException("error ColumnsFrom:" + columnsFrom);
+		}
 	}
 
 	private void executeCreateTableSql(JdbcTemplate jdbcTemplate,Map<String,String> columnsSqlType) {
@@ -260,28 +286,17 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 				logger.info("get primary key:["+primaryKeys +"] from database metadata for table:"+table);
 			}
 			
-			_primaryKeyArray = org.springframework.util.StringUtils.tokenizeToStringArray(primaryKeys, " ,\t\n");
+			_primaryKeyArray = splitTableColumns(primaryKeys);
 			
 			Assert.notEmpty(_primaryKeyArray,"not found primary key on table:"+table);
 		}
 		return _primaryKeyArray;
 	}
 
-	private String generateInsertSqlByTargetTable(JdbcTemplate jdbcTemplate,String table) {
-		Map tableColumns = JdbcUtil.getTableColumns(jdbcTemplate, table, cacheJdbcUrl());
-		ArrayList columns = new ArrayList(MapUtil.keyToLowerCase(tableColumns).keySet());
-		return JdbcSqlUtil.buildInsertSql(table,columns);
-	}
-
-	private String _cacheJdbcUrl = null;
-	private String cacheJdbcUrl()  {
-		if(StringUtils.isBlank(_cacheJdbcUrl)) {
-			_cacheJdbcUrl = getUrl();
-		}
-		if(StringUtils.isBlank(_cacheJdbcUrl)) {
-			_cacheJdbcUrl = JdbcUtil.getJdbcUrl(getDataSource());
-		}
-		return _cacheJdbcUrl;
+	private static String[] splitTableColumns(String columns) {
+		if(StringUtils.isBlank(columns)) return null;
+		
+		return org.springframework.util.StringUtils.tokenizeToStringArray(columns, " ,\t\n");
 	}
 
 	@Override

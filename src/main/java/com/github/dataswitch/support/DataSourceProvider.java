@@ -5,10 +5,12 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.util.Assert;
 
 import com.github.dataswitch.BaseObject;
+import com.github.dataswitch.util.JdbcUtil;
 
 public abstract class DataSourceProvider extends BaseObject{
 
@@ -59,6 +61,17 @@ public abstract class DataSourceProvider extends BaseObject{
 
 	public void setDriverClass(String driverClass) {
 		this.driverClass = driverClass;
+	}
+	
+	private String _cacheJdbcUrl = null;
+	public String cacheJdbcUrl()  {
+		if(StringUtils.isBlank(_cacheJdbcUrl)) {
+			_cacheJdbcUrl = getUrl();
+		}
+		if(StringUtils.isBlank(_cacheJdbcUrl)) {
+			_cacheJdbcUrl = JdbcUtil.getJdbcUrl(getDataSource());
+		}
+		return _cacheJdbcUrl;
 	}
 	
 	private static Map<String,DataSource> dataSourceCache = new HashMap<String,DataSource>();
