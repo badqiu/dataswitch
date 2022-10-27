@@ -248,8 +248,6 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		return JdbcSqlUtil.buildInsertSql(table,columns);
 	}
 
-
-
 	private String _cacheJdbcUrl = null;
 	private String cacheJdbcUrl()  {
 		if(StringUtils.isBlank(_cacheJdbcUrl)) {
