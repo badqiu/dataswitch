@@ -22,7 +22,9 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.Assert;
 
+import com.github.dataswitch.enums.ColumnsFrom;
 import com.github.dataswitch.enums.Constants;
+import com.github.dataswitch.enums.OutputMode;
 import com.github.dataswitch.support.DataSourceProvider;
 import com.github.dataswitch.util.DefaultValueMapSqlParameterSource;
 import com.github.dataswitch.util.JdbcCreateTableSqlUtil;
@@ -410,18 +412,6 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		executeWithSemicolonComma(dataSource,afterSql);
 		logger.info(" executed afterSql:"+afterSql);
 	}
-	
-	public static enum OutputMode {
-		insert,
-		replace,
-		update
-	}
-	
-	//列的来源
-	public static enum ColumnsFrom {
-		table, //来自表
-		input, //来自输入数据
-		config //来自设置属性
-	}
+
 	
 }

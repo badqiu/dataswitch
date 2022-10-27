@@ -13,9 +13,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.Assert;
 
 import com.github.dataswitch.TestUtil;
+import com.github.dataswitch.enums.ColumnsFrom;
+import com.github.dataswitch.enums.OutputMode;
 import com.github.dataswitch.input.JdbcInputTest;
-import com.github.dataswitch.output.JdbcOutput.ColumnsFrom;
-import com.github.dataswitch.output.JdbcOutput.OutputMode;
 import com.github.dataswitch.util.JdbcUtil;
 import com.github.dataswitch.util.NamedParameterUtils;
 import com.github.dataswitch.util.ParsedSql;
