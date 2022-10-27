@@ -39,6 +39,8 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	private static final String SQL_SEPARATOR_CHAR = ";";
 	
 	private static Logger logger = LoggerFactory.getLogger(JdbcOutput.class);
+	
+	
 	private String lockSql;
 	private String sql;
 	private String beforeSql;
