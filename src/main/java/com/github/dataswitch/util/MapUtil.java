@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -25,17 +26,44 @@ public class MapUtil {
 		return m;
 	}
 	
-    public static Map mergeAllMap(List<Map> rows) {
+//    public static Map mergeAllMap(List<Map> rows) {
+//    	if(CollectionUtils.isEmpty(rows)) {
+//    		return Collections.EMPTY_MAP;
+//    	}
+//    	
+//        Map result = new HashMap();
+//        for (Map row : rows) {
+//            result.putAll(row);
+//        }
+//        return result;
+//    }
+    
+	public static Map mergeAllMapWithNotNullValue(List<Map> rows) {
+		return mergeAllMapWithNotNullValue(rows,new TreeMap());
+	}
+	
+    public static Map mergeAllMapWithNotNullValue(List<Map> rows,Map collector) {
     	if(CollectionUtils.isEmpty(rows)) {
     		return Collections.EMPTY_MAP;
     	}
     	
-        Map result = new HashMap();
+        Map result = collector;
         for (Map row : rows) {
-            result.putAll(row);
+            row.forEach((key,value) -> {
+            	if(result.containsKey(key)) {
+            		Object oldValue = result.get(key);
+            		if(oldValue != null) {
+            			return;
+            		}
+            	}
+            	
+            	result.put(key, value);
+            });
         }
+        
         return result;
     }
+    
 	
 	public static Map<String, Object> keyToLowerCase(Map<String, Object> properties) {
 		if (properties == null) {

@@ -61,6 +61,9 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	 */
 	private boolean autoCreateTable = false;
 	
+	/**
+	 * 是否已经执行过create table sql
+	 */
 	private boolean _executedCreateTable = false;
 	
 	/**
@@ -182,9 +185,9 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(getDataSource());
 		executeWithSemicolonComma(getDataSource(), sessionSql);
 
-		Map allMap = MapUtil.mergeAllMap((List) rows);
+		Map allColumnsWithValue = MapUtil.mergeAllMapWithNotNullValue((List) rows);
 		
-		Map<String,String> columnsSqlType = JdbcDataTypeUtil.getDatabaseDataType(cacheJdbcUrl(), allMap);
+		Map<String,String> columnsSqlType = JdbcDataTypeUtil.getDatabaseDataType(cacheJdbcUrl(), allColumnsWithValue);
 		if(autoCreateTable) {
 			executeCreateTableSql(jdbcTemplate,columnsSqlType);
 		}
@@ -192,7 +195,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		Set<String> tableColumnNames = columnsSqlType.keySet();
 		
 		if(autoAlterTableAddColumn) {
-			JdbcUtil.alterTableIfColumnMiss(jdbcTemplate, allMap,table,cacheJdbcUrl());
+			JdbcUtil.alterTableIfColumnMiss(jdbcTemplate, allColumnsWithValue,table,cacheJdbcUrl());
 			sql = JdbcSqlUtil.buildInsertSql(table, tableColumnNames);
 		}else {
 			
