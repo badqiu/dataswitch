@@ -12,7 +12,9 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ComparatorUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +70,15 @@ public class JdbcUtil {
     public static Map<String,String> getTableColumns(JdbcTemplate jdbcTemplate, String tableName,String jdbcUrl) {
     	String cacheKey = getTableCacheKey(tableName, jdbcUrl);
     	Map<String,String> tableColumns = tableColumnsCache.get(cacheKey);
-        if (tableColumns == null) {
+    	if( tableColumns == null) {
+    		tableColumns = getTableColumnsFromConnectionMetaData(tableName,jdbcTemplate);
+    		
+    		synchronized (tableColumnsCache) {
+            	tableColumnsCache.put(cacheKey, tableColumns);
+			}
+    	}
+    	
+        if (MapUtils.isEmpty(tableColumns)) {
         	
         	String sql = "select * from  " + tableName + " limit 1 ";
         	if(jdbcUrl.contains("oracle") || jdbcUrl.contains("sqlserver")) {
@@ -92,23 +102,23 @@ public class JdbcUtil {
     }
    
 	
-//	private static Map<String, Object> getTableColumns(String tableName, JdbcTemplate jt) {
-//		final Map<String,Object> columnMap = new LinkedHashMap();
-//		jt.execute(new ConnectionCallback<Object>() {
-//			@Override
-//			public Object doInConnection(Connection con) throws SQLException, DataAccessException {
-//				ResultSet rs = con.getMetaData().getColumns(null, null, tableName, null);
-//				
-//				rs2ColumnsMap(tableName, columnMap, rs);
-//				return null;
-//			}
-//		});
-//		
-//		return columnMap;
-//	}
+	private static Map<String, String> getTableColumnsFromConnectionMetaData(String tableName, JdbcTemplate jt) {
+		final Map<String,String> columnMap = new LinkedHashMap();
+		jt.execute(new ConnectionCallback<Object>() {
+			@Override
+			public Object doInConnection(Connection con) throws SQLException, DataAccessException {
+				ResultSet rs = con.getMetaData().getColumns(null, null, tableName, null);
+				
+				rs2ColumnsMap(tableName, columnMap, rs);
+				return null;
+			}
+		});
+		
+		return columnMap;
+	}
 	
-	public static Map<String, Object> getTablePrimaryKeys(String tableName, JdbcTemplate jt) {
-		final Map<String,Object> columnMap = new LinkedHashMap();
+	public static Map<String, String> getTablePrimaryKeys(String tableName, JdbcTemplate jt) {
+		final Map<String,String> columnMap = new LinkedHashMap();
 		jt.execute(new ConnectionCallback<Object>() {
 			@Override
 			public Object doInConnection(Connection con) throws SQLException, DataAccessException {
@@ -126,7 +136,7 @@ public class JdbcUtil {
 		return new ArrayList(getTablePrimaryKeys(tableName,jt).keySet());
 	}
 	
-	private static void rs2ColumnsMap(String tableName, final Map<String, Object> columnMap, ResultSet rs)
+	private static void rs2ColumnsMap(String tableName, final Map<String, String> columnMap, ResultSet rs)
 			throws SQLException {
 		List<Map<String,Object>> columns = resultSet2List(rs);
 		
