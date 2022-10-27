@@ -103,7 +103,7 @@ public class JdbcDataTypeUtil {
         if(isDoubleNumber(value)) return "NUMBER(38,4)";
 		
 		if(value instanceof Number || value instanceof Boolean) return "NUMBER(38,0)";
-		if(value instanceof Date) return "DATE";
+		if(value instanceof Date) return "TIMESTAMP";
 
         return VARCHAR;
     }
