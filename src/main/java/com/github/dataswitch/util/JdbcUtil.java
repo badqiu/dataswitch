@@ -31,13 +31,13 @@ public class JdbcUtil {
 	
     public static Map<String,Map> tableColumnsCache = new HashMap<String,Map>();
     
-	private static Map getMissColumns(JdbcTemplate jdbcTemplate, Map allMap, String table,String jdbcUrl) {
+	private static Map getMissColumns(JdbcTemplate jdbcTemplate, Map columnsWithData, String table,String jdbcUrl) {
         Map tableColumns = JdbcUtil.getTableColumns(jdbcTemplate, table,jdbcUrl);
-        return MapUtil.getDifferenceMap(MapUtil.keyToLowerCase(tableColumns), MapUtil.keyToLowerCase(allMap));
+        return MapUtil.getDifferenceMap(MapUtil.keyToLowerCase(tableColumns), MapUtil.keyToLowerCase(columnsWithData));
 	}
 	
-	public static void alterTableIfColumnMiss(JdbcTemplate jdbcTemplate, Map allMap, String table,String jdbcUrl) {
-		Map missColumns = getMissColumns(jdbcTemplate, allMap, table,jdbcUrl);
+	public static void alterTableIfColumnMiss(JdbcTemplate jdbcTemplate, Map columnsWithData, String table,String jdbcUrl) {
+		Map missColumns = getMissColumns(jdbcTemplate, columnsWithData, table,jdbcUrl);
         if (missColumns == null) return;
         
         Map sqlTypes = JdbcDataTypeUtil.getDatabaseDataType(jdbcUrl, missColumns);
