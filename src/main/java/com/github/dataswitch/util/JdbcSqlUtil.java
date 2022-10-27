@@ -107,7 +107,7 @@ public class JdbcSqlUtil {
 		if(ArrayUtils.isEmpty(primaryKeys))
 			return;
 		
-		sql.append("ON DUPLICATE KEY UPDATE ");
+		sql.append(" ON DUPLICATE KEY UPDATE ");
 			
 		assertPrimaryKeys(columns, primaryKeys);
 		

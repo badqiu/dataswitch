@@ -10,10 +10,12 @@ import javax.sql.DataSource;
 
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.util.Assert;
 
 import com.github.dataswitch.TestUtil;
 import com.github.dataswitch.input.JdbcInputTest;
 import com.github.dataswitch.output.JdbcOutput.ColumnsFrom;
+import com.github.dataswitch.output.JdbcOutput.OutputMode;
 import com.github.dataswitch.util.JdbcUtil;
 import com.github.dataswitch.util.NamedParameterUtils;
 import com.github.dataswitch.util.ParsedSql;
@@ -146,7 +148,25 @@ public class JdbcOutputTest {
 		output.open(new HashMap());
 		
 		List<Object> inputRows = TestUtil.newTestDatas(20);
-		output.write(inputRows);
+		for(OutputMode outputMode : OutputMode.values()) {
+			output.outputMode(outputMode);
+			try {
+				output.write(inputRows);
+			}catch(Exception e) {
+				Assert.isTrue(outputMode == OutputMode.replace,e.toString());
+			}
+		}
+		
+		for(ColumnsFrom columnsFrom : ColumnsFrom.values()) {
+			output.columnsFrom(columnsFrom);
+			try {
+				output.write(inputRows);
+			}catch(Exception e) {
+				Assert.isTrue(columnsFrom == ColumnsFrom.config,e.toString());
+				output.setColumns("pwd");
+				output.write(inputRows);
+			}
+		}
 		
 		List<Map<String,Object>> rows = new JdbcTemplate(ds).queryForList("select * from user");
 		TestUtil.printRows(rows);

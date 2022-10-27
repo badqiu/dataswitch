@@ -252,7 +252,9 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		}else if(ColumnsFrom.table.name().equals(columnsFrom)) {
 			return JdbcUtil.getTableColumnsName(jdbcTemplate, table, cacheJdbcUrl());
 		}else if(ColumnsFrom.config.name().equals(columnsFrom)) {
-			return Arrays.asList(JdbcUtil.splitTableColumns(columns));
+			String[] splitTableColumns = JdbcUtil.splitTableColumns(columns);
+			if(splitTableColumns == null) return null;
+			return Arrays.asList(splitTableColumns);
 		}else {
 			throw new UnsupportedOperationException("error ColumnsFrom:" + columnsFrom);
 		}
@@ -410,7 +412,9 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	}
 	
 	public static enum OutputMode {
-		insert,update,replace
+		insert,
+		replace,
+		update
 	}
 	
 	//列的来源
