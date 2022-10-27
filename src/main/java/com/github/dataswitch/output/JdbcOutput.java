@@ -203,24 +203,29 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		
 		if(autoAlterTableAddColumn) {
 			JdbcUtil.alterTableIfColumnMiss(jdbcTemplate, allColumnsWithValue,table,cacheJdbcUrl());
-			sql = JdbcSqlUtil.buildInsertSql(table, tableColumnNames);
-		}else {
-			
-			if(OutputMode.insert.name().equals(outputMode)) {
-				sql = generateInsertSqlByTargetTable(jdbcTemplate,table);
-				setSql(sql);
-			} else {
-				if(OutputMode.replace.name().equals(outputMode)) {
-					sql = JdbcSqlUtil.buildMysqlInsertOrUpdateSql(table, tableColumnNames, getPrimaryKeysArray());
-				}else if(OutputMode.update.name().equals(outputMode)) {
-					sql = JdbcSqlUtil.buildUpdateSql(table, tableColumnNames, getPrimaryKeysArray());
-				}else {
-					throw new UnsupportedOperationException("error outputMode:"+outputMode);
-				}
-			}
-			
 		}
 		
+		return generateUpdateSql(jdbcTemplate, tableColumnNames);
+	}
+
+	private String generateUpdateSql(JdbcTemplate jdbcTemplate, Set<String> tableColumnNames) {
+		String sql = null;
+		if(OutputMode.insert.name().equals(outputMode)) {
+			if(autoAlterTableAddColumn) {
+				sql = JdbcSqlUtil.buildInsertSql(table, tableColumnNames);
+			}else {
+				sql = generateInsertSqlByTargetTable(jdbcTemplate,table);
+				setSql(sql);
+			}
+		} else {
+			if(OutputMode.replace.name().equals(outputMode)) {
+				sql = JdbcSqlUtil.buildMysqlInsertOrUpdateSql(table, tableColumnNames, getPrimaryKeysArray());
+			}else if(OutputMode.update.name().equals(outputMode)) {
+				sql = JdbcSqlUtil.buildUpdateSql(table, tableColumnNames, getPrimaryKeysArray());
+			}else {
+				throw new UnsupportedOperationException("error outputMode:"+outputMode);
+			}
+		}
 		return sql;
 	}
 
