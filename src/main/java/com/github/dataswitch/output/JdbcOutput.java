@@ -78,6 +78,9 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	
 	private int batchSize = Constants.DEFAULT_BUFFER_SIZE; //批量大小
 	
+	private boolean columnsFromTable = false; //输入列来源: table or inputData or columns field
+	private String columns; //要更新的列
+	
 	public String getSql() {
 		return sql;
 	}
@@ -398,6 +401,13 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	
 	public static enum OutputMode {
 		insert,update,replace
+	}
+	
+	//列的来源
+	public static enum ColumnsFrom {
+		table, //来自表
+		input, //来自输入数据
+		property //来自设置属性
 	}
 	
 }
