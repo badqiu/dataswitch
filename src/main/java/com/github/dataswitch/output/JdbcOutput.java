@@ -82,7 +82,10 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	
 	private String primaryKeys; //主键字段,多列用逗号分隔
 	
-	private int batchSize = Constants.DEFAULT_BUFFER_SIZE; //批量大小
+	/**
+	 * 批量更新的数据大小
+	 */
+	private int batchSize = Constants.DEFAULT_BUFFER_SIZE;
 	
 	private ColumnsFrom columnsFrom = ColumnsFrom.input; //输入列来源: table or input or config
 	private String columns; //要更新的列,多列用逗号分隔
