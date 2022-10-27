@@ -189,11 +189,11 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 			executeCreateTableSql(jdbcTemplate,columnsSqlType);
 		}
 		
-		Set<String> columns = columnsSqlType.keySet();
+		Set<String> tableColumnNames = columnsSqlType.keySet();
 		
 		if(autoAlterTableAddColumn) {
 			JdbcUtil.alterTableIfColumnMiss(jdbcTemplate, allMap,table,cacheJdbcUrl());
-			sql = JdbcSqlUtil.buildInsertSql(table, columns);
+			sql = JdbcSqlUtil.buildInsertSql(table, tableColumnNames);
 		}else {
 			
 			if(OutputMode.insert.name().equals(outputMode)) {
@@ -201,9 +201,9 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 				setSql(sql);
 			} else {
 				if(OutputMode.replace.name().equals(outputMode)) {
-					sql = JdbcSqlUtil.buildMysqlInsertOrUpdateSql(table, columns, getPrimaryKeysArray());
+					sql = JdbcSqlUtil.buildMysqlInsertOrUpdateSql(table, tableColumnNames, getPrimaryKeysArray());
 				}else if(OutputMode.update.name().equals(outputMode)) {
-					sql = JdbcSqlUtil.buildUpdateSql(table, columns, getPrimaryKeysArray());
+					sql = JdbcSqlUtil.buildUpdateSql(table, tableColumnNames, getPrimaryKeysArray());
 				}else {
 					throw new UnsupportedOperationException("error outputMode:"+outputMode);
 				}
