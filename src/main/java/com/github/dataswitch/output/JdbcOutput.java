@@ -47,16 +47,16 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	
 	
 	private String lockSql;
-	private String sql;
-	private String beforeSql;
-	private String afterSql;
+	private String sql; //要执行的update SQL,优先级高于table属性
+	private String beforeSql; // open开始时执行的SQL
+	private String afterSql; // close退出时执行的SQL
 
 	private String sessionSql; //在获取Mysql连接时，执行session指定的SQL语句，修改当前connection session属性
 	private OutputMode outputMode = OutputMode.insert; //insert/replace/update, 控制写入数据到目标表采用 insert into 或者 replace into 或者 ON DUPLICATE KEY UPDATE 语句
 
 	
 	/**
-	 * 要插入数据的表
+	 * 表名，作用优先级低于sql属性
 	 */
 	private String table;
 	
@@ -80,18 +80,34 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	 */
 	private boolean replaceSqlWithParams = false;
 	
-	private String primaryKeys; //主键字段,多列用逗号分隔
+	/**
+	 * 主键字段,多列用逗号分隔
+	 */
+	private String primaryKeys; 
 	
 	/**
 	 * 批量更新的数据大小
 	 */
 	private int batchSize = Constants.DEFAULT_BUFFER_SIZE;
 	
-	private ColumnsFrom columnsFrom = ColumnsFrom.input; //输入列来源: table or input or config
-	private String columns; //要更新的列,多列用逗号分隔
+	/**
+	 * 输入列来源: table or input or config
+	 */
+	private ColumnsFrom columnsFrom = ColumnsFrom.input; 
 	
-	private Map<String,String> columnsSqlType = new HashMap(); //列的sql类型
-	private Map<String,String> columnsComment = new HashMap(); //列的注释
+	/**
+	 * 要更新的列,多列用逗号分隔
+	 */
+	private String columns; 
+	
+	/**
+	 * 列的sql类型
+	 */
+	private Map<String,String> columnsSqlType = new HashMap(); 
+	/**
+	 * 列的注释
+	 */
+	private Map<String,String> columnsComment = new HashMap(); 
 	
 	private FailMode failMode = FailMode.FAIL_FAST;
 	
