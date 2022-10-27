@@ -76,7 +76,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	
 	private String primaryKeys; //主键字段
 	
-	private int batchSize = Constants.DEFAULT_BUFFER_SIZE; //批量提升的大小
+	private int batchSize = Constants.DEFAULT_BUFFER_SIZE; //批量大小
 	
 	public String getSql() {
 		return sql;
