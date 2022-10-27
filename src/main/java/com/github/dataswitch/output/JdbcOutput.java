@@ -38,7 +38,7 @@ import com.github.dataswitch.util.Util;
 
 
 public class JdbcOutput extends DataSourceProvider implements Output {
-	private static final String SQL_SEPARATOR_CHAR = ";";
+	
 	
 	private static Logger logger = LoggerFactory.getLogger(JdbcOutput.class);
 	
@@ -194,7 +194,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 			throw new IllegalStateException("table or sql must be not blank");
 		}
 		
-		executeWithSemicolonComma(getDataSource(),beforeSql);
+		JdbcUtil.executeWithSemicolonComma(getDataSource(),beforeSql);
 		logger.info("executed beforeSql:"+beforeSql);
 	}
 	
@@ -213,7 +213,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		Assert.hasText(table,"table or sql must be not blank");
 		
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(getDataSource());
-		executeWithSemicolonComma(getDataSource(), sessionSql);
+		JdbcUtil.executeWithSemicolonComma(getDataSource(), sessionSql);
 
 		Map allColumnsWithValue = MapUtil.mergeAllMapWithNotNullValue((List) rows);
 		
@@ -294,6 +294,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 			
 			Assert.notEmpty(_primaryKeyArray,"not found primary key on table:"+table+",your can config by:primaryKeys");
 		}
+		
 		return _primaryKeyArray;
 	}
 
@@ -321,12 +322,12 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 			}
 		}else {
 			
-			final String[] updateSqls = StringUtils.split(finalSql,SQL_SEPARATOR_CHAR);
+			final String[] updateSqls = StringUtils.split(finalSql,JdbcUtil.SQL_SEPARATOR_CHAR);
 			TransactionTemplate tt = getTransactionTemplate();
 			
 			tt.execute(new TransactionCallback<Object>() {
 				public Object doInTransaction(TransactionStatus status) {
-					executeWithSemicolonComma(getDataSource(),lockSql);
+					JdbcUtil.executeWithSemicolonComma(getDataSource(),lockSql);
 					
 					SqlParameterSource[] batchArgs = newSqlParameterSource(rows);
 					
@@ -352,7 +353,6 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		String replacedSql = JdbcUtil.getReplacedSql(parsedSql, row);
 		new JdbcTemplate(getDataSource()).execute(replacedSql);
 	}
-
 
 	public TransactionTemplate getTransactionTemplate() {
 		if(transactionTemplate == null) {
@@ -391,25 +391,10 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		return cacheJdbcUrl().contains("clickhouse");
 	}
 
-	protected static void executeWithSemicolonComma(DataSource ds, String sql) {
-		if (StringUtils.isBlank(sql)) {
-			return;
-		}
-		
-		final String[] sqls = StringUtils.split(sql,SQL_SEPARATOR_CHAR);;
-		for (String s : sqls) {
-			if(StringUtils.isBlank(s)) {
-				continue;
-			}
-			
-			new JdbcTemplate(ds).execute(s);
-		}
-	}
-	
 	@Override
 	public void close() {
 		DataSource dataSource = getDataSource();
-		executeWithSemicolonComma(dataSource,afterSql);
+		JdbcUtil.executeWithSemicolonComma(dataSource,afterSql);
 		logger.info(" executed afterSql:"+afterSql);
 	}
 

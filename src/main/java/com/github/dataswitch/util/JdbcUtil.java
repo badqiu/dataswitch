@@ -233,6 +233,21 @@ public class JdbcUtil {
 		return results;
 	}
 	
+	public static final String SQL_SEPARATOR_CHAR = ";";
+	public static void executeWithSemicolonComma(DataSource ds, String sql) {
+		if (StringUtils.isBlank(sql)) {
+			return;
+		}
+		
+		final String[] sqls = StringUtils.split(sql,SQL_SEPARATOR_CHAR);;
+		for (String s : sqls) {
+			if(StringUtils.isBlank(s)) {
+				continue;
+			}
+			
+			new JdbcTemplate(ds).execute(s);
+		}
+	}
 	
 	
 }
