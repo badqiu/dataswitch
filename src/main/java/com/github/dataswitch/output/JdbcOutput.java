@@ -81,12 +81,12 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	
 	private transient TransactionTemplate transactionTemplate;
 	
-	private String primaryKeys; //主键字段
+	private String primaryKeys; //主键字段,多列用逗号分隔
 	
 	private int batchSize = Constants.DEFAULT_BUFFER_SIZE; //批量大小
 	
 	private String columnsFrom = ColumnsFrom.input.name(); //输入列来源: table or input or config
-	private String columns; //要更新的列
+	private String columns; //要更新的列,多列用逗号分隔
 	
 	private Map<String,String> columnsSqlType = new HashMap(); //列的sql类型
 	private Map<String,String> columnsComment = new HashMap(); //列的注释
