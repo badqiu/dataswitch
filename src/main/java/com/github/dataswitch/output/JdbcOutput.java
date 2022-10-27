@@ -234,14 +234,12 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		String sql = null;
 		if(OutputMode.insert.name().equals(outputMode)) {
 			sql = JdbcSqlUtil.buildInsertSql(table, columns);
-		} else {
-			if(OutputMode.replace.name().equals(outputMode)) {
-				sql = JdbcSqlUtil.buildMysqlInsertOrUpdateSql(table, columns, getPrimaryKeysArray());
-			}else if(OutputMode.update.name().equals(outputMode)) {
-				sql = JdbcSqlUtil.buildUpdateSql(table, columns, getPrimaryKeysArray());
-			}else {
-				throw new UnsupportedOperationException("error outputMode:"+outputMode);
-			}
+		} if(OutputMode.replace.name().equals(outputMode)) {
+			sql = JdbcSqlUtil.buildMysqlInsertOrUpdateSql(table, columns, getPrimaryKeysArray());
+		}else if(OutputMode.update.name().equals(outputMode)) {
+			sql = JdbcSqlUtil.buildUpdateSql(table, columns, getPrimaryKeysArray());
+		}else {
+			throw new UnsupportedOperationException("error outputMode:"+outputMode);
 		}
 		return sql;
 	}
