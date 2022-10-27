@@ -174,7 +174,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		init();
 	}
 	
-	private String getRealSqlOrAlterTable(final List<Object> rows) {
+	private String alterTableAndGetFinalSql(final List<Object> rows) {
 		String sql = getSql();
 		if(StringUtils.isNotBlank(sql)) {
 			return sql;
@@ -274,25 +274,25 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		if(CollectionUtils.isEmpty(rows)) return;
 		
 		long start = System.currentTimeMillis();
-		String sql = executeWithJdbc(rows);
+		String finalSql = executeWithJdbc(rows);
 		long costTime = System.currentTimeMillis() - start;
 		long tps = Util.getTPS(rows.size(), costTime);
-		logger.info("execute update sql with rows:"+rows.size()+" costTimeMills:"+costTime+" tps:"+ tps +" for sql:"+sql);
+		logger.info("execute update sql with rows:"+rows.size()+" costTimeMills:"+costTime+" tps:"+ tps +" for sql:"+finalSql);
 	}
 
 	protected String executeWithJdbc(final List<Object> rows) {
 		if(CollectionUtils.isEmpty(rows)) return null;
 		
-		String realSql = getRealSqlOrAlterTable(rows);
+		String finalSql = alterTableAndGetFinalSql(rows);
 		
 		if(replaceSqlWithParams) {
-			ParsedSql parsedSql = NamedParameterUtils.parseSqlStatement(realSql);
+			ParsedSql parsedSql = NamedParameterUtils.parseSqlStatement(finalSql);
 			for(Object row : rows) {
 				execWithReplacedSql(parsedSql, row);
 			}
 		}else {
 			
-			final String[] updateSqls = StringUtils.split(realSql,SQL_SEPARATOR_CHAR);
+			final String[] updateSqls = StringUtils.split(finalSql,SQL_SEPARATOR_CHAR);
 			TransactionTemplate tt = getTransactionTemplate();
 			
 			tt.execute(new TransactionCallback<Object>() {
@@ -315,7 +315,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 			});
 		}
 		
-		return realSql;
+		return finalSql;
 	}
 
 	private void execWithReplacedSql(ParsedSql parsedSql, Object row) {
