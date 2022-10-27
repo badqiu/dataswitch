@@ -77,20 +77,20 @@ public class JdbcUtil {
         return tableColumns;
     }
     
-	private static Map<String, Object> getTableColumns(String tableName, JdbcTemplate jt) {
-		final Map<String,Object> columnMap = new LinkedHashMap();
-		jt.execute(new ConnectionCallback<Object>() {
-			@Override
-			public Object doInConnection(Connection con) throws SQLException, DataAccessException {
-				ResultSet rs = con.getMetaData().getColumns(null, null, tableName, null);
-				
-				rs2ColumnsMap(tableName, columnMap, rs);
-				return null;
-			}
-		});
-		
-		return columnMap;
-	}
+//	private static Map<String, Object> getTableColumns(String tableName, JdbcTemplate jt) {
+//		final Map<String,Object> columnMap = new LinkedHashMap();
+//		jt.execute(new ConnectionCallback<Object>() {
+//			@Override
+//			public Object doInConnection(Connection con) throws SQLException, DataAccessException {
+//				ResultSet rs = con.getMetaData().getColumns(null, null, tableName, null);
+//				
+//				rs2ColumnsMap(tableName, columnMap, rs);
+//				return null;
+//			}
+//		});
+//		
+//		return columnMap;
+//	}
 	
 	public static Map<String, Object> getTablePrimaryKeys(String tableName, JdbcTemplate jt) {
 		final Map<String,Object> columnMap = new LinkedHashMap();

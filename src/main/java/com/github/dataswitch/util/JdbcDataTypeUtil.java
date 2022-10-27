@@ -23,6 +23,12 @@ public class JdbcDataTypeUtil {
 		return result;
 	}
 	
+	/**
+	 *  通过java类型猜测数据库数据类型
+	 * @param jdbcUrl
+	 * @param value
+	 * @return
+	 */
 	public static String getDatabaseDataType(String jdbcUrl,Object value) {
 		Assert.hasText(jdbcUrl,"jdbcUrl must be not blank");
 		
