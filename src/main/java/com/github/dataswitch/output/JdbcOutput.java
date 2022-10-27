@@ -79,8 +79,6 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	 */
 	private boolean replaceSqlWithParams = false;
 	
-	private transient TransactionTemplate transactionTemplate;
-	
 	private String primaryKeys; //主键字段,多列用逗号分隔
 	
 	private int batchSize = Constants.DEFAULT_BUFFER_SIZE; //批量大小
@@ -233,7 +231,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		
 		Assert.hasText(table,"table or sql must be not blank");
 		
-		JdbcTemplate jdbcTemplate = new JdbcTemplate(getDataSource());
+		JdbcTemplate jdbcTemplate = getJdbcTemplate();
 		JdbcUtil.executeWithSemicolonComma(getDataSource(), sessionSql);
 
 		Map allColumnsWithValue = MapUtil.mergeAllMapWithNotNullValue((List) rows);
@@ -306,7 +304,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	private String[] getPrimaryKeysArray() {
 		if(_primaryKeyArray == null) {
 			if(StringUtils.isBlank(primaryKeys)) {
-				List<String> tablePrimaryKeysList = JdbcUtil.getTablePrimaryKeysList(table,new JdbcTemplate(getDataSource()));
+				List<String> tablePrimaryKeysList = JdbcUtil.getTablePrimaryKeysList(table,getJdbcTemplate());
 				primaryKeys = StringUtils.join(tablePrimaryKeysList,",");
 				logger.info("get primary key:["+primaryKeys +"] from database metadata for table:"+table);
 			}
@@ -357,13 +355,15 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 							continue;
 						
 						try {
-							new NamedParameterJdbcTemplate(getDataSource()).batchUpdate(updateSql, batchArgs);
+							getNamedParameterJdbcTemplate().batchUpdate(updateSql, batchArgs);
 						}catch(Exception e) {
 							throw new RuntimeException("execute sql error,sql:"+updateSql+" firstRow:"+rows.get(0),e);
 						}
 					}
 					return true;
 				}
+
+
 			});
 		}
 		
@@ -372,20 +372,9 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 
 	private void execWithReplacedSql(ParsedSql parsedSql, Object row) {
 		String replacedSql = JdbcUtil.getReplacedSql(parsedSql, row);
-		new JdbcTemplate(getDataSource()).execute(replacedSql);
+		getJdbcTemplate().execute(replacedSql);
 	}
 
-	public TransactionTemplate getTransactionTemplate() {
-		if(transactionTemplate == null) {
-			transactionTemplate = new TransactionTemplate(new DataSourceTransactionManager(getDataSource()));
-//			transactionTemplate.setIsolationLevelName("ISOLATION_READ_UNCOMMITTED");
-		}
-		return transactionTemplate;
-	}
-	
-	public void setTransactionTemplate(TransactionTemplate transactionTemplate) {
-		this.transactionTemplate = transactionTemplate;
-	}
 
 	protected SqlParameterSource[] newSqlParameterSource(final List<Object> rows) {
 		SqlParameterSource[] batchArgs = new SqlParameterSource[rows.size()];
