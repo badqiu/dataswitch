@@ -62,8 +62,12 @@ public class JdbcUtil {
     	String cacheKey = getTableCacheKey(tableName, jdbcUrl);
     	Map<String,String> tableColumns = tableColumnsCache.get(cacheKey);
         if (tableColumns == null) {
-//        	String sql = "select * from  " + tableName + " limit 1 ";
-            String sql = "select * from  " + tableName;
+        	
+        	String sql = "select * from  " + tableName + " limit 1 ";
+        	if(jdbcUrl.contains("oracle") || jdbcUrl.contains("sqlserver")) {
+        		sql = "select * from  " + tableName;
+        	}
+        	
             SqlRowSet srs = jdbcTemplate.queryForRowSet(sql);
             tableColumns = JdbcUtil.getSqlColumnsNameType(srs);
             synchronized (tableColumnsCache) {
