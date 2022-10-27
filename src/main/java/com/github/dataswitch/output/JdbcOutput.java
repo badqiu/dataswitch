@@ -205,10 +205,10 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 			JdbcUtil.alterTableIfColumnMiss(jdbcTemplate, allColumnsWithValue,table,cacheJdbcUrl());
 		}
 		
-		return generateUpdateSql(jdbcTemplate, tableColumnNames);
+		return generateSql(jdbcTemplate, tableColumnNames);
 	}
 
-	private String generateUpdateSql(JdbcTemplate jdbcTemplate, Set<String> tableColumnNames) {
+	private String generateSql(JdbcTemplate jdbcTemplate, Set<String> tableColumnNames) {
 		String sql = null;
 		if(OutputMode.insert.name().equals(outputMode)) {
 			if(autoAlterTableAddColumn) {
