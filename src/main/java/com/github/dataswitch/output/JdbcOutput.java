@@ -52,7 +52,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	private String afterSql;
 
 	private String sessionSql; //在获取Mysql连接时，执行session指定的SQL语句，修改当前connection session属性
-	private String outputMode = OutputMode.insert.name(); //insert/replace/update, 控制写入数据到目标表采用 insert into 或者 replace into 或者 ON DUPLICATE KEY UPDATE 语句
+	private OutputMode outputMode = OutputMode.insert; //insert/replace/update, 控制写入数据到目标表采用 insert into 或者 replace into 或者 ON DUPLICATE KEY UPDATE 语句
 
 	
 	/**
@@ -84,7 +84,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	
 	private int batchSize = Constants.DEFAULT_BUFFER_SIZE; //批量大小
 	
-	private String columnsFrom = ColumnsFrom.input.name(); //输入列来源: table or input or config
+	private ColumnsFrom columnsFrom = ColumnsFrom.input; //输入列来源: table or input or config
 	private String columns; //要更新的列,多列用逗号分隔
 	
 	private Map<String,String> columnsSqlType = new HashMap(); //列的sql类型
@@ -165,23 +165,23 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	}
 	
 	public String getOutputMode() {
-		return outputMode;
+		return outputMode.name();
 	}
 
 	public void setOutputMode(String outputMode) {
-		this.outputMode = outputMode;
+		this.outputMode = OutputMode.valueOf(outputMode);
 	}
 	
 	public void outputMode(OutputMode outputMode) {
-		this.outputMode = outputMode.name();
+		this.outputMode = outputMode;
 	}
 	
 	public void setColumnsFrom(String columnsFrom) {
-		this.columnsFrom = columnsFrom;
+		this.columnsFrom = ColumnsFrom.valueOf(columnsFrom);
 	}
 	
 	public void columnsFrom(ColumnsFrom columnsFrom) {
-		this.columnsFrom = columnsFrom.name();
+		this.columnsFrom = columnsFrom;
 	}
 	
 	public void setColumnsSqlType(Map<String, String> columnsSqlType) {
@@ -272,11 +272,11 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		Assert.notEmpty(columns,"columns must be not empty");
 		
 		String sql = null;
-		if(OutputMode.insert.name().equals(outputMode)) {
+		if(OutputMode.insert == outputMode) {
 			sql = JdbcSqlUtil.buildInsertSql(table, columns);
-		}else if(OutputMode.replace.name().equals(outputMode)) {
+		}else if(OutputMode.replace == outputMode) {
 			sql = JdbcSqlUtil.buildMysqlInsertOrUpdateSql(table, columns, getPrimaryKeysArray());
-		}else if(OutputMode.update.name().equals(outputMode)) {
+		}else if(OutputMode.update == outputMode) {
 			sql = JdbcSqlUtil.buildUpdateSql(table, columns, getPrimaryKeysArray());
 		}else {
 			throw new UnsupportedOperationException("error outputMode:"+outputMode);
@@ -285,11 +285,11 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	}
 
 	private Collection<String> getColumnsByColumnsFrom(JdbcTemplate jdbcTemplate,Set<String> tableColumnNames) {
-		if(ColumnsFrom.input.name().equals(columnsFrom)) {
+		if(ColumnsFrom.input == columnsFrom) {
 			return tableColumnNames;
-		}else if(ColumnsFrom.table.name().equals(columnsFrom)) {
+		}else if(ColumnsFrom.table == columnsFrom) {
 			return JdbcUtil.getTableColumnsName(jdbcTemplate, table, cacheJdbcUrl());
-		}else if(ColumnsFrom.config.name().equals(columnsFrom)) {
+		}else if(ColumnsFrom.config == columnsFrom) {
 			String[] splitTableColumns = JdbcUtil.splitTableColumns(columns);
 			if(splitTableColumns == null) return null;
 			return Arrays.asList(splitTableColumns);
