@@ -1,6 +1,10 @@
 package com.github.dataswitch;
 
+import java.util.Map;
 import java.util.Properties;
+
+import com.github.dataswitch.util.URLQueryUtil;
+import com.github.rapid.common.beanutils.BeanUtils;
 
 public class BaseObject implements Enabled {
 
@@ -52,6 +56,9 @@ public class BaseObject implements Enabled {
 		return isEnabled();
 	}
 	
-	
+	public void setConfigByQuery(String query) {
+		Map<String,String> params = URLQueryUtil.splitQueryForSingleValue(query);
+		BeanUtils.copyProperties(this, params);
+	}
 
 }
