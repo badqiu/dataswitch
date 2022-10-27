@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import javax.sql.DataSource;
 
@@ -15,9 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -25,6 +24,7 @@ import org.springframework.util.Assert;
 
 import com.github.dataswitch.enums.ColumnsFrom;
 import com.github.dataswitch.enums.Constants;
+import com.github.dataswitch.enums.FailMode;
 import com.github.dataswitch.enums.OutputMode;
 import com.github.dataswitch.support.DataSourceProvider;
 import com.github.dataswitch.util.DefaultValueMapSqlParameterSource;
@@ -37,6 +37,7 @@ import com.github.dataswitch.util.NamedParameterUtils;
 import com.github.dataswitch.util.ParsedSql;
 import com.github.dataswitch.util.PropertiesUtil;
 import com.github.dataswitch.util.Util;
+import com.github.rapid.common.util.CollectionUtil;
 
 
 public class JdbcOutput extends DataSourceProvider implements Output {
@@ -88,6 +89,8 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	
 	private Map<String,String> columnsSqlType = new HashMap(); //列的sql类型
 	private Map<String,String> columnsComment = new HashMap(); //列的注释
+	
+	private FailMode failMode = FailMode.FAIL_FAST;
 	
 	public String getSql() {
 		return sql;
@@ -205,7 +208,21 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	}
 
 	public void setBatchSize(int batchSize) {
+		Assert.isTrue(batchSize > 0,"batchSize > 0 must be true");
 		this.batchSize = batchSize;
+	}
+	
+
+	public String getFailMode() {
+		return failMode.name();
+	}
+	
+	public void setFailMode(String failMode) {
+		this.failMode = FailMode.getRequiredByName(failMode);
+	}
+	
+	public void failMode(FailMode failMode) {
+		this.failMode = failMode;
 	}
 
 	public void init() {
@@ -334,40 +351,53 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		
 		String finalSql = alterTableAndGetFinalSql(rows);
 		
-		if(replaceSqlWithParams) {
-			ParsedSql parsedSql = NamedParameterUtils.parseSqlStatement(finalSql);
-			for(Object row : rows) {
-				execWithReplacedSql(parsedSql, row);
-			}
-		}else {
-			
-			final String[] updateSqls = StringUtils.split(finalSql,JdbcUtil.SQL_SEPARATOR_CHAR);
-			TransactionTemplate tt = getTransactionTemplate();
-			
-			tt.execute(new TransactionCallback<Object>() {
-				public Object doInTransaction(TransactionStatus status) {
-					JdbcUtil.executeWithSemicolonComma(getDataSource(),lockSql);
-					
-					SqlParameterSource[] batchArgs = newSqlParameterSource(rows);
-					
-					for(final String updateSql : updateSqls) {
-						if(StringUtils.isBlank(updateSql)) 
-							continue;
-						
-						try {
-							getNamedParameterJdbcTemplate().batchUpdate(updateSql, batchArgs);
-						}catch(Exception e) {
-							throw new RuntimeException("execute sql error,sql:"+updateSql+" firstRow:"+rows.get(0),e);
-						}
-					}
-					return true;
-				}
-
-
-			});
-		}
+		List<List> multiChunkRows = CollectionUtil.chunk(rows, batchSize);
+		
+		failMode.forEach(executeWithJdbc(finalSql), multiChunkRows);
 		
 		return finalSql;
+	}
+
+	private Consumer<List> executeWithJdbc(String finalSql) {
+		
+		return (finalRows) -> {
+			if(CollectionUtils.isEmpty(finalRows)) {
+				return;
+			}
+			
+			if(replaceSqlWithParams) {
+				ParsedSql parsedSql = NamedParameterUtils.parseSqlStatement(finalSql);
+				for(Object row : finalRows) {
+					execWithReplacedSql(parsedSql, row);
+				}
+			}else {
+				
+				final String[] updateSqls = StringUtils.split(finalSql,JdbcUtil.SQL_SEPARATOR_CHAR);
+				TransactionTemplate tt = getTransactionTemplate();
+				
+				tt.execute(new TransactionCallback<Object>() {
+					public Object doInTransaction(TransactionStatus status) {
+						JdbcUtil.executeWithSemicolonComma(getDataSource(),lockSql);
+						
+						SqlParameterSource[] batchArgs = newSqlParameterSource(finalRows);
+						
+						for(final String updateSql : updateSqls) {
+							if(StringUtils.isBlank(updateSql)) 
+								continue;
+							
+							try {
+								getNamedParameterJdbcTemplate().batchUpdate(updateSql, batchArgs);
+							}catch(Exception e) {
+								throw new RuntimeException("execute sql error,sql:"+updateSql+" firstRow:"+finalRows.get(0),e);
+							}
+						}
+						return true;
+					}
+	
+	
+				});
+			}
+		};
 	}
 
 	private void execWithReplacedSql(ParsedSql parsedSql, Object row) {

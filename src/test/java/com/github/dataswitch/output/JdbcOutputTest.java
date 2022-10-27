@@ -87,6 +87,7 @@ public class JdbcOutputTest {
 	public void test_table_with_auto_add_column() throws Exception {
 		DataSource ds = JdbcInputTest.createDataSourceAndInsertData();
 		output.setDataSource(ds);
+		output.setBatchSize(1);
 		output.setBeforeSql("delete from user");
 		output.setTable("user");
 		output.setAutoAlterTableAddColumn(true);
