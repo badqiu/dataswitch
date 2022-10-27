@@ -214,6 +214,20 @@ public class JdbcUtil {
 		return !columns.isEmpty();
 	}
 	
+	static Map<String,String[]> splitTableColumnsCache = new HashMap();
+	public static String[] splitTableColumns(String columns) {
+		if(StringUtils.isBlank(columns)) return null;
+		
+		String[] results = splitTableColumnsCache.get(columns);
+		if(results == null) {
+			results = org.springframework.util.StringUtils.tokenizeToStringArray(columns, " ,\t\n，");
+			synchronized (splitTableColumnsCache) {
+				splitTableColumnsCache.put(columns, results);
+			}
+		}
+		
+		return results;
+	}
 	
 	
 	

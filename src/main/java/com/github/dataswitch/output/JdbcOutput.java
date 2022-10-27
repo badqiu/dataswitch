@@ -252,7 +252,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		}else if(ColumnsFrom.table.name().equals(columnsFrom)) {
 			return JdbcUtil.getTableColumnsName(jdbcTemplate, table, cacheJdbcUrl());
 		}else if(ColumnsFrom.config.name().equals(columnsFrom)) {
-			return Arrays.asList(splitTableColumns(columns));
+			return Arrays.asList(JdbcUtil.splitTableColumns(columns));
 		}else {
 			throw new UnsupportedOperationException("error ColumnsFrom:" + columnsFrom);
 		}
@@ -286,18 +286,13 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 				logger.info("get primary key:["+primaryKeys +"] from database metadata for table:"+table);
 			}
 			
-			_primaryKeyArray = splitTableColumns(primaryKeys);
+			_primaryKeyArray = JdbcUtil.splitTableColumns(primaryKeys);
 			
 			Assert.notEmpty(_primaryKeyArray,"not found primary key on table:"+table);
 		}
 		return _primaryKeyArray;
 	}
 
-	private static String[] splitTableColumns(String columns) {
-		if(StringUtils.isBlank(columns)) return null;
-		
-		return org.springframework.util.StringUtils.tokenizeToStringArray(columns, " ,\t\n");
-	}
 
 	@Override
 	public void write(final List<Object> rows) {
