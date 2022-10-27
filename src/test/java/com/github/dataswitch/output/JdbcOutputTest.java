@@ -133,4 +133,23 @@ public class JdbcOutputTest {
 		TestUtil.printRows(rows);
 		assertEquals(20,rows.size());
 	}
+	
+	@Test
+	public void test_table_with_AutoCreateTable_with_drop_table() throws Exception {
+		DataSource ds = JdbcInputTest.createDataSourceAndInsertData();
+		output.setDataSource(ds);
+		output.setBeforeSql("drop table user");
+		output.setTable("user");
+		output.setAutoCreateTable(true);
+		output.setAutoAlterTableAddColumn(true);
+		output.setPrimaryKeys("id");
+		output.open(new HashMap());
+		
+		List<Object> inputRows = TestUtil.newTestDatas(20);
+		output.write(inputRows);
+		
+		List<Map<String,Object>> rows = new JdbcTemplate(ds).queryForList("select * from user");
+		TestUtil.printRows(rows);
+		assertEquals(20,rows.size());
+	}
 }

@@ -210,8 +210,12 @@ public class JdbcUtil {
 	}
 
 	public static boolean tableExists(JdbcTemplate jdbcTemplate, String table,String jdbcUrl) {
-		Map<String,String> columns = getTableColumns(jdbcTemplate, table, jdbcUrl);
-		return !columns.isEmpty();
+		try {
+			Map<String,String> columns = getTableColumns(jdbcTemplate, table, jdbcUrl);
+			return !columns.isEmpty();
+		}catch(Exception e) {
+			return false;
+		}
 	}
 	
 	static Map<String,String[]> splitTableColumnsCache = new HashMap();
