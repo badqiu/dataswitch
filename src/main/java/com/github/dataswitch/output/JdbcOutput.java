@@ -35,6 +35,7 @@ import com.github.dataswitch.util.JdbcUtil;
 import com.github.dataswitch.util.MapUtil;
 import com.github.dataswitch.util.NamedParameterUtils;
 import com.github.dataswitch.util.ParsedSql;
+import com.github.dataswitch.util.PropertiesUtil;
 import com.github.dataswitch.util.Util;
 
 
@@ -186,8 +187,16 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		this.columnsSqlType = columnsSqlType;
 	}
 
+	public void setColumnsSqlTypeProperties(String columnsSqlType) {
+		setColumnsSqlType((Map)PropertiesUtil.createProperties(columnsSqlType));
+	}
+	
 	public void setColumnsComment(Map<String, String> columnsComment) {
 		this.columnsComment = columnsComment;
+	}
+	
+	public void setColumnsCommentProperties(String columnsComment) {
+		setColumnsComment((Map)PropertiesUtil.createProperties(columnsComment));
 	}
 
 	public void setColumns(String columns) {
