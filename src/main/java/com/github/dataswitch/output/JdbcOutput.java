@@ -299,12 +299,13 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 				public Object doInTransaction(TransactionStatus status) {
 					executeWithSemicolonComma(getDataSource(),lockSql);
 					
+					SqlParameterSource[] batchArgs = newSqlParameterSource(rows);
+					
 					for(final String updateSql : updateSqls) {
 						if(StringUtils.isBlank(updateSql)) 
 							continue;
 						
 						try {
-							SqlParameterSource[] batchArgs = newSqlParameterSource(rows);
 							new NamedParameterJdbcTemplate(getDataSource()).batchUpdate(updateSql, batchArgs);
 						}catch(Exception e) {
 							throw new RuntimeException("execute sql error,sql:"+updateSql+" firstRow:"+rows.get(0),e);
