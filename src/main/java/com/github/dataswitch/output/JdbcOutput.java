@@ -21,6 +21,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.Assert;
 
+import com.github.dataswitch.enums.Constants;
 import com.github.dataswitch.support.DataSourceProvider;
 import com.github.dataswitch.util.DefaultValueMapSqlParameterSource;
 import com.github.dataswitch.util.JdbcCreateTableSqlUtil;
@@ -74,6 +75,8 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	private transient TransactionTemplate transactionTemplate;
 	
 	private String primaryKeys; //主键字段
+	
+	private int batchSize = Constants.DEFAULT_BUFFER_SIZE; //批量提升的大小
 	
 	public String getSql() {
 		return sql;
@@ -157,6 +160,10 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	
 	public void outputMode(OutputMode outputMode) {
 		this.outputMode = outputMode.name();
+	}
+	
+	public void setBatchSize(int batchSize) {
+		this.batchSize = batchSize;
 	}
 
 	public void init() {
