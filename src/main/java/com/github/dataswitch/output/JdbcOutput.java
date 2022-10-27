@@ -230,13 +230,13 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	}
 
 	private String generateSql(JdbcTemplate jdbcTemplate, Set<String> tableColumnNames) {
-		Collection<String> columns = processColumns(jdbcTemplate,tableColumnNames);
+		Collection<String> columns = getColumnsByColumnsFrom(jdbcTemplate,tableColumnNames);
 		Assert.notEmpty(columns,"columns must be not empty");
 		
 		String sql = null;
 		if(OutputMode.insert.name().equals(outputMode)) {
 			sql = JdbcSqlUtil.buildInsertSql(table, columns);
-		} if(OutputMode.replace.name().equals(outputMode)) {
+		}else if(OutputMode.replace.name().equals(outputMode)) {
 			sql = JdbcSqlUtil.buildMysqlInsertOrUpdateSql(table, columns, getPrimaryKeysArray());
 		}else if(OutputMode.update.name().equals(outputMode)) {
 			sql = JdbcSqlUtil.buildUpdateSql(table, columns, getPrimaryKeysArray());
@@ -246,7 +246,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		return sql;
 	}
 
-	private Collection<String> processColumns(JdbcTemplate jdbcTemplate,Set<String> tableColumnNames) {
+	private Collection<String> getColumnsByColumnsFrom(JdbcTemplate jdbcTemplate,Set<String> tableColumnNames) {
 		if(ColumnsFrom.input.name().equals(columnsFrom)) {
 			return tableColumnNames;
 		}else if(ColumnsFrom.table.name().equals(columnsFrom)) {

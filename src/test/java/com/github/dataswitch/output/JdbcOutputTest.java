@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.github.dataswitch.TestUtil;
 import com.github.dataswitch.input.JdbcInputTest;
+import com.github.dataswitch.output.JdbcOutput.ColumnsFrom;
 import com.github.dataswitch.util.JdbcUtil;
 import com.github.dataswitch.util.NamedParameterUtils;
 import com.github.dataswitch.util.ParsedSql;
@@ -103,6 +104,7 @@ public class JdbcOutputTest {
 		output.setBeforeSql("delete from user");
 		output.setTable("user");
 		output.setAutoAlterTableAddColumn(false);
+		output.columnsFrom(ColumnsFrom.table);
 		output.open(new HashMap());
 		
 		List<Object> inputRows = TestUtil.newTestDatas(20);
