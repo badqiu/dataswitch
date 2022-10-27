@@ -201,6 +201,11 @@ public class JdbcUtil {
 		}
 		return String.valueOf(value);
 	}
+
+	public static boolean tableExists(JdbcTemplate jdbcTemplate, String table,String jdbcUrl) {
+		Map<String,String> columns = getTableColumns(jdbcTemplate, table, jdbcUrl);
+		return !columns.isEmpty();
+	}
 	
 	
 	

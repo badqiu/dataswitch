@@ -14,7 +14,7 @@ public class JdbcCreateTableSqlUtil {
 	private static Logger logger = LoggerFactory.getLogger(JdbcCreateTableSqlUtil.class);
 	
 	public static void executeCreateTableSql(String tableName,Map columnComments,Map<String, String> columnsSqlType,JdbcTemplate jt,String... primaryKeys) {
-		String createTableSql = buildMysqlCreateTableSql(tableName,columnComments, columnsSqlType,primaryKeys);
+		String createTableSql = buildCreateTableSql(tableName,columnComments, columnsSqlType,primaryKeys);
 		
 		if(StringUtils.isNotBlank(createTableSql)) {
 			jt.execute(createTableSql);
@@ -22,12 +22,12 @@ public class JdbcCreateTableSqlUtil {
 		}
 	}
 	
-	public static String buildMysqlCreateTableSql(String tableName,Map columnComments, Map<String, String> columnsSqlType,String... primaryKeys) {
+	public static String buildCreateTableSql(String tableName,Map columnComments, Map<String, String> columnsSqlType,String... primaryKeys) {
 		if(columnsSqlType == null || columnsSqlType.isEmpty()) return null;
 		
 		Assert.notEmpty(primaryKeys,"primary keys must be not empty");
 		
-		StringBuilder sql = new StringBuilder(" create table if not exists "+tableName+" (");
+		StringBuilder sql = new StringBuilder(" create table  "+tableName+" (");
 		boolean first = true;
 		for(Map.Entry<String, String> entry : columnsSqlType.entrySet()) {
 			if(first) {

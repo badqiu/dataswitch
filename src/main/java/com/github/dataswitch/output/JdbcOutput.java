@@ -217,10 +217,12 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	private void executeCreateTableSql(JdbcTemplate jdbcTemplate,Map<String,String> columnsSqlType) {
 		if(_executedCreateTable) return;
 		
-		String createTableSql = JdbcCreateTableSqlUtil.buildMysqlCreateTableSql(table, null, columnsSqlType, getPrimaryKeysArray());
+		String createTableSql = JdbcCreateTableSqlUtil.buildCreateTableSql(table, null, columnsSqlType, getPrimaryKeysArray());
 		if(StringUtils.isNotBlank(createTableSql)) {
-			jdbcTemplate.execute(createTableSql);
-			logger.info("executeCreateTableSql() "+ createTableSql);
+			if(!JdbcUtil.tableExists(jdbcTemplate,table,cacheJdbcUrl())) {
+				jdbcTemplate.execute(createTableSql);
+				logger.info("executeCreateTableSql() "+ createTableSql);
+			}
 		}
 		
 		_executedCreateTable = true;
