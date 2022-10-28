@@ -35,18 +35,19 @@ public enum FailMode {
 		return desc;
 	}
 	
-	public <T> void  forEach(T[] items,Consumer<T> action) {
-		if(items == null) return;
+	public <T> boolean  forEach(T[] items,Consumer<T> action) {
+		if(items == null) return true;
 		
-		forEach(Arrays.asList(items),action);
+		return forEach(Arrays.asList(items),action);
 	}
 	
-	public <T> void  forEach(Iterable<T> items,Consumer<T> action) {
-		if(items == null) return;
+	public <T> boolean  forEach(Iterable<T> items,Consumer<T> action) {
+		if(items == null) return true;
 		
 		Exception lastException = null;
 		T lastExceptionData = null;
 		
+		boolean success = true;
 		for(T item : items) {
 			try {
 				action.accept(item);
@@ -58,12 +59,14 @@ public enum FailMode {
 					Object errorData = Util.first(Util.first(item));
 					throw new RuntimeException("failFast at:"+e+" on data first row:"+errorData,e);
 				}
-				
+				success = false;
 				logger.warn(this.name() + " at:"+e+" on data:"+item,e);
 			}
 		}
 		
 		throwExceptionIfFailAtEnd(lastException,lastExceptionData);
+		
+		return success;
 	}
 	
 	public void handleException(Exception e,String exceptionMessage) {
