@@ -72,7 +72,7 @@ public class DatabaseBatchSync implements Function<Map<String,Object>, Void>{
 	}
 
 	protected Output buildOutput(JdbcInput input,String tableName) {
-		JdbcOutput jdbcOutput = null;
+		JdbcOutput jdbcOutput = new JdbcOutput();
 		jdbcOutput.setTable(tableName);
 //			jdbcOutput.setColumnsFrom(columnsFrom);
 		jdbcOutput.failMode(FailMode.FAIL_FAST);
