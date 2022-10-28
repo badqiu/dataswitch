@@ -12,6 +12,7 @@ import javax.sql.DataSource;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.zookeeper.server.FinalRequestProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -111,6 +112,9 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	
 	private FailMode failMode = FailMode.FAIL_FAST;
 	
+	private boolean renameTable = false;
+	private String finalTable =  null;
+			
 	public String getSql() {
 		return sql;
 	}
@@ -193,9 +197,6 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	}
 
 
-
-
-
 	public String getOutputMode() {
 		return outputMode.name();
 	}
@@ -273,6 +274,22 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	public void failMode(FailMode failMode) {
 		this.failMode = failMode;
 	}
+	
+	public boolean isRenameTable() {
+		return renameTable;
+	}
+
+	public void setRenameTable(boolean renameTable) {
+		this.renameTable = renameTable;
+	}
+
+	public String getFinalTable() {
+		return finalTable;
+	}
+
+	public void setFinalTable(String renameFinalTableName) {
+		this.finalTable = renameFinalTableName;
+	}
 
 	public void init() {
 		if(StringUtils.isBlank(sql) && StringUtils.isBlank(table)) {
@@ -283,10 +300,17 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		logger.info("executed beforeSql:"+beforeSql);
 	}
 	
+	
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
 		Output.super.open(params);
 		init();
+	}
+	
+
+
+	protected String getBackupFinalTable() {
+		return "bak_by_output_" + finalTable;
 	}
 	
 	private String alterTableAndGetFinalSql(final List<Object> rows) {
@@ -407,12 +431,12 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		
 		List<List> multiChunkRows = CollectionUtil.chunk(rows, batchSize);
 		
-		failMode.forEach(executeWithJdbc(finalSql), multiChunkRows);
+		failMode.forEach(multiChunkRows,executeWithJdbc(finalSql));
 		
 		return finalSql;
 	}
 
-	private Consumer<List> executeWithJdbc(String finalSql) {
+	private Consumer<List> executeWithJdbc(final String finalSql) {
 		
 		return (finalRows) -> {
 			if(CollectionUtils.isEmpty(finalRows)) {
@@ -488,8 +512,47 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	@Override
 	public void close() {
 		DataSource dataSource = getDataSource();
+
+		executeRenameTableSqls(dataSource);
+		
+		
 		JdbcUtil.executeWithSemicolonComma(dataSource,afterSql);
-		logger.info(" executed afterSql:"+afterSql);
+		logger.info("executed afterSql:"+afterSql);
+	}
+
+
+	
+	private void executeRenameTableSqls(DataSource dataSource) {
+		if(!renameTable) {
+			return;
+		}
+			
+		String backupFinalTable = getBackupFinalTable();
+		if(JdbcUtil.tableExists(getJdbcTemplate(), backupFinalTable, cacheJdbcUrl())) {
+			String dropBakTableSql = "DROP TABLE " + backupFinalTable + ";\n";
+			JdbcUtil.executeWithSemicolonComma(dataSource,dropBakTableSql);
+			logger.info("executed sql:"+dropBakTableSql);
+		}
+		
+		if(JdbcUtil.tableExists(getJdbcTemplate(), finalTable, cacheJdbcUrl())) {
+			String renameSql = getTableRenameSql(finalTable,backupFinalTable,cacheJdbcUrl())+";\n";
+			JdbcUtil.executeWithSemicolonComma(dataSource,renameSql);
+			logger.info("executed sql:"+renameSql);
+		}
+		
+		String renameSql = getTableRenameSql(table,finalTable,cacheJdbcUrl())+";\n";
+		JdbcUtil.executeWithSemicolonComma(dataSource,renameSql);
+		logger.info("executed sql:"+renameSql);
+	}
+	
+	public static String getTableRenameSql(String oldTableName,String newTableName,String jdbcUrl) {
+		String sql = "";
+		if(jdbcUrl.contains("mysql")) {
+			sql = "RENAME TABLE " + oldTableName + " TO " + newTableName;
+		}else {
+			sql = "ALTER TABLE "+oldTableName+" RENAME TO "+newTableName;
+		}
+		return sql;
 	}
 
 	public static enum IfExists {

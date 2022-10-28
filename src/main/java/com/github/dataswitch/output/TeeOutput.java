@@ -51,9 +51,9 @@ public class TeeOutput extends BaseObject  implements Output{
 	public void write(List<Object> rows) {
 		if(CollectionUtils.isEmpty(rows)) return;
 		
-		failMode.forEach((branch) -> {
+		failMode.forEach(branchs,(branch) -> {
 			branch.write(rows);
-		},branchs);
+		});
 	}
 
 	@Override

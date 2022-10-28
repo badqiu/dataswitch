@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.junit.After;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.Assert;
@@ -24,6 +25,12 @@ import com.github.rapid.common.util.MapUtil;
 public class JdbcOutputTest {
 
 	JdbcOutput output = new JdbcOutput();
+	
+	@After
+	public void after()  {
+		output.close();
+	}
+	
 	@Test
 	public void test_sql() throws Exception {
 		DataSource ds = JdbcInputTest.createDataSourceAndInsertData();
@@ -82,6 +89,8 @@ public class JdbcOutputTest {
 		
 	}
 	
+
+	
 	
 	@Test
 	public void test_table_with_auto_add_column() throws Exception {
@@ -108,6 +117,27 @@ public class JdbcOutputTest {
 		output.setTable("user");
 		output.setAutoAlterTableAddColumn(false);
 		output.columnsFrom(ColumnsFrom.table);
+		output.open(new HashMap());
+		
+		List<Object> inputRows = TestUtil.newTestDatas(20);
+		output.write(inputRows);
+		
+		List<Map<String,Object>> rows = new JdbcTemplate(ds).queryForList("select * from user");
+		TestUtil.printRows(rows);
+		assertEquals(20,rows.size());
+	}
+
+	@Test
+	public void test_table_renameTable() throws Exception {
+		DataSource ds = JdbcInputTest.createDataSourceAndInsertData();
+		output.setDataSource(ds);
+		output.setBeforeSql("delete from user");
+		output.setTable("user");
+		output.setAutoCreateTable(true);
+		output.setAutoAlterTableAddColumn(true);
+		output.setRenameTable(true);
+		output.setFinalTable("final_user");
+//		output.setPrimaryKeys("id");
 		output.open(new HashMap());
 		
 		List<Object> inputRows = TestUtil.newTestDatas(20);

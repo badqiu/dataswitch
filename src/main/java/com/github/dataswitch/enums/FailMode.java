@@ -35,7 +35,7 @@ public enum FailMode {
 		return desc;
 	}
 	
-	public <T> void  forEach(Consumer<T> action,T... items) {
+	public <T> void  forEach(T[] items,Consumer<T> action) {
 		if(items == null) return;
 		
 		forEach(Arrays.asList(items),action);
@@ -55,7 +55,8 @@ public enum FailMode {
 				lastExceptionData = item;
 				
 				if(this == FAIL_FAST) {
-					throw new RuntimeException("failFast at:"+e+" on data first row:"+Util.first(item),e);
+					Object errorData = Util.first(Util.first(item));
+					throw new RuntimeException("failFast at:"+e+" on data first row:"+errorData,e);
 				}
 				
 				logger.warn(this.name() + " at:"+e+" on data:"+item,e);
