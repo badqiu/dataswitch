@@ -18,12 +18,12 @@ import com.github.dataswitch.util.JdbcUtil;
 
 public class DataSourceProvider extends BaseObject{
 
-	private DataSource dataSource;
 	private String username;
 	private String password;
 	private String url;
 	private String driverClass;
 	
+	private DataSource dataSource;
 	private transient TransactionTemplate transactionTemplate;
 	
 	public DataSource getDataSource() {
