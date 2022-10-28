@@ -65,10 +65,7 @@ public enum FailMode {
 			}
 		}
 		
-		if(this == FAIL_AT_END && lastException != null) {
-			throw new RuntimeException("failAtEnd at:"+lastException+" on data:"+lastExceptionData,lastException);
-		}
-		
+		throwExceptionIfFailAtEnd(lastException,lastExceptionData);
 	}
 	
 	public void handleException(Exception e,String exceptionMessage) {
@@ -87,8 +84,8 @@ public enum FailMode {
 	}
 	
 	public void throwExceptionIfFailAtEnd(Exception lastException,Object lastExceptionData) {
-		if(FailMode.FAIL_AT_END == this && lastException != null) {
-			throw new RuntimeException("has exception" + lastException+" lastExceptionData:"+Util.first(lastExceptionData),lastException);
+		if(this == FAIL_AT_END && lastException != null) {
+			throw new RuntimeException("failAtEnd at:"+lastException+" on data:"+lastExceptionData,lastException);
 		}
 	}
 
