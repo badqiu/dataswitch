@@ -526,6 +526,8 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 			return;
 		}
 		
+		Assert.hasText(finalTable,"renameTable = true, finalTable must be not blank");
+		
 		if(StringUtils.equals(table, finalTable)) {
 			return;
 		}
