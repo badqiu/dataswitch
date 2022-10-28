@@ -85,6 +85,12 @@ public enum FailMode {
 			logger.warn(exceptionMessage,e);
 		}
 	}
+	
+	public void throwExceptionIfFailAtEnd(Exception lastException,Object lastExceptionData) {
+		if(FailMode.FAIL_AT_END == this && lastException != null) {
+			throw new RuntimeException("has exception" + lastException+" lastExceptionData:"+Util.first(lastExceptionData),lastException);
+		}
+	}
 
 	public static FailMode getRequiredByName(String name) {
 		if(StringUtils.isBlank(name)) {
