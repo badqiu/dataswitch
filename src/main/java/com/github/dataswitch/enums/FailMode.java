@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.github.dataswitch.util.Util;
 
 public enum FailMode {
+	//RETRY ??
 	FAIL_FAST("failFast","快速失败"),
 	FAIL_AT_END("failAtEnd","结束时失败"),
 	FAIL_NEVER("failNever","从不失败");
@@ -37,14 +38,10 @@ public enum FailMode {
 	public <T> void  forEach(Consumer<T> action,T... items) {
 		if(items == null) return;
 		
-		forEach(action,Arrays.asList(items));
+		forEach(Arrays.asList(items),action);
 	}
 	
 	public <T> void  forEach(Iterable<T> items,Consumer<T> action) {
-		forEach(action,items);
-	}
-	
-	public <T> void  forEach(Consumer<T> action,Iterable<T> items) {
 		if(items == null) return;
 		
 		Exception lastException = null;

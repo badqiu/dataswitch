@@ -3,6 +3,8 @@ package com.github.dataswitch.input;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,10 +31,12 @@ public class JdbcInput extends DataSourceProvider implements Input{
 	private int fetchSize = 1000;
 	private boolean mapKey2lowerCase = true;
 	
-	private transient ResultSet rs;
-	private transient Connection conn;
-	private transient ColumnMapRowMapper rowMapper = new ColumnMapRowMapper();
-	private int rowNumber = 0;
+	private boolean addTableNameColumn = false;
+	
+	protected transient ResultSet _rs;
+	protected transient Connection _conn;
+	private transient ColumnMapRowMapper _rowMapper = new ColumnMapRowMapper();
+	private int _rowNumber = 0;
 	
 	public String getId() {
 		return id;
@@ -73,7 +77,7 @@ public class JdbcInput extends DataSourceProvider implements Input{
 	}
 
 	public void init() {
-		rowMapper = new ColumnMapRowMapper();
+		_rowMapper = new ColumnMapRowMapper();
 		if(StringUtils.isBlank(sql)) {
 			Assert.hasText(table,"table or sql must be not empty");
 			sql = "select * from " + table;
@@ -82,12 +86,12 @@ public class JdbcInput extends DataSourceProvider implements Input{
 		Assert.hasText(sql,"sql must be not empty");
 		Assert.notNull(getDataSource(),"dataSource must be not null");
 		try {
-			conn = getDataSource().getConnection();
-			PreparedStatement ps = conn.prepareStatement(sql);
+			_conn = getDataSource().getConnection();
+			PreparedStatement ps = _conn.prepareStatement(sql);
 			ps.setFetchSize(fetchSize);
 			
 			long start = System.currentTimeMillis();
-			rs = ps.executeQuery();
+			_rs = ps.executeQuery();
 			long cost = System.currentTimeMillis() - start;
 			
 			logger.info("execute sql:"+sql+" cost time mills:"+cost);
@@ -100,11 +104,11 @@ public class JdbcInput extends DataSourceProvider implements Input{
 	public List<Object> read(int size) { // TODO 可以继承BaseInput,删除该方法
 		List result = new ArrayList<Map>();
 		for(int i = 0; i < size; i++) {
-			Map map = read();
-			if(map == null) {
+			Map row = read();
+			if(row == null) {
 				break;
 			}
-			result.add(map);
+			result.add(row);
 		}
 		
 		if(mapKey2lowerCase) {
@@ -118,10 +122,10 @@ public class JdbcInput extends DataSourceProvider implements Input{
 	
 	public Map read() {
 		try {
-			if(rs == null) return null;
+			if(_rs == null) return null;
 			
-			if(rs.next()) {
-				Map<String, Object> mapRow = rowMapper.mapRow(rs,rowNumber++);
+			if(_rs.next()) {
+				Map<String, Object> mapRow = _rowMapper.mapRow(_rs,_rowNumber++);
 				mapRow = processRow(mapRow);
 				return mapRow;
 			}
@@ -131,14 +135,39 @@ public class JdbcInput extends DataSourceProvider implements Input{
 		}
 	}
 	
-	protected Map<String, Object> processRow(Map<String, Object> mapRow) {
-		return mapRow;
+	protected Map<String, Object> processRow(Map<String, Object> row) {
+		processAddMetaData(row);
+		
+		return row;
+	}
+
+	protected void processAddMetaData(Map<String, Object> row) {
+		if(row == null) return;
+		
+		if(addTableNameColumn) {
+			String table = getFromTableName();
+			row.put("fromTable", table);
+		}
+	}
+	
+	private String _metaTableName = null;
+	private String getFromTableName()  {
+		if(_metaTableName == null) {
+			try {
+				ResultSetMetaData metaData = _rs.getMetaData();
+				_metaTableName = metaData.getTableName(1);
+			}catch(Exception e) {
+				logger.warn("ignore get table name from metadata error",e);
+				_metaTableName = table;
+			}
+		}
+		return _metaTableName;
 	}
 
 	@Override
 	public void close() {
-		JdbcUtils.closeResultSet(rs);
-		JdbcUtils.closeConnection(conn);
+		JdbcUtils.closeResultSet(_rs);
+		JdbcUtils.closeConnection(_conn);
 	}
 	
 }

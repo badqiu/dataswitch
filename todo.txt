@@ -1,3 +1,8 @@
+支持每行数据增加RowKing(update,delete,insert,replace)
+整库同步工具
+表字段同步工具，自动添加字段
+
+
 支持csv StreamOutput
 StreamOutput使用 #号,以支持注释
 script 需要增加 context, beforeScript put var into context for init.
@@ -6,7 +11,9 @@ script 需要增加 context, beforeScript put var into context for init.
 增加提供中间交换使用的 storage
 增加存储状态(如offset)的storage
 
-支持每行数据增加RowKing(update,delete,insert,replace)
+
+
+
 
 数据库增量同步
 	天
