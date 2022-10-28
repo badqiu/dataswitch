@@ -123,6 +123,11 @@ public class AsyncOutput extends ProxyOutput{
 		}
 		
 		super.close();
+		
+		if(FailMode.FAIL_AT_END == failMode && lastException != null) {
+			throw new RuntimeException("has exception" + lastException+" lastExceptionData:"+Util.first(lastExceptionData),lastException);
+		}
+		
 	}
 
 	private void waitQueueIsEmpty() {

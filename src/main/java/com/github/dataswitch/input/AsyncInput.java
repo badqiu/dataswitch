@@ -149,5 +149,10 @@ public class AsyncInput extends ProxyInput{
 		}
 		
 		super.close();
+		
+		if(FailMode.FAIL_AT_END == failMode && lastException != null) {
+			throw new RuntimeException("has exception" + lastException+" lastExceptionData:"+Util.first(lastExceptionData),lastException);
+		}
+		
 	}
 }

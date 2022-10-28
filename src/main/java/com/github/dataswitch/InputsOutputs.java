@@ -41,7 +41,7 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 	private int bufferSize = Constants.DEFAULT_BUFFER_SIZE;
 	private int bufferTimeout = Constants.DEFAULT_BUFFER_TIMEOUT; //超时时间，时间单位毫秒
 	
-	private String failMode = FailMode.FAIL_AT_END.getShortName();
+	private FailMode failMode = FailMode.FAIL_AT_END;
 
 	private String desc; // 描述
 	private String author; // 作者
@@ -132,10 +132,14 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 	}
 
 	public String getFailMode() {
-		return failMode;
+		return failMode.name();
 	}
 
 	public void setFailMode(String failMode) {
+		this.failMode = FailMode.getRequiredByName(failMode);
+	}
+	
+	public void failMode(FailMode failMode) {
 		this.failMode = failMode;
 	}
 	
@@ -219,14 +223,13 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 		long costTime = 0;
 		try {
 			
-			FailMode failModeEnum = FailMode.getRequiredByName(failMode);
 //			if(async) {
 //				rows = InputOutputUtil.asyncCopy(input,output,bufferSize,processor,params,failModeEnum,exceptionHandler);
 //			}else {
 //				rows = InputOutputUtil.copy(input, output,bufferSize,processor,params,failModeEnum,exceptionHandler);
 //			}
 			
-			rows = InputOutputUtil.copy(input, output,bufferSize,processor,params,failModeEnum,exceptionHandler);
+			rows = InputOutputUtil.copy(input, output,bufferSize,processor,params,failMode,exceptionHandler);
 			costTime = System.currentTimeMillis() - start;
 			
 			return rows;
