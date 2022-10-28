@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.Assert;
@@ -25,6 +26,12 @@ import com.github.rapid.common.util.MapUtil;
 public class JdbcOutputTest {
 
 	JdbcOutput output = new JdbcOutput();
+	
+	@Before
+	public void before() {
+		DataSource ds = JdbcInputTest.createDataSourceAndInsertData();
+		output.setDataSource(ds);
+	}
 	
 	@After
 	public void after()  {

@@ -101,17 +101,17 @@ public class DataSourceProvider extends BaseObject{
 	}
 	
 	private static Map<String,DataSource> dataSourceCache = new HashMap<String,DataSource>();
-	private static synchronized DataSource getDataSource(String username, String password, String url,String driverClass) {
-		Assert.hasText(url,"jdbc url must be not empty");
+	private static synchronized DataSource getDataSource(String username, String password, String jdbcUrl,String driverClass) {
+		Assert.hasText(jdbcUrl,"jdbcUrl must be not blank");
 		
-		String dataSourceKey = url+username+password;
+		String dataSourceKey = jdbcUrl+username+password;
 		DataSource result = dataSourceCache.get(dataSourceKey);
 		if(result == null) {
 			DriverManagerDataSource ds = new DriverManagerDataSource();
 			ds.setDriverClassName(driverClass);
 			ds.setUsername(username);
 			ds.setPassword(password);
-			ds.setUrl(url);
+			ds.setUrl(jdbcUrl);
 			dataSourceCache.put(dataSourceKey, ds);
 			result = ds;
 		}
