@@ -5,28 +5,38 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.collections.CollectionUtils;
+
+import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.enums.FailMode;
 import com.github.dataswitch.input.JdbcInput;
-import com.github.dataswitch.output.JdbcOutput;
 import com.github.dataswitch.output.Output;
+import com.github.dataswitch.support.DataSourceProvider;
+import com.github.rapid.common.beanutils.BeanUtils;
+import com.github.rapid.common.util.ScriptEngineUtil;
 
-public class DatabaseBatchSync implements Function<Map<String,Object>, Void>{
+public class DatabaseBatchSync extends BaseObject implements Function<Map<String,Object>, Void>{
 
-	private DataSource inputDataSource;
-	
-	private DataSource outputDataSource;
+	private DataSourceProvider inputDataSource = new DataSourceProvider();
 	
 	private String includeTables;
 	private String excludeTables;
 	
 	private Class<Output> outputClass;
 	private FailMode failMode = FailMode.FAIL_FAST;
+	
+	private String configScript;
+	private String configLangguage;
+	
+	private JdbcInput inputTemplate = new JdbcInput();
 	
 	@Override
 	public Void apply(Map<String, Object> t) {
@@ -39,7 +49,7 @@ public class DatabaseBatchSync implements Function<Map<String,Object>, Void>{
 
 	private Void process(Map<String, Object> params) throws Exception {
 		
-		List<String> tables = getAllTableNames(inputDataSource);
+		List<String> tables = getAllTableNames(inputDataSource.getDataSource());
 		tables = filterByIncludeExclude(tables,includeTables,excludeTables);
 		
 		List<InputsOutputs> inputsOutputsList = buildInputsOutputs(tables);
@@ -52,35 +62,56 @@ public class DatabaseBatchSync implements Function<Map<String,Object>, Void>{
 	}
 
 	protected List<InputsOutputs> buildInputsOutputs(List<String> tables)
-			throws InstantiationException, IllegalAccessException {
+			throws Exception {
+		if(CollectionUtils.isEmpty(tables)) {
+			return Collections.EMPTY_LIST;
+		}
+		
 		List<InputsOutputs> inputsOutputsList = new ArrayList();
 		
 		for(String tableName : tables) {
-			JdbcInput jdbcInput = new JdbcInput();
-			jdbcInput.setTable(tableName);
-			jdbcInput.setDataSource(inputDataSource);
-			
+			JdbcInput jdbcInput = buildJdbcInput(tableName);
 			Output output = buildOutput(jdbcInput,tableName);
-			
-			InputsOutputs inputsOutputs = new InputsOutputs();
-			inputsOutputs.setInput(jdbcInput);
-			inputsOutputs.setOutput(output);
+			InputsOutputs inputsOutputs = buildInputsOutputs(jdbcInput, output);
 			
 			inputsOutputsList.add(inputsOutputs);
 		}
+		
 		return inputsOutputsList;
 	}
 
-	protected Output buildOutput(JdbcInput input,String tableName) {
-		JdbcOutput jdbcOutput = new JdbcOutput();
-		jdbcOutput.setTable(tableName);
-//			jdbcOutput.setColumnsFrom(columnsFrom);
-		jdbcOutput.failMode(FailMode.FAIL_FAST);
-		configOutput(jdbcOutput);
-		return jdbcOutput;
+	private InputsOutputs buildInputsOutputs(JdbcInput jdbcInput, Output output) {
+		InputsOutputs inputsOutputs = new InputsOutputs();
+		inputsOutputs.setInput(jdbcInput);
+		inputsOutputs.setOutput(output);
+		return inputsOutputs;
 	}
 
-	protected void configOutput(Output jdbcOutput) {
+	private JdbcInput buildJdbcInput(String tableName) {
+		JdbcInput jdbcInput = new JdbcInput();
+		BeanUtils.copyProperties(jdbcInput, inputTemplate);
+		
+		jdbcInput.setTable(tableName);
+		jdbcInput.setDataSource(inputDataSource.getDataSource());
+		return jdbcInput;
+	}
+
+	protected Output buildOutput(JdbcInput input,String tableName) {
+		try {
+			Output output = outputClass.newInstance();
+			configOutput(output);
+			return output;
+		} catch (Exception e) {
+			throw new RuntimeException("buildOutput error on tableName:"+tableName,e);
+		} 
+	}
+
+	protected void configOutput(Output output) {
+		
+		Map map = new HashMap();
+		map.put("output", output);
+		
+		ScriptEngineUtil.eval(configLangguage, configScript,map);
 		
 	}
 

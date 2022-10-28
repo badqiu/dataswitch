@@ -16,7 +16,7 @@ import org.springframework.util.Assert;
 import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.util.JdbcUtil;
 
-public abstract class DataSourceProvider extends BaseObject{
+public class DataSourceProvider extends BaseObject{
 
 	private DataSource dataSource;
 	private String username;
