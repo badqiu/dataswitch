@@ -536,18 +536,18 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		if(JdbcUtil.tableExists(getJdbcTemplate(), backupFinalTable, cacheJdbcUrl())) {
 			String dropBakTableSql = "DROP TABLE " + backupFinalTable + ";\n";
 			JdbcUtil.executeWithSemicolonComma(dataSource,dropBakTableSql);
-			logger.info("executed sql:"+dropBakTableSql);
+			logger.info("executed sql for table rename:" + dropBakTableSql);
 		}
 		
 		if(JdbcUtil.tableExists(getJdbcTemplate(), finalTable, cacheJdbcUrl())) {
 			String renameSql = getTableRenameSql(finalTable,backupFinalTable,cacheJdbcUrl())+";\n";
 			JdbcUtil.executeWithSemicolonComma(dataSource,renameSql);
-			logger.info("executed sql:"+renameSql);
+			logger.info("executed sql for table rename:" + renameSql);
 		}
 		
 		String renameSql = getTableRenameSql(table,finalTable,cacheJdbcUrl())+";\n";
 		JdbcUtil.executeWithSemicolonComma(dataSource,renameSql);
-		logger.info("executed sql:"+renameSql);
+		logger.info("executed sql for table rename:" + renameSql);
 	}
 	
 	public static String getTableRenameSql(String oldTableName,String newTableName,String jdbcUrl) {
