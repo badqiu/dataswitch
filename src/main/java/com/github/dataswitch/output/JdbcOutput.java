@@ -178,11 +178,24 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	public void setAutoAlterTableAddColumn(boolean autoAlterTableAddColumn) {
 		this.autoAlterTableAddColumn = autoAlterTableAddColumn;
 	}
-
+	
+	public boolean isAutoAlterTableAddColumn() {
+		return autoAlterTableAddColumn;
+	}
+	
 	public void setAutoCreateTable(boolean autoCreateTable) {
 		this.autoCreateTable = autoCreateTable;
 	}
-	
+
+
+	public boolean isAutoCreateTable() {
+		return autoCreateTable;
+	}
+
+
+
+
+
 	public String getOutputMode() {
 		return outputMode.name();
 	}
@@ -211,8 +224,16 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		setColumnsSqlType((Map)PropertiesUtil.createProperties(columnsSqlType));
 	}
 	
+	public Map<String, String> getColumnsSqlType() {
+		return columnsSqlType;
+	}
+	
 	public void setColumnsComment(Map<String, String> columnsComment) {
 		this.columnsComment = columnsComment;
+	}
+	
+	public Map<String, String> getColumnsComment() {
+		return columnsComment;
 	}
 	
 	public void setColumnsCommentProperties(String columnsComment) {
@@ -225,12 +246,21 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 			columnsFrom(ColumnsFrom.config);
 		}
 	}
+	
+	public String getColumns() {
+		return columns;
+	}
+
+
 
 	public void setBatchSize(int batchSize) {
 		Assert.isTrue(batchSize > 0,"batchSize > 0 must be true");
 		this.batchSize = batchSize;
 	}
 	
+	public int getBatchSize() {
+		return batchSize;
+	}
 
 	public String getFailMode() {
 		return failMode.name();

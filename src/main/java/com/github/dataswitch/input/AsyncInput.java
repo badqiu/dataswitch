@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.github.dataswitch.enums.Constants;
 import com.github.dataswitch.enums.FailMode;
 import com.github.dataswitch.util.InputOutputUtil;
+import com.github.dataswitch.util.Util;
 
 public class AsyncInput extends ProxyInput{
 	private static Logger logger = LoggerFactory.getLogger(AsyncInput.class);
@@ -55,7 +56,7 @@ public class AsyncInput extends ProxyInput{
 		readSize = size;
 		
 		if(FailMode.FAIL_FAST == failMode && lastException != null) {
-			throw new RuntimeException("has exception" + lastException+" lastExceptionData:"+lastExceptionData,lastException);
+			throw new RuntimeException("has exception" + lastException+" lastExceptionData:"+Util.first(lastExceptionData),lastException);
 		}
 		
 		try {

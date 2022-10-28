@@ -44,35 +44,16 @@ public class TeeOutput extends BaseObject  implements Output{
 	}
 
 	public void setFailMode(FailMode failMode) {
-		if(failMode == FailMode.FAIL_FAST || failMode == FailMode.FAIL_NEVER) {
-			this.failMode = failMode;
-		}else {
-			throw new IllegalArgumentException("not supported failMode:" + failMode);
-		}
+		this.failMode = failMode;
 	}
 
 	@Override
 	public void write(List<Object> rows) {
 		if(CollectionUtils.isEmpty(rows)) return;
 		
-		for(Output branch : branchs) {
-			try {
-				branch.write(rows);
-			}catch(Exception e) {
-				handleWriteException(branch, e);
-			}
-		}
-	}
-
-	protected void handleWriteException(Output branch, Exception e) {
-		if(FailMode.FAIL_FAST == failMode) {
-			throw new RuntimeException("error output on:"+branch,e);
-		}else if(FailMode.FAIL_NEVER == failMode) {
-			//ignore
-			logger.error("error output on:"+branch,e);
-		}else {
-			throw new RuntimeException("error failMode:"+failMode);
-		}
+		failMode.forEach((branch) -> {
+			branch.write(rows);
+		},branchs);
 	}
 
 	@Override

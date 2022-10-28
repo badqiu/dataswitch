@@ -28,6 +28,22 @@ public class Util {
 		}
 	}
 	
+	public static Object first(Object row)  {
+		if(row == null) return null;
+		
+		if(row instanceof Collection) {
+			Collection col = (Collection)row;
+			if(col.isEmpty()) return null;
+			return col.iterator().next();
+		}else if(row.getClass().isArray()) {
+			Object[] array = (Object[])row;
+			if(array.length == 0) return null;
+			return array[0];
+		}else {
+			return row;
+		}
+	}
+	
 	public static Function toFunction(Supplier supplier) {
 		return new Function() {
 			public Object apply(Object size) {

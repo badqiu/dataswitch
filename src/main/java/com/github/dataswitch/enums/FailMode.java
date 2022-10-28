@@ -7,6 +7,8 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.dataswitch.util.Util;
+
 public enum FailMode {
 	FAIL_FAST("failFast","快速失败"),
 	FAIL_AT_END("failAtEnd","结束时失败"),
@@ -38,7 +40,13 @@ public enum FailMode {
 		forEach(action,Arrays.asList(items));
 	}
 	
+	public <T> void  forEach(Iterable<T> items,Consumer<T> action) {
+		forEach(action,items);
+	}
+	
 	public <T> void  forEach(Consumer<T> action,Iterable<T> items) {
+		if(items == null) return;
+		
 		Exception lastException = null;
 		T lastExceptionData = null;
 		
@@ -50,7 +58,7 @@ public enum FailMode {
 				lastExceptionData = item;
 				
 				if(this == FAIL_FAST) {
-					throw new RuntimeException("failFast at:"+e+" on data:"+item,e);
+					throw new RuntimeException("failFast at:"+e+" on data first row:"+Util.first(item),e);
 				}
 				
 				logger.warn(this.name() + " at:"+e+" on data:"+item,e);
@@ -61,6 +69,21 @@ public enum FailMode {
 			throw new RuntimeException("failAtEnd at:"+lastException+" on data:"+lastExceptionData,lastException);
 		}
 		
+	}
+	
+	public void handleException(Exception e,String exceptionMessage) {
+		if(this == FAIL_FAST) {
+			if(exceptionMessage == null) {
+				throw new RuntimeException(e);
+			}
+			throw new RuntimeException(exceptionMessage,e);
+		}
+		
+		if(exceptionMessage == null) {
+			logger.warn("has error",e);
+		}else {
+			logger.warn(exceptionMessage,e);
+		}
 	}
 
 	public static FailMode getRequiredByName(String name) {

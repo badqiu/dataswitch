@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.dataswitch.enums.FailMode;
 import com.github.dataswitch.util.InputOutputUtil;
+import com.github.dataswitch.util.Util;
 import com.github.rapid.common.util.ThreadUtil;
 
 /**
@@ -50,7 +51,7 @@ public class AsyncOutput extends ProxyOutput{
 		if(CollectionUtils.isEmpty(rows)) return;
 		
 		if(FailMode.FAIL_FAST == failMode && lastException != null) {
-			throw new RuntimeException("has exception" + lastException+" lastExceptionData:"+lastExceptionData,lastException);
+			throw new RuntimeException("has exception" + lastException+" lastExceptionData:"+Util.first(lastExceptionData),lastException);
 		}
 		
 		try {
