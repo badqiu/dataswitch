@@ -14,6 +14,10 @@ public class Database2DatabaseBatchSync extends DatabaseBatchSync {
 	
 	private boolean renameTable;
 	
+	private String outputTablePrefix = "";
+	private String outputTableSuffix = "";
+	
+	
 	public DataSourceProvider getOutputDataSource() {
 		return outputDataSource;
 	}
@@ -47,6 +51,7 @@ public class Database2DatabaseBatchSync extends DatabaseBatchSync {
 	protected void configRenameTable(String tableName, JdbcOutput jdbcOutput) {
 		jdbcOutput.setRenameTable(renameTable);
 		
+		tableName = getRealTableName(tableName);
 		if(jdbcOutput.isRenameTable()) {
 			jdbcOutput.setTable("tmp_by_output_" + tableName);
 			jdbcOutput.setFinalTable(tableName);
@@ -56,6 +61,8 @@ public class Database2DatabaseBatchSync extends DatabaseBatchSync {
 		}
 	}
 	
-	
+	public String getRealTableName(String tableName) {
+		return outputTablePrefix + tableName + outputTableSuffix;
+	}
 	
 }
