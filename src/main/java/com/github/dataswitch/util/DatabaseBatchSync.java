@@ -24,6 +24,12 @@ import com.github.rapid.common.beanutils.BeanUtils;
 import com.github.rapid.common.util.KeyValue;
 import com.github.rapid.common.util.ScriptEngineUtil;
 
+/**
+ * 数据库的批量同步
+ * 
+ * @author badqiu
+ *
+ */
 public class DatabaseBatchSync extends BaseObject implements Function<Map<String,Object>, KeyValue<List<String>,List<String>>>{
 
 	private DataSourceProvider inputDataSource = new DataSourceProvider();

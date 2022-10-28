@@ -6,6 +6,12 @@ import com.github.dataswitch.output.Output;
 import com.github.dataswitch.support.DataSourceProvider;
 import com.github.rapid.common.beanutils.BeanUtils;
 
+/**
+ *  数据库与数据库的批量同步
+ * 
+ * @author badqiu
+ *
+ */
 public class Database2DatabaseBatchSync extends DatabaseBatchSync {
 	
 	private DataSourceProvider outputDataSource = new DataSourceProvider();

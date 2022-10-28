@@ -308,10 +308,6 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	
 
 
-	protected String getBackupFinalTable() {
-		return "bak_by_output_" + finalTable;
-	}
-	
 	private String alterTableAndGetFinalSql(final List<Object> rows) {
 		String sql = getSql();
 		if(StringUtils.isNotBlank(sql)) {
@@ -519,9 +515,11 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		logger.info("executed afterSql:"+afterSql);
 	}
 
-
+	protected String getBackupFinalTable() {
+		return "bak_by_output_" + finalTable;
+	}
 	
-	private void executeRenameTableSqls(DataSource dataSource) {
+	protected void executeRenameTableSqls(DataSource dataSource) {
 		if(!renameTable) {
 			return;
 		}
