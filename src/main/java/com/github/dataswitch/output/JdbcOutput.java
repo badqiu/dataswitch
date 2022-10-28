@@ -12,7 +12,6 @@ import javax.sql.DataSource;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.zookeeper.server.FinalRequestProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -287,8 +286,8 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		return finalTable;
 	}
 
-	public void setFinalTable(String renameFinalTableName) {
-		this.finalTable = renameFinalTableName;
+	public void setFinalTable(String t) {
+		this.finalTable = t;
 	}
 
 	public void init() {
@@ -524,6 +523,10 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	
 	private void executeRenameTableSqls(DataSource dataSource) {
 		if(!renameTable) {
+			return;
+		}
+		
+		if(StringUtils.equals(table, finalTable)) {
 			return;
 		}
 			

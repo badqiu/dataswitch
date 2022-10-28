@@ -12,6 +12,8 @@ public class Database2DatabaseBatchSync extends DatabaseBatchSync {
 	
 	private JdbcOutput outputTemplate = new JdbcOutput();
 	
+	private boolean renameTable;
+	
 	public DataSourceProvider getOutputDataSource() {
 		return outputDataSource;
 	}
@@ -33,13 +35,25 @@ public class Database2DatabaseBatchSync extends DatabaseBatchSync {
 		JdbcOutput jdbcOutput = new JdbcOutput();
 		BeanUtils.copyProperties(jdbcOutput, outputTemplate);
 		
-		jdbcOutput.setTable(tableName);
+		configRenameTable(tableName, jdbcOutput);
 		jdbcOutput.setDataSource(outputDataSource.getDataSource());
 
 		//jdbcOutput.setColumnsFrom(columnsFrom);
 		//jdbcOutput.failMode(FailMode.FAIL_FAST);
 		configOutput(jdbcOutput);
 		return jdbcOutput;
+	}
+
+	protected void configRenameTable(String tableName, JdbcOutput jdbcOutput) {
+		jdbcOutput.setRenameTable(renameTable);
+		
+		if(jdbcOutput.isRenameTable()) {
+			jdbcOutput.setTable("tmp_by_output_" + tableName);
+			jdbcOutput.setFinalTable(tableName);
+		}else {
+			jdbcOutput.setTable(tableName);
+			jdbcOutput.setFinalTable(tableName);
+		}
 	}
 	
 	
