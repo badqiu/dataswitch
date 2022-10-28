@@ -52,6 +52,9 @@ public class JdbcSqlUtil {
 	}
 
 	public static String buildUpdateSql(String tableName, Collection<String> columns,String... primaryKeys) {
+		Assert.notEmpty(primaryKeys,"primaryKeys must be not empty");
+		Assert.notEmpty(columns,"columns must be not empty");
+		
 		StringBuilder sql = new StringBuilder("UPDATE "+tableName+" SET ");
 		
 		boolean first = true;
@@ -80,6 +83,8 @@ public class JdbcSqlUtil {
 	}
 	
 	public static String buildDeleteSql(String tableName, String... primaryKeys) {
+		Assert.notEmpty(primaryKeys,"primaryKeys must be not empty");
+		
 		StringBuilder sql = new StringBuilder("DELETE FROM "+tableName+" WHERE ");
 		
 		boolean first = true;
@@ -114,6 +119,8 @@ public class JdbcSqlUtil {
 	
 	
 	public static String buildMysqlInsertOrUpdateSql(String tableName,Collection<String> columns,String... primaryKeys) {
+		Assert.notEmpty(primaryKeys,"primaryKeys must be not empty");
+		
 		StringBuilder sql = new StringBuilder(buildInsertSql(tableName, columns));
 		appendMysqlOnDuplicateKeyUpdate(sql,columns,primaryKeys);
 		return sql.toString();
@@ -125,7 +132,7 @@ public class JdbcSqlUtil {
 		
 		sql.append(" ON DUPLICATE KEY UPDATE ");
 			
-		assertPrimaryKeys(columns, primaryKeys);
+		assertPrimaryKeysContains(columns, primaryKeys);
 		
 		boolean first = true;
 		for(String c : columns) {
@@ -138,7 +145,7 @@ public class JdbcSqlUtil {
 		}
 	}
 
-	private static void assertPrimaryKeys(Collection<String> columns, String[] primaryKeys) {
+	private static void assertPrimaryKeysContains(Collection<String> columns, String[] primaryKeys) {
 		Set<String> valueColumns = new HashSet(columns);
 		for(String key : primaryKeys) {
 			if(!valueColumns.remove(key)) {

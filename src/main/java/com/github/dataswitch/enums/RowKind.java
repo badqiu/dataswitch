@@ -6,7 +6,10 @@ public enum RowKind {
 
     // Note: Enums have no stable hash code across different JVMs, use toByteValue() for
     // this purpose.
-
+	
+	//REPLACE("+R",(byte)4),
+	
+	
     /** Insertion operation. */
     INSERT("+I", (byte) 0),
 
