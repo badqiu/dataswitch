@@ -76,6 +76,12 @@ public class MapUtil {
 		return result;
 	}
     
+	/**
+	 * 返回key的差集
+	 * @param mainMap
+	 * @param compareMap
+	 * @return
+	 */
     public static Map getDifferenceMap(Map mainMap, Map compareMap) {
         Map result = new HashMap();
         compareMap.forEach((key, value) -> {

@@ -42,16 +42,18 @@ public class JdbcUtil {
 		Map missColumns = getMissColumns(jdbcTemplate, columnsWithData, table,jdbcUrl);
         if (missColumns == null) return;
         
-        Map sqlTypes = JdbcDataTypeUtil.getDatabaseDataType(jdbcUrl, missColumns,columnsSqlType);
-        sqlTypes.forEach((key, jdbcType) -> {
-        	long start = System.currentTimeMillis();
-        	String sql = "ALTER TABLE "+table+"  ADD COLUMN `"+key+"` "+jdbcType;
-        	jdbcTemplate.execute(sql);
-        	long cost = start - System.currentTimeMillis();
-        	logger.info("executed alter_table_add_column sql:["+sql+"], costSeconds:"+(cost/1000));
-        });
-        
-        removeTableColumnsCache(table, jdbcUrl);
+        try {
+	        Map sqlTypes = JdbcDataTypeUtil.getDatabaseDataType(jdbcUrl, missColumns,columnsSqlType);
+	        sqlTypes.forEach((key, jdbcType) -> {
+	        	long start = System.currentTimeMillis();
+	        	String sql = "ALTER TABLE "+table+"  ADD COLUMN `"+key+"` "+jdbcType;
+	        	jdbcTemplate.execute(sql);
+	        	long cost = start - System.currentTimeMillis();
+	        	logger.info("executed alter_table_add_column sql:["+sql+"], costSeconds:"+(cost/1000));
+	        });
+        }finally {
+        	removeTableColumnsCache(table, jdbcUrl);
+        }
 	}
 
 	private static void removeTableColumnsCache(String tableName, String jdbcUrl) {
