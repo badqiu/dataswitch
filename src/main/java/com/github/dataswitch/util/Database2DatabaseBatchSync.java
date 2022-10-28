@@ -12,7 +12,7 @@ public class Database2DatabaseBatchSync extends DatabaseBatchSync {
 	
 	private JdbcOutput outputTemplate = new JdbcOutput();
 	
-	private boolean renameTable;
+	private boolean renameTable = true;
 	
 	private String outputTablePrefix = "";
 	private String outputTableSuffix = "";
