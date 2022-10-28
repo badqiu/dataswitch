@@ -21,9 +21,10 @@ import com.github.dataswitch.input.JdbcInput;
 import com.github.dataswitch.output.Output;
 import com.github.dataswitch.support.DataSourceProvider;
 import com.github.rapid.common.beanutils.BeanUtils;
+import com.github.rapid.common.util.KeyValue;
 import com.github.rapid.common.util.ScriptEngineUtil;
 
-public class DatabaseBatchSync extends BaseObject implements Function<Map<String,Object>, Void>{
+public class DatabaseBatchSync extends BaseObject implements Function<Map<String,Object>, KeyValue<List<String>,List<String>>>{
 
 	private DataSourceProvider inputDataSource = new DataSourceProvider();
 	
@@ -31,7 +32,7 @@ public class DatabaseBatchSync extends BaseObject implements Function<Map<String
 	private String excludeTables;
 	
 	private Class<Output> outputClass;
-	private FailMode failMode = FailMode.FAIL_FAST;
+	private FailMode failMode = FailMode.FAIL_AT_END;
 	
 	private String configScript;
 	private String configLangguage;
@@ -39,26 +40,36 @@ public class DatabaseBatchSync extends BaseObject implements Function<Map<String
 	private JdbcInput inputTemplate = new JdbcInput();
 	
 	@Override
-	public Void apply(Map<String, Object> t) {
+	public KeyValue<List<String>,List<String>> apply(Map<String, Object> t) {
 		try {
-			return process(t);
+			KeyValue<List<String>,List<String>> result = process(t);
+			return result;
 		} catch (Exception e) {
 			throw new RuntimeException();
 		}
 	}
 
-	private Void process(Map<String, Object> params) throws Exception {
+	private KeyValue<List<String>,List<String>> process(Map<String, Object> params) throws Exception {
 		
 		List<String> tables = getAllTableNames(inputDataSource.getDataSource());
 		tables = filterByIncludeExclude(tables,includeTables,excludeTables);
 		
 		List<InputsOutputs> inputsOutputsList = buildInputsOutputs(tables);
 		
+		List<String> successList = new ArrayList();
+		List<String> errorList = new ArrayList();
 		failMode.forEach(inputsOutputsList, (item) -> {
-			item.exec(params);
+			JdbcInput jdbcInput = (JdbcInput)item.getInputs()[0];
+			try {
+				item.exec(params);
+				successList.add(jdbcInput.getTable());
+			}catch(Exception e) {
+				errorList.add(jdbcInput.getTable());
+				throw e;
+			}
 		});
 		
-		return null;
+		return new KeyValue(successList,errorList);
 	}
 
 	protected List<InputsOutputs> buildInputsOutputs(List<String> tables)
@@ -107,7 +118,6 @@ public class DatabaseBatchSync extends BaseObject implements Function<Map<String
 	}
 
 	protected void configOutput(Output output) {
-		
 		Map map = new HashMap();
 		map.put("output", output);
 		
