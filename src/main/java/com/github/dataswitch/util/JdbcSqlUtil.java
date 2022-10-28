@@ -52,7 +52,7 @@ public class JdbcSqlUtil {
 	}
 
 	public static String buildUpdateSql(String tableName, Collection<String> columns,String... primaryKeys) {
-		StringBuilder sql = new StringBuilder("update "+tableName+" set ");
+		StringBuilder sql = new StringBuilder("UPDATE "+tableName+" SET ");
 		
 		boolean first = true;
 		for(Object key : columns) {
@@ -64,7 +64,7 @@ public class JdbcSqlUtil {
 			sql.append("`"+key+"`");
 			sql.append("=:"+key);
 		}
-		sql.append(" where ");
+		sql.append(" WHERE ");
 		
 		first = true;
 		for(String primaryKey : primaryKeys) {
@@ -79,6 +79,21 @@ public class JdbcSqlUtil {
 		return sql.toString();
 	}
 	
+	public static String buildDeleteSql(String tableName, String... primaryKeys) {
+		StringBuilder sql = new StringBuilder("DELETE FROM "+tableName+" WHERE ");
+		
+		boolean first = true;
+		for(String primaryKey : primaryKeys) {
+			if(first) {
+				first = false;
+			}else {
+				sql.append(",");
+			}
+			sql.append(primaryKey);
+			sql.append("=:"+primaryKey);
+		}
+		return sql.toString();
+	}
 	
 	public static String buildInsertSql(String table, Collection<String> columns) {
 		if(CollectionUtils.isEmpty(columns))
@@ -93,9 +108,10 @@ public class JdbcSqlUtil {
 			keyJoiner.add("`"+columnName+"`");
 		});
 		
-		String sql = "insert into " + table + " ("+keyJoiner.toString()+") values ("+valueJoiner.toString()+")";
+		String sql = "INSERT INTO " + table + " ("+keyJoiner.toString()+") VALUES ("+valueJoiner.toString()+")";
 		return sql;
 	}
+	
 	
 	public static String buildMysqlInsertOrUpdateSql(String tableName,Collection<String> columns,String... primaryKeys) {
 		StringBuilder sql = new StringBuilder(buildInsertSql(tableName, columns));
@@ -130,5 +146,7 @@ public class JdbcSqlUtil {
 			}
 		}
 	}
+
+
 	
 }

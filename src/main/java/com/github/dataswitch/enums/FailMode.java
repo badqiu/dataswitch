@@ -33,6 +33,8 @@ public enum FailMode {
 	}
 	
 	public <T> void  forEach(Consumer<T> action,T... items) {
+		if(items == null) return;
+		
 		forEach(action,Arrays.asList(items));
 	}
 	

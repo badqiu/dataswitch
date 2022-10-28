@@ -287,20 +287,25 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	}
 
 	private String generateSql(JdbcTemplate jdbcTemplate, Set<String> tableColumnNames) {
+		if(OutputMode.delete == outputMode) {
+			return JdbcSqlUtil.buildDeleteSql(table, getPrimaryKeysArray());
+		}
+		
 		Collection<String> columns = getColumnsByColumnsFrom(jdbcTemplate,tableColumnNames);
 		Assert.notEmpty(columns,"columns must be not empty");
 		
-		String sql = null;
+		String resultSql = null;
 		if(OutputMode.insert == outputMode) {
-			sql = JdbcSqlUtil.buildInsertSql(table, columns);
+			resultSql = JdbcSqlUtil.buildInsertSql(table, columns);
 		}else if(OutputMode.replace == outputMode) {
-			sql = JdbcSqlUtil.buildMysqlInsertOrUpdateSql(table, columns, getPrimaryKeysArray());
+			resultSql = JdbcSqlUtil.buildMysqlInsertOrUpdateSql(table, columns, getPrimaryKeysArray());
 		}else if(OutputMode.update == outputMode) {
-			sql = JdbcSqlUtil.buildUpdateSql(table, columns, getPrimaryKeysArray());
+			resultSql = JdbcSqlUtil.buildUpdateSql(table, columns, getPrimaryKeysArray());
 		}else {
 			throw new UnsupportedOperationException("error outputMode:"+outputMode);
 		}
-		return sql;
+		
+		return resultSql;
 	}
 
 	private Collection<String> getColumnsByColumnsFrom(JdbcTemplate jdbcTemplate,Set<String> tableColumnNames) {
