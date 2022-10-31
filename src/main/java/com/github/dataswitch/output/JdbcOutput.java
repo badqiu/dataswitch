@@ -112,7 +112,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	private FailMode failMode = FailMode.FAIL_FAST;
 	
 	private boolean renameTable = false;
-	private String finalTable =  null;
+	private String finalTable =  null; //重命名后，最终的表名
 	
 	private Exception exception = null;
 			
