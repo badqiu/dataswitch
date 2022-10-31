@@ -31,6 +31,7 @@ public class HttpOutputTest {
 		txt.setColumnSplit(",");
 		txt.setColumns("account,data");
 		output.setSerializer(txt);
+		output.open(null);
 		for(int i = 0; i < 100; i++) {
 			output.writeObject(MapUtil.newMap("account","a"+i,"data","data"+i));
 		}

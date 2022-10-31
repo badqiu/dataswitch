@@ -30,12 +30,13 @@ public class ScriptOutputTest {
 		});
 	}
 	@Test
-	public void test() {
+	public void test() throws Exception {
 		List<Object> rows = TestUtil.newTestDatas(20);
 		output.setLang("groovy");
 		output.setBeforeScript("System.out.println('before executed'); this.beforeVar = ' beforeValue';");
 		output.setScript("System.out.println(username+' pwd:' + pwd + beforeVar);");
 		output.setAfterScript("System.out.println('after executed,')");
+		output.open(null);
 		output.write(rows);
 		output.close();
 		
@@ -44,7 +45,7 @@ public class ScriptOutputTest {
 
 	
 	@Test
-	public void test_with_output() {
+	public void test_with_output() throws Exception {
 		
 		
 		List<Object> rows = TestUtil.newTestDatas(20);
@@ -52,6 +53,7 @@ public class ScriptOutputTest {
 		output.setBeforeScript("System.out.println('before executed'); this.beforeVar = ' beforeValue';");
 		output.setScript("System.out.println(username+' pwd:' + pwd + beforeVar); output.write([username])");
 		output.setAfterScript("System.out.println('after executed,')");
+		output.open(null);
 		output.write(rows);
 		output.close();
 		

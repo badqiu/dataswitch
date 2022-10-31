@@ -9,13 +9,14 @@ import com.github.dataswitch.serializer.TxtSerializer;
 public class FileOutputTest {
 
 	@Test
-	public void test() {
+	public void test() throws Exception {
 		TxtSerializer serializer = new TxtSerializer();
 		FileOutput fo = new FileOutput();
 		fo.setDir("/tmp/fileout");
 		serializer.setColumns("username, age");
 		fo.setSerializer(serializer);
 		fo.setCompressType("gzip");
+		fo.open(null);
 		fo.write(TestUtil.newTestDatas(100));
 		fo.close();
 	}
