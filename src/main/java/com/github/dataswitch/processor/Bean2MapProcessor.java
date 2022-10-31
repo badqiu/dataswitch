@@ -2,7 +2,7 @@ package com.github.dataswitch.processor;
 
 import java.util.Map;
 
-import org.apache.commons.beanutils.BeanUtils;
+import com.github.dataswitch.util.BeanUtils;
 
 public class Bean2MapProcessor extends BaseProcessor{
 

@@ -12,7 +12,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.beanutils.PropertyUtils;
+import com.github.dataswitch.util.PropertyUtils;
 import org.apache.commons.collections.ComparatorUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -213,7 +213,7 @@ public class JdbcUtil {
 			try {
 				value = PropertyUtils.getSimpleProperty(row, name);
 			}catch(Exception e) {
-				if(value == null) throw new RuntimeException("error, name:"+name+" on sql:"+parsedSql.getOriginalSql()+",row:"+row,e);
+				throw new RuntimeException("error, name:"+name+" on sql:"+parsedSql.getOriginalSql()+",row:"+row,e);
 			}
 			
 			if(value == null) throw new RuntimeException("not found value for name:"+name+" on sql:"+parsedSql.getOriginalSql()+",row:"+row);

@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.PropertyUtils;
+import com.github.dataswitch.util.BeanUtils;
+import com.github.dataswitch.util.PropertyUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.comparators.ReverseComparator;
 import org.apache.commons.lang.StringUtils;

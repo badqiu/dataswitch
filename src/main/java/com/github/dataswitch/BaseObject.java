@@ -4,7 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.beanutils.BeanUtils;
+import com.github.dataswitch.util.BeanUtils;
 
 import com.github.dataswitch.util.PropertiesUtil;
 import com.github.dataswitch.util.URLQueryUtil;

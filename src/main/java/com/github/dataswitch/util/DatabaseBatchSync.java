@@ -13,7 +13,7 @@ import java.util.function.Function;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.beanutils.BeanUtils;
+import com.github.dataswitch.util.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.github.dataswitch.BaseObject;
