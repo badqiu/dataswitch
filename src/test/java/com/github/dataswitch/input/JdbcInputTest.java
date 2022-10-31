@@ -1,15 +1,12 @@
 package com.github.dataswitch.input;
 
-import static org.junit.Assert.*;
-
-import java.io.IOException;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import com.github.dataswitch.TestUtil;
-import com.github.dataswitch.input.JdbcInput;
-import com.mchange.v2.c3p0.DriverManagerDataSource;
 
 public class JdbcInputTest {
 
@@ -44,10 +41,10 @@ public class JdbcInputTest {
 		dbCount++;
 		DriverManagerDataSource ds = new DriverManagerDataSource();
 		
-		ds.setUser("sa");
+		ds.setUsername("sa");
 		ds.setPassword("");
-		ds.setJdbcUrl("jdbc:h2:mem:object_sql_query_"+dbCount+";MODE=MYSQL;DB_CLOSE_DELAY=-1");
-		ds.setDriverClass("org.h2.Driver");
+		ds.setUrl("jdbc:h2:mem:object_sql_query_"+dbCount+";MODE=MYSQL;DB_CLOSE_DELAY=-1");
+		ds.setDriverClassName("org.h2.Driver");
 		
 		new JdbcTemplate(ds).execute("create table user(id int primary key,username varchar(20),password varchar(20),age int,sex varchar(1))");
 		new JdbcTemplate(ds).execute("insert into user values(1,'badqiu','123',20,'M')");
