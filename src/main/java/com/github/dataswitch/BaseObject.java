@@ -1,11 +1,13 @@
 package com.github.dataswitch;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.beanutils.BeanUtils;
+
 import com.github.dataswitch.util.PropertiesUtil;
 import com.github.dataswitch.util.URLQueryUtil;
-import com.github.rapid.common.beanutils.BeanUtils;
 
 public class BaseObject implements Enabled {
 
@@ -59,12 +61,20 @@ public class BaseObject implements Enabled {
 	
 	public void setConfigByQuery(String query) {
 		Map<String,String> params = URLQueryUtil.splitQueryForSingleValue(query);
-		BeanUtils.copyProperties(this, params);
+		try {
+			BeanUtils.copyProperties(this, params);
+		} catch (Exception e) {
+			throw new RuntimeException("error configByQuery:"+query,e);
+		} 
 	}
 	
 	public void setConfigByProperties(String properties) {
 		Map<String,String> params = (Map)PropertiesUtil.createProperties(properties);
-		BeanUtils.copyProperties(this, params);
+		try {
+			BeanUtils.copyProperties(this, params);
+		} catch (Exception e) {
+			throw new RuntimeException("error setConfigByProperties:"+properties,e);
+		}
 	}
 
 }

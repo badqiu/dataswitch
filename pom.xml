@@ -101,18 +101,15 @@
 			    <version>2.7.0</version>
 			    <optional>true</optional>
 			</dependency>
-
+			
+			<!-- 
 			<dependency>
 				<groupId>com.github.rapid.common</groupId>
 				<artifactId>rapid-common-util</artifactId>
 				<version>1.0.1</version>	
 			</dependency>
-			<dependency>
-				<groupId>com.github.rapid.common</groupId>
-				<artifactId>rapid-common-test</artifactId>
-				<version>1.0.0</version>
-				<scope>test</scope>
-			</dependency>
+			 -->
+
 
 			<dependency>
 	        <groupId>com.github.rapid.common</groupId>

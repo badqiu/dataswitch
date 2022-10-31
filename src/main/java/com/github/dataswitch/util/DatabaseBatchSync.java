@@ -13,6 +13,7 @@ import java.util.function.Function;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.github.dataswitch.BaseObject;
@@ -20,9 +21,6 @@ import com.github.dataswitch.enums.FailMode;
 import com.github.dataswitch.input.JdbcInput;
 import com.github.dataswitch.output.Output;
 import com.github.dataswitch.support.DataSourceProvider;
-import com.github.rapid.common.beanutils.BeanUtils;
-import com.github.rapid.common.util.KeyValue;
-import com.github.rapid.common.util.ScriptEngineUtil;
 
 /**
  * 数据库的批量同步
@@ -104,7 +102,7 @@ public class DatabaseBatchSync extends BaseObject implements Function<Map<String
 		return inputsOutputs;
 	}
 
-	private JdbcInput buildJdbcInput(String tableName) {
+	private JdbcInput buildJdbcInput(String tableName) throws Exception {
 		JdbcInput jdbcInput = new JdbcInput();
 		BeanUtils.copyProperties(jdbcInput, inputTemplate);
 		
@@ -113,7 +111,7 @@ public class DatabaseBatchSync extends BaseObject implements Function<Map<String
 		return jdbcInput;
 	}
 
-	protected Output buildOutput(JdbcInput input,String tableName) {
+	protected Output buildOutput(JdbcInput input,String tableName) throws Exception {
 		try {
 			Output output = outputClass.newInstance();
 			configOutput(output);

@@ -14,7 +14,7 @@ import org.junit.Test;
 import com.github.dataswitch.output.JdbcOutput;
 import com.github.dataswitch.processor.Processor;
 import com.github.dataswitch.util.InputOutputUtil;
-import com.github.rapid.common.util.MapUtil;
+import com.github.dataswitch.util.MapUtil;
 
 public class BizFileInputTest {
 	private Map[] fileProps = new Map[]{

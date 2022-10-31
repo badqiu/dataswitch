@@ -2,6 +2,8 @@
 整库同步工具
 表字段同步工具，自动添加字段
 
+增加参数生成功能，如-DparamGenerator=somepkg.SomeClass.method
+Bean2MapProcessor
 
 支持csv StreamOutput
 StreamOutput使用 #号,以支持注释

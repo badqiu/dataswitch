@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import com.github.dataswitch.enums.Constants;
-import com.github.rapid.common.util.SystemTimer;
 
 /**
  * 提供缓冲功能的Output,缓冲池大小根据bufferSize设置
@@ -71,7 +70,7 @@ public class BufferedOutput extends ProxyOutput{
 	}
 
 	private boolean isTimeout() {
-		return Math.abs(lastSendTime - SystemTimer.currentTimeMillis()) > bufferTimeout;
+		return Math.abs(lastSendTime - System.currentTimeMillis()) > bufferTimeout;
 	}
 	
 	@Override
@@ -90,7 +89,7 @@ public class BufferedOutput extends ProxyOutput{
 			super.write(tempBuf);
 		}finally {
 			if(bufferTimeout > 0) {
-				lastSendTime = SystemTimer.currentTimeMillis();
+				lastSendTime = System.currentTimeMillis();
 			}
 		}
 	}

@@ -1,10 +1,13 @@
 package com.github.dataswitch.util;
 
+import java.lang.reflect.InvocationTargetException;
+
+import org.apache.commons.beanutils.BeanUtils;
+
 import com.github.dataswitch.input.JdbcInput;
 import com.github.dataswitch.output.JdbcOutput;
 import com.github.dataswitch.output.Output;
 import com.github.dataswitch.support.DataSourceProvider;
-import com.github.rapid.common.beanutils.BeanUtils;
 
 /**
  *  数据库与数据库的批量同步
@@ -41,7 +44,7 @@ public class Database2DatabaseBatchSync extends DatabaseBatchSync {
 	}
 
 	@Override
-	protected Output buildOutput(JdbcInput input,String tableName) {
+	protected Output buildOutput(JdbcInput input,String tableName) throws Exception {
 		JdbcOutput jdbcOutput = new JdbcOutput();
 		BeanUtils.copyProperties(jdbcOutput, outputTemplate);
 		

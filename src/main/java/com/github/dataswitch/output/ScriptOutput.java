@@ -8,12 +8,12 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.util.Assert;
 
 import com.github.dataswitch.BaseObject;
-import com.github.rapid.common.util.FastBeanUtil;
 
 
 public class ScriptOutput extends BaseObject implements Output{
@@ -114,7 +114,7 @@ public class ScriptOutput extends BaseObject implements Output{
 					if(row instanceof Map) {
 						bindings.putAll((Map)row);
 					}else {
-						bindings.putAll(FastBeanUtil.describe(row)); //TODO,是否需要describe?
+						bindings.putAll(BeanUtils.describe(row)); //TODO,是否需要describe?
 					}
 					engine.eval(script, bindings); //script 性能优化,需要compiled
 				}

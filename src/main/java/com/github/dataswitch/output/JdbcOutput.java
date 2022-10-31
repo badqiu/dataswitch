@@ -27,6 +27,7 @@ import com.github.dataswitch.enums.Constants;
 import com.github.dataswitch.enums.FailMode;
 import com.github.dataswitch.enums.OutputMode;
 import com.github.dataswitch.support.DataSourceProvider;
+import com.github.dataswitch.util.CollectionUtil;
 import com.github.dataswitch.util.DefaultValueMapSqlParameterSource;
 import com.github.dataswitch.util.JdbcCreateTableSqlUtil;
 import com.github.dataswitch.util.JdbcDataTypeUtil;
@@ -37,7 +38,6 @@ import com.github.dataswitch.util.NamedParameterUtils;
 import com.github.dataswitch.util.ParsedSql;
 import com.github.dataswitch.util.PropertiesUtil;
 import com.github.dataswitch.util.Util;
-import com.github.rapid.common.util.CollectionUtil;
 
 
 public class JdbcOutput extends DataSourceProvider implements Output {

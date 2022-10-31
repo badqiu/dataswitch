@@ -1,6 +1,7 @@
 package com.github.dataswitch.processor;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.github.rapid.common.util.MapUtil;
+import com.github.dataswitch.util.MapUtil;
 
 public class ScriptProcessorTest {
 

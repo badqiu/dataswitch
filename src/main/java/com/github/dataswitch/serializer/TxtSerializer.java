@@ -8,7 +8,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -17,8 +19,6 @@ import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.enums.Constants;
 import com.github.dataswitch.util.HiveEscapeUtil;
 import com.github.dataswitch.util.Util;
-import com.github.rapid.common.beanutils.PropertyUtils;
-import com.github.rapid.common.util.DateConvertUtil;
 
 public class TxtSerializer extends BaseObject implements Serializer<Object>,Flushable{
 
@@ -134,9 +134,14 @@ public class TxtSerializer extends BaseObject implements Serializer<Object>,Flus
 			}
 			throw new RuntimeException("not exist key:"+name+" on row:"+row);
 		}else {
-			if(PropertyUtils.isReadable(row, name)) {
-				return PropertyUtils.getSimpleProperty(row,name); //TODO 性能是否有问题
+			try {
+				if(PropertyUtils.isReadable(row, name)) {
+					return PropertyUtils.getSimpleProperty(row,name); //TODO 性能是否有问题
+				}
+			}catch(Exception e) {
+				throw new RuntimeException("error exist key:"+name+" on row:"+row,e);
 			}
+			
 			throw new RuntimeException("not exist key:"+name+" on row:"+row);
 		}
 	}
@@ -146,7 +151,7 @@ public class TxtSerializer extends BaseObject implements Serializer<Object>,Flus
 			return nullValue;
 		}
 		if(value instanceof Date) {
-			return DateConvertUtil.format((Date)value, dateFormat);
+			return DateFormatUtils.format((Date)value, dateFormat);
 		}
 		if(value instanceof String) {
 			return HiveEscapeUtil.hiveEscaped((String)value);

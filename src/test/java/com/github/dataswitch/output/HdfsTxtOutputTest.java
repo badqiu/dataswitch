@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import com.github.rapid.common.util.MapUtil;
+import com.github.dataswitch.util.MapUtil;
 
 
 public class HdfsTxtOutputTest {

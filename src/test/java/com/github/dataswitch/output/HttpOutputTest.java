@@ -16,7 +16,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import com.github.dataswitch.serializer.TxtSerializer;
-import com.github.rapid.common.util.MapUtil;
+import com.github.dataswitch.util.MapUtil;
 
 public class HttpOutputTest {
 

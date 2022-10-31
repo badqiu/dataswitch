@@ -12,7 +12,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.ComparatorUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -25,8 +25,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.jdbc.support.rowset.SqlRowSetMetaData;
-
-import com.github.rapid.common.beanutils.PropertyUtils;
 
 public class JdbcUtil {
 	private static Logger logger = LoggerFactory.getLogger(JdbcUtil.class);
@@ -211,7 +209,12 @@ public class JdbcUtil {
 		Collections.sort(parameterNames,ComparatorUtils.reversedComparator(null));
 		
 		for(String name : parameterNames) {
-			Object value = PropertyUtils.getSimpleProperty(row, name);
+			Object value = null;
+			try {
+				value = PropertyUtils.getSimpleProperty(row, name);
+			}catch(Exception e) {
+				if(value == null) throw new RuntimeException("error, name:"+name+" on sql:"+parsedSql.getOriginalSql()+",row:"+row,e);
+			}
 			
 			if(value == null) throw new RuntimeException("not found value for name:"+name+" on sql:"+parsedSql.getOriginalSql()+",row:"+row);
 			

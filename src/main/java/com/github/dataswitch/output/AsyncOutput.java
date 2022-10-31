@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import com.github.dataswitch.enums.FailMode;
 import com.github.dataswitch.util.InputOutputUtil;
+import com.github.dataswitch.util.ThreadUtil;
 import com.github.dataswitch.util.Util;
-import com.github.rapid.common.util.ThreadUtil;
 
 /**
  * 异步output

@@ -19,9 +19,9 @@ import com.github.dataswitch.enums.ColumnsFrom;
 import com.github.dataswitch.enums.OutputMode;
 import com.github.dataswitch.input.JdbcInputTest;
 import com.github.dataswitch.util.JdbcUtil;
+import com.github.dataswitch.util.MapUtil;
 import com.github.dataswitch.util.NamedParameterUtils;
 import com.github.dataswitch.util.ParsedSql;
-import com.github.rapid.common.util.MapUtil;
 
 public class JdbcOutputTest {
 

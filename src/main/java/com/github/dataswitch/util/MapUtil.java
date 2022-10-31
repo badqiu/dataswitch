@@ -25,7 +25,24 @@ public class MapUtil {
 		}
 		return m;
 	}
+
+	public static Map newMap(Object... args) {
+		Map map = new HashMap();
+		for(int i = 0; i < args.length; i+=2) {
+			map.put(args[i], args[i+1]);
+		}
+		return map;
+	}
 	
+	public static Map newLinkedMap(Object... args) {
+		Map map = new LinkedHashMap();
+		for(int i = 0; i < args.length; i+=2) {
+			map.put(args[i], args[i+1]);
+		}
+		return map;
+	}
+	
+
 //    public static Map mergeAllMap(List<Map> rows) {
 //    	if(CollectionUtils.isEmpty(rows)) {
 //    		return Collections.EMPTY_MAP;

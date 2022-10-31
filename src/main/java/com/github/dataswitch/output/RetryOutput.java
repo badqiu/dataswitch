@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.springframework.util.Assert;
 
-import com.github.rapid.common.util.Retry;
+import com.github.dataswitch.util.Retry;
 
 public class RetryOutput extends ProxyOutput {
 	

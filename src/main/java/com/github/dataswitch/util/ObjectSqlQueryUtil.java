@@ -18,8 +18,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.github.rapid.common.util.MapUtil;
-
 /**
  * 
  * 可以对List<Map>结构的数据，进行sql语句查询，底层使用H2数据库，支持任何的标准SQL语句

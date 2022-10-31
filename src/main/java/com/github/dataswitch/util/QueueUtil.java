@@ -9,8 +9,6 @@ import java.util.concurrent.BlockingQueue;
 
 import org.springframework.util.Assert;
 
-import com.github.rapid.common.util.SystemTimer;
-
 public class QueueUtil {
 
 	private static Map<String,BlockingQueue> queueMap = new HashMap<String,BlockingQueue>();
@@ -29,7 +27,7 @@ public class QueueUtil {
 	
 	public static List<Object> batchTake(BlockingQueue<Object> queue,int size, int timeout) throws InterruptedException {
 		List<Object> results = new ArrayList(100);
-		long startReadTime = SystemTimer.currentTimeMillis();
+		long startReadTime = System.currentTimeMillis();
 		
 		for(int i = 0; i < size; i++) {
 			Object object = queue.take();
@@ -43,7 +41,7 @@ public class QueueUtil {
 	}
 	
 	private static boolean isTimeout(int timeout,long startReadTime) {
-		long interval = SystemTimer.currentTimeMillis() - startReadTime;
+		long interval = System.currentTimeMillis() - startReadTime;
 		return interval > timeout;
 	}
 	

@@ -7,7 +7,7 @@ import java.io.OutputStream;
 import org.apache.hadoop.fs.FileSystem;
 
 import com.github.dataswitch.util.HadoopConfUtil;
-import com.github.rapid.common.hadoop.HdfsFile;
+import com.github.dataswitch.util.hadoop.HdfsFile;
 
 public class HdfsOutput extends FileOutput {
 

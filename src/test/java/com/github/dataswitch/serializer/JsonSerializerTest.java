@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import com.github.dataswitch.input.FileInput;
 import com.github.dataswitch.output.FileOutput;
-import com.github.rapid.common.util.MapUtil;
+import com.github.dataswitch.util.MapUtil;
 
 public class JsonSerializerTest {
 
