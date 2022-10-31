@@ -18,12 +18,12 @@ public class PropertyUtils {
 	}
 	
 	public static void clearDescriptors() {
-		com.github.dataswitch.util.PropertyUtils.clearDescriptors();
+		org.apache.commons.beanutils.PropertyUtils.clearDescriptors();
 	}
 
 	public static void copyProperties(Object dest, Object orig){
 		try {
-			com.github.dataswitch.util.PropertyUtils.copyProperties(dest, orig);
+			org.apache.commons.beanutils.PropertyUtils.copyProperties(dest, orig);
 		}catch(Exception e) {
 			handleException(e);
 		}
@@ -31,7 +31,7 @@ public class PropertyUtils {
 
 	public static Map describe(Object bean) {
 		try {
-			return com.github.dataswitch.util.PropertyUtils.describe(bean);
+			return org.apache.commons.beanutils.PropertyUtils.describe(bean);
 		}catch(Exception e) {
 			handleException(e);
 			return null;
@@ -40,7 +40,7 @@ public class PropertyUtils {
 
 	public static Object getIndexedProperty(Object bean, String name, int index){
 		try {
-			return com.github.dataswitch.util.PropertyUtils.getIndexedProperty(bean, name, index);
+			return org.apache.commons.beanutils.PropertyUtils.getIndexedProperty(bean, name, index);
 		}catch(Exception e) {
 			handleException(e);
 			return null;
@@ -49,7 +49,7 @@ public class PropertyUtils {
 
 	public static Object getIndexedProperty(Object bean, String name) {
 		try {
-			return com.github.dataswitch.util.PropertyUtils.getIndexedProperty(bean, name);
+			return org.apache.commons.beanutils.PropertyUtils.getIndexedProperty(bean, name);
 		}catch(Exception e) {
 			handleException(e);
 			return null;
@@ -58,7 +58,7 @@ public class PropertyUtils {
 
 	public static Object getMappedProperty(Object bean, String name, String key) {
 		try {
-			return com.github.dataswitch.util.PropertyUtils.getMappedProperty(bean, name, key);
+			return org.apache.commons.beanutils.PropertyUtils.getMappedProperty(bean, name, key);
 		}catch(Exception e) {
 			handleException(e);
 			return null;
@@ -67,7 +67,7 @@ public class PropertyUtils {
 
 	public static Object getMappedProperty(Object bean, String name) {
 		try {
-			return com.github.dataswitch.util.PropertyUtils.getMappedProperty(bean, name);
+			return org.apache.commons.beanutils.PropertyUtils.getMappedProperty(bean, name);
 		}catch(Exception e) {
 			handleException(e);
 			return null;
@@ -76,7 +76,7 @@ public class PropertyUtils {
 
 	public static Object getNestedProperty(Object bean, String name) {
 		try {
-			return com.github.dataswitch.util.PropertyUtils.getNestedProperty(bean, name);
+			return org.apache.commons.beanutils.PropertyUtils.getNestedProperty(bean, name);
 		}catch(Exception e) {
 			handleException(e);
 			return null;
@@ -89,7 +89,7 @@ public class PropertyUtils {
 			if(bean instanceof Map) {
 				return ((Map)bean).get(name);
 			} else {
-				return com.github.dataswitch.util.PropertyUtils.getProperty(bean, name);
+				return org.apache.commons.beanutils.PropertyUtils.getProperty(bean, name);
 			}
 		}catch(Exception e) {
 			handleException(e);
@@ -99,7 +99,7 @@ public class PropertyUtils {
 
 	public static PropertyDescriptor getPropertyDescriptor(Object bean, String name) {
 		try {
-			return com.github.dataswitch.util.PropertyUtils.getPropertyDescriptor(bean, name);
+			return org.apache.commons.beanutils.PropertyUtils.getPropertyDescriptor(bean, name);
 		}catch(Exception e) {
 			handleException(e);
 			return null;
@@ -107,16 +107,16 @@ public class PropertyUtils {
 	}
 
 	public static PropertyDescriptor[] getPropertyDescriptors(Class beanClass) {
-		return com.github.dataswitch.util.PropertyUtils.getPropertyDescriptors(beanClass);
+		return org.apache.commons.beanutils.PropertyUtils.getPropertyDescriptors(beanClass);
 	}
 
 	public static PropertyDescriptor[] getPropertyDescriptors(Object bean) {
-		return com.github.dataswitch.util.PropertyUtils.getPropertyDescriptors(bean);
+		return org.apache.commons.beanutils.PropertyUtils.getPropertyDescriptors(bean);
 	}
 
 	public static Class getPropertyEditorClass(Object bean, String name) {
 		try {
-			return com.github.dataswitch.util.PropertyUtils.getPropertyEditorClass(bean, name);
+			return org.apache.commons.beanutils.PropertyUtils.getPropertyEditorClass(bean, name);
 		}catch(Exception e) {
 			handleException(e);
 			return null;
@@ -125,7 +125,7 @@ public class PropertyUtils {
 
 	public static Class getPropertyType(Object bean, String name) {
 		try {
-			return com.github.dataswitch.util.PropertyUtils.getPropertyType(bean, name);
+			return org.apache.commons.beanutils.PropertyUtils.getPropertyType(bean, name);
 		}catch(Exception e) {
 			handleException(e);
 			return null;
@@ -133,7 +133,7 @@ public class PropertyUtils {
 	}
 
 	public static Method getReadMethod(PropertyDescriptor descriptor) {
-		return com.github.dataswitch.util.PropertyUtils.getReadMethod(descriptor);
+		return org.apache.commons.beanutils.PropertyUtils.getReadMethod(descriptor);
 	}
 
 	public static Object getSimpleProperty(Object bean, String name){
@@ -142,7 +142,7 @@ public class PropertyUtils {
 			if(bean instanceof Map) {
 				return ((Map)bean).get(name);
 			} else {
-				return com.github.dataswitch.util.PropertyUtils.getSimpleProperty(bean, name);
+				return org.apache.commons.beanutils.PropertyUtils.getSimpleProperty(bean, name);
 			}
 		}catch(Exception e) {
 			handleException(e);
@@ -151,21 +151,21 @@ public class PropertyUtils {
 	}
 
 	public static Method getWriteMethod(PropertyDescriptor descriptor) {
-		return com.github.dataswitch.util.PropertyUtils.getWriteMethod(descriptor);
+		return org.apache.commons.beanutils.PropertyUtils.getWriteMethod(descriptor);
 	}
 
 
 	public static boolean isReadable(Object bean, String name) {
-		return com.github.dataswitch.util.PropertyUtils.isReadable(bean, name);
+		return org.apache.commons.beanutils.PropertyUtils.isReadable(bean, name);
 	}
 
 	public static boolean isWriteable(Object bean, String name) {
-		return com.github.dataswitch.util.PropertyUtils.isWriteable(bean, name);
+		return org.apache.commons.beanutils.PropertyUtils.isWriteable(bean, name);
 	}
 
 	public static void setIndexedProperty(Object bean, String name, int index,Object value) {
 		try {
-		com.github.dataswitch.util.PropertyUtils.setIndexedProperty(bean, name, index, value);
+		org.apache.commons.beanutils.PropertyUtils.setIndexedProperty(bean, name, index, value);
 		}catch(Exception e) {
 			handleException(e);
 		}
@@ -173,7 +173,7 @@ public class PropertyUtils {
 
 	public static void setIndexedProperty(Object bean, String name, Object value){
 		try {
-		com.github.dataswitch.util.PropertyUtils.setIndexedProperty(bean, name, value);
+		org.apache.commons.beanutils.PropertyUtils.setIndexedProperty(bean, name, value);
 		}catch(Exception e) {
 			handleException(e);
 		}
@@ -181,7 +181,7 @@ public class PropertyUtils {
 
 	public static void setMappedProperty(Object bean, String name, Object value){
 		try {
-		com.github.dataswitch.util.PropertyUtils.setMappedProperty(bean, name, value);
+		org.apache.commons.beanutils.PropertyUtils.setMappedProperty(bean, name, value);
 		}catch(Exception e) {
 			handleException(e);
 		}
@@ -189,7 +189,7 @@ public class PropertyUtils {
 
 	public static void setMappedProperty(Object bean, String name, String key,Object value) {
 		try{
-		com.github.dataswitch.util.PropertyUtils.setMappedProperty(bean, name, key, value);
+		org.apache.commons.beanutils.PropertyUtils.setMappedProperty(bean, name, key, value);
 		}catch(Exception e) {
 			handleException(e);
 		}
@@ -197,7 +197,7 @@ public class PropertyUtils {
 
 	public static void setNestedProperty(Object bean, String name, Object value){
 		try {
-		com.github.dataswitch.util.PropertyUtils.setNestedProperty(bean, name, value);
+		org.apache.commons.beanutils.PropertyUtils.setNestedProperty(bean, name, value);
 		}catch(Exception e) {
 			handleException(e);
 		}
@@ -205,7 +205,7 @@ public class PropertyUtils {
 
 	public static void setProperty(Object bean, String name, Object value){
 		try {
-		com.github.dataswitch.util.PropertyUtils.setProperty(bean, name, value);
+		org.apache.commons.beanutils.PropertyUtils.setProperty(bean, name, value);
 		}catch(Exception e) {
 			handleException(e);
 		}
@@ -213,7 +213,7 @@ public class PropertyUtils {
 
 	public static void setSimpleProperty(Object bean, String name, Object value){
 		try {
-		com.github.dataswitch.util.PropertyUtils.setSimpleProperty(bean, name, value);
+		org.apache.commons.beanutils.PropertyUtils.setSimpleProperty(bean, name, value);
 		}catch(Exception e) {
 			handleException(e);
 		}

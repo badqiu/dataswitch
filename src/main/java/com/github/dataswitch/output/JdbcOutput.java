@@ -514,7 +514,9 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	@Override
 	public void close() {
 		
-		if(exception != null) {
+		boolean isSuccess = exception != null;
+		
+		if(isSuccess) {
 			DataSource dataSource = getDataSource();
 	
 			executeRenameTableSqls(dataSource);

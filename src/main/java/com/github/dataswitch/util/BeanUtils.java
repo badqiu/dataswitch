@@ -71,7 +71,7 @@ public class BeanUtils {
 	
 	public static Object cloneBean(Object bean){
 		try {
-			return com.github.dataswitch.util.BeanUtils.cloneBean(bean);
+			return org.apache.commons.beanutils.BeanUtils.cloneBean(bean);
 		} catch (Exception e) {
 			handleReflectionException(e);
 			return null;
@@ -91,7 +91,7 @@ public class BeanUtils {
 	
 	public static void copyProperties(Object dest, Object orig) {
 		try {
-			com.github.dataswitch.util.BeanUtils.copyProperties(dest, orig);
+			org.apache.commons.beanutils.BeanUtils.copyProperties(dest, orig);
 		} catch (Exception e) {
 			handleReflectionException(e);
 		}
@@ -99,7 +99,7 @@ public class BeanUtils {
 
 	public static void copyProperty(Object bean, String name, Object value) {
 		try {
-			com.github.dataswitch.util.BeanUtils.copyProperty(bean, name, value);
+			org.apache.commons.beanutils.BeanUtils.copyProperty(bean, name, value);
 		} catch (Exception e) {
 			handleReflectionException(e);
 		}
@@ -107,7 +107,7 @@ public class BeanUtils {
 
 	public static Map describe(Object bean) {
 		try {
-			return com.github.dataswitch.util.BeanUtils.describe(bean);
+			return org.apache.commons.beanutils.BeanUtils.describe(bean);
 		} catch (Exception e) {
 			handleReflectionException(e);
 			return null;
@@ -116,7 +116,7 @@ public class BeanUtils {
 
 	public static String[] getArrayProperty(Object bean, String name){
 		try {
-			return com.github.dataswitch.util.BeanUtils.getArrayProperty(bean, name);
+			return org.apache.commons.beanutils.BeanUtils.getArrayProperty(bean, name);
 		} catch (Exception e) {
 			handleReflectionException(e);
 			return null;
@@ -125,7 +125,7 @@ public class BeanUtils {
 
 	public static String getIndexedProperty(Object bean, String name, int index){
 		try {
-			return com.github.dataswitch.util.BeanUtils.getIndexedProperty(bean, name, index);
+			return org.apache.commons.beanutils.BeanUtils.getIndexedProperty(bean, name, index);
 		} catch (Exception e) {
 			handleReflectionException(e);
 			return null;
@@ -134,7 +134,7 @@ public class BeanUtils {
 
 	public static String getIndexedProperty(Object bean, String name){
 		try {
-			return com.github.dataswitch.util.BeanUtils.getIndexedProperty(bean, name);
+			return org.apache.commons.beanutils.BeanUtils.getIndexedProperty(bean, name);
 		} catch (Exception e) {
 			handleReflectionException(e);
 			return null;
@@ -143,7 +143,7 @@ public class BeanUtils {
 
 	public static String getMappedProperty(Object bean, String name, String key){
 		try {
-			return com.github.dataswitch.util.BeanUtils.getMappedProperty(bean, name, key);
+			return org.apache.commons.beanutils.BeanUtils.getMappedProperty(bean, name, key);
 		} catch (Exception e) {
 			handleReflectionException(e);
 			return null;
@@ -152,7 +152,7 @@ public class BeanUtils {
 
 	public static String getMappedProperty(Object bean, String name){
 		try {
-			return com.github.dataswitch.util.BeanUtils.getMappedProperty(bean, name);
+			return org.apache.commons.beanutils.BeanUtils.getMappedProperty(bean, name);
 		} catch (Exception e) {
 			handleReflectionException(e);
 			return null;
@@ -161,7 +161,7 @@ public class BeanUtils {
 
 	public static String getNestedProperty(Object bean, String name){
 		try {
-			return com.github.dataswitch.util.BeanUtils.getNestedProperty(bean, name);
+			return org.apache.commons.beanutils.BeanUtils.getNestedProperty(bean, name);
 		} catch (Exception e) {
 			handleReflectionException(e);
 			return null;
@@ -175,7 +175,7 @@ public class BeanUtils {
 				Object value = ((Map)bean).get(name);
 				return value == null ? null : String.valueOf(value);
 			} else {
-				return com.github.dataswitch.util.BeanUtils.getProperty(bean, name);
+				return org.apache.commons.beanutils.BeanUtils.getProperty(bean, name);
 			}
 		} catch (Exception e) {
 			handleReflectionException(e);
@@ -190,7 +190,7 @@ public class BeanUtils {
 				Object value = ((Map)bean).get(name);
 				return value == null ? null : String.valueOf(value);
 			} else {
-				return com.github.dataswitch.util.BeanUtils.getSimpleProperty(bean, name);
+				return org.apache.commons.beanutils.BeanUtils.getSimpleProperty(bean, name);
 			}
 		} catch (Exception e) {
 			handleReflectionException(e);
@@ -200,7 +200,7 @@ public class BeanUtils {
 
 	public static void populate(Object bean, Map properties) {
 		try {
-			com.github.dataswitch.util.BeanUtils.populate(bean, properties);
+			org.apache.commons.beanutils.BeanUtils.populate(bean, properties);
 		} catch (Exception e) {
 			handleReflectionException(e);
 		}
@@ -208,7 +208,7 @@ public class BeanUtils {
 
 	public static void setProperty(Object bean, String name, Object value) {
 		try {
-			com.github.dataswitch.util.BeanUtils.setProperty(bean, name, value);
+			org.apache.commons.beanutils.BeanUtils.setProperty(bean, name, value);
 		} catch (Exception e) {
 			handleReflectionException(e);
 		}
