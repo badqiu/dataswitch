@@ -35,19 +35,32 @@ public enum FailMode {
 		return desc;
 	}
 	
-	public <T> boolean  forEach(T[] items,Consumer<T> action) {
-		if(items == null) return true;
+	/**
+	 * 
+	 * @param <T>
+	 * @param items
+	 * @param action
+	 * @return 最后的异常，如果是FailNever
+	 */
+	public <T> Exception  forEach(T[] items,Consumer<T> action) {
+		if(items == null) return null;
 		
 		return forEach(Arrays.asList(items),action);
 	}
 	
-	public <T> boolean  forEach(Iterable<T> items,Consumer<T> action) {
-		if(items == null) return true;
+	/**
+	 * 
+	 * @param <T>
+	 * @param items
+	 * @param action
+	 * @return 最后的异常，如果是FailNever
+	 */	
+	public <T> Exception  forEach(Iterable<T> items,Consumer<T> action) {
+		if(items == null) return null;
 		
 		Exception lastException = null;
 		T lastExceptionData = null;
 		
-		boolean success = true;
 		for(T item : items) {
 			try {
 				action.accept(item);
@@ -59,14 +72,13 @@ public enum FailMode {
 					Object errorData = Util.first(Util.first(item));
 					throw new RuntimeException("failFast at:"+e+" on data first row:"+errorData,e);
 				}
-				success = false;
 				logger.warn(this.name() + " at:"+e+" on data:"+item,e);
 			}
 		}
 		
 		throwExceptionIfFailAtEnd(lastException,lastExceptionData);
 		
-		return success;
+		return lastException;
 	}
 	
 	public void handleException(Exception e,String exceptionMessage) {

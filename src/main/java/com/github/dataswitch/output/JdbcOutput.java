@@ -113,6 +113,8 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	
 	private boolean renameTable = false;
 	private String finalTable =  null;
+	
+	private Exception exception = null;
 			
 	public String getSql() {
 		return sql;
@@ -426,7 +428,12 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		
 		List<List> multiChunkRows = CollectionUtil.chunk(rows, batchSize);
 		
-		failMode.forEach(multiChunkRows,executeWithJdbc(finalSql));
+		try {
+			failMode.forEach(multiChunkRows,executeWithJdbc(finalSql));
+		}catch(Exception e) {
+			exception = e;
+			throw new RuntimeException(e);
+		}
 		
 		return finalSql;
 	}
@@ -506,13 +513,16 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 
 	@Override
 	public void close() {
-		DataSource dataSource = getDataSource();
-
-		executeRenameTableSqls(dataSource);
 		
+		if(exception != null) {
+			DataSource dataSource = getDataSource();
+	
+			executeRenameTableSqls(dataSource);
+			
+			JdbcUtil.executeWithSemicolonComma(dataSource,afterSql);
+			logger.info("executed afterSql:"+afterSql);
+		}
 		
-		JdbcUtil.executeWithSemicolonComma(dataSource,afterSql);
-		logger.info("executed afterSql:"+afterSql);
 	}
 
 	protected String getBackupFinalTable() {
