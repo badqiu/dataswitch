@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.dataswitch.BaseObject;
-import com.github.dataswitch.util.IOUtil;
+import com.github.dataswitch.util.InputOutputUtil;
 
 public class ProxyInput extends BaseObject  implements Input{
 
@@ -23,7 +23,7 @@ public class ProxyInput extends BaseObject  implements Input{
 	}
 
 	public void close() throws Exception {
-		IOUtil.closeQuietly(proxy);
+		InputOutputUtil.closeQuietly(proxy);
 	}
 
 	public Input getProxy() {

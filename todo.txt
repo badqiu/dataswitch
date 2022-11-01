@@ -4,6 +4,7 @@
 
 增加参数生成功能，如-DparamGenerator=somepkg.SomeClass.method
 Bean2MapProcessor
+临时目录支持projectCode及多租户目录，如 /tmp/hivetmp/$projectCode/$zh/xxxxx.tmp.file
 
 支持csv StreamOutput
 StreamOutput使用 #号,以支持注释
