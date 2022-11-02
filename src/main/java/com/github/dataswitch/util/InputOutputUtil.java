@@ -145,97 +145,6 @@ public class InputOutputUtil {
 		return result;
 	}
 	
-	static ArrayList exitSign = new ArrayList(0);
-	public static int asyncCopy(Input input, final Output output,int bufferSize,Processor processor,FailMode failMode, Consumer<Exception> exceptionHandler) {
-		return asyncCopy(input,output,bufferSize,processor,failMode,exceptionHandler);
-	}
-	
-	public static int asyncCopy(Input input, final Output output,int bufferSize,Processor processor,Map<String, Object> params, FailMode failMode,Consumer<Exception> exceptionHandler) {
-		openAll(params,input, output, processor);
-		
-		final BlockingQueue<List> queue = new LinkedBlockingQueue(100);
-		
-		final List<Exception> exceptions = new ArrayList<Exception>();
-		
-		Thread writeThread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					while(true) {
-						List rows = null;
-						try {
-							rows = queue.take();
-							if(CollectionUtils.isEmpty(rows)) {
-								return; //exit sign
-							}
-							
-							
-							write(output, rows, processor);
-						}catch(InterruptedException e) {
-							logger.info("InterruptedException on write thread,exit thread",e);
-							return;
-						}catch(Exception e) {
-							Object firstRow = CollectionUtils.get(rows, 0);
-							logger.warn("ignore error on write thread, one dataRow:"+firstRow,e);
-							
-							collectExceptionIfFailAtEnd(failMode, exceptions, e);
-							
-							handleException(exceptionHandler, e);
-							
-						}
-					}
-				}finally {
-					InputOutputUtil.closeQuietly(output);
-				}
-			}
-
-
-		},"asyncCopy_write");
-		writeThread.setDaemon(true);
-		writeThread.start();
-		
-		int totalRows = 0;
-		try {
-			while(true) {
-				try {
-					List rows = input.read(bufferSize);
-					if(CollectionUtils.isEmpty((rows))) {
-						break;
-					}
-					totalRows += rows.size();
-					queue.put(rows);
-					
-					
-					input.commitInput();
-				}catch(Exception e) {
-					String msg = "read error,input:"+input+" output:"+output+" processor:"+processor;
-					logger.warn(msg,e);
-					if(FailMode.FAIL_FAST == failMode) {
-						throw new RuntimeException(msg,e);
-					}
-					
-					collectExceptionIfFailAtEnd(failMode, exceptions, e);
-					
-					handleException(exceptionHandler, e);
-				}
-			}
-			
-			return totalRows;
-		}finally {
-			try {
-				queue.put(exitSign);//exit sign
-				writeThread.join();
-			}catch(Exception e) {
-				throw new RuntimeException(e);
-			}
-			
-			closeAllQuietly(input, output, processor);
-			
-			if(!exceptions.isEmpty() && FailMode.FAIL_AT_END ==failMode) {
-				throw new RuntimeException("copy error,input:"+input+" output:"+output+" processor:"+processor+" exceptions:"+exceptions);
-			}
-		}
-	}
 	
 	public static void collectExceptionIfFailAtEnd(FailMode failMode, final List<Exception> exceptions,Exception e) {
 		if(exceptions == null) return;
@@ -246,17 +155,6 @@ public class InputOutputUtil {
 				exceptions.add(e);
 			}
 		}
-	}
-	
-	/**
-	 * 异步拷贝数据
-	 * @param input
-	 * @param output
-	 * @param processor
-	 */
-	
-	public static int asyncCopy(Input input, final Output output,int bufferSize,Processor processor,String failMode) {
-		return asyncCopy(input,output,bufferSize,processor,FailMode.getRequiredByName(failMode),null);
 	}
 	
 	/**
