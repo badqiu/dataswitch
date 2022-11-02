@@ -18,7 +18,7 @@ import com.github.dataswitch.BaseObject;
 
 public class ScriptOutput extends BaseObject implements Output{
 
-	private String lang; //动态语言
+	private String language; //动态语言
 	private String beforeScript; // script执行之前的脚本
 	private String script; // write()时执行的脚本
 	private String afterScript; // script执行之后的脚本
@@ -44,16 +44,12 @@ public class ScriptOutput extends BaseObject implements Output{
 		this.output = output;
 	}
 
-	public String getLang() {
-		return lang;
+	public String getLanguage() {
+		return language;
 	}
 
-	public void setLang(String lang) {
-		this.lang = lang;
-	}
-	
 	public void setLanguage(String lang) {
-		setLang(lang);
+		this.language = lang;
 	}
 
 	public String getScript() {
@@ -145,10 +141,10 @@ public class ScriptOutput extends BaseObject implements Output{
 	private Bindings beforeBinding;
 	public void init(Map<String, Object> params) throws ScriptException {
 		Assert.hasText(script,"script must be not empty");
-		Assert.hasText(lang,"'lang' must be not null");
+		Assert.hasText(language,"'language' must be not null");
 		
 		ScriptEngineManager scriptEngineMgr = new ScriptEngineManager();
-		engine = scriptEngineMgr.getEngineByName(lang);
+		engine = scriptEngineMgr.getEngineByName(language);
 		beforeBinding = evalIfNotBlank(engine,beforeScript,params);
 	}
 

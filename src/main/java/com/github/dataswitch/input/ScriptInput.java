@@ -12,7 +12,7 @@ import org.springframework.util.Assert;
 import com.github.dataswitch.output.ScriptOutput;
 
 public class ScriptInput extends BaseInput{
-	private String lang; //动态语言
+	private String language; //动态语言
 	private String beforeScript; // script执行之前的脚本
 	private String script; // write()时执行的脚本
 	private String afterScript; // script执行之后的脚本
@@ -20,16 +20,12 @@ public class ScriptInput extends BaseInput{
 	private transient ScriptEngine engine;
 	private Map context;
 	
-	public String getLang() {
-		return lang;
-	}
-
-	public void setLang(String lang) {
-		this.lang = lang;
+	public String getLanguage() {
+		return language;
 	}
 
 	public void setLanguage(String lang) {
-		setLang(lang);
+		this.language = lang;
 	}
 	
 	public String getBeforeScript() {
@@ -102,8 +98,8 @@ public class ScriptInput extends BaseInput{
 	private Bindings beforeBindings;
 	private void init(Map<String, Object> params) {
 		ScriptEngineManager scriptEngineMgr = new ScriptEngineManager();
-		Assert.hasText(lang,"'lang' must be not null");
-		engine = scriptEngineMgr.getEngineByName(lang);
+		Assert.hasText(language,"'language' must be not null");
+		engine = scriptEngineMgr.getEngineByName(language);
 		
 		Assert.hasText(script,"script must be not empty");
 		beforeBindings = ScriptOutput.evalIfNotBlank(engine,beforeScript,params);

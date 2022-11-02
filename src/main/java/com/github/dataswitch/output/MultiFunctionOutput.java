@@ -2,12 +2,13 @@ package com.github.dataswitch.output;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.locks.Lock;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.dataswitch.enums.Constants;
 
@@ -16,7 +17,8 @@ import com.github.dataswitch.enums.Constants;
  * 
  **/
 public class MultiFunctionOutput extends ProxyOutput {
-
+	private static Logger _log = LoggerFactory.getLogger(MultiFunctionOutput.class);
+	
 	private boolean async = false; //done
 	private boolean sync = false; //done
 	
@@ -173,6 +175,7 @@ public class MultiFunctionOutput extends ProxyOutput {
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
 		Output newProxy = newMultiFunctionProxy(getProxy());
+		_log.info("final MultiFunction outputClass:"+newProxy.getClass()+" output:"+newProxy);
 		setProxy(newProxy);
 		
 		super.open(params);
