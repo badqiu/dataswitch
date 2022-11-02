@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class BaseProcessor implements Processor{
+import com.github.dataswitch.BaseObject;
+
+public abstract class BaseProcessor extends BaseObject implements Processor{
 
 	@Override
 	public List<Object> process(List<Object> datas) throws Exception {
