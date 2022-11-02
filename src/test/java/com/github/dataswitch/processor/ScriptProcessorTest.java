@@ -47,7 +47,7 @@ public class ScriptProcessorTest {
 
 	private ScriptProcessor newScriptProcessor() {
 		ScriptProcessor sp = new ScriptProcessor();
-		sp.setLang("groovy");
+		sp.setLanguage("groovy");
 		sp.setRowEval(true);
 		sp.setInitScript("println 'initScript executed'");
 

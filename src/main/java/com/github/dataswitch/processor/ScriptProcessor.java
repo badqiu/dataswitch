@@ -23,7 +23,7 @@ import com.github.dataswitch.output.ScriptOutput;
  */
 public class ScriptProcessor implements Processor {
 
-	private String lang; // 动态语言
+	private String language; // 动态语言
 	private String initScript; // script执行之前的脚本,可以执行初始化操作
 	private String script; // write()时执行的脚本
 
@@ -37,22 +37,18 @@ public class ScriptProcessor implements Processor {
 	public ScriptProcessor() {
 	}
 
-	public ScriptProcessor(String lang, String script) {
+	public ScriptProcessor(String language, String script) {
 		super();
-		this.lang = lang;
+		this.language = language;
 		this.script = script;
 	}
 
-	public String getLang() {
-		return lang;
+	public String getLanguage() {
+		return language;
 	}
 
-	public void setLang(String lang) {
-		this.lang = lang;
-	}
-	
 	public void setLanguage(String lang) {
-		setLang(lang);
+		this.language = lang;
 	}
 	
 	public String getScript() {
@@ -147,8 +143,8 @@ public class ScriptProcessor implements Processor {
 	private void lookupScriptEngine() {
 		if(scriptEngine == null) {
 			ScriptEngineManager scriptEngineMgr = new ScriptEngineManager();
-			Assert.hasText(lang,"lang must be not empty for lookup ScriptEngine");
-			scriptEngine = scriptEngineMgr.getEngineByName(lang);
+			Assert.hasText(language,"language must be not empty for lookup ScriptEngine");
+			scriptEngine = scriptEngineMgr.getEngineByName(language);
 		}
 	}
 
