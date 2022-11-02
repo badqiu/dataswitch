@@ -8,6 +8,7 @@ import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -209,7 +210,7 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 		
 		
 		Processor processor = null;
-		if(processors != null) {
+		if(ArrayUtils.isNotEmpty(processors)) {
 			processor = new MultiProcessor(processors);
 		}
 		
