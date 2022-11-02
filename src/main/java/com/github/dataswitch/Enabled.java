@@ -6,9 +6,7 @@ import java.util.List;
 
 public interface Enabled {
 
-	public default boolean enabled() {
-		return true;
-	}
+	public boolean enabled();
 	
 	public static void assertEnabled(Object item) {
 		if(item == null) return;
