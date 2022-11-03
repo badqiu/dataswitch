@@ -72,7 +72,7 @@ public enum FailMode {
 				
 				Object errorData = Util.first(Util.first(item));
 				if(this == FAIL_FAST) {
-					throw new RuntimeException("failFast at:"+e+" on data first row:"+errorData,e);
+					throw new RuntimeException("failFast on data first row:"+errorData,e);
 				}
 				logger.warn(this.name() + " at:"+e+" on data:"+errorData,e);
 			}
@@ -105,7 +105,7 @@ public enum FailMode {
 	public void throwExceptionIfFailAtEnd(Exception lastException,Object lastExceptionData,int totalErrorCount) {
 		if(this == FAIL_AT_END && lastException != null) {
 			Object lastData = Util.first(Util.first(lastExceptionData));
-			String message = this.name() + " , lastException:"+lastException+" on lastData:"+lastData + " totalErrorCount:" + totalErrorCount;
+			String message = this.name() +" with lastException on lastData:"+lastData + " totalErrorCount:" + totalErrorCount+" ";
 			throw new RuntimeException(message,lastException);
 		}
 	}
