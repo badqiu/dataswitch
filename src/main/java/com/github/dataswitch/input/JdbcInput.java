@@ -83,7 +83,8 @@ public class JdbcInput extends DataSourceProvider implements Input{
 	}
 
 	public void init() {
-		_rowMapper = new ColumnMapRowMapper();
+		Assert.notNull(_rowMapper,"_rowMapper must be not null");
+		
 		if(StringUtils.isBlank(sql)) {
 			Assert.hasText(table,"table or sql must be not empty");
 			sql = "select * from " + table;
