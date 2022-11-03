@@ -9,6 +9,8 @@ public class UtilTest {
 
 	@Test
 	public void test() {
+		assertEquals("",StringUtils.join(Util.splitColumns(" \t\n ,,,"),";"));
+		assertEquals(null,StringUtils.join(Util.splitColumns(null),";"));
 		assertEquals("user;age",StringUtils.join(Util.splitColumns("user,age"),";"));
 		assertEquals("user;age",StringUtils.join(Util.splitColumns("user  age"),";"));
 		assertEquals("user;age;diy;blog;abc",StringUtils.join(Util.splitColumns("user\nage\n\t\ndiy\nblog,abc"),";"));
