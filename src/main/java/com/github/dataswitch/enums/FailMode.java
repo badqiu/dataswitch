@@ -68,11 +68,11 @@ public enum FailMode {
 				lastException = e;
 				lastExceptionData = item;
 				
+				Object errorData = Util.first(Util.first(item));
 				if(this == FAIL_FAST) {
-					Object errorData = Util.first(Util.first(item));
 					throw new RuntimeException("failFast at:"+e+" on data first row:"+errorData,e);
 				}
-				logger.warn(this.name() + " at:"+e+" on data:"+item,e);
+				logger.warn(this.name() + " at:"+e+" on data:"+errorData,e);
 			}
 		}
 		
