@@ -58,6 +58,14 @@ public enum FailMode {
 	public <T> Exception  forEach(Iterable<T> items,Consumer<T> action) {
 		if(items == null) return null;
 		
+		if(this == FAIL_FAST) { 
+			for(T item : items) {
+				action.accept(item);
+			}
+			return null;
+		}
+		
+		
 		Exception lastException = null;
 		T lastExceptionData = null;
 		int totalErrorCount = 0;
