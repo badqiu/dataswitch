@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +17,7 @@ import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.util.Assert;
 
 import com.github.dataswitch.support.DataSourceProvider;
+import com.github.dataswitch.util.JdbcUtil;
 import com.github.dataswitch.util.MapUtil;
 
 
@@ -35,7 +35,13 @@ public class JdbcInput extends DataSourceProvider implements Input{
 	
 	protected transient ResultSet _rs;
 	protected transient Connection _conn;
-	private transient ColumnMapRowMapper _rowMapper = new ColumnMapRowMapper();
+	
+	private transient ColumnMapRowMapper _rowMapper = new ColumnMapRowMapper() {
+		protected String getColumnKey(String columnName) {
+			return JdbcUtil.getFinalColumnKey(columnName);
+		}
+	};
+	
 	private int _rowNumber = 0;
 	
 	public String getId() {

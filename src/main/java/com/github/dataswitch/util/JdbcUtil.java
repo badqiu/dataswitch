@@ -272,5 +272,18 @@ public class JdbcUtil {
 		}
 	}
 	
-	
+	/**
+	 * 修复有些jdbc，列名表表名的问题。    
+	 * @param columnName  some_table.some_column
+	 * @return some_column
+	 */
+	public static String getFinalColumnKey(String columnName) {
+		if(columnName == null) return null;
+		
+		int index =  columnName.lastIndexOf(".");
+		if(index >= 0) {
+			return columnName.substring(index + 1, columnName.length());
+		}
+		return columnName;
+	};
 }
