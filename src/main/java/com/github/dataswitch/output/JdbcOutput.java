@@ -418,7 +418,14 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		String finalSql = executeWithJdbc(rows);
 		long costTime = System.currentTimeMillis() - start;
 		long tps = Util.getTPS(rows.size(), costTime);
-		logger.info("execute update sql with rows:"+rows.size()+" costTimeMills:"+costTime+" tps:"+ tps +" for sql:"+StringUtils.substring(finalSql,0,100));
+		logger.info("execute update sql with rows:"+rows.size()+" costTimeMills:"+costTime+" tps:"+ tps +" for sql:"+getOutputDigestInfo(finalSql));
+	}
+
+	private String getOutputDigestInfo(String finalSql) {
+		if(StringUtils.isNotBlank(table))
+			return table;
+		
+		return StringUtils.substring(finalSql,0,100);
 	}
 
 	protected String executeWithJdbc(final List<Object> rows) {
