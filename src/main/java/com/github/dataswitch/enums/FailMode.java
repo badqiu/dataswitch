@@ -60,11 +60,13 @@ public enum FailMode {
 		
 		Exception lastException = null;
 		T lastExceptionData = null;
+		int totalErrorCount = 0;
 		
 		for(T item : items) {
 			try {
 				action.accept(item);
 			}catch(Exception e) {
+				totalErrorCount++;
 				lastException = e;
 				lastExceptionData = item;
 				
@@ -76,7 +78,7 @@ public enum FailMode {
 			}
 		}
 		
-		throwExceptionIfFailAtEnd(lastException,lastExceptionData);
+		throwExceptionIfFailAtEnd(lastException,lastExceptionData,totalErrorCount);
 		
 		return lastException;
 	}
@@ -97,8 +99,14 @@ public enum FailMode {
 	}
 	
 	public void throwExceptionIfFailAtEnd(Exception lastException,Object lastExceptionData) {
+		throwExceptionIfFailAtEnd(lastException,lastExceptionData,1);
+	}
+	
+	public void throwExceptionIfFailAtEnd(Exception lastException,Object lastExceptionData,int totalErrorCount) {
 		if(this == FAIL_AT_END && lastException != null) {
-			throw new RuntimeException("failAtEnd at:"+lastException+" on data:"+lastExceptionData,lastException);
+			Object lastData = Util.first(Util.first(lastExceptionData));
+			String message = this.name() + " , lastException:"+lastException+" on lastData:"+lastData + " totalErrorCount:" + totalErrorCount;
+			throw new RuntimeException(message,lastException);
 		}
 	}
 
