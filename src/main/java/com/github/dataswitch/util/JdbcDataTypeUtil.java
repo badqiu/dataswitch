@@ -34,6 +34,7 @@ public class JdbcDataTypeUtil {
 	 *  通过java类型猜测数据库数据类型
 	 * @param jdbcUrl
 	 * @param value
+	 * @param defaultSqlType 默认的数据类型，如果为null值
 	 * @return
 	 */
 	public static String getDatabaseDataType(String jdbcUrl,Object value,String defaultSqlType) {
