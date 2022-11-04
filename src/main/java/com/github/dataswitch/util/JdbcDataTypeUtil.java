@@ -10,19 +10,20 @@ import org.springframework.util.Assert;
 public class JdbcDataTypeUtil {
 
 	private static final String VARCHAR = "VARCHAR(4000)";
+	private static final String VARCHAR2 = "VARCHAR2(4000)";
 	/**
 	 * 根据输入数据，输出数据类型
 	 * @param jdbcUrl
 	 * @param inputData
 	 * @return
 	 */
-	public static Map<String,String> getDatabaseDataType(String jdbcUrl,Map<String,Object> inputData,Map<String,String> columnsSqlType) {
+	public static Map<String,String> getDatabaseDataType(String jdbcUrl,Map<String,Object> inputData,Map<String,String> columnsSqlType,String defaultSqlType) {
 		Map<String,String> result = new LinkedHashMap<String,String>();
 		inputData.forEach((key,value) -> {
 			String sqlType = columnsSqlType != null ? columnsSqlType.get(key) : null;
 			
 			if(StringUtils.isBlank(sqlType)) {
-				sqlType = getDatabaseDataType(jdbcUrl,value);
+				sqlType = getDatabaseDataType(jdbcUrl,value,defaultSqlType);
 			}
 			result.put(key, sqlType);
 		});
@@ -35,8 +36,11 @@ public class JdbcDataTypeUtil {
 	 * @param value
 	 * @return
 	 */
-	public static String getDatabaseDataType(String jdbcUrl,Object value) {
+	public static String getDatabaseDataType(String jdbcUrl,Object value,String defaultSqlType) {
 		Assert.hasText(jdbcUrl,"jdbcUrl must be not blank");
+		if(value == null && StringUtils.isNotBlank(defaultSqlType)) {
+			return defaultSqlType;
+		}
 		
 		if(isMysqlJdbcUrl(jdbcUrl)) {
 			return JdbcDataTypeUtil.getMysqlDataType(value);
@@ -99,11 +103,11 @@ public class JdbcDataTypeUtil {
     
     public static String getOracleDataType(Object value) {
         if (value == null) {
-            return VARCHAR;
+            return VARCHAR2;
         }
 
         if (value instanceof String) {
-            return VARCHAR;
+            return VARCHAR2;
         }
 
         if(isDoubleNumber(value)) return "NUMBER(38,4)";
@@ -111,7 +115,7 @@ public class JdbcDataTypeUtil {
 		if(value instanceof Number || value instanceof Boolean) return "NUMBER(38,0)";
 		if(value instanceof Date) return "TIMESTAMP";
 
-        return VARCHAR;
+        return VARCHAR2;
     }
     
     public static String getSqlServerDataType(Object value) {

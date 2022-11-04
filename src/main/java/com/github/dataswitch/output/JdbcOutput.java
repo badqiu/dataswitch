@@ -66,6 +66,10 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	private boolean autoAlterTableAddColumn = false;
 	
 	/**
+	 * 自动增加列时，如果数值为null,默认的数据类型
+	 */
+	private String defaultSqlType; 
+	/**
 	 * 自动创建表
 	 */
 	private boolean autoCreateTable = false;
@@ -115,6 +119,8 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	private String finalTable =  null; //重命名后，最终的表名
 	
 	private Exception exception = null;
+
+
 			
 	public String getSql() {
 		return sql;
@@ -188,6 +194,18 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		return autoAlterTableAddColumn;
 	}
 	
+	public String getDefaultSqlType() {
+		return defaultSqlType;
+	}
+
+	public void setDefaultSqlType(String defaultSqlType) {
+		this.defaultSqlType = defaultSqlType;
+	}
+
+	public Exception getException() {
+		return exception;
+	}
+
 	public void setAutoCreateTable(boolean autoCreateTable) {
 		this.autoCreateTable = autoCreateTable;
 	}
@@ -323,7 +341,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 
 		Map allColumnsWithValue = MapUtil.mergeAllMapWithNotNullValue((List) rows);
 		
-		Map<String,String> localColumnsSqlType = JdbcDataTypeUtil.getDatabaseDataType(cacheJdbcUrl(), allColumnsWithValue,this.columnsSqlType);
+		Map<String,String> localColumnsSqlType = JdbcDataTypeUtil.getDatabaseDataType(cacheJdbcUrl(), allColumnsWithValue,this.columnsSqlType,this.defaultSqlType);
 		if(autoCreateTable) {
 			executeCreateTableSql(jdbcTemplate,localColumnsSqlType);
 		}
@@ -331,7 +349,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		Set<String> tableColumnNames = localColumnsSqlType.keySet();
 		
 		if(autoAlterTableAddColumn) {
-			JdbcUtil.alterTableIfColumnMiss(jdbcTemplate, allColumnsWithValue,table,cacheJdbcUrl(),this.columnsSqlType);
+			JdbcUtil.alterTableIfColumnMiss(jdbcTemplate, allColumnsWithValue,table,cacheJdbcUrl(),this.columnsSqlType,this.defaultSqlType);
 		}
 		
 		return generateSql(jdbcTemplate, tableColumnNames);
