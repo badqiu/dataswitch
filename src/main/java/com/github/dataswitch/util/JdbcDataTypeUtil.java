@@ -57,7 +57,10 @@ public class JdbcDataTypeUtil {
 		}else if(jdbcUrl.contains("jdbc:h2:")) {
 			return JdbcDataTypeUtil.getH2DataType(value);	
 		}else if(jdbcUrl.contains("jdbc:hsqldb:")) {
-			return JdbcDataTypeUtil.getHSQLDataType(value);			
+			return JdbcDataTypeUtil.getHSQLDataType(value);	
+		}else if(jdbcUrl.contains("jdbc:sqlite:")) {
+			return JdbcDataTypeUtil.getSqlLiteDataType(value);	
+			
 		}else {
 			throw new UnsupportedOperationException("cannot get database type by url:"+jdbcUrl);
 		}
@@ -216,6 +219,23 @@ public class JdbcDataTypeUtil {
 		
 		if(value instanceof Number || value instanceof Boolean) return "BIGINT";
 		if(value instanceof Date) return "datetime";
+
+        return VARCHAR;		
+	}
+
+	public static String getSqlLiteDataType(Object value) {
+        if (value == null) {
+            return VARCHAR;
+        }
+
+        if (value instanceof String) {
+            return VARCHAR;
+        }
+
+		if(isDoubleNumber(value)) return "REAL";
+		
+		if(value instanceof Number || value instanceof Boolean) return "INTEGER";
+		if(value instanceof Date) return "DATETIME";
 
         return VARCHAR;		
 	}
