@@ -66,20 +66,31 @@ public class MapUtil {
     	
         Map result = collector;
         for (Map row : rows) {
-            row.forEach((key,value) -> {
-            	if(result.containsKey(key)) {
-            		Object oldValue = result.get(key);
-            		if(oldValue != null) {
-            			return;
-            		}
-            	}
-            	
-            	result.put(key, value);
-            });
+            putWithNotNullValue(result, row);
         }
         
         return result;
     }
+
+	public static void putWithNotNullValue(Map collector, Map row) {
+		row.forEach((key,value) -> {
+			if(containsKeyAndNotNullValue(collector, key)) {
+				return;
+			}
+			
+			collector.put(key, value);
+		});
+	}
+
+	public static boolean containsKeyAndNotNullValue(Map collector, Object key) {
+		if(collector.containsKey(key)) {
+			Object value = collector.get(key);
+			if(value != null) {
+				return true;
+			}
+		}
+		return false;
+	}
     
 	
 	public static Map<String, Object> keyToLowerCase(Map<String, Object> properties) {

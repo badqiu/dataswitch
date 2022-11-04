@@ -1,5 +1,6 @@
 package com.github.dataswitch.output;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -119,8 +120,9 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	private String finalTable =  null; //重命名后，最终的表名
 	
 	private Exception exception = null;
-
-
+	
+	// 保留起来的所有数据列及值
+	private Map<String,Object> _allColumnWithValue = new HashMap();
 			
 	public String getSql() {
 		return sql;
@@ -271,8 +273,6 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		return columns;
 	}
 
-
-
 	public void setBatchSize(int batchSize) {
 		Assert.isTrue(batchSize > 0,"batchSize > 0 must be true");
 		this.batchSize = batchSize;
@@ -338,8 +338,8 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		
 		JdbcTemplate jdbcTemplate = getJdbcTemplate();
 		JdbcUtil.executeWithSemicolonComma(getDataSource(), sessionSql);
-
-		Map allColumnsWithValue = MapUtil.mergeAllMapWithNotNullValue((List) rows);
+		
+		Map allColumnsWithValue = getAllColumnWithValue(rows);
 		
 		Map<String,String> localColumnsSqlType = JdbcDataTypeUtil.getDatabaseDataType(cacheJdbcUrl(), allColumnsWithValue,this.columnsSqlType,this.defaultColumnSqlType);
 		if(autoCreateTable) {
@@ -353,6 +353,15 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		}
 		
 		return generateSql(jdbcTemplate, tableColumnNames);
+	}
+
+	private Map getAllColumnWithValue(final List<Object> rows) {
+		List tmpRows = new ArrayList(rows);
+		Map allColumnsWithValue = MapUtil.mergeAllMapWithNotNullValue((List) tmpRows);
+		
+		MapUtil.putWithNotNullValue(this._allColumnWithValue, allColumnsWithValue);
+		
+		return allColumnsWithValue;
 	}
 
 	private String generateSql(JdbcTemplate jdbcTemplate, Set<String> tableColumnNames) {
