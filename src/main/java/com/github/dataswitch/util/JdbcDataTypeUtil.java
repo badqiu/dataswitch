@@ -1,5 +1,6 @@
 package com.github.dataswitch.util;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -11,6 +12,7 @@ public class JdbcDataTypeUtil {
 
 	private static final String VARCHAR = "VARCHAR(4000)";
 	private static final String VARCHAR2 = "VARCHAR2(4000)";
+	
 	/**
 	 * 根据输入数据，输出数据类型
 	 * @param jdbcUrl
@@ -81,8 +83,8 @@ public class JdbcDataTypeUtil {
 
         if(isDoubleNumber(value)) return "Float64";
 		
-		if(value instanceof Number || value instanceof Boolean) return "Int64";
-		if(value instanceof Date) return "DateTime64(3)";
+		if(isIntegerNumber(value)) return "Int64";
+		if(isDateType(value)) return "DateTime64(3)";
 
         return "String";
     }
@@ -98,8 +100,8 @@ public class JdbcDataTypeUtil {
 
         if(isDoubleNumber(value)) return "DOUBLE";
 		
-		if(value instanceof Number || value instanceof Boolean) return "BIGINT";
-		if(value instanceof Date) return "DATETIME";
+		if(isIntegerNumber(value)) return "BIGINT";
+		if(isDateType(value)) return "DATETIME";
 
         return VARCHAR;
     }
@@ -115,8 +117,8 @@ public class JdbcDataTypeUtil {
 
         if(isDoubleNumber(value)) return "NUMBER(38,4)";
 		
-		if(value instanceof Number || value instanceof Boolean) return "NUMBER(38,0)";
-		if(value instanceof Date) return "TIMESTAMP";
+		if(isIntegerNumber(value)) return "NUMBER(38,0)";
+		if(isDateType(value)) return "TIMESTAMP";
 
         return VARCHAR2;
     }
@@ -132,8 +134,8 @@ public class JdbcDataTypeUtil {
 
         if(isDoubleNumber(value)) return "FLOAT";
 		
-		if(value instanceof Number || value instanceof Boolean) return "BIGINT";
-		if(value instanceof Date) return "DATETIME";
+		if(isIntegerNumber(value)) return "BIGINT";
+		if(isDateType(value)) return "DATETIME";
 
         return VARCHAR;
     }
@@ -149,8 +151,8 @@ public class JdbcDataTypeUtil {
 
         if(isDoubleNumber(value)) return "float8";
 		
-		if(value instanceof Number || value instanceof Boolean) return "BIGINT";
-		if(value instanceof Date) return "timestamp";
+		if(isIntegerNumber(value)) return "BIGINT";
+		if(isDateType(value)) return "timestamp";
 
         return VARCHAR;
     }
@@ -166,8 +168,8 @@ public class JdbcDataTypeUtil {
 
         if(isDoubleNumber(value)) return "DOUBLE";
 		
-		if(value instanceof Number || value instanceof Boolean) return "BIGINT";
-		if(value instanceof Date) return "TIMESTAMP";
+		if(isIntegerNumber(value)) return "BIGINT";
+		if(isDateType(value)) return "TIMESTAMP";
 
         return "STRING";
 	}    
@@ -183,11 +185,12 @@ public class JdbcDataTypeUtil {
 
         if(isDoubleNumber(value)) return "NUMERIC(20, 2)";
 		
-		if(value instanceof Number || value instanceof Boolean) return "BIGINT";
-		if(value instanceof Date) return "TIMESTAMP";
+		if(isIntegerNumber(value)) return "BIGINT";
+		if(isDateType(value)) return "TIMESTAMP";
 
         return VARCHAR;		
 	}
+
 
 	public static String getHSQLDataType(Object value) {
         if (value == null) {
@@ -200,8 +203,8 @@ public class JdbcDataTypeUtil {
 
         if(isDoubleNumber(value)) return "REAL";
 		
-		if(value instanceof Number || value instanceof Boolean) return "BIGINT";
-		if(value instanceof Date) return "DATETIME";
+		if(isIntegerNumber(value)) return "BIGINT";
+		if(isDateType(value)) return "DATETIME";
 
         return VARCHAR;		
 	}
@@ -217,8 +220,8 @@ public class JdbcDataTypeUtil {
 
 		if(isDoubleNumber(value)) return "REAL";
 		
-		if(value instanceof Number || value instanceof Boolean) return "BIGINT";
-		if(value instanceof Date) return "datetime";
+		if(isIntegerNumber(value)) return "BIGINT";
+		if(isDateType(value)) return "datetime";
 
         return VARCHAR;		
 	}
@@ -234,23 +237,41 @@ public class JdbcDataTypeUtil {
 
 		if(isDoubleNumber(value)) return "REAL";
 		
-		if(value instanceof Number || value instanceof Boolean) return "INTEGER";
-		if(value instanceof Date) return "DATETIME";
+		if(isIntegerNumber(value)) return "INTEGER";
+		if(isDateType(value)) return "DATETIME";
 
         return VARCHAR;		
 	}
-	
+
+
 	public static String getTiDBDataType(Object value) {
         return getMysqlDataType(value);	
 	}
 	
-	private static boolean isDoubleNumber(Object value) {
+	public static boolean isIntegerNumber(Object value) {
+		if(isDoubleNumber(value)) return false;
+		
+		if(value instanceof Long || value instanceof Integer) {
+			return true;
+		}
+		if(value.getClass() == int.class) return true;
+		if(value.getClass() == long.class) return true;
+		
+		return value instanceof Number || value instanceof Boolean;
+	}
+	
+	public static boolean isDateType(Object value) {
+		return value instanceof Date;
+	}
+	
+	public static boolean isDoubleNumber(Object value) {
 		if(value == null) return false;
 		
 		if(value instanceof Double) return true;
 		if(value instanceof Float) return true;
 		if(value.getClass() == double.class) return true;
 		if(value.getClass() == float.class) return true;
+		if(value.getClass() == BigDecimal.class) return true;
 		
 		return false;
 	}

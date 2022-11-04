@@ -521,7 +521,9 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		for (Object row : rows) {
 			if(row instanceof Map) {
 				Map rowMap = (Map)row;
-				Object defaultValue = isClickhouseDatabase ? "0" : null; //clickhouse不能插入null值
+				
+				Object defaultValue = isClickhouseDatabase ? null : null; //clickhouse不能插入null值 ??
+				
 				DefaultValueMapSqlParameterSource defaultValueMapSqlParameterSource = new DefaultValueMapSqlParameterSource(rowMap);
 				defaultValueMapSqlParameterSource.setDefaultValue(defaultValue);
 				
