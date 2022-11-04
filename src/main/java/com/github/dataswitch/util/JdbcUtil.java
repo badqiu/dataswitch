@@ -36,12 +36,12 @@ public class JdbcUtil {
         return MapUtil.getDifferenceMap(MapUtil.keyToLowerCase(tableColumns), MapUtil.keyToLowerCase(columnsWithData));
 	}
 	
-	public static void alterTableIfColumnMiss(JdbcTemplate jdbcTemplate, Map columnsWithData, String table,String jdbcUrl,Map<String,String> columnsSqlType,String defaultSqlType) {
+	public static void alterTableIfColumnMiss(JdbcTemplate jdbcTemplate, Map columnsWithData, String table,String jdbcUrl,Map<String,String> columnsSqlType,String defaultColumnSqlType) {
 		Map missColumns = getMissColumns(jdbcTemplate, columnsWithData, table,jdbcUrl);
         if (missColumns == null) return;
         
         try {
-	        Map sqlTypes = JdbcDataTypeUtil.getDatabaseDataType(jdbcUrl, missColumns,columnsSqlType,defaultSqlType);
+	        Map sqlTypes = JdbcDataTypeUtil.getDatabaseDataType(jdbcUrl, missColumns,columnsSqlType,defaultColumnSqlType);
 	        sqlTypes.forEach((key, jdbcType) -> {
 	        	long start = System.currentTimeMillis();
 	        	String sql = "ALTER TABLE "+table+"  ADD COLUMN `"+key+"` "+jdbcType;
