@@ -68,7 +68,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	/**
 	 * 自动增加列时，如果数值为null,默认的数据类型
 	 */
-	private String defaultSqlType; 
+	private String defaultColumnSqlType; 
 	/**
 	 * 自动创建表
 	 */
@@ -194,12 +194,12 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		return autoAlterTableAddColumn;
 	}
 	
-	public String getDefaultSqlType() {
-		return defaultSqlType;
+	public String getDefaultColumnSqlType() {
+		return defaultColumnSqlType;
 	}
 
-	public void setDefaultSqlType(String defaultSqlType) {
-		this.defaultSqlType = defaultSqlType;
+	public void setDefaultColumnSqlType(String defaultSqlType) {
+		this.defaultColumnSqlType = defaultSqlType;
 	}
 
 	public Exception getException() {
@@ -341,7 +341,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 
 		Map allColumnsWithValue = MapUtil.mergeAllMapWithNotNullValue((List) rows);
 		
-		Map<String,String> localColumnsSqlType = JdbcDataTypeUtil.getDatabaseDataType(cacheJdbcUrl(), allColumnsWithValue,this.columnsSqlType,this.defaultSqlType);
+		Map<String,String> localColumnsSqlType = JdbcDataTypeUtil.getDatabaseDataType(cacheJdbcUrl(), allColumnsWithValue,this.columnsSqlType,this.defaultColumnSqlType);
 		if(autoCreateTable) {
 			executeCreateTableSql(jdbcTemplate,localColumnsSqlType);
 		}
@@ -349,7 +349,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		Set<String> tableColumnNames = localColumnsSqlType.keySet();
 		
 		if(autoAlterTableAddColumn) {
-			JdbcUtil.alterTableIfColumnMiss(jdbcTemplate, allColumnsWithValue,table,cacheJdbcUrl(),this.columnsSqlType,this.defaultSqlType);
+			JdbcUtil.alterTableIfColumnMiss(jdbcTemplate, allColumnsWithValue,table,cacheJdbcUrl(),this.columnsSqlType,this.defaultColumnSqlType);
 		}
 		
 		return generateSql(jdbcTemplate, tableColumnNames);

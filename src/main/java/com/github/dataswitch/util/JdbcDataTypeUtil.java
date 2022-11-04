@@ -19,13 +19,13 @@ public class JdbcDataTypeUtil {
 	 * @param inputData
 	 * @return
 	 */
-	public static Map<String,String> getDatabaseDataType(String jdbcUrl,Map<String,Object> inputData,Map<String,String> columnsSqlType,String defaultSqlType) {
+	public static Map<String,String> getDatabaseDataType(String jdbcUrl,Map<String,Object> inputData,Map<String,String> columnsSqlType,String defaultColumnSqlType) {
 		Map<String,String> result = new LinkedHashMap<String,String>();
 		inputData.forEach((key,value) -> {
 			String sqlType = columnsSqlType != null ? columnsSqlType.get(key) : null;
 			
 			if(StringUtils.isBlank(sqlType)) {
-				sqlType = getDatabaseDataType(jdbcUrl,value,defaultSqlType);
+				sqlType = getDatabaseDataType(jdbcUrl,value,defaultColumnSqlType);
 			}
 			result.put(key, sqlType);
 		});
@@ -39,10 +39,10 @@ public class JdbcDataTypeUtil {
 	 * @param defaultSqlType 默认的数据类型，如果为null值
 	 * @return
 	 */
-	public static String getDatabaseDataType(String jdbcUrl,Object value,String defaultSqlType) {
+	public static String getDatabaseDataType(String jdbcUrl,Object value,String defaultColumnSqlType) {
 		Assert.hasText(jdbcUrl,"jdbcUrl must be not blank");
-		if(value == null && StringUtils.isNotBlank(defaultSqlType)) {
-			return defaultSqlType;
+		if(value == null && StringUtils.isNotBlank(defaultColumnSqlType)) {
+			return defaultColumnSqlType;
 		}
 		
 		if(isMysqlJdbcUrl(jdbcUrl)) {
