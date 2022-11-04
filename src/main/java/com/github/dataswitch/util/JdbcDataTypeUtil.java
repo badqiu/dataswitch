@@ -59,8 +59,7 @@ public class JdbcDataTypeUtil {
 		}else if(jdbcUrl.contains("jdbc:hsqldb:")) {
 			return JdbcDataTypeUtil.getHSQLDataType(value);	
 		}else if(jdbcUrl.contains("jdbc:sqlite:")) {
-			return JdbcDataTypeUtil.getSqlLiteDataType(value);	
-			
+			return JdbcDataTypeUtil.getSqlLiteDataType(value);			
 		}else {
 			throw new UnsupportedOperationException("cannot get database type by url:"+jdbcUrl);
 		}
@@ -238,6 +237,10 @@ public class JdbcDataTypeUtil {
 		if(value instanceof Date) return "DATETIME";
 
         return VARCHAR;		
+	}
+	
+	public static String getTiDBDataType(Object value) {
+        return getMysqlDataType(value);	
 	}
 	
 	private static boolean isDoubleNumber(Object value) {
