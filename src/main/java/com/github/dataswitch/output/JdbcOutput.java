@@ -433,7 +433,9 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		if(CollectionUtils.isEmpty(rows)) return;
 		
 		long start = System.currentTimeMillis();
+		
 		String finalSql = executeWithJdbc(rows);
+		
 		long costTime = System.currentTimeMillis() - start;
 		long tps = Util.getTPS(rows.size(), costTime);
 		logger.info("execute update sql with rows:"+rows.size()+" costTimeMills:"+costTime+" tps:"+ tps +" for sql:"+getOutputDigestInfo(finalSql));
