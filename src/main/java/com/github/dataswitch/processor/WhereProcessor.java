@@ -23,9 +23,9 @@ public class WhereProcessor extends BaseProcessor{
 	private int limit; //done
 	private int offset; //done
 	
-	private String orderBy;
-	private String groupBy;
-	private String having;
+//	private String orderBy;
+//	private String groupBy;
+//	private String having;
 	
 	
 	private String[] _removeKeys = null;
@@ -33,6 +33,47 @@ public class WhereProcessor extends BaseProcessor{
 	private int _limitCount = 0;
 	private int _OffsetCount = 0;
 	
+	
+	public String getWhere() {
+		return where;
+	}
+
+	public void setWhere(String where) {
+		this.where = where;
+	}
+
+	public String getSelect() {
+		return select;
+	}
+
+	public void setSelect(String select) {
+		this.select = select;
+	}
+
+	public String getRemove() {
+		return remove;
+	}
+
+	public void setRemove(String remove) {
+		this.remove = remove;
+	}
+
+	public int getLimit() {
+		return limit;
+	}
+
+	public void setLimit(int limit) {
+		this.limit = limit;
+	}
+
+	public int getOffset() {
+		return offset;
+	}
+
+	public void setOffset(int offset) {
+		this.offset = offset;
+	}
+
 	@Override
 	protected Object processOne(Object row) throws Exception {
 		if(row == null) return null;
@@ -86,8 +127,22 @@ public class WhereProcessor extends BaseProcessor{
 	public void open(Map<String, Object> params) throws Exception {
 		super.open(params);
 		
-		where = StringUtils.trimToNull(where);
+		where = convertSqlWhere2JavaWhere(where);
 		_removeKeys = Util.splitColumns(remove);
 		_selectKeys = Util.splitColumns(select);
+	}
+
+	private String convertSqlWhere2JavaWhere(String where) {
+		if(StringUtils.isBlank(where)) return null;
+		
+		String result = where.trim();
+		result = result.replaceAll("(?i)\sand\s", " && ");
+		result = result.replaceAll("(?i)\sor\s", " || ");
+		
+		result = result.replaceAll("(?i)\snot\s+", " ! ");
+		if(result.toLowerCase().startsWith("not")) {
+			result = result.replaceAll("(?i)not\s+", " ! ");
+		}
+		return result;
 	}
 }
