@@ -91,49 +91,55 @@ public class JdbcMetaDataUtil {
 
 	private List<SqlColumn> getSqlTableSqlColumns(Connection conn,SqlTable table, List primaryKeys, List indices, Map uniqueIndices, Map uniqueSqlColumns) throws SQLException {
 		// get the columns
-	      List columns = new LinkedList();
-	      ResultSet columnRs = getSqlColumnsResultSet(conn.getMetaData(),table.getSqlName());
-	      
-	      while (columnRs.next()) {
-	         int sqlType = columnRs.getInt("DATA_TYPE");
-	         String sqlTypeName = columnRs.getString("TYPE_NAME");
-	         String columnName = columnRs.getString("COLUMN_NAME");
-	         String columnDefaultValue = columnRs.getString("COLUMN_DEF");
-	         // if columnNoNulls or columnNullableUnknown assume "not nullable"
-	         boolean isNullable = (DatabaseMetaData.columnNullable == columnRs.getInt("NULLABLE"));
-	         int size = columnRs.getInt("COLUMN_SIZE");
-	         int decimalDigits = columnRs.getInt("DECIMAL_DIGITS");
-
-	         boolean isPk = primaryKeys.contains(columnName);
-	         boolean isIndexed = indices.contains(columnName);
-	         String uniqueIndex = (String)uniqueIndices.get(columnName);
-	         List columnsInUniqueIndex = null;
-	         if (uniqueIndex != null) {
-	            columnsInUniqueIndex = (List)uniqueSqlColumns.get(uniqueIndex);
-	         }
-
-	         boolean isUnique = columnsInUniqueIndex != null && columnsInUniqueIndex.size() == 1;
-	         if (isUnique) {
-	            _log.debug("unique column:" + columnName);
-	         }
-	         
-	         SqlColumn column = new SqlColumn(
-	               table,
-	               sqlType,
-	               sqlTypeName,
-	               columnName,
-	               size,
-	               decimalDigits,
-	               isPk,
-	               isNullable,
-	               isIndexed,
-	               isUnique,
-	               columnDefaultValue);
-	         
-	         columns.add(column);
-	      }
-	      columnRs.close();
+		List columns = new LinkedList();
+		ResultSet columnRs = getSqlColumnsResultSet(conn.getMetaData(),table.getSqlName());
+		  
+		while (columnRs.next()) {
+			SqlColumn column = buildSqlColumn(table, primaryKeys, indices, uniqueIndices, uniqueSqlColumns, columnRs);
+			columns.add(column);
+		}
+		  
+		columnRs.close();
 		return columns;
+	}
+
+	private SqlColumn buildSqlColumn(SqlTable table, List primaryKeys, List indices, Map uniqueIndices,
+			Map uniqueSqlColumns, ResultSet columnRs) throws SQLException {
+		int sqlType = columnRs.getInt("DATA_TYPE");
+		 String sqlTypeName = columnRs.getString("TYPE_NAME");
+		 String columnName = columnRs.getString("COLUMN_NAME");
+		 String columnDefaultValue = columnRs.getString("COLUMN_DEF");
+		 // if columnNoNulls or columnNullableUnknown assume "not nullable"
+		 boolean isNullable = (DatabaseMetaData.columnNullable == columnRs.getInt("NULLABLE"));
+		 int size = columnRs.getInt("COLUMN_SIZE");
+		 int decimalDigits = columnRs.getInt("DECIMAL_DIGITS");
+
+		 boolean isPk = primaryKeys.contains(columnName);
+		 boolean isIndexed = indices.contains(columnName);
+		 String uniqueIndex = (String)uniqueIndices.get(columnName);
+		 List columnsInUniqueIndex = null;
+		 if (uniqueIndex != null) {
+		    columnsInUniqueIndex = (List)uniqueSqlColumns.get(uniqueIndex);
+		 }
+
+		 boolean isUnique = columnsInUniqueIndex != null && columnsInUniqueIndex.size() == 1;
+		 if (isUnique) {
+		    _log.debug("unique column:" + columnName);
+		 }
+		 
+		 SqlColumn column = new SqlColumn(
+		       table,
+		       sqlType,
+		       sqlTypeName,
+		       columnName,
+		       size,
+		       decimalDigits,
+		       isPk,
+		       isNullable,
+		       isIndexed,
+		       isUnique,
+		       columnDefaultValue);
+		return column;
 	}
 
 	private ResultSet getSqlColumnsResultSet(DatabaseMetaData metaData,String tableName) throws SQLException {
