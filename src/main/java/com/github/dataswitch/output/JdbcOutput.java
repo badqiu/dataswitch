@@ -212,11 +212,9 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		this.autoCreateTable = autoCreateTable;
 	}
 
-
 	public boolean isAutoCreateTable() {
 		return autoCreateTable;
 	}
-
 
 	public String getOutputMode() {
 		return outputMode.name();
@@ -355,7 +353,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		return generateSql(jdbcTemplate, tableColumnNames);
 	}
 
-	private Map getAllColumnWithValue(final List<Object> rows) {
+	protected Map getAllColumnWithValue(final List<Object> rows) {
 		List tmpRows = new ArrayList(rows);
 		Map allColumnsWithValue = MapUtil.mergeAllMapWithNotNullValue((List) tmpRows);
 		
@@ -364,7 +362,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		return allColumnsWithValue;
 	}
 
-	private String generateSql(JdbcTemplate jdbcTemplate, Set<String> tableColumnNames) {
+	protected String generateSql(JdbcTemplate jdbcTemplate, Set<String> tableColumnNames) {
 		if(OutputMode.delete == outputMode) {
 			return JdbcSqlUtil.buildDeleteSql(table, getPrimaryKeysArray());
 		}
@@ -386,7 +384,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		return resultSql;
 	}
 
-	private Collection<String> getColumnsByColumnsFrom(JdbcTemplate jdbcTemplate,Set<String> tableColumnNames) {
+	protected Collection<String> getColumnsByColumnsFrom(JdbcTemplate jdbcTemplate,Set<String> tableColumnNames) {
 		if(ColumnsFrom.input == columnsFrom) {
 			return tableColumnNames;
 		}else if(ColumnsFrom.table == columnsFrom) {
@@ -400,7 +398,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		}
 	}
 
-	private void executeCreateTableSql(JdbcTemplate jdbcTemplate,Map<String,String> columnsSqlType) {
+	protected void executeCreateTableSql(JdbcTemplate jdbcTemplate,Map<String,String> columnsSqlType) {
 		if(_executedCreateTable) return;
 		
 		String createTableSql = JdbcCreateTableSqlUtil.buildCreateTableSql(table, columnsComment, columnsSqlType, getPrimaryKeysArray());
@@ -420,7 +418,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	}
 	
 	private String[] _primaryKeyArray;
-	private String[] getPrimaryKeysArray() {
+	protected String[] getPrimaryKeysArray() {
 		if(_primaryKeyArray == null) {
 			if(StringUtils.isBlank(primaryKeys)) {
 				List<String> tablePrimaryKeysList = JdbcUtil.getTablePrimaryKeysList(table,getJdbcTemplate());
@@ -475,7 +473,6 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	}
 
 	private Consumer<List> executeWithJdbc(final String finalSql) {
-		
 		return (finalRows) -> {
 			if(CollectionUtils.isEmpty(finalRows)) {
 				return;

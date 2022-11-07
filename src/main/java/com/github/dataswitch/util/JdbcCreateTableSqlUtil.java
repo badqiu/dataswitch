@@ -13,7 +13,7 @@ public class JdbcCreateTableSqlUtil {
 	
 	private static Logger logger = LoggerFactory.getLogger(JdbcCreateTableSqlUtil.class);
 	
-	public static void executeCreateTableSql(String tableName,Map columnComments,Map<String, String> columnsSqlType,JdbcTemplate jt,String... primaryKeys) {
+	public static void executeCreateTableSql(String tableName,Map columnComments,Map<String, String> columnsSqlType,JdbcTemplate jt,String[] primaryKeys) {
 		String createTableSql = buildCreateTableSql(tableName,columnComments, columnsSqlType,primaryKeys);
 		
 		if(StringUtils.isNotBlank(createTableSql)) {
@@ -22,7 +22,7 @@ public class JdbcCreateTableSqlUtil {
 		}
 	}
 	
-	public static String buildCreateTableSql(String tableName,Map columnComments, Map<String, String> columnsSqlType,String... primaryKeys) {
+	public static String buildCreateTableSql(String tableName,Map columnComments, Map<String, String> columnsSqlType,String[] primaryKeys) {
 		if(columnsSqlType == null || columnsSqlType.isEmpty()) return null;
 		
 		Assert.notEmpty(primaryKeys,"primary keys must be not empty");
@@ -64,7 +64,7 @@ public class JdbcCreateTableSqlUtil {
 		return " comment '"+com+"'";
 	}
 
-	private static void addPrimaryKeys(StringBuilder sql, String... primaryKeys) {
+	private static void addPrimaryKeys(StringBuilder sql, String[] primaryKeys) {
 		if(ArrayUtils.isEmpty(primaryKeys)) {
 			return;
 		}
