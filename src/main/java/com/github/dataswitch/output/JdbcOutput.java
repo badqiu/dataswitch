@@ -396,6 +396,8 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		}else if(ColumnsFrom.table == columnsFrom) {
 			return JdbcUtil.getTableColumnsName(jdbcTemplate, table, cacheJdbcUrl());
 		}else if(ColumnsFrom.config == columnsFrom) {
+			Assert.hasText(columns,"columns must be not blank if: columnsFrom == config");
+			
 			String[] splitTableColumns = JdbcUtil.splitTableColumns(columns);
 			if(splitTableColumns == null) return null;
 			return Arrays.asList(splitTableColumns);
