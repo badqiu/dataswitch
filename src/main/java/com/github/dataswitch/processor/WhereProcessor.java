@@ -27,7 +27,7 @@ public class WhereProcessor extends BaseProcessor{
 	private String select; //done
 	private String remove; //done
 	private long limit; //done
-	private long offset; //done
+	private long offset; //done, 从0开始
 	
 //	private String orderBy;
 //	private String groupBy;

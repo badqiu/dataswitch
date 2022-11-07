@@ -27,13 +27,31 @@ public class WhereProcessorTest {
 	@Test
 	public void test_offset() throws Exception {
 		List rows = newList(10);
+		List results = null;
 		
+		p = new WhereProcessor();
 		p.setLimit(5);
 		p.setOffset(1);
 		p.open(null);
-		List results = p.process(rows);
+		results = p.process(rows);
 		System.out.println(results);
 		assertEquals("[{count=1}, {count=2}, {count=3}, {count=4}, {count=5}]",results.toString());
+		
+		p = new WhereProcessor();
+		p.setLimit(Integer.MAX_VALUE);
+		p.setOffset(8);
+		p.open(null);
+		results = p.process(rows);
+		System.out.println(results);
+		assertEquals("[{count=8}, {count=9}]",results.toString());
+		
+		p = new WhereProcessor();
+		p.setLimit(Integer.MAX_VALUE);
+		p.setOffset(0);
+		p.open(null);
+		results = p.process(rows);
+		System.out.println(results);
+		assertEquals("[{count=0}, {count=1}, {count=2}, {count=3}, {count=4}, {count=5}, {count=6}, {count=7}, {count=8}, {count=9}]",results.toString());
 	}
 	
 	@Test
