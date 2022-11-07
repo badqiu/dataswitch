@@ -9,6 +9,12 @@ import org.mvel2.MVEL;
 
 import com.github.dataswitch.util.Util;
 
+/**
+ * 提供类似SQL的where,select等过滤数据功能
+ * 
+ * @author badqiu
+ *
+ */
 public class WhereProcessor extends BaseProcessor{
 	// where columns
 	// select columns
@@ -20,8 +26,8 @@ public class WhereProcessor extends BaseProcessor{
 	private String where; //done   age > 10 && name == 'badqiu'
 	private String select; //done
 	private String remove; //done
-	private int limit; //done
-	private int offset; //done
+	private long limit; //done
+	private long offset; //done
 	
 //	private String orderBy;
 //	private String groupBy;
@@ -30,8 +36,8 @@ public class WhereProcessor extends BaseProcessor{
 	
 	private String[] _removeKeys = null;
 	private String[] _selectKeys = null;
-	private int _limitCount = 0;
-	private int _OffsetCount = 0;
+	private long _limitCount = 0;
+	private long _OffsetCount = 0;
 	
 	
 	public String getWhere() {
@@ -58,19 +64,19 @@ public class WhereProcessor extends BaseProcessor{
 		this.remove = remove;
 	}
 
-	public int getLimit() {
+	public long getLimit() {
 		return limit;
 	}
 
-	public void setLimit(int limit) {
+	public void setLimit(long limit) {
 		this.limit = limit;
 	}
 
-	public int getOffset() {
+	public long getOffset() {
 		return offset;
 	}
 
-	public void setOffset(int offset) {
+	public void setOffset(long offset) {
 		this.offset = offset;
 	}
 
@@ -114,7 +120,11 @@ public class WhereProcessor extends BaseProcessor{
 		if(ArrayUtils.isNotEmpty(_selectKeys)) {
 			Map result = new LinkedHashMap(_selectKeys.length * 2);
 			for(String key : _selectKeys) {
-				result.put(key, map.get(key));
+				Object value = map.get(key);
+				
+				if(value != null) {
+					result.put(key, value);
+				}
 			}
 			return result;
 		}
@@ -127,7 +137,7 @@ public class WhereProcessor extends BaseProcessor{
 	public void open(Map<String, Object> params) throws Exception {
 		super.open(params);
 		
-		where = convertSqlWhere2JavaWhere(where);
+//		where = convertSqlWhere2JavaWhere(where);
 		_removeKeys = Util.splitColumns(remove);
 		_selectKeys = Util.splitColumns(select);
 	}
@@ -138,7 +148,7 @@ public class WhereProcessor extends BaseProcessor{
 		String result = where.trim();
 		result = result.replaceAll("(?i)\sand\s", " && ");
 		result = result.replaceAll("(?i)\sor\s", " || ");
-		
+
 		result = result.replaceAll("(?i)\snot\s+", " ! ");
 		if(result.toLowerCase().startsWith("not")) {
 			result = result.replaceAll("(?i)not\s+", " ! ");
