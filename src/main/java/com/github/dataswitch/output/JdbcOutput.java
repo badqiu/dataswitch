@@ -409,7 +409,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	protected void executeCreateTableSql(JdbcTemplate jdbcTemplate,Map<String,String> columnsSqlType) {
 		if(_executedCreateTable) return;
 		
-		String createTableSql = JdbcCreateTableSqlUtil.buildCreateTableSql(table, columnsComment, columnsSqlType, getPrimaryKeysArray());
+		String createTableSql = buildCreateTableSql(columnsSqlType);
 		
 		try {
 			if(StringUtils.isBlank(createTableSql)) {
@@ -426,6 +426,11 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 			_executedCreateTable = true;
 		}
 		
+	}
+
+	protected String buildCreateTableSql(Map<String, String> columnsSqlType) {
+		String createTableSql = JdbcCreateTableSqlUtil.buildCreateTableSql(table, columnsComment, columnsSqlType, getPrimaryKeysArray());
+		return createTableSql;
 	}
 	
 	private String[] _primaryKeyArray;
