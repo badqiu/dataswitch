@@ -7,6 +7,7 @@ InputsOutputs配置文件生成工具
 WhereProcessor改名:  SqlExprProcessor ???
 记录并使用数据库己知的数据类型
 建表时，使用模板？？？然后SQL代码，只替换表名？
+支持多进程？？ 表字段同步？
 
 增加参数生成功能，如-DparamGenerator=somepkg.SomeClass.method
 临时目录支持projectCode及多租户目录，如 /tmp/hivetmp/$projectCode/$zh/xxxxx.tmp.file
