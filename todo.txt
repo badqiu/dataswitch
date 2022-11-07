@@ -1,6 +1,7 @@
 支持每行数据增加RowKing(update,delete,insert,replace)
 output能够感知到Input ???,或是感知至Input的columns DataType ???
-整库同步工具
+整库同步工具,或是用参数生成InputsOutputs ???
+InputsOutputs配置文件生成工具
 #表字段同步工具，自动添加字段
 #Bean2MapProcessor
 WhereProcessor改名:  SqlExprProcessor ???
@@ -21,7 +22,7 @@ script 需要增加 context, beforeScript put var into context for init.
 
 
 数据库增量同步
-	天
+	天,已经支持
 		按时间：日期，同步昨天数据，需要数据有last_update_time，参数要有: start_time & end_time
 	分钟
 		按时间：分钟，同步上一分钟的数据，需要数据有last_update_time，参数要有: start_time & end_time
