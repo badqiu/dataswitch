@@ -25,7 +25,6 @@ public class JdbcInput extends DataSourceProvider implements Input{
 
 	private static Logger logger = LoggerFactory.getLogger(JdbcInput.class);
 	
-	private String id;
 	private String sql;
 	private String table;
 	private int fetchSize = 1000;
@@ -44,13 +43,6 @@ public class JdbcInput extends DataSourceProvider implements Input{
 	
 	private int _rowNumber = 0;
 	
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
 
 	public String getSql() {
 		return sql;
@@ -76,6 +68,22 @@ public class JdbcInput extends DataSourceProvider implements Input{
 		this.mapKey2lowerCase = mapKey2lowerCase;
 	}
 	
+	public int getFetchSize() {
+		return fetchSize;
+	}
+
+	public void setFetchSize(int fetchSize) {
+		this.fetchSize = fetchSize;
+	}
+
+	public boolean isAddTableNameColumn() {
+		return addTableNameColumn;
+	}
+
+	public void setAddTableNameColumn(boolean addTableNameColumn) {
+		this.addTableNameColumn = addTableNameColumn;
+	}
+
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
 		Input.super.open(params);
@@ -186,6 +194,8 @@ public class JdbcInput extends DataSourceProvider implements Input{
 	public void close() {
 		JdbcUtils.closeResultSet(_rs);
 		JdbcUtils.closeConnection(_conn);
+		_rs = null;
+		_conn = null;
 	}
 	
 }
