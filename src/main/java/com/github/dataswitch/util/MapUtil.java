@@ -98,7 +98,7 @@ public class MapUtil {
 			return Collections.emptyMap();
 		}
 
-		Map result = new HashMap(properties.size() * 2);
+		Map result = new LinkedHashMap(properties.size() * 2);
 		properties.forEach((key, value) -> result.put(StringUtils.lowerCase(key), value));
 
 		return result;
