@@ -604,14 +604,8 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		logger.info("executed sql for table rename:" + renameSql);
 	}
 	
-	public static String getTableRenameSql(String oldTableName,String newTableName,String jdbcUrl) {
-		String sql = "";
-		if(jdbcUrl.contains("mysql")) {
-			sql = "RENAME TABLE " + oldTableName + " TO " + newTableName;
-		}else {
-			sql = "ALTER TABLE "+oldTableName+" RENAME TO "+newTableName;
-		}
-		return sql;
+	protected String getTableRenameSql(String oldTableName,String newTableName,String jdbcUrl) {
+		return JdbcUtil.getTableRenameSql(oldTableName, newTableName, jdbcUrl);
 	}
 
 	public static enum IfExists {

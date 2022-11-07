@@ -147,6 +147,16 @@ public class JdbcUtil {
 		return new ArrayList(getTablePrimaryKeys(tableName,jt).keySet());
 	}
 	
+	public static String getTableRenameSql(String oldTableName,String newTableName,String jdbcUrl) {
+		String sql = "";
+		if(jdbcUrl.contains("mysql")) {
+			sql = "RENAME TABLE " + oldTableName + " TO " + newTableName;
+		}else {
+			sql = "ALTER TABLE "+oldTableName+" RENAME TO "+newTableName;
+		}
+		return sql;
+	}
+	
 	private static void rs2ColumnsMap(String tableName, final Map<String, String> columnMap, ResultSet rs)
 			throws SQLException {
 		List<Map<String,Object>> columns = resultSet2List(rs);
