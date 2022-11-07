@@ -356,14 +356,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	}
 
 	protected BiConsumer<String, String> newAlterTableAddColumnFunction(JdbcTemplate jdbcTemplate) {
-		BiConsumer<String,String> alterTableAddColumnAction = (columnName, jdbcSqlType) -> {
-			long start = System.currentTimeMillis();
-			String alterSql = "ALTER TABLE "+table+"  ADD COLUMN `"+columnName+"` "+jdbcSqlType;
-			jdbcTemplate.execute(alterSql);
-			long cost = start - System.currentTimeMillis();
-			logger.info("executed alter_table_add_column sql:["+alterSql+"], costSeconds:"+(cost/1000));
-		};
-		return alterTableAddColumnAction;
+		return JdbcUtil.newAlterTableAddColumnFunction(jdbcTemplate, table);
 	}
 
 	protected Map getAllColumnWithValue(final List<Object> rows) {

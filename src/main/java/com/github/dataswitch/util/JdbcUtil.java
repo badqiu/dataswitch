@@ -37,15 +37,19 @@ public class JdbcUtil {
         return MapUtil.getDifferenceMap(MapUtil.keyToLowerCase(tableColumns), MapUtil.keyToLowerCase(columnsWithData));
 	}
 	
+	public static BiConsumer<String, String> newAlterTableAddColumnFunction(JdbcTemplate jdbcTemplate,String table) {
+		BiConsumer<String,String> alterTableAddColumnAction = (columnName, jdbcSqlType) -> {
+			long start = System.currentTimeMillis();
+			String alterSql = "ALTER TABLE "+table+"  ADD COLUMN `"+columnName+"` "+jdbcSqlType;
+			jdbcTemplate.execute(alterSql);
+			long cost = start - System.currentTimeMillis();
+			logger.info("executed alter_table_add_column sql:["+alterSql+"], costSeconds:"+(cost/1000));
+		};
+		return alterTableAddColumnAction;
+	}
+	
 	public static void alterTableIfColumnMiss(final JdbcTemplate jdbcTemplate, Map columnsWithData, String table,String jdbcUrl,Map<String,String> columnsSqlType,String defaultColumnSqlType) {
-        BiConsumer<String,String> alterTableAddColumnAction = (columnName, jdbcSqlType) -> {
-        	long start = System.currentTimeMillis();
-        	String sql = "ALTER TABLE "+table+"  ADD COLUMN `"+columnName+"` "+jdbcSqlType;
-        	jdbcTemplate.execute(sql);
-        	long cost = start - System.currentTimeMillis();
-        	logger.info("executed alter_table_add_column sql:["+sql+"], costSeconds:"+(cost/1000));
-        };
-        
+        BiConsumer<String,String> alterTableAddColumnAction = newAlterTableAddColumnFunction(jdbcTemplate,table);
         alterTableIfColumnMiss(jdbcTemplate,columnsWithData,table,jdbcUrl,columnsSqlType,defaultColumnSqlType,alterTableAddColumnAction);
 	}
 	
