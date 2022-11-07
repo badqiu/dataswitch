@@ -130,7 +130,7 @@ public class MapUtil {
 			List<Map<String, Object>> list) {
 		List<Map<String,Object>> result = new ArrayList(list.size());
 		for(Map<String,Object> row : list) {
-			Map newRow = new HashMap();
+			Map newRow = new LinkedHashMap();
 			for(Map.Entry<String, Object> entry : row.entrySet()) {
 				newRow.put(StringUtils.lowerCase(entry.getKey()), entry.getValue());
 			}

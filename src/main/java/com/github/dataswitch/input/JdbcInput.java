@@ -119,9 +119,9 @@ public class JdbcInput extends DataSourceProvider implements Input{
 		}
 		
 		if(mapKey2lowerCase) {
-			List collect = (List)result.stream().map(item -> {return MapUtil.keyToLowerCase((Map)item);}).collect(Collectors.toList());
-			return collect;
-//			return (List)MapUtil.allMapKey2LowerCase(result);
+//			List collect = (List)result.stream().map(item -> {return MapUtil.keyToLowerCase((Map)item);}).collect(Collectors.toList());
+//			return collect;
+			return (List)MapUtil.allMapKey2LowerCase(result);
 		}else {
 			return (List)result;
 		}
