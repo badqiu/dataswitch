@@ -42,7 +42,7 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 	private int bufferSize = Constants.DEFAULT_BUFFER_SIZE;
 	private int bufferTimeout = Constants.DEFAULT_BUFFER_TIMEOUT; //超时时间，时间单位毫秒
 	
-	private FailMode failMode = FailMode.FAIL_AT_END;
+	private FailMode failMode = FailMode.FAIL_FAST;
 
 	private String desc; // 描述
 	private String author; // 作者
