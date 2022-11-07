@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 import javax.sql.DataSource;
 
@@ -36,19 +37,25 @@ public class JdbcUtil {
         return MapUtil.getDifferenceMap(MapUtil.keyToLowerCase(tableColumns), MapUtil.keyToLowerCase(columnsWithData));
 	}
 	
-	public static void alterTableIfColumnMiss(JdbcTemplate jdbcTemplate, Map columnsWithData, String table,String jdbcUrl,Map<String,String> columnsSqlType,String defaultColumnSqlType) {
+	public static void alterTableIfColumnMiss(final JdbcTemplate jdbcTemplate, Map columnsWithData, String table,String jdbcUrl,Map<String,String> columnsSqlType,String defaultColumnSqlType) {
+        BiConsumer<String,String> alterTableAddColumnAction = (columnName, jdbcSqlType) -> {
+        	long start = System.currentTimeMillis();
+        	String sql = "ALTER TABLE "+table+"  ADD COLUMN `"+columnName+"` "+jdbcSqlType;
+        	jdbcTemplate.execute(sql);
+        	long cost = start - System.currentTimeMillis();
+        	logger.info("executed alter_table_add_column sql:["+sql+"], costSeconds:"+(cost/1000));
+        };
+        
+        alterTableIfColumnMiss(jdbcTemplate,columnsWithData,table,jdbcUrl,columnsSqlType,defaultColumnSqlType,alterTableAddColumnAction);
+	}
+	
+	public static void alterTableIfColumnMiss(JdbcTemplate jdbcTemplate, Map columnsWithData, String table,String jdbcUrl,Map<String,String> columnsSqlType,String defaultColumnSqlType,BiConsumer<String,String> alterTableAddColumnAction) {
 		Map missColumns = getMissColumns(jdbcTemplate, columnsWithData, table,jdbcUrl);
         if (missColumns == null) return;
         
         try {
-	        Map sqlTypes = JdbcDataTypeUtil.getDatabaseDataType(jdbcUrl, missColumns,columnsSqlType,defaultColumnSqlType);
-	        sqlTypes.forEach((key, jdbcType) -> {
-	        	long start = System.currentTimeMillis();
-	        	String sql = "ALTER TABLE "+table+"  ADD COLUMN `"+key+"` "+jdbcType;
-	        	jdbcTemplate.execute(sql);
-	        	long cost = start - System.currentTimeMillis();
-	        	logger.info("executed alter_table_add_column sql:["+sql+"], costSeconds:"+(cost/1000));
-	        });
+	        Map sqlTypes = JdbcDataTypeUtil.getDatabaseDataType(jdbcUrl, missColumns,columnsSqlType,defaultColumnSqlType);	        
+			sqlTypes.forEach(alterTableAddColumnAction);
         }finally {
         	removeTableColumnsCache(table, jdbcUrl);
         }

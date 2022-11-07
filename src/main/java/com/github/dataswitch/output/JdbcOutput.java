@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import javax.sql.DataSource;
@@ -347,10 +348,22 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		Set<String> tableColumnNames = localColumnsSqlType.keySet();
 		
 		if(autoAlterTableAddColumn) {
-			JdbcUtil.alterTableIfColumnMiss(jdbcTemplate, allColumnsWithValue,table,cacheJdbcUrl(),this.columnsSqlType,this.defaultColumnSqlType);
+			BiConsumer<String, String> alterTableAddColumnAction = newAlterTableAddColumnFunction(jdbcTemplate);
+			JdbcUtil.alterTableIfColumnMiss(jdbcTemplate, allColumnsWithValue,table,cacheJdbcUrl(),this.columnsSqlType,this.defaultColumnSqlType,alterTableAddColumnAction);
 		}
 		
 		return generateSql(jdbcTemplate, tableColumnNames);
+	}
+
+	protected BiConsumer<String, String> newAlterTableAddColumnFunction(JdbcTemplate jdbcTemplate) {
+		BiConsumer<String,String> alterTableAddColumnAction = (columnName, jdbcSqlType) -> {
+			long start = System.currentTimeMillis();
+			String alterSql = "ALTER TABLE "+table+"  ADD COLUMN `"+columnName+"` "+jdbcSqlType;
+			jdbcTemplate.execute(alterSql);
+			long cost = start - System.currentTimeMillis();
+			logger.info("executed alter_table_add_column sql:["+alterSql+"], costSeconds:"+(cost/1000));
+		};
+		return alterTableAddColumnAction;
 	}
 
 	protected Map getAllColumnWithValue(final List<Object> rows) {
