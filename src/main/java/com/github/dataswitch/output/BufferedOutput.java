@@ -23,12 +23,14 @@ public class BufferedOutput extends ProxyOutput{
 	
 	
 	private int bufferSize = Constants.DEFAULT_BUFFER_SIZE;
-	private int bufferTimeout = 0;
+	private long bufferTimeout = 0;
 	
 	private long lastSendTime = System.currentTimeMillis();
 	private List<Object> bufferList = new ArrayList<Object>();
 	
 	private boolean init = false;
+	
+	private boolean running = true;
 	
 	public BufferedOutput(Output proxy) {
 		this(proxy,Constants.DEFAULT_BUFFER_SIZE);
@@ -104,6 +106,7 @@ public class BufferedOutput extends ProxyOutput{
 	private void init() {
 		Assert.isTrue(!init,"already init");
 		
+		running = true;
 		startAutoFlushThread();
 		init = true;
 	}
@@ -119,7 +122,7 @@ public class BufferedOutput extends ProxyOutput{
 			
 			logger.info("flush thread started,bufferTimeout:"+bufferTimeout);
 			try {
-				while(true) {
+				while(running) {
 					try {
 						Thread.sleep(bufferTimeout);
 					} catch (InterruptedException e) {
@@ -145,6 +148,8 @@ public class BufferedOutput extends ProxyOutput{
 	public void close() throws Exception {
 		flush();
 		super.close();
+		running = false;
+		
 	}
 
 }
