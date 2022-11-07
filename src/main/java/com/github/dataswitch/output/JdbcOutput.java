@@ -482,6 +482,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 			failMode.forEach(multiChunkRows,executeWithJdbc(finalSql));
 		}catch(Exception e) {
 			exception = e;
+			JdbcUtil.tableColumnsCache.clear(); //清下表字段缓存，避免字段出错
 			throw new RuntimeException(e);
 		}
 		

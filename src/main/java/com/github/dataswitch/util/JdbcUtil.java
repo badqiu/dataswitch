@@ -65,7 +65,7 @@ public class JdbcUtil {
         }
 	}
 
-	private static void removeTableColumnsCache(String tableName, String jdbcUrl) {
+	public static void removeTableColumnsCache(String tableName, String jdbcUrl) {
 		String cacheKey = JdbcUtil.getTableCacheKey(tableName, jdbcUrl);
         JdbcUtil.tableColumnsCache.remove(cacheKey);
 	}
