@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dataswitch.enums.Constants;
+import com.github.dataswitch.enums.FailMode;
 
 /**
  * 多功能的Output
@@ -41,6 +42,8 @@ public class MultiFunctionOutput extends ProxyOutput {
 	
 	private Consumer<List<Object>> consumer; //done
 	private String logger = null; //done
+	
+	private FailMode failMode;
 	
 	
 	public MultiFunctionOutput() {
