@@ -39,7 +39,7 @@ public class JdbcCreateTableSqlUtil {
 			String sqlType = entry.getValue();
 			
 			//缩短主键长度，避免mysql主键过长报错
-			if(ArrayUtils.contains(primaryKeys, key) && sqlType.contains("varchar")) {
+			if(ArrayUtils.contains(primaryKeys, key) && sqlType.toLowerCase().contains("varchar")) {
 				sqlType = "varchar(50)";			
 			}
 			
