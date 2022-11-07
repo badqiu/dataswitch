@@ -86,12 +86,17 @@ public class JdbcInput extends DataSourceProvider implements Input{
 		Assert.notNull(_rowMapper,"_rowMapper must be not null");
 		
 		if(StringUtils.isBlank(sql)) {
-			Assert.hasText(table,"table or sql must be not empty");
+			Assert.hasText(table,"table or sql must be not blank");
 			sql = "select * from " + table;
 		}
 		
 		Assert.hasText(sql,"sql must be not empty");
 		Assert.notNull(getDataSource(),"dataSource must be not null");
+		
+		executeQueryBySql();
+	}
+
+	private void executeQueryBySql() {
 		try {
 			_conn = getDataSource().getConnection();
 			PreparedStatement ps = _conn.prepareStatement(sql);
@@ -101,7 +106,7 @@ public class JdbcInput extends DataSourceProvider implements Input{
 			_rs = ps.executeQuery();
 			long cost = System.currentTimeMillis() - start;
 			
-			logger.info("execute sql:"+sql+" cost time mills:"+cost);
+			logger.info("execute sql:"+sql+" cost time seconds:"+(cost / 1000)+" fetchSize:"+fetchSize);
 		}catch(Exception e) {
 			throw new RuntimeException("executeQuery error,sql:"+sql,e);
 		}
