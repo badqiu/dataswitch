@@ -5,6 +5,8 @@ InputsOutputs配置文件生成工具
 #表字段同步工具，自动添加字段
 #Bean2MapProcessor
 WhereProcessor改名:  SqlExprProcessor ???
+记录并使用数据库己知的数据类型
+write error就清空数据缓存
 
 增加参数生成功能，如-DparamGenerator=somepkg.SomeClass.method
 临时目录支持projectCode及多租户目录，如 /tmp/hivetmp/$projectCode/$zh/xxxxx.tmp.file
