@@ -7,6 +7,8 @@ InputsOutputs配置文件生成工具
 WhereProcessor改名:  SqlExprProcessor ???
 记录并使用数据库己知的数据类型
 自动create table建表时，使用模板？？？然后SQL代码，只替换表名？
+自动建表时，支持partition? (mysql)
+JdbcOutput replace数据时，其它数据库，使用insert or update by get data
 支持多进程？？ 表字段同步？
 
 增加参数生成功能，如-DparamGenerator=somepkg.SomeClass.method
