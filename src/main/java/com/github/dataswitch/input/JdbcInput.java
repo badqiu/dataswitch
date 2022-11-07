@@ -157,18 +157,24 @@ public class JdbcInput extends DataSourceProvider implements Input{
 		}
 	}
 	
-	private String _metaTableName = null;
+	private String _metaFromTableName = null;
 	private String getFromTableName()  {
-		if(_metaTableName == null) {
+		
+		if(StringUtils.isBlank(_metaFromTableName)) {
+			_metaFromTableName = table;
+		}
+		
+		if(StringUtils.isBlank(_metaFromTableName)) {
 			try {
 				ResultSetMetaData metaData = _rs.getMetaData();
-				_metaTableName = metaData.getTableName(1);
+				_metaFromTableName = metaData.getTableName(1);
 			}catch(Exception e) {
 				logger.warn("ignore get table name from metadata error",e);
-				_metaTableName = table;
+				_metaFromTableName = table;
 			}
 		}
-		return _metaTableName;
+		
+		return _metaFromTableName;
 	}
 
 	@Override
