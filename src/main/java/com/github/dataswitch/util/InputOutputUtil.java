@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -177,16 +175,16 @@ public class InputOutputUtil {
 	 * 拷贝数据
 	 * @return 拷贝的数据量
 	 */
-	public static long copy(Input input,Output output,boolean ignoreWriteError) {
-		return copy(input,output,DEFAULT_BUFFER_SIZE,DEFAULT_PROCESSOR,ignoreWriteError);
+	public static long copy(Input input,Output output,FailMode failMode) {
+		return copy(input,output,DEFAULT_BUFFER_SIZE,DEFAULT_PROCESSOR,failMode);
 	}
 	
 	/**
 	 * 拷贝数据
 	 * @return 拷贝的数据量
 	 */
-	public static long copy(Input input,Output output,Processor processor,boolean ignoreWriteError) {
-		return copy(input,output,DEFAULT_BUFFER_SIZE,processor,ignoreWriteError);
+	public static long copy(Input input,Output output,Processor processor,FailMode failMode) {
+		return copy(input,output,DEFAULT_BUFFER_SIZE,processor,failMode);
 	}
 	
 	/**
@@ -194,7 +192,7 @@ public class InputOutputUtil {
 	 * @return 拷贝的数据量
 	 */
 	public static long copy(Input input,Output output,int bufferSize) {
-		return copy(input,output,bufferSize,DEFAULT_PROCESSOR,false);
+		return copy(input,output,bufferSize,DEFAULT_PROCESSOR,FailMode.FAIL_FAST);
 	}
 	
 	/**
@@ -202,7 +200,7 @@ public class InputOutputUtil {
 	 * @return 拷贝的数据量
 	 */
 	public static long copy(Input input,Output output,int bufferSize,Processor processor) {
-		return copy(input,output,bufferSize,processor,false);
+		return copy(input,output,bufferSize,processor,FailMode.FAIL_FAST);
 	}
 	
 	/**
@@ -213,11 +211,7 @@ public class InputOutputUtil {
 	 * @param ignoreWriteError
 	 * @return 拷贝的数据量
 	 */
-	public static long copy(Input input,Output output,int bufferSize,Processor processor,boolean ignoreCopyError) {
-		FailMode failMode = FailMode.FAIL_NEVER;
-		if(!ignoreCopyError) {
-			failMode = FailMode.FAIL_FAST;
-		}
+	public static long copy(Input input,Output output,int bufferSize,Processor processor,FailMode failMode) {
 		return copy(input,output,bufferSize,processor,null,failMode,null);
 	}
 

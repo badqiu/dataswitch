@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import com.github.dataswitch.enums.FailMode;
 import com.github.dataswitch.input.CollectDataOutput;
 import com.github.dataswitch.input.RandomStringInput;
 import com.github.dataswitch.processor.MultiProcessor;
@@ -15,7 +16,7 @@ public class InputOutputUtilTest {
 	@Test
 	public void test() {
 		CollectDataOutput output = new CollectDataOutput();
-		InputOutputUtil.copy(new RandomStringInput(10),output, null);
+		InputOutputUtil.copy(new RandomStringInput(10),output, FailMode.FAIL_FAST);
 		assertEquals(output.getDatas().toString(),"[{num=0}, {num=1}, {num=2}, {num=3}, {num=4}, {num=5}, {num=6}, {num=7}, {num=8}, {num=9}]");
 		
 		output = new CollectDataOutput();
