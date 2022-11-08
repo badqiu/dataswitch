@@ -13,64 +13,12 @@ import com.github.dataswitch.util.hadoop.HdfsFile;
 
 public class HdfsInput extends FileInput{
 
-//	private String hadoopJobUgi = ""; //HDFS 登录帐号，格式为：username,groupname,(groupname...) #password
-//	private String hadoopConf; // hadoop-site.xml conf
 	private String hdfsUri; // hdfs uri: hdfs://ip:port
 	private String hdfsUser; // hdfs ugi: hadoop:hadoop
-
-//	private FileSystem fs;
-//	private List<HdfsFile> files;
-//	private ReaderInput currentInput;
-	
-//	@Override
-//	public List<Map> read(int size) {
-//		try {
-//			
-//			if(currentInput == null) {
-//				if(files.isEmpty()) {
-//					return Collections.EMPTY_LIST;
-//				}
-//				HdfsFile file = files.remove(0);
-//				InputStream input = file.open();
-//				currentInput = new ReaderInput(input);
-//			}
-//			
-//			List<Map> rows = currentInput.read(size);
-//			if(CollectionUtils.isEmpty(rows)) {
-//				InputOutputUtil.close(currentInput);
-//				currentInput = null;
-//				return read(size);
-//			}
-//			return rows;
-//		}catch(Exception e) {
-//			throw new RuntimeException(e);
-//		}
-//	}
-//	
-//	private void init() throws IOException {
-//		fs = getFileSystem();
-//		List<File> files = new ArrayList<File>();
-//		for(String dir : getDirs()) {
-//			HdfsFile file = new HdfsFile(fs, new Path(dir));
-//			files.addAll(listAllFiles(file));
-//		}
-//		
-//	}
-	
-//	@Override
-//	protected List<File> listAllFiles() {
-//		List<File> files = new ArrayList<File>();
-//		for(String dir : getDirs()) {
-//			HdfsFile file = new HdfsFile(fs, new Path(dir));
-//			files.addAll(listAllFiles(file));
-//		}
-//		return files;
-//	}
 	
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
 		super.open(params);
-//		init();
 	}
 	
 	private FileSystem fs = null;
