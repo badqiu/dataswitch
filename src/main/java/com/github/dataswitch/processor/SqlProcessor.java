@@ -26,6 +26,8 @@ public class SqlProcessor implements Processor {
 
 	@Override
 	public List<Object> process(List<Object> datas) throws Exception {
+		if(datas == null) return null;
+		
 		List result = ObjectSqlQueryUtil.query(sql, (List) datas);
 		return result;
 	}
