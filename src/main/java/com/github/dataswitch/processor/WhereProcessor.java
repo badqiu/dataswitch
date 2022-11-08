@@ -6,6 +6,8 @@ import java.util.Map;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.mvel2.MVEL;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.dataswitch.util.Util;
 
@@ -16,6 +18,7 @@ import com.github.dataswitch.util.Util;
  *
  */
 public class WhereProcessor extends BaseProcessor{
+	private static Logger logger = LoggerFactory.getLogger(WhereProcessor.class);
 	// where columns
 	// select columns
 	// remove columns
@@ -23,15 +26,16 @@ public class WhereProcessor extends BaseProcessor{
 	// group by columns, having
 	// limit offset,limit
 	
-	private String where; //done   age > 10 && name == 'badqiu'
-	private String select; //done
-	private String remove; //done
-	private long limit; //done
-	private long offset; //done, 从0开始
+	private String where; //过滤数据
+	private String select; //要select的列
+	private String remove; //要删除的列
+	private long limit; //
+	private long offset; //从0开始
 	
 //	private String orderBy;
 //	private String groupBy;
 //	private String having;
+	private String print; //条件成立时打印日志
 	
 	
 	private String[] _removeKeys = null;
@@ -62,6 +66,14 @@ public class WhereProcessor extends BaseProcessor{
 
 	public void setRemove(String remove) {
 		this.remove = remove;
+	}
+	
+	public String getPrint() {
+		return print;
+	}
+
+	public void setPrint(String print) {
+		this.print = print;
 	}
 
 	public long getLimit() {
@@ -101,6 +113,13 @@ public class WhereProcessor extends BaseProcessor{
 			_limitCount++;
 			if(_limitCount > limit) {
 				return null;
+			}
+		}
+		
+		if(StringUtils.isNotBlank(print)) {
+			Boolean pass = (Boolean)MVEL.eval(print, map);
+			if(pass) {
+				logger.info("show_log_by_print:"+String.valueOf(map));
 			}
 		}
 		
