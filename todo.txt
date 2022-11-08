@@ -4,6 +4,8 @@ output能够感知到Input ???,或是感知至Input的columns DataType ???
 InputsOutputs配置文件生成工具
 #表字段同步工具，自动添加字段
 #Bean2MapProcessor
+集成runner with xstream
+xstream集成参数generator
 WhereProcessor改名:  SqlExprProcessor ???
 记录并使用数据库己知的数据类型
 自动create table建表时，使用模板？？？然后SQL代码，只替换表名？
