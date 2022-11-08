@@ -50,18 +50,7 @@ public class FileBufferedInput extends ProxyInput{
 	public List<Object> read(int size) {
 		File file = new File(dir,filename);
 		if(!file.exists() || file.length() <= 0) {
-			logger.info("create buf file:"+file);
-			FileOutput bufferedOutput = new FileOutput();
-			bufferedOutput.setDir(dir);
-			bufferedOutput.setFilename(filename);
-			bufferedOutput.setSerializer(new ByteSerializer());
-			Input proxy = getProxy();
-			try {
-				InputOutputUtil.copy(proxy,bufferedOutput);
-			}finally {
-				InputOutputUtil.close(proxy);
-				InputOutputUtil.close(bufferedOutput);
-			}
+			saveIntoBufferdFile(file);
 		}
 		
 		if(bufferedInput == null) {
@@ -71,6 +60,21 @@ public class FileBufferedInput extends ProxyInput{
 		}
 		
 		return bufferedInput.read(size);
+	}
+
+	private void saveIntoBufferdFile(File file) {
+		logger.info("create buf file:"+file);
+		FileOutput bufferedOutput = new FileOutput();
+		bufferedOutput.setDir(dir);
+		bufferedOutput.setFilename(filename);
+		bufferedOutput.setSerializer(new ByteSerializer());
+		Input proxy = getProxy();
+		try {
+			InputOutputUtil.copy(proxy,bufferedOutput);
+		}finally {
+			InputOutputUtil.close(proxy);
+			InputOutputUtil.close(bufferedOutput);
+		}
 	}
 
 	@Override
