@@ -68,7 +68,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	private boolean autoAlterTableAddColumn = false;
 	
 	/**
-	 * 自动增加列时，如果数值为null,默认的数据类型
+	 * 自动增加列时，如果数值为null,默认的数据类型,示例值: BIGINT,VARCHAR(200)
 	 */
 	private String defaultColumnSqlType; 
 	/**
