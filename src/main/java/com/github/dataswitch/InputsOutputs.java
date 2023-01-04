@@ -11,6 +11,8 @@ import java.util.function.Function;
 import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 
 import com.github.dataswitch.enums.Constants;
 import com.github.dataswitch.enums.FailMode;
@@ -23,6 +25,7 @@ import com.github.dataswitch.output.Output;
 import com.github.dataswitch.processor.MultiProcessor;
 import com.github.dataswitch.processor.Processor;
 import com.github.dataswitch.util.InputOutputUtil;
+import com.github.dataswitch.util.ScriptEngineUtil;
 
 /**
  * 输入输出类，一个输入可以配置多个输出
@@ -34,7 +37,7 @@ import com.github.dataswitch.util.InputOutputUtil;
  * @author badqiu
  *
  */
-public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callable<Long>,Function<Map<String,Object>, Long> {
+public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callable<Long>,Function<Map<String,Object>, Long>,InitializingBean,DisposableBean {
 
 
 	private static Logger logger = LoggerFactory.getLogger(InputsOutputs.class);
@@ -61,6 +64,10 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 	private boolean enabled = true;
 	
 	private Map<String,Object> params = new HashMap<String,Object>();
+	
+	private String language;
+	private String initScript;
+	private String destoryScript;
 	
 	public String getDesc() {
 		return desc;
@@ -197,24 +204,30 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 			throw new IllegalStateException("enabled is false, "+info());
 		}
 		
-		Input input = new MultiInput(inputs);
-		Output output = new MultiOutput(outputs);
-		
-		if(async) {
-			output = new AsyncOutput(output);
+		try {
+			afterPropertiesSet();
+			
+			Input input = new MultiInput(inputs);
+			Output output = new MultiOutput(outputs);
+			
+			if(async) {
+				output = new AsyncOutput(output);
+			}
+			
+			if(bufferSize > 0) {
+				output = new BufferedOutput(output, bufferSize, bufferTimeout);
+			}
+			
+			
+			Processor processor = null;
+			if(ArrayUtils.isNotEmpty(processors)) {
+				processor = new MultiProcessor(processors);
+			}
+			
+			return exec(params, input, output, processor);
+		}finally {
+			destroy();
 		}
-		
-		if(bufferSize > 0) {
-			output = new BufferedOutput(output, bufferSize, bufferTimeout);
-		}
-		
-		
-		Processor processor = null;
-		if(ArrayUtils.isNotEmpty(processors)) {
-			processor = new MultiProcessor(processors);
-		}
-		
-		return exec(params, input, output, processor);
 	}
 
 	private long exec(Map<String, Object> params, Input input, Output output, Processor processor) {
@@ -257,5 +270,14 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 		return exec(param);
 	}
 
+	@Override
+	public void destroy()  {
+		ScriptEngineUtil.eval(language, destoryScript);
+	}
+
+	@Override
+	public void afterPropertiesSet()  {
+		ScriptEngineUtil.eval(language, initScript);
+	}
 
 }
