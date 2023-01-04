@@ -182,6 +182,38 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 	public void setParams(Map<String, Object> params) {
 		this.params = params;
 	}
+	
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+
+	public String getInitScript() {
+		return initScript;
+	}
+
+	public void setInitScript(String initScript) {
+		this.initScript = initScript;
+	}
+
+	public String getDestoryScript() {
+		return destoryScript;
+	}
+
+	public void setDestoryScript(String destoryScript) {
+		this.destoryScript = destoryScript;
+	}
+	
+	public Consumer<Exception> getExceptionHandler() {
+		return exceptionHandler;
+	}
+
+	public void setExceptionHandler(Consumer<Exception> exceptionHandler) {
+		this.exceptionHandler = exceptionHandler;
+	}
 
 	public String info() {
 		return "id:"+getId();
