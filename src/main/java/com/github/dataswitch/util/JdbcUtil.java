@@ -132,8 +132,8 @@ public class JdbcUtil {
 		final Map<String,String> columnMap = new LinkedHashMap();
 		jt.execute(new ConnectionCallback<Object>() {
 			@Override
-			public Object doInConnection(Connection con) throws SQLException, DataAccessException {
-				ResultSet rs = con.getMetaData().getPrimaryKeys(null, null, tableName);
+			public Object doInConnection(Connection connection) throws SQLException, DataAccessException {
+				ResultSet rs = connection.getMetaData().getPrimaryKeys(null, null, tableName);
 				rs2ColumnsMap(tableName, columnMap, rs);
 				return null;
 			}

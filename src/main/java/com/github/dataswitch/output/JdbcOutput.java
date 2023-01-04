@@ -611,10 +611,5 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		return JdbcUtil.getTableRenameSql(oldTableName, newTableName, jdbcUrl);
 	}
 
-	public static enum IfExists {
-		error, //Raise a ValueError.
-		replace, //Drop the table before inserting new values.
-		append //Insert new values to the existing table.
-	}
 	
 }
