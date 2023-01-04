@@ -41,14 +41,14 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 
 
 	private static Logger logger = LoggerFactory.getLogger(InputsOutputs.class);
-
+	
+	private String desc; // 描述
+	private String author; // 作者
+	
 	private int bufferSize = Constants.DEFAULT_BUFFER_SIZE;
 	private int bufferTimeout = Constants.DEFAULT_BUFFER_TIMEOUT; //超时时间，时间单位毫秒
 	
 	private FailMode failMode = FailMode.FAIL_FAST;
-
-	private String desc; // 描述
-	private String author; // 作者
 	
 	private Input[] inputs; //输入
 	private Output[] outputs; //输出
