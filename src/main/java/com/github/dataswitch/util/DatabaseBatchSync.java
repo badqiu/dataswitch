@@ -10,10 +10,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import com.github.dataswitch.InputsOutputs;
 
 import javax.sql.DataSource;
 
-import com.github.dataswitch.util.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.github.dataswitch.BaseObject;
