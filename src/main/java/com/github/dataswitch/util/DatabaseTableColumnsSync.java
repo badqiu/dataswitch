@@ -1,5 +1,6 @@
 package com.github.dataswitch.util;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -27,6 +28,7 @@ public class DatabaseTableColumnsSync {
 	}
 
 	private Map newColumnsWithData(Map<String, String> inputColumns) {
+		Map map = new HashMap();
 		return null;
 	}
 }
