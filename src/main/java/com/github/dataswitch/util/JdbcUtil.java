@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -248,6 +249,9 @@ public class JdbcUtil {
 		if(value == null) return "";
 		
 		if(value instanceof String) {
+			return "'"+value+"'";
+		}
+		if(value instanceof Date) {
 			return "'"+value+"'";
 		}
 		return String.valueOf(value);
