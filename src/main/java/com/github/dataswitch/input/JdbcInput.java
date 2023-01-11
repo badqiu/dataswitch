@@ -107,6 +107,7 @@ public class JdbcInput extends DataSourceProvider implements Input{
 	private void executeQueryBySql() {
 		try {
 			_conn = getDataSource().getConnection();
+//			PreparedStatement ps = _conn.prepareStatement(sql,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			PreparedStatement ps = _conn.prepareStatement(sql);
 			ps.setFetchSize(fetchSize);
 			
