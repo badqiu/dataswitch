@@ -63,11 +63,11 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 	/** 是否激活 */
 	private boolean enabled = true;
 	
-	private Map<String,Object> params = new HashMap<String,Object>();
+	private Map<String,Object> params = new HashMap<String,Object>(); //运行参数，在没有外部参数传递时使用
 	
-	private String language;
-	private String initScript;
-	private String destoryScript;
+	private String language; //执行的脚本语言，如groovy
+	private String initScript; //初始化执行的脚本
+	private String destoryScript; //destory() 时执行的脚本
 	
 	public String getDesc() {
 		return desc;
