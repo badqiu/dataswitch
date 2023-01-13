@@ -7,7 +7,12 @@ import java.util.Map;
 import org.springframework.jdbc.core.SqlParameterValue;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.util.Assert;
-
+/**
+ * 与MapSqlParameterSource区别： 不抛异常，返回默认值
+ * 
+ * @author badqiu
+ *
+ */
 public class DefaultValueMapSqlParameterSource extends MapSqlParameterSource{
 
 
