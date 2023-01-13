@@ -237,16 +237,25 @@ public class InputOutputUtil {
 		
 		long count = 0;
 		List<Object> rows = null;
+		long readCostSum = 0;
+		long writeCostSum = 0;
 		try {
 			
 			while(true) {
 				try {
+					long startReadTime = System.currentTimeMillis();
 					rows = input.read(bufferSize);
+					long readCost = startReadTime - System.currentTimeMillis();
+					readCostSum += readCost;
+					
 					if(CollectionUtils.isEmpty((rows))) {
 						break;
 					}
 					
+					long startWriteTime = System.currentTimeMillis();
 					count += write(output, rows,processor);
+					long writeCost = startWriteTime - System.currentTimeMillis();
+					writeCostSum += writeCost;
 					
 					input.commitInput();
 				}catch(Exception e) {
@@ -270,6 +279,8 @@ public class InputOutputUtil {
 		}finally {
 			closeAllQuietly(input, output, processor);
 		}
+		
+		logger.info("timeCostStat, count:" + count + " readCostSumMills:"+readCostSum+" writeCostSumMills:"+writeCostSum + " readTps:"+Util.getTPS(count, readCostSum) + " writeTps:"+Util.getTPS(count, writeCostSum));
 		
 		if(lastException != null && FailMode.FAIL_AT_END == failMode) {
 			throw new RuntimeException("copy error,input:"+input+" output:"+output+" processor:"+processor+" lastExceptionData:"+lastExceptionData + " exception:"+lastException);
