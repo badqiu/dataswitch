@@ -19,6 +19,7 @@ import org.springframework.util.Assert;
 import com.github.dataswitch.support.DataSourceProvider;
 import com.github.dataswitch.util.JdbcUtil;
 import com.github.dataswitch.util.MapUtil;
+import com.github.dataswitch.util.Util;
 
 
 public class JdbcInput extends DataSourceProvider implements Input{
@@ -144,7 +145,7 @@ public class JdbcInput extends DataSourceProvider implements Input{
 			}
 		}finally {
 			long cost = System.currentTimeMillis() - start;
-			logger.info("read result size:"+result.size()+" cost time seconds:"+(cost / 1000)+" costTimeMills:"+cost+" tps:"+(cost * 1000 / result.size()));
+			logger.info("read result size:"+result.size()+" cost time seconds:"+(cost / 1000)+" costTimeMills:"+cost+" tps:"+Util.getTPS(result.size(), cost));
 		}
 	}
 	
