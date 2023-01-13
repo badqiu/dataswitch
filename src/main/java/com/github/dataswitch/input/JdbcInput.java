@@ -123,21 +123,28 @@ public class JdbcInput extends DataSourceProvider implements Input{
 	
 	@Override
 	public List<Object> read(int size) { // TODO 可以继承BaseInput,删除该方法
-		List result = new ArrayList<Map>();
-		for(int i = 0; i < size; i++) {
-			Map row = read();
-			if(row == null) {
-				break;
-			}
-			result.add(row);
-		}
 		
-		if(mapKey2lowerCase) {
-//			List collect = (List)result.stream().map(item -> {return MapUtil.keyToLowerCase((Map)item);}).collect(Collectors.toList());
-//			return collect;
-			return (List)MapUtil.allMapKey2LowerCase(result);
-		}else {
-			return (List)result;
+		long start = System.currentTimeMillis();
+		List result = new ArrayList<Map>();
+		try {
+			for(int i = 0; i < size; i++) {
+				Map row = read();
+				if(row == null) {
+					break;
+				}
+				result.add(row);
+			}
+			
+			if(mapKey2lowerCase) {
+	//			List collect = (List)result.stream().map(item -> {return MapUtil.keyToLowerCase((Map)item);}).collect(Collectors.toList());
+	//			return collect;
+				return (List)MapUtil.allMapKey2LowerCase(result);
+			}else {
+				return (List)result;
+			}
+		}finally {
+			long cost = System.currentTimeMillis() - start;
+			logger.info("read result size:"+result.size()+" cost time seconds:"+(cost / 1000)+" costTimeMills:"+cost+" tps:"+(cost * 1000 / result.size()));
 		}
 	}
 	
