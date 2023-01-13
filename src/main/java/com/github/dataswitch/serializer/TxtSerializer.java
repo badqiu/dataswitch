@@ -31,8 +31,8 @@ public class TxtSerializer extends BaseObject implements Serializer<Object>,Flus
 	private String lineSplit = "\n"; //行分隔符
 	private String charset;
 	
-	private String[] columnNames;
-	private boolean isInit = false;
+	private String[] _columnNames;
+	private boolean _isInit = false;
 	
 	public TxtSerializer(){
 	}
@@ -96,7 +96,7 @@ public class TxtSerializer extends BaseObject implements Serializer<Object>,Flus
 //	public void write(Writer out,Object row) {
 //		try {
 //			List<String> values = new ArrayList<String>();
-//			for(String name : columnNames) {
+//			for(String name : _columnNames) {
 //				Object value = getValue(row, name);
 //				values.add(format(value));
 //			}
@@ -119,7 +119,7 @@ public class TxtSerializer extends BaseObject implements Serializer<Object>,Flus
 
 	private String toLineString(Object row) {
 		List<String> values = new ArrayList<String>();
-		for(String name : columnNames) {
+		for(String name : _columnNames) {
 			Object value = getValue(row, name);
 			values.add(format(value));
 		}
@@ -163,13 +163,13 @@ public class TxtSerializer extends BaseObject implements Serializer<Object>,Flus
 
 	private void init() {
 		Assert.hasText(columns,"columns must be not empty");
-		columnNames = Util.splitColumns(columns);
+		_columnNames = Util.splitColumns(columns);
 	}
 
 	@Override
 	public void serialize(Object object, OutputStream outputStream) throws IOException {
-		if(!isInit ) {
-			isInit = true;
+		if(!_isInit ) {
+			_isInit = true;
 			init();
 		}
 		
