@@ -114,7 +114,7 @@ public class AsyncInput extends ProxyInput{
 							logger.info("InterruptedException on read thread,exit thread",e);
 							return;
 						}catch(Exception e) {
-							Object firstRow = CollectionUtils.get(rows, 0);
+							Object firstRow = Util.first(rows);
 							logger.warn("ignore error on read thread, one dataRow:"+firstRow,e);
 							lastException = e;
 							lastExceptionData = firstRow;

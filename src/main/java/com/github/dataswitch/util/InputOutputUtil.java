@@ -261,7 +261,7 @@ public class InputOutputUtil {
 				}catch(Exception e) {
 					lastException = e;
 					
-					Object firstRow = CollectionUtils.get(rows, 0);
+					Object firstRow = Util.first(rows);
 					lastExceptionData = firstRow;
 					
 					if(FailMode.FAIL_FAST == failMode) {
