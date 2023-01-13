@@ -269,12 +269,6 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 		long costTime = 0;
 		try {
 			
-//			if(async) {
-//				rows = InputOutputUtil.asyncCopy(input,output,bufferSize,processor,params,failModeEnum,exceptionHandler);
-//			}else {
-//				rows = InputOutputUtil.copy(input, output,bufferSize,processor,params,failModeEnum,exceptionHandler);
-//			}
-			
 			rows = InputOutputUtil.copy(input, output,bufferSize,processor,params,failMode,exceptionHandler);
 			costTime = System.currentTimeMillis() - start;
 			
