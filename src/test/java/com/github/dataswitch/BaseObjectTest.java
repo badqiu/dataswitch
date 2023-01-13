@@ -16,6 +16,11 @@ public class BaseObjectTest {
 		
 		assertFalse(obj.isEnabled());
 		assertEquals(obj.getId(),"hello_id");
+		
+		obj.setConfigByQuery("  ");
+		obj.setConfigByQuery(null);
+		assertFalse(obj.isEnabled());
+		assertEquals(obj.getId(),"hello_id");
 	}
 	
 	@Test
@@ -26,6 +31,27 @@ public class BaseObjectTest {
 		
 		obj.setConfigByProperties("enabled=false \n id=hello_id");
 		
+		assertFalse(obj.isEnabled());
+		assertEquals(obj.getId(),"hello_id");
+		
+		obj.setConfigByProperties("  ");
+		obj.setConfigByProperties(null);
+		assertFalse(obj.isEnabled());
+		assertEquals(obj.getId(),"hello_id");
+	}
+	
+	@Test
+	public void setConfigByJson() {
+		BaseObject obj = new BaseObject();
+		assertTrue(obj.isEnabled());
+		assertEquals(obj.getId(),null);
+		
+		obj.setConfigByJson("{\"enabled\":false,\"id\":\"hello_id\"}");
+		
+		assertFalse(obj.isEnabled());
+		assertEquals(obj.getId(),"hello_id");
+		obj.setConfigByJson("  ");
+		obj.setConfigByJson(null);
 		assertFalse(obj.isEnabled());
 		assertEquals(obj.getId(),"hello_id");
 	}

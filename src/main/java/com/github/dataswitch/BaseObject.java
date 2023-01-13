@@ -3,6 +3,9 @@ package com.github.dataswitch;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dataswitch.util.BeanUtils;
 import com.github.dataswitch.util.PropertiesUtil;
 import com.github.dataswitch.util.URLQueryUtil;
@@ -55,6 +58,18 @@ public class BaseObject implements Enabled {
 	@Override
 	public boolean enabled() {
 		return isEnabled();
+	}
+	
+	public void setConfigByJson(String json) {
+		if(StringUtils.isBlank(json)) return;
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {
+			Map<String,String> params = objectMapper.readValue(json, Map.class);
+			BeanUtils.copyProperties(this, params);
+		} catch (Exception e) {
+			throw new RuntimeException("error configByJson:"+json,e);
+		} 
 	}
 	
 	public void setConfigByQuery(String query) {
