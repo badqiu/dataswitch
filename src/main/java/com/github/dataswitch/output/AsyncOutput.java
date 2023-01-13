@@ -88,7 +88,7 @@ public class AsyncOutput extends ProxyOutput{
 							
 							output.write(rows);
 						}catch(InterruptedException e) {
-							logger.info("InterruptedException on write thread,exit thread",e);
+							logger.info("InterruptedException on write thread,exit thread");
 							return;
 						}catch(Exception e) {
 							Object firstRow = Util.first(rows);
