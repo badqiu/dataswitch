@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import com.github.dataswitch.util.MapUtil;
 
-public class WhereProcessorTest {
+public class SqlFuncProcessorTest {
 
 	SqlFuncProcessor p = new SqlFuncProcessor();
 	@Test
