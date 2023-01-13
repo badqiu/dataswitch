@@ -12,7 +12,7 @@ import com.github.dataswitch.util.MapUtil;
 
 public class WhereProcessorTest {
 
-	WhereProcessor p = new WhereProcessor();
+	SqlFuncProcessor p = new SqlFuncProcessor();
 	@Test
 	public void test_limit() throws Exception {
 		List rows = newList(10);
@@ -29,7 +29,7 @@ public class WhereProcessorTest {
 		List rows = newList(10);
 		List results = null;
 		
-		p = new WhereProcessor();
+		p = new SqlFuncProcessor();
 		p.setLimit(5);
 		p.setOffset(1);
 		p.open(null);
@@ -37,7 +37,7 @@ public class WhereProcessorTest {
 		System.out.println(results);
 		assertEquals("[{count=1}, {count=2}, {count=3}, {count=4}, {count=5}]",results.toString());
 		
-		p = new WhereProcessor();
+		p = new SqlFuncProcessor();
 		p.setLimit(Integer.MAX_VALUE);
 		p.setOffset(8);
 		p.open(null);
@@ -45,7 +45,7 @@ public class WhereProcessorTest {
 		System.out.println(results);
 		assertEquals("[{count=8}, {count=9}]",results.toString());
 		
-		p = new WhereProcessor();
+		p = new SqlFuncProcessor();
 		p.setLimit(Integer.MAX_VALUE);
 		p.setOffset(0);
 		p.open(null);

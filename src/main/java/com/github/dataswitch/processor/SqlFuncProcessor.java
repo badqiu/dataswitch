@@ -17,8 +17,8 @@ import com.github.dataswitch.util.Util;
  * @author badqiu
  *
  */
-public class WhereProcessor extends BaseProcessor{
-	private static Logger logger = LoggerFactory.getLogger(WhereProcessor.class);
+public class SqlFuncProcessor extends BaseProcessor{
+	private static Logger logger = LoggerFactory.getLogger(SqlFuncProcessor.class);
 	// where columns
 	// select columns
 	// remove columns
