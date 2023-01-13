@@ -245,7 +245,7 @@ public class InputOutputUtil {
 				try {
 					long startReadTime = System.currentTimeMillis();
 					rows = input.read(bufferSize);
-					long readCost = startReadTime - System.currentTimeMillis();
+					long readCost = System.currentTimeMillis() - startReadTime;
 					readCostSum += readCost;
 					
 					if(CollectionUtils.isEmpty((rows))) {
@@ -254,7 +254,7 @@ public class InputOutputUtil {
 					
 					long startWriteTime = System.currentTimeMillis();
 					count += write(output, rows,processor);
-					long writeCost = startWriteTime - System.currentTimeMillis();
+					long writeCost = System.currentTimeMillis() - startWriteTime;
 					writeCostSum += writeCost;
 					
 					input.commitInput();

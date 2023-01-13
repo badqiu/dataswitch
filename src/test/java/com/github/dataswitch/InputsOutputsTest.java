@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import com.github.dataswitch.input.Input;
 import com.github.dataswitch.output.Output;
+import com.github.dataswitch.util.ThreadUtil;
 
 public class InputsOutputsTest {
 
@@ -34,6 +35,7 @@ public class InputsOutputsTest {
 			@Override
 			public List read(int size) {
 				count++;
+				ThreadUtil.sleep(10);
 				if(count >= 100) return null;
 				return Arrays.asList(count);
 			}
