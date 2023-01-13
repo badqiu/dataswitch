@@ -2,16 +2,18 @@
 output能够感知到Input ???,或是感知至Input的columns DataType ???
 整库同步工具,或是用参数生成InputsOutputs ???
 InputsOutputs配置文件生成工具
-#表字段同步工具，自动添加字段
-#Bean2MapProcessor
 集成runner with xstream
 xstream集成参数generator
-WhereProcessor改名:  SqlExprProcessor ???
+WhereProcessor改名:  SqlExprProcessor SqlFuncProcessor???
 记录并使用数据库己知的数据类型
 自动create table建表时，使用模板？？？然后SQL代码，只替换表名？
 自动建表时，支持partition? (mysql)
 JdbcOutput replace数据时，其它数据库，使用insert or update by get data
 支持多进程？？ 表字段同步？
+支持调整同步并发数？
+
+#Bean2MapProcessor
+#表字段同步工具，自动添加字段
 
 增加参数生成功能，如-DparamGenerator=somepkg.SomeClass.method
 临时目录支持projectCode及多租户目录，如 /tmp/hivetmp/$projectCode/$zh/xxxxx.tmp.file
@@ -50,12 +52,12 @@ script 需要增加 context, beforeScript put var into context for init.
   --last-value “2014-11-09 21:00:00”
  
  支持其它:
-  MongoDB
   ES
   Hbase
-  Kudu
-  Cassandra
+  MongoDB
   Hive
+  Kudu
   OpenTSDB
+  Cassandra
   #ClickHouse
   
