@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 
 import com.github.dataswitch.enums.Constants;
 import com.github.dataswitch.enums.FailMode;
@@ -236,6 +237,11 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 		if(!enabled) {
 			throw new IllegalStateException("enabled is false, "+info());
 		}
+		
+//		Assert.hasText(getId(),"id must be not blank");
+//		Assert.hasText(getAuthor(),"author must be not blank");
+//		Assert.hasText(getRemarks(),"remarks must be not blank");
+//		Assert.hasText(getCreateDate(),"createDate must be not blank");
 		
 		try {
 			afterPropertiesSet();
