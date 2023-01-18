@@ -31,6 +31,38 @@ public class MongodbOutput extends MongodbProvider implements Output {
 	private MongoCollection<Document> _mongoCollection;
 	
 	
+	public OutputMode getOutputMode() {
+		return outputMode;
+	}
+
+	public void setOutputMode(OutputMode outputMode) {
+		this.outputMode = outputMode;
+	}
+
+	public String getFilterScript() {
+		return filterScript;
+	}
+
+	public void setFilterScript(String filterScript) {
+		this.filterScript = filterScript;
+	}
+
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+
+	public Function<Map<String, Object>, Bson> getFilterFunction() {
+		return filterFunction;
+	}
+
+	public void setFilterFunction(Function<Map<String, Object>, Bson> filterFunction) {
+		this.filterFunction = filterFunction;
+	}
+
 	@Override
 	public void write(List<Object> rows) {
 		writeByOutputMode((List)rows);
