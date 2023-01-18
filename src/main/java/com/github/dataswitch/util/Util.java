@@ -23,7 +23,7 @@ public class Util {
 	private static Logger logger = LoggerFactory.getLogger(Util.class);
 	
 	public static String[] splitColumns(String columns) {
-		if(columns == null) return null;
+		if(org.apache.commons.lang.StringUtils.isBlank(columns)) return null;
 		
 		String[] result = StringUtils.trimArrayElements(columns.trim().split("[,，\\s]+"));
 		return result;

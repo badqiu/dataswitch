@@ -13,6 +13,7 @@ import com.github.dataswitch.enums.Constants;
 import com.github.dataswitch.support.MongodbProvider;
 import com.github.dataswitch.util.InputOutputUtil;
 import com.github.dataswitch.util.ScriptEngineUtil;
+import com.github.dataswitch.util.Util;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
@@ -21,13 +22,17 @@ import com.mongodb.client.MongoDatabase;
 
 public class MongodbInput extends MongodbProvider implements Input {
 	
-	private String findScript;
-	private String language;
+	private String whereJson; //查询过滤JSON条件
+	private String whereScript; //查询过滤脚本
+	private String language; //查询过滤语言: groovy
+	
 	private Function<MongoCollection<Document>,FindIterable<Document>> findFunction = null;
 	private int limit;
 	private int skip;
 	private int batchSize = Constants.DEFAULT_BUFFER_SIZE;
 	
+	private String columns; //要读取的列
+	private String[] _columnsArray;
 	
 	private MongoClient _client;
 	private MongoDatabase _database = null;
@@ -36,12 +41,12 @@ public class MongodbInput extends MongodbProvider implements Input {
 	private FindIterable<Document> _findIterable;
 	private MongoCursor<Document> _mongoCursor;
 	
-	public String getFindScript() {
-		return findScript;
+	public String getWhereScript() {
+		return whereScript;
 	}
 
-	public void setFindScript(String findScript) {
-		this.findScript = findScript;
+	public void setWhereScript(String whereScript) {
+		this.whereScript = whereScript;
 	}
 
 	public String getLanguage() {
@@ -83,15 +88,46 @@ public class MongodbInput extends MongodbProvider implements Input {
 	public void setBatchSize(int batchSize) {
 		this.batchSize = batchSize;
 	}
+	
+	public String getWhereJson() {
+		return whereJson;
+	}
+
+	public void setWhereJson(String whereJson) {
+		this.whereJson = whereJson;
+	}
+
+	public String getColumns() {
+		return columns;
+	}
+
+	public void setColumns(String columns) {
+		this.columns = columns;
+	}
 
 	@Override
 	public List<Object> read(int size) {
 		List<Map> results = new ArrayList<Map>(size);
 		for(int i = 0; _mongoCursor.hasNext() && i < size; i++) {
 			Document doc = _mongoCursor.next();
-			results.add(doc);
+			Map result = getDocByColumns(doc);
+			results.add(result);
 		}
 		return (List)results;
+	}
+
+	private Map getDocByColumns(Document doc) {
+		if(_columnsArray == null) {
+			return doc;
+		}
+		
+		Map result = new HashMap(_columnsArray.length * 2);
+		for(String key : _columnsArray) {
+			result.put(key,doc.get(key));
+			
+		}
+		return result;
+
 	}
 	
 	private FindIterable<Document> executeFindAndChange() {
@@ -115,13 +151,18 @@ public class MongodbInput extends MongodbProvider implements Input {
 		}
 		
 		FindIterable<Document> result = null;
-		if(StringUtils.isBlank(findScript)) {
-			result = _mongoCollection.find();
-		}else {
+		if(StringUtils.isNotBlank(whereScript)) {
 			Map<String,Object> context = new HashMap<String,Object>();
 			context.put("mongoCollection", _mongoCollection);
-			result = (FindIterable)ScriptEngineUtil.eval(language, findScript, context);
+			result = (FindIterable)ScriptEngineUtil.eval(language, whereScript, context);
+			return result;
 		}
+		
+		Document filter = new Document();
+		if(StringUtils.isNotBlank(whereJson)) {
+			filter = Document.parse(whereJson);
+		}
+		result = _mongoCollection.find(filter);
 		return result;
 	}
 	
@@ -134,6 +175,8 @@ public class MongodbInput extends MongodbProvider implements Input {
 		
 		_findIterable = executeFindAndChange();
 		_mongoCursor = _findIterable.iterator();
+		
+		_columnsArray = Util.splitColumns(columns);
 	}
 
 	@Override
