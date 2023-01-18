@@ -134,7 +134,7 @@ public class MongodbInput extends MongodbProvider implements Input {
 		FindIterable<Document> result = executeFind();
 		
 		if(batchSize > 0) {
-			_findIterable.batchSize(batchSize);
+			result.batchSize(batchSize);
 		}
 		if(limit > 0) {
 			result.limit(limit);
