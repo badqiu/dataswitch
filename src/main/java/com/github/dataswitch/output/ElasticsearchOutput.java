@@ -37,6 +37,11 @@ public class ElasticsearchOutput implements Output{
 	private int flushMaxMemorySize;
 	private int maxRetry;
 	private int retryInterval;
+	private String settings; // {"index" :{"number_of_shards": 1, "number_of_replicas": 0}};
+	private String columns; //要写的列
+	private boolean dropIndex; //写入前，删除索引
+	private boolean ignoreWriteError;
+	
 	
 	private RestHighLevelClient _client;
 	
@@ -134,6 +139,7 @@ public class ElasticsearchOutput implements Output{
 	    	
 	    	request.mapping(row);
 			CreateIndexResponse createIndexResponse = indicesClient.create(request, RequestOptions.DEFAULT);
+			
     	}
 	}
 	
