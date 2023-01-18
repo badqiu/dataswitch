@@ -75,14 +75,18 @@ public class ElasticsearchOutput implements Output{
 	private synchronized RestHighLevelClient makeConnection() {
         RestHighLevelClient client = null;
         HttpHost[] hostList = newHttpHostArray(hosts);
-        if(StringUtils.isEmpty(username)) {
-        	client = new RestHighLevelClient(RestClient.builder(hostList));
+        RestClientBuilder restClient = RestClient.builder(hostList);
+        restClient.setPathPrefix(connectionPathPrefix);
+        
+    
+		if(StringUtils.isEmpty(username)) {
+        	client = new RestHighLevelClient(restClient);
         }else {
         	final BasicCredentialsProvider basicCredentialsProvider = new BasicCredentialsProvider();
             basicCredentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username,password));
             
 			client = new RestHighLevelClient(
-	                RestClient.builder(hostList)
+	                restClient
 	                        .setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
 	                            @Override
 	                            public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
