@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -283,14 +284,14 @@ public class InputOutputUtil {
 			totalCostTime = System.currentTimeMillis() - startTime; 
 		}
 		
-		CopyStatInfo result = new CopyStatInfo(count,totalCostTime,readCostSum,writeCostSum);
+		CopyStatInfo statInfo = new CopyStatInfo(count,totalCostTime,readCostSum,writeCostSum);
 		
-		logger.info("timeCostStat, count:" + count + " readCostSumMills:"+readCostSum+" writeCostSumMills:"+writeCostSum + " readTps:"+Util.getTPS(count, readCostSum) + " writeTps:"+Util.getTPS(count, writeCostSum));
+		logger.info("copy() result stat:"+statInfo);
 		
 		if(lastException != null && FailMode.FAIL_AT_END == failMode) {
 			throw new RuntimeException("copy error,input:"+input+" output:"+output+" processor:"+processor+" lastExceptionData:"+lastExceptionData + " exception:"+lastException);
 		}
-		return result;
+		return statInfo;
 	}
 
 
@@ -360,17 +361,26 @@ public class InputOutputUtil {
 			this.totalCostTime = totalCostTime;
 		}
 
-		public double getReadTps() {
+		public long getReadTps() {
 			return Util.getTPS(count, readCostTime);
 		}
 		
-		public double getWriteTps() {
+		public long getWriteTps() {
 			return Util.getTPS(count, writeCostTime);
 		}
 		
-		public double getTotalTps() {
+		public long getTotalTps() {
 			return Util.getTPS(count, totalCostTime);
 		}
+
+		@Override
+		public String toString() {
+			return "CopyStatInfo [count=" + count + ", totalCostTime=" + totalCostTime + ", readCostTime="
+					+ readCostTime + ", writeCostTime=" + writeCostTime + ", readTps=" + getReadTps()
+					+ ", writeTps=" + getWriteTps() + ", totalTps=" + getTotalTps() + "]";
+		}
+		
+		
 	}
 
 	
