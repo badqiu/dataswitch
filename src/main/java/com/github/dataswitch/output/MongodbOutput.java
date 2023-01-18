@@ -2,18 +2,17 @@ package com.github.dataswitch.output;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.springframework.util.Assert;
 
 import com.github.dataswitch.enums.OutputMode;
+import com.github.dataswitch.input.MongodbInput;
 import com.github.dataswitch.support.MongodbProvider;
 import com.github.dataswitch.util.InputOutputUtil;
 import com.github.dataswitch.util.ScriptEngineUtil;
@@ -118,16 +117,8 @@ public class MongodbOutput extends MongodbProvider implements Output {
 	}
 	
 	public Document getDocByColumns(Map row) {
-		if(_columnsArray == null) {
-			return new Document(row);
-		}
-		
-		Document r = new Document();
-		for(String column : _columnsArray) {
-			r.put(column, row.get(column));
-		}
-		
-		return r;
+		Map doc = MongodbInput.getDocByColumns(row, _columnsArray);
+		return new Document(doc);
 	}
 
 	private Bson getFilter(Map<String,Object> row) {

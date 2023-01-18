@@ -110,13 +110,13 @@ public class MongodbInput extends MongodbProvider implements Input {
 		List<Map> results = new ArrayList<Map>(size);
 		for(int i = 0; _mongoCursor.hasNext() && i < size; i++) {
 			Document doc = _mongoCursor.next();
-			Map result = getDocByColumns(doc);
+			Map result = getDocByColumns(doc,_columnsArray);
 			results.add(result);
 		}
 		return (List)results;
 	}
 
-	private Map getDocByColumns(Document doc) {
+	public static Map getDocByColumns(Map doc,String[] _columnsArray) {
 		if(_columnsArray == null) {
 			return doc;
 		}
@@ -124,7 +124,6 @@ public class MongodbInput extends MongodbProvider implements Input {
 		Map result = new HashMap(_columnsArray.length * 2);
 		for(String key : _columnsArray) {
 			result.put(key,doc.get(key));
-			
 		}
 		return result;
 
