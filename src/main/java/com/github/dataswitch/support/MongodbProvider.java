@@ -7,7 +7,7 @@ import com.mongodb.client.MongoClients;
 public class MongodbProvider extends BaseObject{
 	private String url;
 	private String database;
-	private String collectionName;
+	private String collection;
 	
 	public MongoClient createMongoClient() {
 		MongoClient r = MongoClients.create(url);
@@ -30,12 +30,12 @@ public class MongodbProvider extends BaseObject{
 		this.database = database;
 	}
 
-	public String getCollectionName() {
-		return collectionName;
+	public String getCollection() {
+		return collection;
 	}
 
-	public void setCollectionName(String collectionName) {
-		this.collectionName = collectionName;
+	public void setCollection(String collectionName) {
+		this.collection = collectionName;
 	}
 	
 	

@@ -115,7 +115,7 @@ public class MongodbOutput extends MongodbProvider implements Output {
 		_client = createMongoClient();
 		_database = _client.getDatabase(getDatabase());
 		
-		_mongoCollection = _database.getCollection(getCollectionName());
+		_mongoCollection = _database.getCollection(getCollection());
 	}
 
 	@Override

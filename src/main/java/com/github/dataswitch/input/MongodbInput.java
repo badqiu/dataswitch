@@ -110,10 +110,12 @@ public class MongodbInput extends MongodbProvider implements Input {
 	}
 
 	private FindIterable<Document> executeFind() {
-		FindIterable<Document> result = null;
 		if(findFunction != null) {
-			result = findFunction.apply(_mongoCollection);
-		}else if(StringUtils.isBlank(findScript)) {
+			return findFunction.apply(_mongoCollection);
+		}
+		
+		FindIterable<Document> result = null;
+		if(StringUtils.isBlank(findScript)) {
 			result = _mongoCollection.find();
 		}else {
 			Map<String,Object> context = new HashMap<String,Object>();
@@ -128,7 +130,7 @@ public class MongodbInput extends MongodbProvider implements Input {
 		_client = createMongoClient();
 		_database = _client.getDatabase(getDatabase());
 		
-		_mongoCollection = _database.getCollection(getCollectionName());
+		_mongoCollection = _database.getCollection(getCollection());
 		
 		_findIterable = executeFindAndChange();
 		_mongoCursor = _findIterable.iterator();
