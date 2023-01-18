@@ -1,7 +1,9 @@
 package com.github.dataswitch.output;
 
 public class HbaseOutput {
-	private String hbaseConfig;
+//	private String hbaseConfig;
+	private String zookeeperQuorum;
+	private String zookeeperZnodeParent = "/hbase";
 	
 	private String columnFamily;
 	private String columns;
