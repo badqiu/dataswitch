@@ -160,7 +160,7 @@ public class InputOutputUtil {
 	 * 拷贝数据
 	 * @return 拷贝的数据量
 	 */
-	public static CopyStatInfo copy(Input input,Output output) {
+	public static CopyResult copy(Input input,Output output) {
 		return copy(input,output,DEFAULT_BUFFER_SIZE);
 	}
 	
@@ -168,7 +168,7 @@ public class InputOutputUtil {
 	 * 拷贝数据
 	 * @return 拷贝的数据量
 	 */
-	public static CopyStatInfo copy(Input input,Output output,Processor processor) {
+	public static CopyResult copy(Input input,Output output,Processor processor) {
 		return copy(input,output,DEFAULT_BUFFER_SIZE,processor);
 	}
 	
@@ -176,7 +176,7 @@ public class InputOutputUtil {
 	 * 拷贝数据
 	 * @return 拷贝的数据量
 	 */
-	public static CopyStatInfo copy(Input input,Output output,FailMode failMode) {
+	public static CopyResult copy(Input input,Output output,FailMode failMode) {
 		return copy(input,output,DEFAULT_BUFFER_SIZE,DEFAULT_PROCESSOR,failMode);
 	}
 	
@@ -184,7 +184,7 @@ public class InputOutputUtil {
 	 * 拷贝数据
 	 * @return 拷贝的数据量
 	 */
-	public static CopyStatInfo copy(Input input,Output output,Processor processor,FailMode failMode) {
+	public static CopyResult copy(Input input,Output output,Processor processor,FailMode failMode) {
 		return copy(input,output,DEFAULT_BUFFER_SIZE,processor,failMode);
 	}
 	
@@ -192,7 +192,7 @@ public class InputOutputUtil {
 	 * 拷贝数据
 	 * @return 拷贝的数据量
 	 */
-	public static CopyStatInfo copy(Input input,Output output,int bufferSize) {
+	public static CopyResult copy(Input input,Output output,int bufferSize) {
 		return copy(input,output,bufferSize,DEFAULT_PROCESSOR,FailMode.FAIL_FAST);
 	}
 	
@@ -200,7 +200,7 @@ public class InputOutputUtil {
 	 * 拷贝数据
 	 * @return 拷贝的数据量
 	 */
-	public static CopyStatInfo copy(Input input,Output output,int bufferSize,Processor processor) {
+	public static CopyResult copy(Input input,Output output,int bufferSize,Processor processor) {
 		return copy(input,output,bufferSize,processor,FailMode.FAIL_FAST);
 	}
 	
@@ -212,11 +212,11 @@ public class InputOutputUtil {
 	 * @param ignoreWriteError
 	 * @return 拷贝的数据量
 	 */
-	public static CopyStatInfo copy(Input input,Output output,int bufferSize,Processor processor,FailMode failMode) {
+	public static CopyResult copy(Input input,Output output,int bufferSize,Processor processor,FailMode failMode) {
 		return copy(input,output,bufferSize,processor,null,failMode,null);
 	}
 
-	public static CopyStatInfo copy(Input input,Output output,int bufferSize,Processor processor,Map params,String failMode) {
+	public static CopyResult copy(Input input,Output output,int bufferSize,Processor processor,Map params,String failMode) {
 		return copy(input,output,bufferSize,processor,params,FailMode.getRequiredByName(failMode),null);
 	}
 
@@ -228,7 +228,7 @@ public class InputOutputUtil {
 	 * @param failMode,取值: failFast,failAtEnd,failNever
 	 * @return 拷贝的数据量
 	 */
-	public static CopyStatInfo copy(Input input,Output output,int bufferSize,Processor processor,Map params,FailMode failMode,Consumer<Exception> exceptionHandler) {
+	public static CopyResult copy(Input input,Output output,int bufferSize,Processor processor,Map params,FailMode failMode,Consumer<Exception> exceptionHandler) {
 		if(bufferSize <= 0) throw new IllegalArgumentException("bufferSize > 0 must be true");
 		
 		openAll(params,input, output, processor);
@@ -284,14 +284,14 @@ public class InputOutputUtil {
 			totalCostTime = System.currentTimeMillis() - startTime; 
 		}
 		
-		CopyStatInfo statInfo = new CopyStatInfo(count,totalCostTime,readCostSum,writeCostSum);
+		CopyResult copyResult = new CopyResult(count,totalCostTime,readCostSum,writeCostSum);
 		
-		logger.info("copy() result stat:"+statInfo);
+		logger.info("copy() result stat:"+copyResult);
 		
 		if(lastException != null && FailMode.FAIL_AT_END == failMode) {
 			throw new RuntimeException("copy error,input:"+input+" output:"+output+" processor:"+processor+" lastExceptionData:"+lastExceptionData + " exception:"+lastException);
 		}
-		return statInfo;
+		return copyResult;
 	}
 
 
@@ -320,16 +320,16 @@ public class InputOutputUtil {
 	}
 	
 	/** copy() 方法的统计结果  */
-	public static class CopyStatInfo {
+	public static class CopyResult {
 		private long count; //总条数
 		private long totalCostTime; //全部总耗时
 		private long readCostTime; //读取总耗时
 		private long writeCostTime; //写入总耗时
 		
-		public CopyStatInfo() {
+		public CopyResult() {
 		}
 		
-		public CopyStatInfo(long count, long totalCostTime,long readCostTime, long writeCostTime) {
+		public CopyResult(long count, long totalCostTime,long readCostTime, long writeCostTime) {
 			this.count = count;
 			this.totalCostTime = totalCostTime;
 			this.readCostTime = readCostTime;
@@ -375,7 +375,7 @@ public class InputOutputUtil {
 
 		@Override
 		public String toString() {
-			return "CopyStatInfo [count=" + count + ", totalCostTime=" + totalCostTime + ", readCostTime="
+			return "CopyResult [count=" + count + ", totalCostTime=" + totalCostTime + ", readCostTime="
 					+ readCostTime + ", writeCostTime=" + writeCostTime + ", readTps=" + getReadTps()
 					+ ", writeTps=" + getWriteTps() + ", totalTps=" + getTotalTps() + "]";
 		}
