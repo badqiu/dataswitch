@@ -19,6 +19,7 @@ import com.github.rapid.common.redis.RedisTransactionCallback;
 public class RedisOutput extends BaseObject implements Output{
 
 	private JedisPool jedisPool;
+	private String url;
 	private String script;
 //	private String beforeScript;
 //	private String afterScript;
@@ -47,6 +48,14 @@ public class RedisOutput extends BaseObject implements Output{
 	public void setContext(Map context) {
 		this.context = context;
 	}
+	
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
 
 	@Override
 	public void write(List<Object> rows) {
@@ -62,6 +71,11 @@ public class RedisOutput extends BaseObject implements Output{
 	@Override
 	public void close() {
 		jedisPool.destroy();
+	}
+	
+	@Override
+	public void open(Map<String, Object> params) throws Exception {
+		jedisPool = new JedisPool(url);
 	}
 	
 	public static void batchRedis(JedisPool jedisPool,final List<Object> datas,final Map globalContext, final String script) throws Exception {
