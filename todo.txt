@@ -52,7 +52,7 @@ script 需要增加 context, beforeScript put var into context for init.
   --last-value “2014-11-09 21:00:00”
  
  支持其它:
-  ES 未测试
+  ES 未测试,性能用批量写，是否可提升？
   MongoDB 未测试
   Hive 缺少ORC支持，缺少hive
   Hbase
