@@ -101,7 +101,7 @@ public class MongodbOutput extends MongodbProvider implements Output {
 		return (Bson)ScriptEngineUtil.eval(language, filterScript,row);
 	}
 
-	private List<Document> toDocuments(List<Map<String,Object>> rows) {
+	private static List<Document> toDocuments(List<Map<String,Object>> rows) {
 		List<Document> documents = new ArrayList<Document>(rows.size());
 		for(Map row : rows) {
 			Document doc = new Document(row);
