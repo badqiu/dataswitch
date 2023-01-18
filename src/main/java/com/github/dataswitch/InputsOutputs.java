@@ -25,6 +25,7 @@ import com.github.dataswitch.output.Output;
 import com.github.dataswitch.processor.MultiProcessor;
 import com.github.dataswitch.processor.Processor;
 import com.github.dataswitch.util.InputOutputUtil;
+import com.github.dataswitch.util.InputOutputUtil.CopyStatInfo;
 import com.github.dataswitch.util.ScriptEngineUtil;
 
 /**
@@ -269,7 +270,8 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 		long costTime = 0;
 		try {
 			
-			rows = InputOutputUtil.copy(input, output,bufferSize,processor,params,failMode,exceptionHandler);
+			CopyStatInfo copyStatInfo = InputOutputUtil.copy(input, output,bufferSize,processor,params,failMode,exceptionHandler);
+			rows = copyStatInfo.getCount();
 			costTime = System.currentTimeMillis() - start;
 			
 			return rows;

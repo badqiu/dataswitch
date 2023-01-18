@@ -159,7 +159,7 @@ public class InputOutputUtil {
 	 * 拷贝数据
 	 * @return 拷贝的数据量
 	 */
-	public static long copy(Input input,Output output) {
+	public static CopyStatInfo copy(Input input,Output output) {
 		return copy(input,output,DEFAULT_BUFFER_SIZE);
 	}
 	
@@ -167,7 +167,7 @@ public class InputOutputUtil {
 	 * 拷贝数据
 	 * @return 拷贝的数据量
 	 */
-	public static long copy(Input input,Output output,Processor processor) {
+	public static CopyStatInfo copy(Input input,Output output,Processor processor) {
 		return copy(input,output,DEFAULT_BUFFER_SIZE,processor);
 	}
 	
@@ -175,7 +175,7 @@ public class InputOutputUtil {
 	 * 拷贝数据
 	 * @return 拷贝的数据量
 	 */
-	public static long copy(Input input,Output output,FailMode failMode) {
+	public static CopyStatInfo copy(Input input,Output output,FailMode failMode) {
 		return copy(input,output,DEFAULT_BUFFER_SIZE,DEFAULT_PROCESSOR,failMode);
 	}
 	
@@ -183,7 +183,7 @@ public class InputOutputUtil {
 	 * 拷贝数据
 	 * @return 拷贝的数据量
 	 */
-	public static long copy(Input input,Output output,Processor processor,FailMode failMode) {
+	public static CopyStatInfo copy(Input input,Output output,Processor processor,FailMode failMode) {
 		return copy(input,output,DEFAULT_BUFFER_SIZE,processor,failMode);
 	}
 	
@@ -191,7 +191,7 @@ public class InputOutputUtil {
 	 * 拷贝数据
 	 * @return 拷贝的数据量
 	 */
-	public static long copy(Input input,Output output,int bufferSize) {
+	public static CopyStatInfo copy(Input input,Output output,int bufferSize) {
 		return copy(input,output,bufferSize,DEFAULT_PROCESSOR,FailMode.FAIL_FAST);
 	}
 	
@@ -199,7 +199,7 @@ public class InputOutputUtil {
 	 * 拷贝数据
 	 * @return 拷贝的数据量
 	 */
-	public static long copy(Input input,Output output,int bufferSize,Processor processor) {
+	public static CopyStatInfo copy(Input input,Output output,int bufferSize,Processor processor) {
 		return copy(input,output,bufferSize,processor,FailMode.FAIL_FAST);
 	}
 	
@@ -211,11 +211,11 @@ public class InputOutputUtil {
 	 * @param ignoreWriteError
 	 * @return 拷贝的数据量
 	 */
-	public static long copy(Input input,Output output,int bufferSize,Processor processor,FailMode failMode) {
+	public static CopyStatInfo copy(Input input,Output output,int bufferSize,Processor processor,FailMode failMode) {
 		return copy(input,output,bufferSize,processor,null,failMode,null);
 	}
 
-	public static long copy(Input input,Output output,int bufferSize,Processor processor,Map params,String failMode) {
+	public static CopyStatInfo copy(Input input,Output output,int bufferSize,Processor processor,Map params,String failMode) {
 		return copy(input,output,bufferSize,processor,params,FailMode.getRequiredByName(failMode),null);
 	}
 
@@ -227,7 +227,7 @@ public class InputOutputUtil {
 	 * @param failMode,取值: failFast,failAtEnd,failNever
 	 * @return 拷贝的数据量
 	 */
-	public static long copy(Input input,Output output,int bufferSize,Processor processor,Map params,FailMode failMode,Consumer<Exception> exceptionHandler) {
+	public static CopyStatInfo copy(Input input,Output output,int bufferSize,Processor processor,Map params,FailMode failMode,Consumer<Exception> exceptionHandler) {
 		if(bufferSize <= 0) throw new IllegalArgumentException("bufferSize > 0 must be true");
 		
 		openAll(params,input, output, processor);
@@ -239,6 +239,8 @@ public class InputOutputUtil {
 		List<Object> rows = null;
 		long readCostSum = 0;
 		long writeCostSum = 0;
+		long startTime = System.currentTimeMillis();
+		long totalCostTime = 0;
 		try {
 			
 			while(true) {
@@ -278,14 +280,17 @@ public class InputOutputUtil {
 			}
 		}finally {
 			closeAllQuietly(input, output, processor);
+			totalCostTime = System.currentTimeMillis() - startTime; 
 		}
+		
+		CopyStatInfo result = new CopyStatInfo(count,totalCostTime,readCostSum,writeCostSum);
 		
 		logger.info("timeCostStat, count:" + count + " readCostSumMills:"+readCostSum+" writeCostSumMills:"+writeCostSum + " readTps:"+Util.getTPS(count, readCostSum) + " writeTps:"+Util.getTPS(count, writeCostSum));
 		
 		if(lastException != null && FailMode.FAIL_AT_END == failMode) {
 			throw new RuntimeException("copy error,input:"+input+" output:"+output+" processor:"+processor+" lastExceptionData:"+lastExceptionData + " exception:"+lastException);
 		}
-		return count;
+		return result;
 	}
 
 
@@ -311,6 +316,61 @@ public class InputOutputUtil {
 		
 		output.write(processedRows);
 		return processedRows.size();
+	}
+	
+	/** copy() 方法的统计结果  */
+	public static class CopyStatInfo {
+		private long count; //总条数
+		private long totalCostTime; //全部总耗时
+		private long readCostTime; //读取总耗时
+		private long writeCostTime; //写入总耗时
+		
+		public CopyStatInfo() {
+		}
+		
+		public CopyStatInfo(long count, long totalCostTime,long readCostTime, long writeCostTime) {
+			this.count = count;
+			this.totalCostTime = totalCostTime;
+			this.readCostTime = readCostTime;
+			this.writeCostTime = writeCostTime;
+		}
+		
+		public long getCount() {
+			return count;
+		}
+		public void setCount(long count) {
+			this.count = count;
+		}
+		public long getReadCostTime() {
+			return readCostTime;
+		}
+		public void setReadCostTime(long readCostTime) {
+			this.readCostTime = readCostTime;
+		}
+		public long getWriteCostTime() {
+			return writeCostTime;
+		}
+		public void setWriteCostTime(long writeCostTime) {
+			this.writeCostTime = writeCostTime;
+		}
+		public long getTotalCostTime() {
+			return totalCostTime;
+		}
+		public void setTotalCostTime(long totalCostTime) {
+			this.totalCostTime = totalCostTime;
+		}
+
+		public double getReadTps() {
+			return Util.getTPS(count, readCostTime);
+		}
+		
+		public double getWriteTps() {
+			return Util.getTPS(count, writeCostTime);
+		}
+		
+		public double getTotalTps() {
+			return Util.getTPS(count, totalCostTime);
+		}
 	}
 
 	
