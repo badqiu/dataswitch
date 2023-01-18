@@ -21,7 +21,9 @@ public class Bean2MapProcessor extends BaseProcessor{
 			return map;
 		}
 		
-		return BeanUtils.describe(row);
+		Map r = BeanUtils.describe(row);
+		r.remove("class");
+		return r;
 	}
 
 }
