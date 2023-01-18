@@ -144,11 +144,11 @@ public class JdbcInput extends DataSourceProvider implements Input{
 				return (List)result;
 			}
 		}finally {
-			long cost = System.currentTimeMillis() - start;
+			long costTime = System.currentTimeMillis() - start;
 			
 			
-			if(result.size() >= 1000 || cost >= 1000) {
-				logger.info("read result size:"+result.size()+" cost time seconds:"+(cost / 1000)+" costTimeMills:"+cost+" tps:"+Util.getTPS(result.size(), cost));
+			if(result.size() >= 1000 || costTime >= 1000) {
+				logger.info("read result size:"+result.size()+" cost time seconds:"+(costTime / 1000)+" costTimeMills:"+costTime+" tps:"+Util.getTPS(result.size(), costTime));
 			}
 		}
 	}

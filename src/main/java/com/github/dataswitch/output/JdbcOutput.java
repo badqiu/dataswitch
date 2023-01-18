@@ -459,8 +459,8 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		
 		String finalSql = executeWithJdbc(rows);
 		
-		if(rows.size() >= 1000) {
-			long costTime = System.currentTimeMillis() - start;
+		long costTime = System.currentTimeMillis() - start;
+		if(rows.size() >= 1000 || costTime >= 1000) {
 			long tps = Util.getTPS(rows.size(), costTime);
 			logger.info("execute update sql with rows:"+rows.size()+" costTimeMills:"+costTime+" tps:"+ tps +" for sql:"+getOutputDigestInfo(finalSql));
 		}
