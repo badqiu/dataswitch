@@ -60,5 +60,8 @@ script 需要增加 context, beforeScript put var into context for init.
   ApacheDoris
   OpenTSDB
   Cassandra
+  OpenSearch
+  Queue
+  	RabbitMQ
   #ClickHouse
   
