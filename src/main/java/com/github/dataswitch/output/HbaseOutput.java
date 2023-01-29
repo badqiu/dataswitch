@@ -220,7 +220,10 @@ public class HbaseOutput extends HbaseProvider implements Output{
 
 	public byte[] getRowkey(Map record){
     	Object value = record.get(rowkeyColumn);
-    	Assert.notNull(value,"rowkey must be not null by rowkeyColumn:"+rowkeyColumn);
+    	if(value == null) {
+    		throw new IllegalStateException("rowkey must be not null by rowkeyColumn:"+rowkeyColumn+" on row:"+record);
+    	}
+    	
     	return objectToHbaseBytes(value,_charset);
     }
 
