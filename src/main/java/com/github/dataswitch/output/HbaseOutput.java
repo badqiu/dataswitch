@@ -25,7 +25,7 @@ import com.github.dataswitch.util.Util;
 
 public class HbaseOutput extends HbaseProvider implements Output{
 
-	private String columnFamily;
+	private String family;
 	private String columns; //要写入的hbase列，可为空，为空将输入值全部写入
 	private String rowkeyColumn = "rowkey";
 	private String versionColumn; //版本列，timestamp列
@@ -39,12 +39,12 @@ public class HbaseOutput extends HbaseProvider implements Output{
 	private String[] _columnsArray;
 	private Charset _charset;
 	
-	public String getColumnFamily() {
-		return columnFamily;
+	public String getFamily() {
+		return family;
 	}
 
-	public void setColumnFamily(String columnFamily) {
-		this.columnFamily = columnFamily;
+	public void setFamily(String family) {
+		this.family = family;
 	}
 
 	public String getColumns() {
@@ -117,7 +117,7 @@ public class HbaseOutput extends HbaseProvider implements Output{
 		_columnsArray = Util.splitColumns(columns);
 		_charset = Charset.forName(encoding);
 		Assert.hasText(rowkeyColumn,"rowkeyColumn must be not blank");
-		Assert.hasText(columnFamily,"columnFamily must be not blank");
+		Assert.hasText(family,"family must be not blank");
 	}
 	
 	@Override
@@ -195,7 +195,7 @@ public class HbaseOutput extends HbaseProvider implements Output{
 		}
 		
 		columnNameBytes = Bytes.toBytes(columnName);
-		put.addColumn(Bytes.toBytes(columnFamily),columnNameBytes,columnValueBytes);
+		put.addColumn(Bytes.toBytes(family),columnNameBytes,columnValueBytes);
 	}
 
 	protected Put newPut(Map record) {

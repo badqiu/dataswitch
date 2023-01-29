@@ -29,7 +29,7 @@ import com.github.dataswitch.util.PropertiesUtil;
 public class HbaseInput  extends HbaseProvider implements Input{
 	private static Logger logger = LoggerFactory.getLogger(HbaseInput.class);
 	
-	private String columnFamily = null;
+	private String family = null;
     private String startKey = null;
     private String endKey = null;
     private String columnsType = null;
@@ -61,7 +61,7 @@ public class HbaseInput  extends HbaseProvider implements Input{
         
         this._scan.withStartRow(_startKey);
         this._scan.withStopRow(_endKey);
-        this._scan.addFamily(Bytes.toBytes(columnFamily));
+        this._scan.addFamily(Bytes.toBytes(family));
         
         logger.info("The task set startRowkey=[{}], endRowkey=[{}].", this.startKey, this.endKey);
         //scan的Caching Batch全部留在hconfig中每次从服务器端读取的行数，设置默认值未256
@@ -135,7 +135,7 @@ public class HbaseInput  extends HbaseProvider implements Input{
 	protected Map result2Map(Result result) {
 		if(result == null) return null;
 		
-		NavigableMap<byte[], byte[]> familyMap = result.getFamilyMap(Bytes.toBytes(columnFamily));
+		NavigableMap<byte[], byte[]> familyMap = result.getFamilyMap(Bytes.toBytes(family));
 		
 		return convertByColumnType(familyMap);
 	}
