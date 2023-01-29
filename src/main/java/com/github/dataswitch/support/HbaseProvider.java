@@ -59,13 +59,13 @@ public class HbaseProvider extends BaseObject {
 		this.table = table;
 	}
 
-	public static Object convertBytesByDataType(byte[] bytes, String columnType) {
+	public static Object convertBytesByDataType(byte[] bytes, String columnType,Charset charset) {
 		if(StringUtils.isBlank(columnType)) {
-			return Bytes.toString(bytes);
+			return new String(bytes,charset);
 		}
 		
 		if("string".equals(columnType)) {
-			return Bytes.toString(bytes);
+			return new String(bytes,charset);
 		}else if("int".equals(columnType)) {
 			return Bytes.toInt(bytes);
 		}else if("long".equals(columnType)) {
@@ -80,7 +80,7 @@ public class HbaseProvider extends BaseObject {
 		}else if("boolean".equals(columnType)) {
 			return Bytes.toBoolean(bytes);
 		}else {
-			return Bytes.toString(bytes);
+			return new String(bytes,charset);
 		}
 	}
 	

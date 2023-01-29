@@ -159,7 +159,7 @@ public class HbaseInput  extends HbaseProvider implements Input{
 		if(bytes.length == 0) return null;
 		
 		String columnType = getColumnType(key);
-		return convertBytesByDataType(bytes, columnType);
+		return convertBytesByDataType(bytes, columnType,_charset);
 	}
 
 	private String getColumnType(String key) {
