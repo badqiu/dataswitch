@@ -57,6 +57,7 @@ script 需要增加 context, beforeScript put var into context for init.
   Hbase 未测试，读写
   Hive 缺少ORC支持，缺少hive
   Kudu
+  ApacheDoris
   OpenTSDB
   Cassandra
   #ClickHouse
