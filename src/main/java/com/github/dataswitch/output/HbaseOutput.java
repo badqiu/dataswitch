@@ -10,6 +10,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hbase.HConstants;
 import org.apache.hadoop.hbase.client.BufferedMutator;
+import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Durability;
 import org.apache.hadoop.hbase.client.Mutation;
 import org.apache.hadoop.hbase.client.Put;
@@ -17,6 +18,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.springframework.util.Assert;
 
 import com.github.dataswitch.enums.Constants;
+import com.github.dataswitch.enums.OutputMode;
 import com.github.dataswitch.support.HbaseProvider;
 import com.github.dataswitch.util.InputOutputUtil;
 import com.github.dataswitch.util.Util;
@@ -31,7 +33,7 @@ public class HbaseOutput extends HbaseProvider implements Output{
 	private boolean skipWal = false; //关闭WAL日志写入，可以提升性能，但存在数据丢失风险
 	private boolean skipNull = true; //是否忽略null值，不忽略将填写byte[0]作为null值
 	private int writeBufferSize = Constants.DEFAULT_BUFFER_SIZE; //批量写入的大小
-	
+	private OutputMode outputMode = OutputMode.replace;
 	
 	private BufferedMutator _bufferedMutator;
 	private String[] _columnsArray;
@@ -100,6 +102,14 @@ public class HbaseOutput extends HbaseProvider implements Output{
 	public void setWriteBufferSize(int writeBufferSize) {
 		this.writeBufferSize = writeBufferSize;
 	}
+	
+	public OutputMode getOutputMode() {
+		return outputMode;
+	}
+
+	public void setOutputMode(OutputMode outputMode) {
+		this.outputMode = outputMode;
+	}
 
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
@@ -146,7 +156,12 @@ public class HbaseOutput extends HbaseProvider implements Output{
 	}
 	
 	private Mutation convert2Mutation(Map row) {
-		return convertRecordToPut(row);
+		if(outputMode == outputMode.delete) {
+			byte[] rowkey = getRowkey(row);
+			return new Delete(rowkey);
+		}else {
+			return convertRecordToPut(row);
+		}
 	}
 	
     public Put convertRecordToPut(Map record){
