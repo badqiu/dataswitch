@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hbase.HConstants;
 import org.apache.hadoop.hbase.client.BufferedMutator;
@@ -23,19 +24,83 @@ import com.github.dataswitch.util.Util;
 public class HbaseOutput extends HbaseProvider implements Output{
 
 	private String columnFamily;
-	private String columns;
+	private String columns; //要写入的hbase列，可为空，为空将输入值全部写入
 	private String rowkeyColumn = "rowkey";
-	private String versionColumn;
+	private String versionColumn; //版本列，timestamp列
 	private String encoding = StandardCharsets.UTF_8.name();
 	private boolean skipWal = false; //关闭WAL日志写入，可以提升性能，但存在数据丢失风险
 	private boolean skipNull = true; //是否忽略null值，不忽略将填写byte[0]作为null值
-	private int writeBufferSize = Constants.DEFAULT_BUFFER_SIZE;
+	private int writeBufferSize = Constants.DEFAULT_BUFFER_SIZE; //批量写入的大小
 	
 	
 	private BufferedMutator _bufferedMutator;
 	private String[] _columnsArray;
 	private Charset _charset;
 	
+	public String getColumnFamily() {
+		return columnFamily;
+	}
+
+	public void setColumnFamily(String columnFamily) {
+		this.columnFamily = columnFamily;
+	}
+
+	public String getColumns() {
+		return columns;
+	}
+
+	public void setColumns(String columns) {
+		this.columns = columns;
+	}
+
+	public String getRowkeyColumn() {
+		return rowkeyColumn;
+	}
+
+	public void setRowkeyColumn(String rowkeyColumn) {
+		this.rowkeyColumn = rowkeyColumn;
+	}
+
+	public String getVersionColumn() {
+		return versionColumn;
+	}
+
+	public void setVersionColumn(String versionColumn) {
+		this.versionColumn = versionColumn;
+	}
+
+	public String getEncoding() {
+		return encoding;
+	}
+
+	public void setEncoding(String encoding) {
+		this.encoding = encoding;
+	}
+
+	public boolean isSkipWal() {
+		return skipWal;
+	}
+
+	public void setSkipWal(boolean skipWal) {
+		this.skipWal = skipWal;
+	}
+
+	public boolean isSkipNull() {
+		return skipNull;
+	}
+
+	public void setSkipNull(boolean skipNull) {
+		this.skipNull = skipNull;
+	}
+
+	public int getWriteBufferSize() {
+		return writeBufferSize;
+	}
+
+	public void setWriteBufferSize(int writeBufferSize) {
+		this.writeBufferSize = writeBufferSize;
+	}
+
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
 		_bufferedMutator = getBufferedMutator(getHbaseConfig(),getTable(),writeBufferSize);
@@ -59,6 +124,8 @@ public class HbaseOutput extends HbaseProvider implements Output{
 	
 	@Override
 	public void write(List<Object> rows) {
+		if(CollectionUtils.isEmpty(rows)) return;
+		
 		for(Object row : rows) {
 			Mutation m = convert2Mutation(row);
 			
