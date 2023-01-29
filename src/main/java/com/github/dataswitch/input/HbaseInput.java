@@ -159,28 +159,7 @@ public class HbaseInput  extends HbaseProvider implements Input{
 		if(bytes.length == 0) return null;
 		
 		String columnType = getColumnType(key);
-		if(StringUtils.isBlank(columnType)) {
-			return Bytes.toString(bytes);
-		}
-		
-		if("int".equals(columnType)) {
-			return Bytes.toInt(bytes);
-		}else if("long".equals(columnType)) {
-			return Bytes.toLong(bytes);
-		}else if("date".equals(columnType)) {
-			long value = Bytes.toLong(bytes);
-			return new Date(value);
-		}else if("double".equals(columnType)) {
-			return Bytes.toDouble(bytes);
-		}else if("float".equals(columnType)) {
-			return Bytes.toFloat(bytes);
-		}else if("string".equals(columnType)) {
-			return Bytes.toString(bytes);
-		}else if("boolean".equals(columnType)) {
-			return Bytes.toBoolean(bytes);
-		}else {
-			return Bytes.toString(bytes);
-		}
+		return convertBytesByDataType(bytes, columnType);
 	}
 
 	private String getColumnType(String key) {

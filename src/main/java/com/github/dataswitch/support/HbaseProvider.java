@@ -59,6 +59,31 @@ public class HbaseProvider extends BaseObject {
 		this.table = table;
 	}
 
+	public static Object convertBytesByDataType(byte[] bytes, String columnType) {
+		if(StringUtils.isBlank(columnType)) {
+			return Bytes.toString(bytes);
+		}
+		
+		if("string".equals(columnType)) {
+			return Bytes.toString(bytes);
+		}else if("int".equals(columnType)) {
+			return Bytes.toInt(bytes);
+		}else if("long".equals(columnType)) {
+			return Bytes.toLong(bytes);
+		}else if("date".equals(columnType)) {
+			long value = Bytes.toLong(bytes);
+			return new Date(value);
+		}else if("double".equals(columnType)) {
+			return Bytes.toDouble(bytes);
+		}else if("float".equals(columnType)) {
+			return Bytes.toFloat(bytes);
+		}else if("boolean".equals(columnType)) {
+			return Bytes.toBoolean(bytes);
+		}else {
+			return Bytes.toString(bytes);
+		}
+	}
+	
     public static byte[] objectToHbaseBytes(Object value,Charset encoding) {
     	if(value == null) return null;
     	
