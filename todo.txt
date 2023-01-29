@@ -62,6 +62,7 @@ script 需要增加 context, beforeScript put var into context for init.
   Cassandra
   OpenSearch
   Queue
+  	RocketMQ
   	RabbitMQ
   #ClickHouse
   
