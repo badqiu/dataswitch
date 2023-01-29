@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.hadoop.hbase.HBaseConfiguration;
@@ -60,6 +61,8 @@ public class HbaseProvider extends BaseObject {
 	}
 
 	public static Object convertBytesByDataType(byte[] bytes, String columnType,Charset charset) {
+		if(ArrayUtils.isEmpty(bytes)) return null;
+		
 		if(StringUtils.isBlank(columnType)) {
 			return new String(bytes,charset);
 		}
