@@ -270,12 +270,4 @@ public class HbaseProvider extends BaseObject {
 		return _connection.getTable(TableName.valueOf(table));
 	}
 
-	public void batchInsert() throws IOException {
-		Table table = getHbaseTable();
-		List<Put> puts = new ArrayList<Put>();
-		puts.add(new Put(Bytes.toBytes("rowkey")));
-
-		table.put(puts);
-	}
-
 }
