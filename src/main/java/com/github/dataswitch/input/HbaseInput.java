@@ -4,9 +4,14 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableMap;
+import java.util.Properties;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
@@ -19,14 +24,16 @@ import org.slf4j.LoggerFactory;
 import com.github.dataswitch.enums.Constants;
 import com.github.dataswitch.support.HbaseProvider;
 import com.github.dataswitch.util.InputOutputUtil;
+import com.github.dataswitch.util.PropertiesUtil;
 
 public class HbaseInput  extends HbaseProvider implements Input{
 	private static Logger logger = LoggerFactory.getLogger(HbaseInput.class);
 	
+	private String columnFamily = null;
     private String startKey = null;
     private String endKey = null;
+    private String columnsType = null;
     
-    private String columnFamily = null;
 
     protected String encoding = StandardCharsets.UTF_8.name();
     protected int scanCacheSize = Constants.DEFAULT_BUFFER_SIZE;
@@ -40,6 +47,7 @@ public class HbaseInput  extends HbaseProvider implements Input{
     private byte[] _startKey = null;
     private byte[] _endKey = null;
     private Charset _charset = null;
+    private Properties _columnsType = null;
     
 
     protected void initScan(Scan scan) {
@@ -127,7 +135,56 @@ public class HbaseInput  extends HbaseProvider implements Input{
 	protected Map result2Map(Result result) {
 		if(result == null) return null;
 		
-		return result.getFamilyMap(Bytes.toBytes(columnFamily));
+		NavigableMap<byte[], byte[]> familyMap = result.getFamilyMap(Bytes.toBytes(columnFamily));
+		
+		return convertByColumnType(familyMap);
+	}
+
+	private Map convertByColumnType(NavigableMap<byte[], byte[]> familyMap) {
+		Map map = new HashMap(familyMap.size() * 2);
+		familyMap.forEach((k,v) -> {
+			String key = new String(k,_charset);
+			Object value = getValueByColumnType(key,v);
+			if(value == null) {
+				return;
+			}
+			
+			map.put(key, value);
+		});
+		return familyMap;
+	}
+
+	private Object getValueByColumnType(String key, byte[] bytes) {
+		if(bytes == null) return null;
+		if(bytes.length == 0) return null;
+		
+		String columnType = getColumnType(key);
+		if(StringUtils.isBlank(columnType)) {
+			return Bytes.toString(bytes);
+		}
+		
+		if("int".equals(columnType)) {
+			return Bytes.toInt(bytes);
+		}else if("long".equals(columnType)) {
+			return Bytes.toLong(bytes);
+		}else if("date".equals(columnType)) {
+			long value = Bytes.toLong(bytes);
+			return new Date(value);
+		}else if("double".equals(columnType)) {
+			return Bytes.toDouble(bytes);
+		}else if("float".equals(columnType)) {
+			return Bytes.toFloat(bytes);
+		}else if("string".equals(columnType)) {
+			return Bytes.toString(bytes);
+		}else if("boolean".equals(columnType)) {
+			return Bytes.toBoolean(bytes);
+		}else {
+			return Bytes.toString(bytes);
+		}
+	}
+
+	private String getColumnType(String key) {
+		return _columnsType.getProperty(key);
 	}
 
 	@Override
@@ -137,6 +194,9 @@ public class HbaseInput  extends HbaseProvider implements Input{
         this._charset = Charset.forName(encoding);
         this._startKey = objectToHbaseBytes(startKey, _charset);
         this._endKey = objectToHbaseBytes(endKey, _charset);
+        
+        this._columnsType = PropertiesUtil.createProperties(columnsType);
+        prepare();
 	}
 	
 
