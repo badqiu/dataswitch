@@ -198,7 +198,7 @@ public class HbaseOutput extends HbaseProvider implements Output{
 		put.addColumn(Bytes.toBytes(columnFamily),columnNameBytes,columnValueBytes);
 	}
 
-	private Put newPut(Map record) {
+	protected Put newPut(Map record) {
 		byte[] rowkey = getRowkey(record);
         Put put = null;
         if(StringUtils.isBlank(versionColumn)){
