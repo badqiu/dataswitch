@@ -10,15 +10,16 @@ import com.github.dataswitch.util.InputOutputUtil;
 public class MongodbInputTest {
 
 	public static String mongodbUrl = "mongodb://172.17.38.121:27017/?directConnection=true&serverSelectionTimeoutMS=2000";
+	
 	MongodbInput input = new MongodbInput();
 	
 	
 	@Before
 	public void before() throws Exception {
+		System.out.println("--------------------------------------:" + input);
 		input.setUrl(mongodbUrl);
 		input.setDatabase("test");
 		input.setCollection("badqiu_test");
-		System.out.println("--------------------------------------");
 	}
 	
 	@After
