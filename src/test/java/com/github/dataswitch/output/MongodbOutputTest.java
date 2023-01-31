@@ -31,9 +31,6 @@ public class MongodbOutputTest {
 	@Test
 	public void testWrite() throws Exception {
 		for(OutputMode outputMode : OutputMode.values()) {
-//			if(outputMode == OutputMode.update) {
-//				continue;
-//			}
 			output.setPrimaryKeys("name");
 			output.setOutputMode(outputMode);
 			output.open(null);

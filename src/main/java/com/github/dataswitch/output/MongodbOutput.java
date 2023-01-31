@@ -104,7 +104,8 @@ public class MongodbOutput extends MongodbProvider implements Output {
 			}
 		}else if(outputMode == OutputMode.update) {
 			for(Map<String,Object> row : rows) {
-				_mongoCollection.updateOne(getFilter(row), getDocByColumns(row));
+				Document doc = getDocByColumns(row);
+				_mongoCollection.updateOne(getFilter(row), new Document("$set",doc));
 			}
 		}else if(outputMode == OutputMode.delete) {
 			for(Map<String,Object> row : rows) {
