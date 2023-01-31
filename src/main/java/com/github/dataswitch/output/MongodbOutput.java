@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.springframework.util.Assert;
@@ -127,8 +128,8 @@ public class MongodbOutput extends MongodbProvider implements Output {
 			return whereFunction.apply(row);
 		}
 		
-		if(_primaryKeysArray != null) {
-			return getPrimaryKeysFilter(row);
+		if(ArrayUtils.isNotEmpty(_primaryKeysArray)) {
+			return getPrimaryKeysFilter(row,_primaryKeysArray);
 		}
 		
 //		if(StringUtils.isNotBlank(whereJson)) {
@@ -139,9 +140,9 @@ public class MongodbOutput extends MongodbProvider implements Output {
 		return (Bson)ScriptEngineUtil.eval(language, whereScript,row);
 	}
 
-	private Bson getPrimaryKeysFilter(Map<String, Object> row) {
+	public static Bson getPrimaryKeysFilter(Map<String, Object> row,String[] primaryKeysArray) {
 		Bson filter = null;
-		for(String fieldName : _primaryKeysArray) {
+		for(String fieldName : primaryKeysArray) {
 			Bson condition = Filters.eq(fieldName, row.get(fieldName));
 			if(filter == null) {
 				filter = condition;
