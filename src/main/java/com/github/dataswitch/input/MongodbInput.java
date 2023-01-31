@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bson.Document;
 
@@ -117,7 +118,7 @@ public class MongodbInput extends MongodbProvider implements Input {
 	}
 
 	public static Map getDocByColumns(Map doc,String[] _columnsArray) {
-		if(_columnsArray == null) {
+		if(ArrayUtils.isEmpty(_columnsArray)) {
 			return doc;
 		}
 		
