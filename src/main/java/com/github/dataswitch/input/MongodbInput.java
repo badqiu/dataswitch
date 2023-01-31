@@ -146,6 +146,7 @@ public class MongodbInput extends MongodbProvider implements Input {
 		if(skip > 0) {
 			result.skip(skip);
 		}
+		
 	}
 
 	private FindIterable<Document> executeFind() {
