@@ -37,7 +37,8 @@ public class MongodbOutputTest {
 			
 			List rows = new ArrayList<Map>();
 			for(int i = 0; i < 5; i++) {
-				rows.add(MapUtil.newMap("name","badqiu-"+i,"age",20));
+				Map row = MapUtil.newMap("name","badqiu-"+i,"age",20,"count",i);
+				rows.add(row);
 			}
 			output.write(rows);
 		}
