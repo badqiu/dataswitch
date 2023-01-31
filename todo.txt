@@ -53,7 +53,7 @@ script 需要增加 context, beforeScript put var into context for init.
  
  支持其它:
   #MongoDB
-  ES 未测试,性能用批量写，是否可提升？
+  ES 未测试,(性能用批量写,是否可提升)?
   Hbase 未测试，读写
   Hive 缺少ORC支持，缺少hive
   Kudu
