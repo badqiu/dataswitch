@@ -131,7 +131,11 @@ public class MongodbInput extends MongodbProvider implements Input {
 	
 	private FindIterable<Document> executeFindAndChange() {
 		FindIterable<Document> result = executeFind();
-		
+		initFindIterable(result);
+		return result;
+	}
+
+	protected void initFindIterable(FindIterable<Document> result) {
 		if(batchSize > 0) {
 			result.batchSize(batchSize);
 		}
@@ -141,7 +145,6 @@ public class MongodbInput extends MongodbProvider implements Input {
 		if(skip > 0) {
 			result.skip(skip);
 		}
-		return result;
 	}
 
 	private FindIterable<Document> executeFind() {
