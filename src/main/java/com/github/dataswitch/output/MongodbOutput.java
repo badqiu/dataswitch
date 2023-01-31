@@ -127,22 +127,29 @@ public class MongodbOutput extends MongodbProvider implements Output {
 		}
 		
 		if(_primaryKeysArray != null) {
-			Bson filter = new Document();
-			for(String fieldName : _primaryKeysArray) {
-				Bson condition = Filters.eq(fieldName, row.get(fieldName));
-				filter = Filters.and(condition);
-//				filter = new Document("$and",Arrays.asList(condition));
-			}
-			
-			return filter;
+			return getPrimaryKeysFilter(row);
 		}
 		
 //		if(StringUtils.isNotBlank(whereJson)) {
 //			return Document.parse(whereJson);
 //		}
 		
-		Assert.hasText(whereScript,"filterScript must be not blank");
+		Assert.hasText(whereScript,"primaryKeys or whereScript must be not blank");
 		return (Bson)ScriptEngineUtil.eval(language, whereScript,row);
+	}
+
+	private Bson getPrimaryKeysFilter(Map<String, Object> row) {
+		Bson filter = null;
+		for(String fieldName : _primaryKeysArray) {
+			Bson condition = Filters.eq(fieldName, row.get(fieldName));
+			if(filter == null) {
+				filter = condition;
+			}else {
+				filter = Filters.and(condition);
+			}
+		}
+		
+		return filter;
 	}
 
 	private List<Document> toDocuments(List<Map<String,Object>> rows) {

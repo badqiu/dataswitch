@@ -34,8 +34,8 @@ public class MongodbProvider extends BaseObject{
 		return collection;
 	}
 
-	public void setCollection(String collectionName) {
-		this.collection = collectionName;
+	public void setCollection(String collection) {
+		this.collection = collection;
 	}
 	
 	
