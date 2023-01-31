@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Properties;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
@@ -59,9 +60,15 @@ public class HbaseInput  extends HbaseProvider implements Input{
         //this._scan.setSmall(false);
         this._scan.setReadType(ReadType.PREAD);
         
-        this._scan.withStartRow(_startKey);
-        this._scan.withStopRow(_endKey);
-        this._scan.addFamily(Bytes.toBytes(family));
+        if(ArrayUtils.isNotEmpty(_startKey)) {
+        	this._scan.withStartRow(_startKey);
+        }
+        if(ArrayUtils.isNotEmpty(_endKey)) {
+        	this._scan.withStopRow(_endKey);
+        }
+        if(StringUtils.isNoneBlank(family)) {
+        	this._scan.addFamily(Bytes.toBytes(family));
+        }
         
         logger.info("The task set startRowkey=[{}], endRowkey=[{}].", this.startKey, this.endKey);
         //scan的Caching Batch全部留在hconfig中每次从服务器端读取的行数，设置默认值未256
