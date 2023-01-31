@@ -39,4 +39,11 @@ public class MongodbInputTest {
 		input.setWhereJson("{\"name\":\"badqiu-0\"}");
 		InputOutputUtil.copy(input, new PrintOutput());
 	}
+	
+	@Test
+	public void testInput_with_columns() throws Exception {
+		input.setLimit(10);
+		input.setColumns("name,count");
+		InputOutputUtil.copy(input, new PrintOutput());
+	}
 }
