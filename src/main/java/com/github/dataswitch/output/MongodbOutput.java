@@ -90,10 +90,10 @@ public class MongodbOutput extends MongodbProvider implements Output {
 
 	@Override
 	public void write(List<Object> rows) {
-		writeByOutputMode((List)rows);
+		writeByOutputMode((List)rows,outputMode);
 	}
 
-	private void writeByOutputMode(List<Map<String,Object>> rows) {
+	protected void writeByOutputMode(List<Map<String,Object>> rows,OutputMode outputMode) {
 		if(CollectionUtils.isEmpty(rows)) return;
 		
 		if(outputMode == OutputMode.insert) {
