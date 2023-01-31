@@ -42,6 +42,7 @@ public class MongodbInputTest {
 	
 	@Test
 	public void testInput_with_columns() throws Exception {
+		input.setSkip(2);
 		input.setLimit(10);
 		input.setColumns("name,count,_id");
 		InputOutputUtil.copy(input, new PrintOutput());
