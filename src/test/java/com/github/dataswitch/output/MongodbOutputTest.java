@@ -13,15 +13,14 @@ import com.github.dataswitch.util.MapUtil;
 
 public class MongodbOutputTest {
 
+	public static String mongodbUrl = "mongodb://172.17.38.121:27017/?directConnection=true&serverSelectionTimeoutMS=2000";
 	MongodbOutput output = new MongodbOutput();
 	
 	@Before
 	public void before() throws Exception {
-		output.setUrl("mongodb://172.17.38.121:27017/?directConnection=true&serverSelectionTimeoutMS=2000");
+		output.setUrl(mongodbUrl);
 		output.setDatabase("test");
 		output.setCollection("badqiu_test");
-		
-		
 	}
 	
 	@After
