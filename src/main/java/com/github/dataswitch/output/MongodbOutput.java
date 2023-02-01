@@ -21,6 +21,7 @@ import com.github.dataswitch.util.Util;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.DeleteOptions;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
 import com.mongodb.client.model.UpdateOptions;
@@ -102,19 +103,20 @@ public class MongodbOutput extends MongodbProvider implements Output {
 			List<Document> documents = toDocuments(rows);
 			_mongoCollection.insertMany(documents);
 		}else if(outputMode == OutputMode.replace) {
+			ReplaceOptions replaceOptions = new ReplaceOptions().upsert(true);
 			for(Map<String,Object> row : rows) {
-				ReplaceOptions upsert = new ReplaceOptions().upsert(true);
-				_mongoCollection.replaceOne(getFilter(row), getDocByColumns(row),upsert);
+				_mongoCollection.replaceOne(getFilter(row), getDocByColumns(row),replaceOptions);
 			}
 		}else if(outputMode == OutputMode.update) {
+			UpdateOptions updateOptions = new UpdateOptions();
 			for(Map<String,Object> row : rows) {
 				Document doc = getDocByColumns(row);
-				UpdateOptions updateOptions = new UpdateOptions();
 				_mongoCollection.updateOne(getFilter(row), new Document("$set",doc),updateOptions);
 			}
 		}else if(outputMode == OutputMode.delete) {
+			DeleteOptions deleteOptions = new DeleteOptions();
 			for(Map<String,Object> row : rows) {
-				_mongoCollection.deleteOne(getFilter(row));
+				_mongoCollection.deleteOne(getFilter(row),deleteOptions);
 			}
 		}else {
 			throw new UnsupportedOperationException("unsupport outputMode:"+outputMode);
