@@ -129,14 +129,23 @@ public class MongodbOutput extends MongodbProvider implements Output {
 		return new Document(doc);
 	}
 
+	static final String[] mongodbDefaultId = new String[] {"_id"};
 	private Bson getFilter(Map<String,Object> row) {
+		
 		if(whereFunction != null) {
 			return whereFunction.apply(row);
+		}
+		
+		Object mongodbId = row.get("_id");
+		if(mongodbId != null) {
+			return getPrimaryKeysFilter(row,mongodbDefaultId);
 		}
 		
 		if(ArrayUtils.isNotEmpty(_primaryKeysArray)) {
 			return getPrimaryKeysFilter(row,_primaryKeysArray);
 		}
+		
+		
 		
 //		if(StringUtils.isNotBlank(whereJson)) {
 //			return Document.parse(whereJson);
