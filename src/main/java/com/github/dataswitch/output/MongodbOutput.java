@@ -22,6 +22,8 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.ReplaceOptions;
+import com.mongodb.client.model.UpdateOptions;
 
 public class MongodbOutput extends MongodbProvider implements Output {
 	private OutputMode outputMode = OutputMode.insert;
@@ -35,9 +37,9 @@ public class MongodbOutput extends MongodbProvider implements Output {
 	private String columns; //要写入的列
 	private String[] _columnsArray; //要写入的列
 
-	private MongoClient _client;
-	private MongoDatabase _database = null;
-	private MongoCollection<Document> _mongoCollection;
+	MongoClient _client;
+	MongoDatabase _database = null;
+	MongoCollection<Document> _mongoCollection;
 	
 	
 	public OutputMode getOutputMode() {
@@ -101,12 +103,14 @@ public class MongodbOutput extends MongodbProvider implements Output {
 			_mongoCollection.insertMany(documents);
 		}else if(outputMode == OutputMode.replace) {
 			for(Map<String,Object> row : rows) {
-				_mongoCollection.replaceOne(getFilter(row), getDocByColumns(row));
+				ReplaceOptions upsert = new ReplaceOptions().upsert(true);
+				_mongoCollection.replaceOne(getFilter(row), getDocByColumns(row),upsert);
 			}
 		}else if(outputMode == OutputMode.update) {
 			for(Map<String,Object> row : rows) {
 				Document doc = getDocByColumns(row);
-				_mongoCollection.updateOne(getFilter(row), new Document("$set",doc));
+				UpdateOptions updateOptions = new UpdateOptions();
+				_mongoCollection.updateOne(getFilter(row), new Document("$set",doc),updateOptions);
 			}
 		}else if(outputMode == OutputMode.delete) {
 			for(Map<String,Object> row : rows) {
