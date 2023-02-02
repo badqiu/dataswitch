@@ -52,7 +52,7 @@ public class HbaseOutputTest {
 		
 		List rows = new ArrayList<Map>();
 		for(int i = 0; i < dataCount; i++) {
-			Map row = MapUtil.newMap("name","badqiu-"+i,"age",20,"count",i,"time",System.currentTimeMillis());
+			Map row = MapUtil.newMap("name","badqiu-diy-"+i,"age",20,"count",i,"time",System.currentTimeMillis());
 			rows.add(row);
 		}
 		output.write(rows);

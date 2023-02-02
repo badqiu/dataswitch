@@ -64,7 +64,7 @@ public class HbaseProvider extends BaseObject {
 		if(ArrayUtils.isEmpty(bytes)) return null;
 		
 		if(StringUtils.isBlank(columnType)) {
-			return new String(bytes,charset);
+			return guessDataTypeByDataLength(bytes, charset);
 		}
 		
 		if("string".equals(columnType)) {
@@ -84,6 +84,22 @@ public class HbaseProvider extends BaseObject {
 			return Bytes.toBoolean(bytes);
 		}else {
 			return new String(bytes,charset);
+		}
+		
+	}
+
+	public static Object guessDataTypeByDataLength(byte[] bytes, Charset charset) {
+		//guess data type by length
+		if(bytes.length == 8) {
+			return Bytes.toLong(bytes);
+		}else if(bytes.length == 4) {
+			return Bytes.toInt(bytes);
+		}else if(bytes.length == 2) {
+			return (char)Bytes.toShort(bytes);
+		}else if(bytes.length == 1) {
+			return Bytes.toBoolean(bytes);
+		}else {
+			return new String(bytes);
 		}
 	}
 	

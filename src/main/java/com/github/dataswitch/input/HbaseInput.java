@@ -99,6 +99,15 @@ public class HbaseInput  extends HbaseProvider implements Input{
 	public void setScanBatchSize(int scanBatchSize) {
 		this.scanBatchSize = scanBatchSize;
 	}
+	
+	public String getColumnsType() {
+		return columnsType;
+	}
+
+	public void setColumnsType(String columnsType) {
+		this.columnsType = columnsType;
+	}
+	
 
 	protected void initScan(Scan scan) {
     };
