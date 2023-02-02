@@ -24,7 +24,7 @@ public class HbaseInputTest {
 		input.setTable("test_hbase_output");
 //		input.setFamily("f");
 		
-		input.setColumnsTypeByBean(TestHbaseInputBean.class);
+		input.setColumnsType(TestHbaseInputBean.class);
 	}
 	
 	@After

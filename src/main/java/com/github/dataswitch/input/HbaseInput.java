@@ -38,7 +38,10 @@ public class HbaseInput  extends HbaseProvider implements Input{
     protected String encoding = StandardCharsets.UTF_8.name();
     protected int scanCacheSize = Constants.DEFAULT_BUFFER_SIZE;
     protected int  scanBatchSize = Constants.DEFAULT_BUFFER_SIZE;
-
+    
+    private boolean columnWithFamily = false; //读列时，是否加上family名
+    private String familySeperator = ":"; //加上family的列分隔符
+    
     private String columnsType = null; //读数据时的列类型,多行用换行符，如  name=string
 
     protected Result _lastResult = null;
@@ -101,6 +104,22 @@ public class HbaseInput  extends HbaseProvider implements Input{
 		this.scanBatchSize = scanBatchSize;
 	}
 	
+	public boolean isColumnWithFamily() {
+		return columnWithFamily;
+	}
+
+	public void setColumnWithFamily(boolean columnWithFamily) {
+		this.columnWithFamily = columnWithFamily;
+	}
+
+	public String getFamilySeperator() {
+		return familySeperator;
+	}
+
+	public void setFamilySeperator(String familySeperator) {
+		this.familySeperator = familySeperator;
+	}
+	
 	public String getColumnsType() {
 		return columnsType;
 	}
@@ -109,12 +128,7 @@ public class HbaseInput  extends HbaseProvider implements Input{
 		this.columnsType = columnsType;
 	}
 	
-	public void setColumnsTypeByBean(Class columnsType) {
-		PropertyDescriptor[] pdList = org.springframework.beans.BeanUtils.getPropertyDescriptors(columnsType);
-		Properties props = new Properties();
-		for(PropertyDescriptor pd : pdList) {
-			props.setProperty(pd.getName(), pd.getPropertyType().getSimpleName().toLowerCase());
-		}
+	public void setColumnsType(Properties props) {
 		StringWriter propsString = new StringWriter();
 		try {
 			props.store(propsString, "");
@@ -122,8 +136,20 @@ public class HbaseInput  extends HbaseProvider implements Input{
 			throw new RuntimeException(e);
 		}
 		
-		this.columnsType = propsString.toString();
+		setColumnsType(propsString.toString());
 	}
+	
+	public void setColumnsType(Class columnsType) {
+		PropertyDescriptor[] pdList = org.springframework.beans.BeanUtils.getPropertyDescriptors(columnsType);
+		Properties props = new Properties();
+		for(PropertyDescriptor pd : pdList) {
+			props.setProperty(pd.getName(), pd.getPropertyType().getSimpleName().toLowerCase());
+		}
+		
+		setColumnsType(props);
+	}
+
+
 
 	protected void initScan(Scan scan) {
     };
@@ -235,8 +261,11 @@ public class HbaseInput  extends HbaseProvider implements Input{
 			if(value == null) {
 				return;
 			}
-			
-			resultMap.put(key, value);
+			if(columnWithFamily) {
+				resultMap.put(family + familySeperator + key, value);
+			}else {
+				resultMap.put(key, value);
+			}
 		});
 		
 		return resultMap;
