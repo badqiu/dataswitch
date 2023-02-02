@@ -37,7 +37,6 @@ import com.github.dataswitch.util.PropertiesUtil;
 
 public class HbaseProvider extends BaseObject {
 	private String hbaseConfig;
-	private String zookeeperZnodeParent = "/hbase";
 	private String table;
 
 	Connection _connection = null;
