@@ -117,10 +117,11 @@ public class HbaseInput  extends HbaseProvider implements Input{
 		}
 		StringWriter propsString = new StringWriter();
 		try {
-			props.store(new StringWriter(), "");
+			props.store(propsString, "");
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+		
 		this.columnsType = propsString.toString();
 	}
 
@@ -216,7 +217,6 @@ public class HbaseInput  extends HbaseProvider implements Input{
 		if(result == null) return null;
 		
 		NavigableMap<byte[], byte[]> familyMap = result.getFamilyMap(Bytes.toBytes(family));
-		System.out.println("familyMap:"+familyMap);
 		return convertByColumnType(familyMap);
 	}
 
@@ -226,7 +226,6 @@ public class HbaseInput  extends HbaseProvider implements Input{
 		familyMap.forEach((k,v) -> {
 			String key = new String(k,_charset);
 			Object value = getValueByColumnType(key,v);
-			System.out.println("key="+key+" v="+v+" value="+value);
 			if(value == null) {
 				return;
 			}

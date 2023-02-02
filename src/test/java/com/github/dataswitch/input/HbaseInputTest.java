@@ -1,5 +1,7 @@
 package com.github.dataswitch.input;
 
+import java.util.Date;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,19 +41,27 @@ public class HbaseInputTest {
 	
 	public static class TestHbaseInputBean {
 		private String name;
-		private long time;
+		private Date time;
+		private char count;
 		public String getName() {
 			return name;
 		}
 		public void setName(String name) {
 			this.name = name;
 		}
-		public long getTime() {
+		public Date getTime() {
 			return time;
 		}
-		public void setTime(long time) {
+		public void setTime(Date time) {
 			this.time = time;
 		}
+		public char getCount() {
+			return count;
+		}
+		public void setCount(char count) {
+			this.count = count;
+		}
+		
 		
 	}
 

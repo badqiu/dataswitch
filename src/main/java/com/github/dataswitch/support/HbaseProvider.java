@@ -70,6 +70,10 @@ public class HbaseProvider extends BaseObject {
 			return new String(bytes,charset);
 		}else if("int".equals(columnType)) {
 			return Bytes.toInt(bytes);
+		}else if("integer".equals(columnType)) {
+			return Bytes.toInt(bytes);			
+		}else if("char".equals(columnType)) {
+			return (char)Bytes.toShort(bytes);			
 		}else if("long".equals(columnType)) {
 			return Bytes.toLong(bytes);
 		}else if("date".equals(columnType)) {
