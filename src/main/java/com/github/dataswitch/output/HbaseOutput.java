@@ -42,11 +42,12 @@ public class HbaseOutput extends HbaseProvider implements Output{
 	private String columns; //要写入的hbase列，可为空，为空将输入值全部写入
 	
 	private String rowkeyColumn = "rowkey";
-	private String versionColumn; //版本列，timestamp列
+	private String versionColumn; //版本列，timestamp列,可选
 	private String encoding = StandardCharsets.UTF_8.name();
+	
 	private boolean skipWal = false; //关闭WAL日志写入，可以提升性能，但存在数据丢失风险
 	private boolean skipNull = true; //是否忽略null值，不忽略将填写byte[0]作为null值
-	private boolean createTable = false;
+	private boolean createTable = false; //是否hbase 建表
 	private int writeBufferSize = Constants.DEFAULT_BUFFER_SIZE; //批量写入的大小
 	private OutputMode outputMode = OutputMode.replace;
 	
