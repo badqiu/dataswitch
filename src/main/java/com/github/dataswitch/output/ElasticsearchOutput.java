@@ -178,15 +178,15 @@ public class ElasticsearchOutput implements Output{
 			return request;
 		}if(outputMode == OutputMode.update) {
 			String id = (String)row.get(primaryKey);
-			if(StringUtils.isEmpty(id)) {
-				Assert.hasText(id,"not found id value by primaryKey:"+primaryKey+" on row:"+row);
+			if(StringUtils.isBlank(id)) {
+				throw new IllegalArgumentException("not found id value by primaryKey:"+primaryKey+" on row:"+row);
 			}
 			UpdateRequest request = new UpdateRequest(index,id);
 			return request;
 		}else if(outputMode == OutputMode.delete) {
 			String id = (String)row.get(primaryKey);
-			if(StringUtils.isEmpty(id)) {
-				Assert.hasText(id,"not found id value by primaryKey:"+primaryKey+" on row:"+row);
+			if(StringUtils.isBlank(id)) {
+				throw new IllegalArgumentException("not found id value by primaryKey:"+primaryKey+" on row:"+row);
 			}
 			DeleteRequest request = new DeleteRequest(index,id);
 			return request;
