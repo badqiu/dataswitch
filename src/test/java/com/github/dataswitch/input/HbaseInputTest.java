@@ -22,7 +22,7 @@ public class HbaseInputTest {
 		System.out.println("--------------------------------------:" + input);
 		input.setHbaseConfig(HbaseOutputTest.hbaseConfig);
 		input.setTable("test_hbase_output");
-		input.setFamily("f");
+//		input.setFamily("f");
 		
 		input.setColumnsTypeByBean(TestHbaseInputBean.class);
 	}
