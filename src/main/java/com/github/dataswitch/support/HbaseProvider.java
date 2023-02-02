@@ -95,7 +95,7 @@ public class HbaseProvider extends BaseObject {
 		}else if(bytes.length == 2) {
 			return (char)Bytes.toShort(bytes);
 		}else if(bytes.length == 4) {
-			return Bytes.toInt(bytes);
+			return Bytes.toInt(bytes); //错误的概率太大了，有可能是4个字符的字符串
 		}else if(bytes.length == 8) { 
 			return Bytes.toLong(bytes); //错误的概率太大了，有可能是8个字符的字符串
 		}else {
