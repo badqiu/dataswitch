@@ -253,8 +253,6 @@ public class HbaseOutput extends HbaseProvider implements Output{
     }
 
 	private void addColumnForPut(Put put, String columnName,Object columnValueObject) {
-		byte[] columnNameBytes = null;
-		
 		byte[] columnValueBytes = getColumnBytes(columnValueObject);
 		
 		if(columnValueBytes == null) {
@@ -265,7 +263,7 @@ public class HbaseOutput extends HbaseProvider implements Output{
 			}
 		}
 		
-		columnNameBytes = Bytes.toBytes(columnName);
+		byte[] columnNameBytes = Bytes.toBytes(columnName);
 		put.addColumn(Bytes.toBytes(family),columnNameBytes,columnValueBytes);
 	}
 
