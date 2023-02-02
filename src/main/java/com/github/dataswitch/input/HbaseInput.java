@@ -50,8 +50,57 @@ public class HbaseInput  extends HbaseProvider implements Input{
     private Charset _charset = null;
     private Properties _columnsType = null;
     
+    
 
-    protected void initScan(Scan scan) {
+    public String getFamily() {
+		return family;
+	}
+
+	public void setFamily(String family) {
+		this.family = family;
+	}
+
+	public String getStartKey() {
+		return startKey;
+	}
+
+	public void setStartKey(String startKey) {
+		this.startKey = startKey;
+	}
+
+	public String getEndKey() {
+		return endKey;
+	}
+
+	public void setEndKey(String endKey) {
+		this.endKey = endKey;
+	}
+
+	public String getEncoding() {
+		return encoding;
+	}
+
+	public void setEncoding(String encoding) {
+		this.encoding = encoding;
+	}
+
+	public int getScanCacheSize() {
+		return scanCacheSize;
+	}
+
+	public void setScanCacheSize(int scanCacheSize) {
+		this.scanCacheSize = scanCacheSize;
+	}
+
+	public int getScanBatchSize() {
+		return scanBatchSize;
+	}
+
+	public void setScanBatchSize(int scanBatchSize) {
+		this.scanBatchSize = scanBatchSize;
+	}
+
+	protected void initScan(Scan scan) {
     };
 
     public void prepare() throws Exception {
@@ -143,22 +192,25 @@ public class HbaseInput  extends HbaseProvider implements Input{
 		if(result == null) return null;
 		
 		NavigableMap<byte[], byte[]> familyMap = result.getFamilyMap(Bytes.toBytes(family));
-		
+		System.out.println("familyMap:"+familyMap);
 		return convertByColumnType(familyMap);
 	}
 
 	private Map convertByColumnType(NavigableMap<byte[], byte[]> familyMap) {
-		Map map = new HashMap(familyMap.size() * 2);
+		Map resultMap = new HashMap(familyMap.size() * 2);
+		
 		familyMap.forEach((k,v) -> {
 			String key = new String(k,_charset);
 			Object value = getValueByColumnType(key,v);
+			System.out.println("key="+key+" v="+v+" value="+value);
 			if(value == null) {
 				return;
 			}
 			
-			map.put(key, value);
+			resultMap.put(key, value);
 		});
-		return familyMap;
+		
+		return resultMap;
 	}
 
 	private Object getValueByColumnType(String key, byte[] bytes) {

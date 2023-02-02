@@ -246,10 +246,13 @@ public class HbaseOutput extends HbaseProvider implements Output{
 		byte[] columnNameBytes = null;
 		
 		byte[] columnValueBytes = getColumnBytes(columnValueObject);
-		if(skipNull && columnValueBytes == null) {
-			return;
-		}else {
-			columnValueBytes = HConstants.EMPTY_BYTE_ARRAY;
+		
+		if(columnValueBytes == null) {
+			if(skipNull) {
+				return;
+			}else {
+				columnValueBytes = HConstants.EMPTY_BYTE_ARRAY;
+			}
 		}
 		
 		columnNameBytes = Bytes.toBytes(columnName);

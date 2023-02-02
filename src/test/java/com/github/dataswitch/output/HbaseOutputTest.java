@@ -17,9 +17,10 @@ public class HbaseOutputTest {
 	public static String mongodbUrl = "mongodb://172.17.38.121:27017/?directConnection=true&serverSelectionTimeoutMS=2000";
 	HbaseOutput output = new HbaseOutput();
 	int dataCount = 5;
+	public static String hbaseConfig = "hbase.zookeeper.quorum=172.17.38.121:2181";
 	@Before
 	public void before() throws Exception {
-		output.setHbaseConfig("hbase.zookeeper.quorum=172.17.38.121:2181");
+		output.setHbaseConfig(hbaseConfig);
 		output.setTable("test_hbase_output");
 		output.setCreateTable(true);
 		output.setFamily("f");
