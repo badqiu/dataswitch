@@ -10,11 +10,22 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hbase.HConstants;
+import org.apache.hadoop.hbase.KeepDeletedCells;
+import org.apache.hadoop.hbase.MemoryCompactionPolicy;
+import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.BufferedMutator;
+import org.apache.hadoop.hbase.client.ColumnFamilyDescriptor;
+import org.apache.hadoop.hbase.client.ColumnFamilyDescriptorBuilder;
 import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Durability;
+import org.apache.hadoop.hbase.client.MobCompactPartitionPolicy;
 import org.apache.hadoop.hbase.client.Mutation;
 import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.client.TableDescriptorBuilder;
+import org.apache.hadoop.hbase.io.compress.Compression.Algorithm;
+import org.apache.hadoop.hbase.io.encoding.DataBlockEncoding;
+import org.apache.hadoop.hbase.io.encoding.IndexBlockEncoding;
+import org.apache.hadoop.hbase.regionserver.BloomType;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.springframework.util.Assert;
 
@@ -33,6 +44,7 @@ public class HbaseOutput extends HbaseProvider implements Output{
 	private String encoding = StandardCharsets.UTF_8.name();
 	private boolean skipWal = false; //关闭WAL日志写入，可以提升性能，但存在数据丢失风险
 	private boolean skipNull = true; //是否忽略null值，不忽略将填写byte[0]作为null值
+	private boolean createTable = false;
 	private int writeBufferSize = Constants.DEFAULT_BUFFER_SIZE; //批量写入的大小
 	private OutputMode outputMode = OutputMode.replace;
 	
@@ -111,16 +123,59 @@ public class HbaseOutput extends HbaseProvider implements Output{
 	public void setOutputMode(OutputMode outputMode) {
 		this.outputMode = outputMode;
 	}
+	
+	public boolean isCreateTable() {
+		return createTable;
+	}
+
+	public void setCreateTable(boolean createTable) {
+		this.createTable = createTable;
+	}
 
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
-		_bufferedMutator = getBufferedMutator(getHbaseConfig(),getTable(),writeBufferSize);
-		_columnsArray = Util.splitColumns(columns);
-		_charset = Charset.forName(encoding);
 		Assert.hasText(rowkeyColumn,"rowkeyColumn must be not blank");
 		Assert.hasText(family,"family must be not blank");
+
+		_columnsArray = Util.splitColumns(columns);
+		_charset = Charset.forName(encoding);
+		
+		if(createTable) {
+			executeCreateHbaseTable();
+		}
+		
+		_bufferedMutator = getBufferedMutator(getHbaseConfig(),getTable(),writeBufferSize);
 	}
 	
+	private void executeCreateHbaseTable() {
+		executeCreateHbaseTable(getHbaseConfig(),getTable(),getFamily());
+	}
+
+	private void executeCreateHbaseTable(String hbaseConfig,String table,String family) {
+		org.apache.hadoop.conf.Configuration hConfiguration = getHbaseConfiguration(hbaseConfig);
+		org.apache.hadoop.hbase.client.Connection hConnection = getHbaseConnection(hbaseConfig);
+		TableName hTableName = TableName.valueOf(table);
+		org.apache.hadoop.hbase.client.Admin admin = null;
+		BufferedMutator bufferedMutator = null;
+		try {
+			admin = hConnection.getAdmin();
+			if (admin.tableExists(hTableName)) {
+				return;
+			}
+			
+			TableDescriptorBuilder builder = TableDescriptorBuilder.newBuilder(hTableName);
+			ColumnFamilyDescriptorBuilder cbuilder = ColumnFamilyDescriptorBuilder.newBuilder(family.getBytes());
+			builder.setColumnFamily(cbuilder.build());
+			admin.createTable(builder.build());
+			checkHbaseTable(admin, hTableName);
+		} catch (Exception e) {
+			InputOutputUtil.close(bufferedMutator);
+			InputOutputUtil.close(admin);
+			InputOutputUtil.close(hConnection);
+			throw new IllegalStateException("executeCreateHbaseTable error,userTable:" + table, e);
+		}
+	}
+
 	@Override
 	public void flush() throws IOException {
 		if(_bufferedMutator != null) {

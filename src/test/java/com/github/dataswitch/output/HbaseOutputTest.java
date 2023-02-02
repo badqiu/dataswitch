@@ -1,31 +1,32 @@
 package com.github.dataswitch.output;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.bson.Document;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.github.dataswitch.enums.OutputMode;
 import com.github.dataswitch.util.MapUtil;
-import com.mongodb.client.FindIterable;
 
-public class MongodbOutputTest {
+public class HbaseOutputTest {
 
 	public static String mongodbUrl = "mongodb://172.17.38.121:27017/?directConnection=true&serverSelectionTimeoutMS=2000";
-	MongodbOutput output = new MongodbOutput();
+	HbaseOutput output = new HbaseOutput();
 	int dataCount = 5;
 	@Before
 	public void before() throws Exception {
-		output.setUrl(mongodbUrl);
-		output.setDatabase("test");
-		output.setCollection("badqiu_test");
+		output.setHbaseConfig("hbase.zookeeper.quorum=172.17.38.121:2181");
+		output.setTable("test_hbase_output");
+		output.setCreateTable(true);
+		output.setFamily("f");
+		output.setRowkeyColumn("name");
+		output.setVersionColumn("time");
+		output.setSkipNull(false);
+		output.setSkipWal(true);
 	}
 	
 	@After
@@ -41,40 +42,24 @@ public class MongodbOutputTest {
 		}
 	}
 	
-	@Test
-	public void testWrite() throws Exception {
-		writeByOutputMode(OutputMode.insert);
-		assertEquals(0,writeByOutputMode(OutputMode.delete));
-		
-		output._mongoCollection.deleteMany(new Document());
-		assertEquals(dataCount,writeByOutputMode(OutputMode.insert));
-		
-		output._mongoCollection.deleteMany(new Document());
-		assertEquals(dataCount,writeByOutputMode(OutputMode.replace));
-		
-		output._mongoCollection.deleteMany(new Document());
-		assertEquals(0,writeByOutputMode(OutputMode.update));
-	}
 
-	private int writeByOutputMode(OutputMode outputMode) throws Exception {
+
+	private void writeByOutputMode(OutputMode outputMode) throws Exception {
 		System.out.println("============= "+ outputMode);
-		output.setPrimaryKeys("name");
 		output.setOutputMode(outputMode);
 		output.open(null);
 		
 		List rows = new ArrayList<Map>();
 		for(int i = 0; i < dataCount; i++) {
-			long now = System.currentTimeMillis();
-			Map row = MapUtil.newMap("name","badqiu-"+i,"age",20,"count",i,"birthDate",new java.sql.Date(now));
+			Map row = MapUtil.newMap("name","badqiu-"+i,"age",20,"count",i,"time",System.currentTimeMillis());
 			rows.add(row);
 		}
 		output.write(rows);
 		
-		FindIterable<Document> find = output._mongoCollection.find();
-		return print(find);
+		print(rows);
 	}
 
-	private int print(FindIterable<Document> find) {
+	private int print(List<Object> find) {
 		final AtomicInteger count = new AtomicInteger();
 		find.forEach((item) -> {
 			System.out.println("item:"+item);

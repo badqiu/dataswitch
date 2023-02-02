@@ -250,7 +250,7 @@ public class HbaseProvider extends BaseObject {
 		}
 	}
 
-	private static void checkHbaseTable(Admin admin, TableName hTableName) throws IOException {
+	public static void checkHbaseTable(Admin admin, TableName hTableName) throws IOException {
 		if (!admin.tableExists(hTableName)) {
 			throw new IllegalStateException("HBase源头表" + hTableName.toString() + "不存在, 请检查您的配置 或者 联系 Hbase 管理员.");
 		}
