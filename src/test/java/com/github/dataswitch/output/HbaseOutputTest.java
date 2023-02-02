@@ -28,6 +28,7 @@ public class HbaseOutputTest {
 		output.setVersionColumn("time");
 		output.setSkipNull(false);
 		output.setSkipWal(true);
+		
 	}
 	
 	@After

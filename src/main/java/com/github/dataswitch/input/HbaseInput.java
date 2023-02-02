@@ -1,10 +1,11 @@
 package com.github.dataswitch.input;
 
+import java.beans.PropertyDescriptor;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -108,6 +109,20 @@ public class HbaseInput  extends HbaseProvider implements Input{
 		this.columnsType = columnsType;
 	}
 	
+	public void setColumnsTypeByBean(Class columnsType) {
+		PropertyDescriptor[] pdList = org.springframework.beans.BeanUtils.getPropertyDescriptors(columnsType);
+		Properties props = new Properties();
+		for(PropertyDescriptor pd : pdList) {
+			props.setProperty(pd.getName(), pd.getPropertyType().getSimpleName().toLowerCase());
+		}
+		StringWriter propsString = new StringWriter();
+		try {
+			props.store(new StringWriter(), "");
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		this.columnsType = propsString.toString();
+	}
 
 	protected void initScan(Scan scan) {
     };
