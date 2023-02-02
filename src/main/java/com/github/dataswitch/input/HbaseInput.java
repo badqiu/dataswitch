@@ -216,11 +216,17 @@ public class HbaseInput  extends HbaseProvider implements Input{
 	protected Map result2Map(Result result) {
 		if(result == null) return null;
 		
-		NavigableMap<byte[], byte[]> familyMap = result.getFamilyMap(Bytes.toBytes(family));
-		return convertByColumnType(familyMap);
+//		NavigableMap<byte[], byte[]> familyMap = result.getFamilyMap(Bytes.toBytes(family));
+//		return convertByColumnType(familyMap);
+		Map resultMap = new HashMap();
+		result.getNoVersionMap().forEach((f,bytesFamilyMap) -> {
+			Map familyMap = convertByColumnType(new String(f,_charset),bytesFamilyMap);
+			resultMap.putAll(familyMap);
+		});
+		return resultMap;
 	}
 
-	private Map convertByColumnType(NavigableMap<byte[], byte[]> familyMap) {
+	private Map convertByColumnType(String family,NavigableMap<byte[], byte[]> familyMap) {
 		Map resultMap = new HashMap(familyMap.size() * 2);
 		
 		familyMap.forEach((k,v) -> {
