@@ -6,12 +6,18 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
+import org.elasticsearch.action.DocWriteRequest;
 import org.elasticsearch.action.admin.indices.flush.FlushRequest;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.IndicesClient;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
@@ -19,8 +25,9 @@ import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.CreateIndexResponse;
-import org.springframework.util.StringUtils;
+import org.springframework.util.Assert;
 
+import com.github.dataswitch.enums.OutputMode;
 import com.github.dataswitch.util.InputOutputUtil;
 
 public class ElasticsearchOutput implements Output{
@@ -39,8 +46,13 @@ public class ElasticsearchOutput implements Output{
 	private int retryInterval;
 	private String settings; // {"index" :{"number_of_shards": 1, "number_of_replicas": 0}};
 	private String columns; //要写的列
+	private String primaryKey;
+	
 	private boolean dropIndex; //写入前，删除索引
+	private boolean createIndex;
 	private boolean ignoreWriteError;
+	
+	private OutputMode outputMode = OutputMode.replace;
 	
 	
 	private RestHighLevelClient _client;
@@ -84,7 +96,7 @@ public class ElasticsearchOutput implements Output{
         restClient.setPathPrefix(connectionPathPrefix);
         
     
-		if(StringUtils.isEmpty(username)) {
+		if(StringUtils.isBlank(username)) {
         	client = new RestHighLevelClient(restClient);
         }else {
         	final BasicCredentialsProvider basicCredentialsProvider = new BasicCredentialsProvider();
@@ -106,7 +118,7 @@ public class ElasticsearchOutput implements Output{
     }
 
 	private static HttpHost[] newHttpHostArray(String hosts) {
-		String[] hostList = StringUtils.tokenizeToStringArray(hosts, ",; \t\n");
+		String[] hostList = org.springframework.util.StringUtils.tokenizeToStringArray(hosts, ",; \t\n");
 		List<HttpHost> result = new ArrayList<HttpHost>();
 		for(String host : hostList) {
 			HttpHost item = HttpHost.create(host);
@@ -127,8 +139,19 @@ public class ElasticsearchOutput implements Output{
 	private void write0(List<Map> rows) throws IOException {
 		if(CollectionUtils.isEmpty(rows)) return;
     	
-		IndicesClient indicesClient = _client.indices();
+//		writeBySingleAction(rows);
 		
+		BulkRequest bulkRequest = new BulkRequest();
+		for(Map row : rows) {
+			DocWriteRequest request = getRequestByOutputMode(outputMode,row);
+			bulkRequest.add(request);
+		}
+		
+		_client.bulk(bulkRequest, RequestOptions.DEFAULT);
+	}
+
+	private void writeBySingleAction(List<Map> rows) throws IOException {
+		IndicesClient indicesClient = _client.indices();
 		for(Map row : rows) {
 	    	CreateIndexRequest request = new CreateIndexRequest(index);
 	    	
@@ -139,10 +162,39 @@ public class ElasticsearchOutput implements Output{
 	    	
 	    	request.mapping(row);
 			CreateIndexResponse createIndexResponse = indicesClient.create(request, RequestOptions.DEFAULT);
-			
     	}
 	}
 	
+	private DocWriteRequest getRequestByOutputMode(OutputMode outputMode2, Map row) {
+		if(outputMode == OutputMode.replace || outputMode == OutputMode.insert) {
+			IndexRequest request = new IndexRequest(index);
+			
+			if(org.apache.commons.lang3.StringUtils.isNotBlank(primaryKey)) {
+				String id = (String)row.get(primaryKey);
+				request.id(id);
+			}
+			
+			request.source(row);
+			return request;
+		}if(outputMode == OutputMode.update) {
+			String id = (String)row.get(primaryKey);
+			if(StringUtils.isEmpty(id)) {
+				Assert.hasText(id,"not found id value by primaryKey:"+primaryKey+" on row:"+row);
+			}
+			UpdateRequest request = new UpdateRequest(index,id);
+			return request;
+		}else if(outputMode == OutputMode.delete) {
+			String id = (String)row.get(primaryKey);
+			if(StringUtils.isEmpty(id)) {
+				Assert.hasText(id,"not found id value by primaryKey:"+primaryKey+" on row:"+row);
+			}
+			DeleteRequest request = new DeleteRequest(index,id);
+			return request;
+		}else {
+			throw new UnsupportedOperationException("Unsupported outputMode:"+outputMode);
+		}
+	}
+
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
 		_client = makeConnection();
