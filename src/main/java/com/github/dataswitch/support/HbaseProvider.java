@@ -90,16 +90,16 @@ public class HbaseProvider extends BaseObject {
 
 	public static Object guessDataTypeByDataLength(byte[] bytes, Charset charset) {
 		//guess data type by length
-		if(bytes.length == 8) {
-			return Bytes.toLong(bytes);
-		}else if(bytes.length == 4) {
-			return Bytes.toInt(bytes);
+		if(bytes.length == 1) {
+			return Bytes.toBoolean(bytes);
 		}else if(bytes.length == 2) {
 			return (char)Bytes.toShort(bytes);
-		}else if(bytes.length == 1) {
-			return Bytes.toBoolean(bytes);
+		}else if(bytes.length == 4) {
+			return Bytes.toInt(bytes);
+		}else if(bytes.length == 8) { 
+			return Bytes.toLong(bytes); //错误的概率太大了，有可能是8个字符的字符串
 		}else {
-			return new String(bytes);
+			return new String(bytes,charset);
 		}
 	}
 	
