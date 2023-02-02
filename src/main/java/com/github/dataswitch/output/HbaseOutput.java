@@ -21,6 +21,7 @@ import org.apache.hadoop.hbase.client.Durability;
 import org.apache.hadoop.hbase.client.MobCompactPartitionPolicy;
 import org.apache.hadoop.hbase.client.Mutation;
 import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.client.TableDescriptor;
 import org.apache.hadoop.hbase.client.TableDescriptorBuilder;
 import org.apache.hadoop.hbase.io.compress.Compression.Algorithm;
 import org.apache.hadoop.hbase.io.encoding.DataBlockEncoding;
@@ -37,8 +38,9 @@ import com.github.dataswitch.util.Util;
 
 public class HbaseOutput extends HbaseProvider implements Output{
 
-	private String family;
+	private String family; //要写入的hbase family,必填
 	private String columns; //要写入的hbase列，可为空，为空将输入值全部写入
+	
 	private String rowkeyColumn = "rowkey";
 	private String versionColumn; //版本列，timestamp列
 	private String encoding = StandardCharsets.UTF_8.name();
@@ -148,10 +150,10 @@ public class HbaseOutput extends HbaseProvider implements Output{
 	}
 	
 	private void executeCreateHbaseTable() {
-		executeCreateHbaseTable(getHbaseConfig(),getTable(),getFamily());
+		executeCreateHbaseTableIfNotExists(getHbaseConfig(),getTable(),getFamily());
 	}
 
-	private void executeCreateHbaseTable(String hbaseConfig,String table,String family) {
+	public static void executeCreateHbaseTableIfNotExists(String hbaseConfig,String table,String family) {
 		org.apache.hadoop.conf.Configuration hConfiguration = getHbaseConfiguration(hbaseConfig);
 		org.apache.hadoop.hbase.client.Connection hConnection = getHbaseConnection(hbaseConfig);
 		TableName hTableName = TableName.valueOf(table);
@@ -163,10 +165,8 @@ public class HbaseOutput extends HbaseProvider implements Output{
 				return;
 			}
 			
-			TableDescriptorBuilder builder = TableDescriptorBuilder.newBuilder(hTableName);
-			ColumnFamilyDescriptorBuilder cbuilder = ColumnFamilyDescriptorBuilder.newBuilder(family.getBytes());
-			builder.setColumnFamily(cbuilder.build());
-			admin.createTable(builder.build());
+			TableDescriptor tableDesc = TableDescriptor(hTableName, family);
+			admin.createTable(tableDesc);
 			checkHbaseTable(admin, hTableName);
 		} catch (Exception e) {
 			InputOutputUtil.close(bufferedMutator);
@@ -174,6 +174,15 @@ public class HbaseOutput extends HbaseProvider implements Output{
 			InputOutputUtil.close(hConnection);
 			throw new IllegalStateException("executeCreateHbaseTable error,userTable:" + table, e);
 		}
+	}
+
+	private static TableDescriptor TableDescriptor(TableName hTableName, String family) {
+		TableDescriptorBuilder builder = TableDescriptorBuilder.newBuilder(hTableName);
+		
+		ColumnFamilyDescriptorBuilder columnFamily = ColumnFamilyDescriptorBuilder.newBuilder(family.getBytes());
+		builder.setColumnFamily(columnFamily.build());
+		
+		return builder.build();
 	}
 
 	@Override
