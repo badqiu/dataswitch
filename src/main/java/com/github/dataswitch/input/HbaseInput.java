@@ -34,12 +34,12 @@ public class HbaseInput  extends HbaseProvider implements Input{
 	private String family = null;
     private String startKey = null;
     private String endKey = null;
-    private String columnsType = null;
     
-
     protected String encoding = StandardCharsets.UTF_8.name();
     protected int scanCacheSize = Constants.DEFAULT_BUFFER_SIZE;
     protected int  scanBatchSize = Constants.DEFAULT_BUFFER_SIZE;
+
+    private String columnsType = null; //读数据时的列类型,多行用换行符，如  name=string
 
     protected Result _lastResult = null;
     protected Scan _scan;
