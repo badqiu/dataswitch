@@ -480,6 +480,8 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 		
 		List<List> multiChunkRows = CollectionUtil.chunk(rows, batchSize);
 		
+		Assert.hasText(finalSql,"finalSql must be no blank");
+		
 		try {
 			failMode.forEach(multiChunkRows,executeWithJdbc(finalSql));
 		}catch(Exception e) {
@@ -492,7 +494,7 @@ public class JdbcOutput extends DataSourceProvider implements Output {
 	}
 
 	private Consumer<List> executeWithJdbc(final String finalSql) {
-		Assert.hasText(finalSql,"finalSql must be no blank");
+		
 		
 		return (finalRows) -> {
 			if(CollectionUtils.isEmpty(finalRows)) {
