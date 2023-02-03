@@ -231,6 +231,9 @@ public class InputOutputUtil {
 	public static CopyResult copy(Input input,Output output,int bufferSize,Processor processor,Map params,FailMode failMode,Consumer<Exception> exceptionHandler) {
 		if(bufferSize <= 0) throw new IllegalArgumentException("bufferSize > 0 must be true");
 		
+		long totalCostTime = 0;
+		long startTime = System.currentTimeMillis();
+
 		openAll(params,input, output, processor);
 		
 		Object lastExceptionData = null;
@@ -240,8 +243,6 @@ public class InputOutputUtil {
 		List<Object> rows = null;
 		long readCostSum = 0;
 		long writeCostSum = 0;
-		long startTime = System.currentTimeMillis();
-		long totalCostTime = 0;
 		try {
 			
 			while(true) {
