@@ -16,6 +16,9 @@ public class Table {
 	String className;
 	/** the name of the owner of the synonym if this table is a synonym */
 	private String ownerSynonymName = null;
+	
+	private String remarks;
+	
 	List columns = new ArrayList();
 	List primaryKeyColumns = new ArrayList();
 
@@ -47,6 +50,12 @@ public class Table {
 		this.sqlName = sqlName;
 	}
 	
+	public String getRemarks() {
+		return remarks;
+	}
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
 	public void addColumn(Column column) {
 		columns.add(column);
 	}

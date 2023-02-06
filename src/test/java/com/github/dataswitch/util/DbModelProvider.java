@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -15,6 +16,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -62,16 +64,32 @@ public class DbModelProvider {
 		String schemaName = rs.getString("TABLE_SCHEM") == null ? "" : rs.getString("TABLE_SCHEM");
 		String realTableName = rs.getString("TABLE_NAME");
 		String tableType = rs.getString("TABLE_TYPE");
+		String remarks = rs.getString("REMARKS");
+		if(StringUtils.isBlank(remarks)) {
+			remarks = getTableRemarks(conn,schemaName,realTableName);
+		}
 		
 		Table table = new Table();
 		table.setSqlName(realTableName);
 		if ("SYNONYM".equals(tableType) && isOracleDataBase()) {
 		    table.setOwnerSynonymName(getSynonymOwner(realTableName));
 		}
+		table.setRemarks(remarks);
 		
 		retriveTableColumns(table);
 		
 		return table;
+	}
+	
+	public String getTableRemarks(Connection conn,String tableSchema,String table) throws SQLException {
+		String sql = "SELECT TABLE_COMMENT FROM INFORMATION_SCHEMA.TABLES WHERE  TABLE_NAME = '"+table+"'";
+		Statement statement = conn.createStatement();
+		ResultSet rs = statement.executeQuery(sql);
+		while (rs.next()) {
+		    String tableRemark = rs.getString(1);
+		    return tableRemark;
+		}
+		return null;
 	}
 	
 	public List<Table> getAllTables(Connection conn) throws SQLException {
