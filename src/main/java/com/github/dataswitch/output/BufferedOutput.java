@@ -37,7 +37,7 @@ public class BufferedOutput extends ProxyOutput{
 	}
 	
 	public BufferedOutput(Output proxy,int bufferSize) {
-		this(proxy,bufferSize,Constants.DEFAULT_BUFFER_TIMEOUT);
+		this(proxy,bufferSize,0);
 	}
 	
 	public BufferedOutput(Output proxy,int bufferSize,int bufferTimeout) {
