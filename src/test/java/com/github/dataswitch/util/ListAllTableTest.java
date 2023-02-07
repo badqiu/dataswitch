@@ -36,7 +36,7 @@ public class ListAllTableTest {
 			
 //			System.out.println(alterTableAddColumnSql);
 			
-			System.out.println(tableName+"="+table.getRemarks());
+			System.out.println(tableName+","+table.getColumns().size()+","+table.getPrimaryKeyColumns().size()+","+table.getRemarks());
 		});;
 		
 		
