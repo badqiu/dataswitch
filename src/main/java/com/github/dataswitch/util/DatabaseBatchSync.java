@@ -10,20 +10,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import com.github.dataswitch.InputsOutputs;
 
 import javax.sql.DataSource;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.AntPathMatcher;
 
 import com.github.dataswitch.BaseObject;
+import com.github.dataswitch.InputsOutputs;
 import com.github.dataswitch.enums.FailMode;
 import com.github.dataswitch.input.JdbcInput;
 import com.github.dataswitch.output.Output;
 import com.github.dataswitch.support.DataSourceProvider;
 
 /**
- * 数据库的批量同步
+ * 数据库的批量表数据同步
  * 
  * @author badqiu
  *
@@ -32,7 +34,7 @@ public class DatabaseBatchSync extends BaseObject implements Function<Map<String
 
 	private DataSourceProvider inputDataSource = new DataSourceProvider();
 	
-	private String includeTables;
+	private String includeTables = "*";
 	private String excludeTables;
 	
 	private Class<Output> outputClass;
@@ -58,17 +60,19 @@ public class DatabaseBatchSync extends BaseObject implements Function<Map<String
 		List<String> tables = getAllTableNames(inputDataSource.getDataSource());
 		tables = filterByIncludeExclude(tables,includeTables,excludeTables);
 		
-		List<InputsOutputs> inputsOutputsList = buildInputsOutputs(tables);
+		List<InputsOutputs> inputsOutputsList = buildInputsOutputsList(tables);
 		
 		List<String> successList = new ArrayList();
 		List<String> errorList = new ArrayList();
 		failMode.forEach(inputsOutputsList, (item) -> {
-			JdbcInput jdbcInput = (JdbcInput)item.getInputs()[0];
+			
+			String table = getTableFromInput0(item);
+			
 			try {
 				item.exec(params);
-				successList.add(jdbcInput.getTable());
+				successList.add(table);
 			}catch(Exception e) {
-				errorList.add(jdbcInput.getTable());
+				errorList.add(table);
 				throw e;
 			}
 		});
@@ -76,7 +80,13 @@ public class DatabaseBatchSync extends BaseObject implements Function<Map<String
 		return new KeyValue(successList,errorList);
 	}
 
-	protected List<InputsOutputs> buildInputsOutputs(List<String> tables)
+	private String getTableFromInput0(InputsOutputs item) {
+		JdbcInput jdbcInput = (JdbcInput)item.getInputs()[0];
+		String table = jdbcInput.getTable();
+		return table;
+	}
+
+	protected List<InputsOutputs> buildInputsOutputsList(List<String> tables)
 			throws Exception {
 		if(CollectionUtils.isEmpty(tables)) {
 			return Collections.EMPTY_LIST;
@@ -129,8 +139,43 @@ public class DatabaseBatchSync extends BaseObject implements Function<Map<String
 		
 	}
 
-	protected List<String> filterByIncludeExclude(List<String> tables, String includeTables2, String excludeTables2) {
-		return tables;
+	protected static List<String> filterByIncludeExclude(List<String> tables, String includeTables, String excludeTables) {
+		List<String> result = new ArrayList<String>();
+		for(String table : tables) {
+			if (isMatchMany(excludeTables,table)) {
+				continue;
+			}
+			if (isMatchMany(includeTables,table)) {
+				result.add(table);
+			}
+		}
+		return result;
+	}
+
+	private static boolean isMatchMany(String matchPatterns, String table) {
+		String[] array = Util.splitColumns(matchPatterns);
+		for(String pattern : array) {
+			if(isMatch(pattern,table)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static AntPathMatcher antPathMatcher = new AntPathMatcher(".");
+	static {
+		antPathMatcher.setTrimTokens(true);
+		antPathMatcher.setCaseSensitive(false);
+	}
+	
+	private static boolean isMatch(String matchPattern, String table) {
+		if(StringUtils.isBlank(table)) return false;
+		
+		if(table.equals(matchPattern)) {
+			return true;
+		}
+		
+		return antPathMatcher.match(matchPattern, table);
 	}
 
 	public static List<String> getAllTableNames(DataSource dataSource) throws SQLException {

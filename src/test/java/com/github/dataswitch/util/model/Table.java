@@ -3,6 +3,7 @@ package com.github.dataswitch.util.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.lucene.util.StringHelper;
 /**
@@ -19,16 +20,16 @@ public class Table {
 	
 	private String remarks;
 	
-	List columns = new ArrayList();
-	List primaryKeyColumns = new ArrayList();
+	List<Column> columns = new ArrayList();
+	List<Column> primaryKeyColumns = new ArrayList();
 
 	public void setClassName(String className) {
 		this.className = className;
 	}
-	public List getColumns() {
+	public List<Column> getColumns() {
 		return columns;
 	}
-	public void setColumns(List columns) {
+	public void setColumns(List<Column> columns) {
 		this.columns = columns;
 	}
 	public String getOwnerSynonymName() {
@@ -96,6 +97,10 @@ public class Table {
 		return null;
 	}
 	
+	
+	public List<Column> getUniqueColumns() {
+		return columns.stream().filter(c->c.isUnique()).collect(Collectors.toList());
+	}
 	
 	
 	public    static final String PKTABLE_NAME  = "PKTABLE_NAME";
