@@ -1,3 +1,5 @@
+字段概念统一:  table,column
+
 集成runner with xstream
 xstream集成参数generator
 JdbcOutput replace数据时，其它数据库，使用insert or update by get data
