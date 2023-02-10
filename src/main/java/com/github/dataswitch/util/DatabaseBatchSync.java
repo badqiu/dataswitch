@@ -38,8 +38,8 @@ public class DatabaseBatchSync extends BaseObject implements Function<Map<String
 	private String includeTables = "*";
 	private String excludeTables;
 	
-	private Class<Output> outputClass;
-	private String outputProps;
+	private Class<Output> outputClass; //输出类
+	private String outputProps; //输出配置属性
 	private FailMode failMode = FailMode.FAIL_AT_END;
 	
 	private String configScript;
@@ -126,19 +126,21 @@ public class DatabaseBatchSync extends BaseObject implements Function<Map<String
 	protected Output buildOutput(JdbcInput input,String tableName) throws Exception {
 		try {
 			Output output = outputClass.newInstance();
-			configOutput(output);
+			configOutput(tableName,output);
 			return output;
 		} catch (Exception e) {
 			throw new RuntimeException("buildOutput error on tableName:"+tableName,e);
 		} 
 	}
 
-	protected void configOutput(Output output) {
+	protected void configOutput(String tableName,Output output) {
 		Properties props = PropertiesUtil.createProperties(outputProps);
+		props.put("table", tableName);
 		BeanUtils.copyProperties(output, props);
 		
 		Map map = new HashMap();
 		map.put("output", output);
+		map.put("table", tableName);
 		
 		ScriptEngineUtil.eval(configLangguage, configScript,map);
 		

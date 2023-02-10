@@ -53,7 +53,7 @@ public class Database2DatabaseBatchSync extends DatabaseBatchSync {
 
 		//jdbcOutput.setColumnsFrom(columnsFrom);
 		//jdbcOutput.failMode(FailMode.FAIL_FAST);
-		configOutput(jdbcOutput);
+		configOutput(tableName,jdbcOutput);
 		return jdbcOutput;
 	}
 
