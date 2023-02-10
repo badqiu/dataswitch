@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.function.Function;
 
 import javax.sql.DataSource;
@@ -38,6 +39,7 @@ public class DatabaseBatchSync extends BaseObject implements Function<Map<String
 	private String excludeTables;
 	
 	private Class<Output> outputClass;
+	private String outputProps;
 	private FailMode failMode = FailMode.FAIL_AT_END;
 	
 	private String configScript;
@@ -132,6 +134,9 @@ public class DatabaseBatchSync extends BaseObject implements Function<Map<String
 	}
 
 	protected void configOutput(Output output) {
+		Properties props = PropertiesUtil.createProperties(outputProps);
+		BeanUtils.copyProperties(output, props);
+		
 		Map map = new HashMap();
 		map.put("output", output);
 		

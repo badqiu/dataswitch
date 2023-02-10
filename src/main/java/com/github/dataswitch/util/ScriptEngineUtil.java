@@ -11,6 +11,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.util.Assert;
 
 public class ScriptEngineUtil {
 	
@@ -57,18 +58,19 @@ public class ScriptEngineUtil {
         return null;
 	}
 	
-	public static ScriptEngine getScriptEngine(String scriptEngineName) {
-		ScriptEngine engine = scriptEngineCache.get(scriptEngineName);
+	public static ScriptEngine getScriptEngine(String language) {
+		Assert.hasText(language,"language must be not blank. like groovy,javascript");
+		ScriptEngine engine = scriptEngineCache.get(language);
 		
 		if(engine == null) {
 			synchronized (ScriptEngineUtil.class) {
-				engine = factory.getEngineByName(scriptEngineName);
-				scriptEngineCache.put(scriptEngineName, engine);
+				engine = factory.getEngineByName(language);
+				scriptEngineCache.put(language, engine);
 			}
 		}
 		
 		if(engine == null)
-			throw new IllegalStateException("not found ScriptEngine by name:"+scriptEngineName);
+			throw new IllegalStateException("not found ScriptEngine by name:"+language);
 		return engine;
 	}
 	
