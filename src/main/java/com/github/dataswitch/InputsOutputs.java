@@ -62,8 +62,6 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 	 */
 	private boolean async = false;
 	
-	/** 是否激活 */
-	private boolean enabled = true;
 	
 	private Map<String,Object> params = new HashMap<String,Object>(); //运行参数，在没有外部参数传递时使用
 	
@@ -169,14 +167,6 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 		return !isAsync();
 	}
 	
-	public boolean isEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-	}
-	
 	public Map<String, Object> getParams() {
 		return params;
 	}
@@ -234,7 +224,7 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 		if(bufferSize <= 0) bufferSize = Constants.DEFAULT_BUFFER_SIZE;
 		if(params == null) params = Collections.EMPTY_MAP;
 		
-		if(!enabled) {
+		if(!isEnabled()) {
 			throw new IllegalStateException("enabled is false, "+info());
 		}
 		
