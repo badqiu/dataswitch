@@ -17,9 +17,10 @@ import org.springframework.util.Assert;
 
 import com.github.dataswitch.serializer.Serializer;
 import com.github.dataswitch.util.CompressUtil;
+import com.github.dataswitch.util.TableName;
 
 
-public class FileOutput extends BaseOutput implements Output {
+public class FileOutput extends BaseOutput implements Output,TableName{
 
 	private static Logger log = LoggerFactory.getLogger(FileOutput.class);
 	
@@ -67,6 +68,12 @@ public class FileOutput extends BaseOutput implements Output {
 	public void setTable(String table) {
 		setFilename(table);
 	}
+	
+	@Override
+	public String getTable() {
+		return getFilename();
+	}
+	
 
 	public Serializer getSerializer() {
 		return serializer;

@@ -29,8 +29,9 @@ import org.springframework.util.Assert;
 
 import com.github.dataswitch.enums.OutputMode;
 import com.github.dataswitch.util.InputOutputUtil;
+import com.github.dataswitch.util.TableName;
 
-public class ElasticsearchOutput implements Output{
+public class ElasticsearchOutput implements Output,TableName{
 	private String hosts; //One or more Elasticsearch hosts to connect to, e.g. 'http://host_name:9092;http://host_name:9093'.
 	private String username;
 	private String password;
@@ -91,6 +92,11 @@ public class ElasticsearchOutput implements Output{
 	
 	public void setTable(String table) {
 		setIndex(table);
+	}
+	
+	@Override
+	public String getTable() {
+		return getIndex();
 	}
 
 	private synchronized RestHighLevelClient makeConnection() {

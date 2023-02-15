@@ -39,10 +39,11 @@ import com.github.dataswitch.util.MapUtil;
 import com.github.dataswitch.util.NamedParameterUtils;
 import com.github.dataswitch.util.ParsedSql;
 import com.github.dataswitch.util.PropertiesUtil;
+import com.github.dataswitch.util.TableName;
 import com.github.dataswitch.util.Util;
 
 
-public class JdbcOutput extends DataSourceProvider implements Output {
+public class JdbcOutput extends DataSourceProvider implements Output,TableName{
 	
 	
 	private static Logger logger = LoggerFactory.getLogger(JdbcOutput.class);

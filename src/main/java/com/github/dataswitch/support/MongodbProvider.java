@@ -1,10 +1,11 @@
 package com.github.dataswitch.support;
 
 import com.github.dataswitch.BaseObject;
+import com.github.dataswitch.util.TableName;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 
-public class MongodbProvider extends BaseObject{
+public class MongodbProvider extends BaseObject implements TableName{
 	private String url;
 	private String database;
 	private String collection;
@@ -40,6 +41,11 @@ public class MongodbProvider extends BaseObject{
 	
 	public void setTable(String table) {
 		setCollection(table);
+	}
+	
+	@Override
+	public String getTable() {
+		return getCollection();
 	}
 	
 	

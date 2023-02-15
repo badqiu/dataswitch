@@ -17,9 +17,10 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dataswitch.util.KafkaConfigUtil;
 import com.github.dataswitch.util.PropertiesUtil;
+import com.github.dataswitch.util.TableName;
 
 
-public class KafkaOutput implements Output {
+public class KafkaOutput implements Output,TableName{
 
 	protected static Logger logger = LoggerFactory.getLogger(KafkaOutput.class);
 	
@@ -58,6 +59,11 @@ public class KafkaOutput implements Output {
 	
 	public void setTable(String table) {
 		setTopic(table);
+	}
+	
+	@Override
+	public String getTable() {
+		return getTopic();
 	}
 
 	public KafkaProducer<Object, Object> buildKafkaProducer(Properties properties) {

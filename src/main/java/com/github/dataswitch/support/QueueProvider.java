@@ -11,8 +11,9 @@ import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.Openable;
 import com.github.dataswitch.enums.Constants;
 import com.github.dataswitch.util.QueueUtil;
+import com.github.dataswitch.util.TableName;
 
-public class QueueProvider extends BaseObject implements Openable {
+public class QueueProvider extends BaseObject implements Openable,TableName{
 	
 	private int queueSize = 100000 / Constants.DEFAULT_BUFFER_SIZE;
 	
@@ -74,6 +75,11 @@ public class QueueProvider extends BaseObject implements Openable {
 	
 	public void setTable(String table) {
 		setQueueName(table);
+	}
+	
+	@Override
+	public String getTable() {
+		return getQueueName();
 	}
 
 	public BlockingQueue<List<Object>> getQueue() {

@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -21,7 +19,6 @@ import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.HTable;
-import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
@@ -35,7 +32,7 @@ import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.util.InputOutputUtil;
 import com.github.dataswitch.util.PropertiesUtil;
 
-public class HbaseProvider extends BaseObject {
+public class HbaseProvider extends BaseObject implements com.github.dataswitch.util.TableName{
 	private String hbaseConfig;
 	private String table;
 

@@ -7,7 +7,6 @@ import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -19,10 +18,11 @@ import org.springframework.util.Assert;
 import com.github.dataswitch.support.DataSourceProvider;
 import com.github.dataswitch.util.JdbcUtil;
 import com.github.dataswitch.util.MapUtil;
+import com.github.dataswitch.util.TableName;
 import com.github.dataswitch.util.Util;
 
 
-public class JdbcInput extends DataSourceProvider implements Input{
+public class JdbcInput extends DataSourceProvider implements Input,TableName{
 
 	private static Logger logger = LoggerFactory.getLogger(JdbcInput.class);
 	

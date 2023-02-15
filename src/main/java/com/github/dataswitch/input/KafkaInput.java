@@ -21,9 +21,10 @@ import org.springframework.util.StringUtils;
 import com.github.dataswitch.util.KafkaConfigUtil;
 import com.github.dataswitch.util.PropertiesUtil;
 import com.github.dataswitch.util.QueueUtil;
+import com.github.dataswitch.util.TableName;
 
 
-public class KafkaInput implements Input{
+public class KafkaInput implements Input,TableName{
 
 	protected static Logger logger = LoggerFactory.getLogger(KafkaInput.class);
 	
@@ -70,6 +71,11 @@ public class KafkaInput implements Input{
 	
 	public void setTable(String table) {
 		setTopic(table);
+	}
+	
+	@Override
+	public String getTable() {
+		return getTopic();
 	}
 	
 	public void setAsyncReadTimeout(int asyncReadTimeout) {

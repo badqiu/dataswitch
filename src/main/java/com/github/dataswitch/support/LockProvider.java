@@ -8,8 +8,9 @@ import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.Openable;
 import com.github.dataswitch.enums.Constants;
 import com.github.dataswitch.util.LockUtil;
+import com.github.dataswitch.util.TableName;
 
-public class LockProvider extends BaseObject implements Openable {
+public class LockProvider extends BaseObject implements Openable,TableName{
 
 	private String lockGroup = Constants.DEFAULT_LOCK_GROUP;
 	private String lockId;
@@ -36,6 +37,11 @@ public class LockProvider extends BaseObject implements Openable {
 	
 	public void setTable(String table) {
 		setLockId(table);
+	}
+	
+	@Override
+	public String getTable() {
+		return getLockId();
 	}
 	
 	public Lock getLock() {
