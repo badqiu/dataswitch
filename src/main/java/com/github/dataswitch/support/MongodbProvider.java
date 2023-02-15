@@ -38,6 +38,10 @@ public class MongodbProvider extends BaseObject{
 		this.collection = collection;
 	}
 	
+	public void setTable(String table) {
+		setCollection(table);
+	}
+	
 	
 	
 	

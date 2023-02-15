@@ -63,6 +63,10 @@ public class FileOutput extends BaseOutput implements Output {
 	public void setFilename(String filename) {
 		this.filename = filename;
 	}
+	
+	public void setTable(String table) {
+		setFilename(table);
+	}
 
 	public Serializer getSerializer() {
 		return serializer;

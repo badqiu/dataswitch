@@ -68,6 +68,10 @@ public class KafkaInput implements Input{
 		this.topic = inputTopic;
 	}
 	
+	public void setTable(String table) {
+		setTopic(table);
+	}
+	
 	public void setAsyncReadTimeout(int asyncReadTimeout) {
 		this.asyncReadTimeout = asyncReadTimeout;
 	}

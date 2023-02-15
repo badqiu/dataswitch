@@ -71,6 +71,10 @@ public class QueueProvider extends BaseObject implements Openable {
 	public void setQueueName(String queueName) {
 		this.queueName = queueName;
 	}
+	
+	public void setTable(String table) {
+		setQueueName(table);
+	}
 
 	public BlockingQueue<List<Object>> getQueue() {
 		return queue;

@@ -55,6 +55,10 @@ public class KafkaOutput implements Output {
 	public void setTopic(String outputTopic) {
 		this.topic = outputTopic;
 	}
+	
+	public void setTable(String table) {
+		setTopic(table);
+	}
 
 	public KafkaProducer<Object, Object> buildKafkaProducer(Properties properties) {
 		KafkaConfigUtil.initJavaSecurityAuthLoginConfig(properties);

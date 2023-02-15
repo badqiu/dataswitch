@@ -88,6 +88,10 @@ public class ElasticsearchOutput implements Output{
 	public void setIndex(String index) {
 		this.index = index;
 	}
+	
+	public void setTable(String table) {
+		setIndex(table);
+	}
 
 	private synchronized RestHighLevelClient makeConnection() {
         RestHighLevelClient client = null;

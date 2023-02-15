@@ -37,7 +37,6 @@ public class FileInput extends BaseInput implements Input{
 
 	private Deserializer deserializer = null;
 	
-	private List<File> files = null;
 	
 	/**
 	 * 检查是否有文件 ，不存在则报错
@@ -46,9 +45,13 @@ public class FileInput extends BaseInput implements Input{
 	
 	private String include;
 	private String exclude;
+	
+	
 	private transient AntPathMatcher antPathMatcher = new AntPathMatcher();
 	
 	private transient InputStream inputStream;
+	
+	private List<File> _files = null;
 	public List<String> getDirs() {
 		return dirs;
 	}
@@ -99,11 +102,11 @@ public class FileInput extends BaseInput implements Input{
 		try {
 			
 			if(inputStream == null) {
-				if(CollectionUtils.isEmpty(files)) {
+				if(CollectionUtils.isEmpty(_files)) {
 					return null;
 				}
 				
-				File currentFile = files.remove(0);
+				File currentFile = _files.remove(0);
 				log.info("read from file:"+currentFile);
 				inputStream = new BufferedInputStream(CompressUtil.newDecompressInputByExt(openFileInputStream(currentFile),currentFile.getName()));
 			}
@@ -128,13 +131,13 @@ public class FileInput extends BaseInput implements Input{
 
 	private void init() {
 		Assert.notNull(deserializer,"deserializer must be not null");
-		this.files = listAllFiles();
-		if(CollectionUtils.isEmpty(this.files)) {
+		this._files = listAllFiles();
+		if(CollectionUtils.isEmpty(this._files)) {
 			log.warn("not found any file by dirs:"+getDirs());
 		}
 		
 		if(errorOnEmptyFile) {
-			Assert.notEmpty(this.files,"not found any file by dirs:"+getDirs());
+			Assert.notEmpty(this._files,"not found any file by dirs:"+getDirs());
 		}
 	}
 

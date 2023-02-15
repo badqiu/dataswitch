@@ -34,6 +34,10 @@ public class LockProvider extends BaseObject implements Openable {
 		this.lockId = lockId;
 	}
 	
+	public void setTable(String table) {
+		setLockId(table);
+	}
+	
 	public Lock getLock() {
 		return lock;
 	}
