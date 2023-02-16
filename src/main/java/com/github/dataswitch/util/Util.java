@@ -130,6 +130,30 @@ public class Util {
 		}
 	}
 	
+	/**
+	 * 转换成下划线分隔的名称。  示例： userName => user_name转换
+	 */
+	public static String underscoreName(String name) {
+		if(StringUtils.isEmpty(name)) return name;
+		
+		StringBuilder result = new StringBuilder();
+		if (name != null && name.length() > 0) {
+			result.append(name.substring(0, 1).toLowerCase());
+			for (int i = 1; i < name.length(); i++) {
+				char c = name.charAt(i);
+				if (Character.isUpperCase(c) && !Character.isDigit(c)) {
+					result.append("_");
+					result.append(Character.toLowerCase(c));
+				}
+				else {
+					result.append(c);
+				}
+			}
+		}
+		return result.toString();
+	}
+	
+	
 	public static ApplicationContext newApplicationContext(
 			String springConfigDir) {
 		logger.info("newApplicationContext by springConfigDir:"+springConfigDir);

@@ -20,5 +20,15 @@ public class UtilTest {
 		assertEquals("tdate;tdate_type;app_id;channel_id;pay;pay_account_idcnt;pay_device_idcnt;active_device_idcnt;active_account_idcnt",StringUtils.join(Util.splitColumns("				tdate,tdate_type,app_id,channel_id,\n				pay,pay_account_idcnt,pay_device_idcnt,active_device_idcnt,active_account_idcnt\n\t\n\t \n"),";"));
 		
 	}
+	
+	@Test
+	public void underscoreName() {
+		assertEquals(null,Util.underscoreName(null));
+		assertEquals(" ",Util.underscoreName(" "));
+		assertEquals("  ",Util.underscoreName("  "));
+		assertEquals("user_name",Util.underscoreName("userName"));
+		assertEquals("user_name_sex1",Util.underscoreName("userNameSex1"));
+		assertEquals("user_name_sex1",Util.underscoreName("user_name_sex1"));
+	}
 
 }
