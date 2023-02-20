@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.sql.DataSource;
 
@@ -250,18 +251,31 @@ public class DbModelProvider {
 	            indexRs.close();
 	         }
 	      }
-
+	      int uniqueIndexMaxColumns = getUniqueIndexMaxColumns(uniqueColumns);
 	      List columns = getTableColumns(table, primaryKeys, indices, uniqueIndices, uniqueColumns);
 
 	      for (Iterator i = columns.iterator(); i.hasNext(); ) {
 	         Column column = (Column)i.next();
 	         table.addColumn(column);
 	      }
+	      
+	      table.setUniqueIndexMaxColumns(uniqueIndexMaxColumns);
 
 	      // In case none of the columns were primary keys, issue a warning.
 	      if (primaryKeys.size() == 0) {
 	         _log.warn("WARNING: The JDBC driver didn't report any primary key columns in " + table.getSqlName());
 	      }
+	}
+
+	private int getUniqueIndexMaxColumns(Map<String,List> uniqueColumns) {
+		AtomicInteger result = new AtomicInteger();
+		uniqueColumns.forEach((column,list) -> {
+			if(result.get() < list.size()) {
+				result.set(list.size());
+			}
+		});
+		
+		return result.get();
 	}
 
 	private List getTableColumns(Table table, List primaryKeys, List indices, Map uniqueIndices, Map uniqueColumns) throws SQLException {
@@ -289,7 +303,7 @@ public class DbModelProvider {
 
 	         boolean isUnique = columnsInUniqueIndex != null && columnsInUniqueIndex.size() == 1;
 	         if (isUnique) {
-	            _log.debug("unique column:" + columnName);
+	            _log.debug("unique column:" + columnName+" columnsInUniqueIndex:"+columnsInUniqueIndex);
 	         }
 	         Column column = new Column(
 	               table,

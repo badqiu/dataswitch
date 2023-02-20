@@ -22,7 +22,8 @@ public class Table {
 	
 	List<Column> columns = new ArrayList();
 	List<Column> primaryKeyColumns = new ArrayList();
-
+	private int uniqueIndexMaxColumns;
+	
 	public void setClassName(String className) {
 		this.className = className;
 	}
@@ -108,4 +109,13 @@ public class Table {
 	public    static final String FKTABLE_NAME  = "FKTABLE_NAME";
 	public    static final String FKCOLUMN_NAME = "FKCOLUMN_NAME";
 	public    static final String KEY_SEQ       = "KEY_SEQ";
+
+	public void setUniqueIndexMaxColumns(int uniqueIndexMaxColumns) {
+		this.uniqueIndexMaxColumns = uniqueIndexMaxColumns;
+	}
+	
+	public int getUniqueIndexMaxColumns() {
+		return uniqueIndexMaxColumns;
+	}
+	
 }

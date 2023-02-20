@@ -20,7 +20,7 @@ public class ListAllTableTest {
 	}
 	
 	@Test
-	public void test() throws Exception {
+	public void test_all_table_add_column_sql() throws Exception {
 	
 		DbModelProvider dbModelProvider = new DbModelProvider(inputDataSource.getDataSource());
 		dbModelProvider.getAllTables().forEach(table -> {
@@ -37,6 +37,30 @@ public class ListAllTableTest {
 //			System.out.println(alterTableAddColumnSql);
 			
 			System.out.println(tableName+","+table.getColumns().size()+","+table.getUniqueColumns().size()+","+table.getRemarks());
+		});;
+		
+		
+	}
+	
+	@Test
+	public void test_all_table_unique_keys_sql() throws Exception {
+	
+		DbModelProvider dbModelProvider = new DbModelProvider(inputDataSource.getDataSource());
+		dbModelProvider.getAllTables().forEach(table -> {
+			String tableName = table.getSqlName();
+			Map<String,String> inputColumns = JdbcUtil.getTableColumns(new JdbcTemplate(inputDataSource.getDataSource()), tableName, inputDataSource.cacheJdbcUrl());
+//			if(inputColumns.containsKey("company_id")) {
+//				return;
+//			}
+			
+			String alterTableAddColumnSql = "ALTER TABLE " + tableName + " " + 
+					"ADD COLUMN `company_id` bigint NOT NULL DEFAULT 1 COMMENT '公司ID' ," + 
+					"ADD INDEX `idx_company_id`(`company_id`);";
+			
+//			System.out.println(alterTableAddColumnSql);
+			
+//			System.out.println(tableName+","+table.getColumns().size()+","+table.getUniqueColumns().size()+","+table.getRemarks());
+			System.out.println(tableName+","+table.getUniqueIndexMaxColumns()+","+table.getRemarks());
 		});;
 		
 		
