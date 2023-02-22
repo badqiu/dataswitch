@@ -258,7 +258,7 @@ public class DbModelProvider {
 	         Column column = (Column)i.next();
 	         table.addColumn(column);
 	      }
-	      
+	      table.setUniqueIndexs(uniqueColumns);
 	      table.setUniqueIndexMaxColumns(uniqueIndexMaxColumns);
 
 	      // In case none of the columns were primary keys, issue a warning.

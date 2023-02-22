@@ -3,9 +3,8 @@ package com.github.dataswitch.util.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-
-import org.apache.lucene.util.StringHelper;
 /**
  * 
  * @author badqiu
@@ -117,5 +116,17 @@ public class Table {
 	public int getUniqueIndexMaxColumns() {
 		return uniqueIndexMaxColumns;
 	}
+	
+	private Map<String,List<String>> uniqueIndexs;
+	
+	public void setUniqueIndexs(Map uniqueIndexs) {
+		this.uniqueIndexs = uniqueIndexs;
+	}
+	
+	public Map<String,List<String>> getUniqueIndexs() {
+		return uniqueIndexs;
+	}
+	
+	
 	
 }

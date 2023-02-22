@@ -2,6 +2,7 @@ package com.github.dataswitch.util;
 
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -53,14 +54,38 @@ public class ListAllTableTest {
 //				return;
 //			}
 			
-			String alterTableAddColumnSql = "ALTER TABLE " + tableName + " " + 
-					"ADD COLUMN `company_id` bigint NOT NULL DEFAULT 1 COMMENT '公司ID' ," + 
-					"ADD INDEX `idx_company_id`(`company_id`);";
+//			String alterTableAddColumnSql = "ALTER TABLE " + tableName + " " + 
+//					"ADD COLUMN `company_id` bigint NOT NULL DEFAULT 1 COMMENT '公司ID' ," + 
+//					"ADD INDEX `idx_company_id`(`company_id`);";
 			
 //			System.out.println(alterTableAddColumnSql);
 			
 //			System.out.println(tableName+","+table.getColumns().size()+","+table.getUniqueColumns().size()+","+table.getRemarks());
-			System.out.println(tableName+","+table.getUniqueIndexMaxColumns()+","+table.getRemarks());
+			if(table.getUniqueIndexMaxColumns() <= 1) {
+				return;
+			}
+			
+			table.getUniqueIndexs().forEach((index,columns) -> {
+				if(columns.contains("company_id")) {
+					return;
+				}
+				if(columns.size() <= 1) {
+					return;
+				}
+				if("PRIMARY".equals(index)) {
+					return;
+				}
+				
+				
+				String sql = "ALTER TABLE "+table.getSqlName()+" " + 
+						"DROP INDEX "+index+"," + 
+						"ADD UNIQUE INDEX "+index + "(company_id, " + StringUtils.join(columns,",") + ") USING BTREE; -- "+table.getRemarks();
+				
+				System.out.println(sql);
+				System.out.println();
+			});
+			
+//			System.out.println(tableName+","+table.getUniqueIndexMaxColumns()+","+table.getRemarks());
 		});;
 		
 		
