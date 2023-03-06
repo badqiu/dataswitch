@@ -27,8 +27,9 @@ public class AsyncOutput extends ProxyOutput{
 	private boolean running = true;
 	private Exception lastException;
 	private Object lastExceptionData;
-	private Thread thread = null;
 	private FailMode failMode = FailMode.FAIL_FAST;
+
+	private Thread _writeThread = null;
 	
 	public AsyncOutput() {
 		super();
@@ -73,7 +74,7 @@ public class AsyncOutput extends ProxyOutput{
 		Output output = getProxy();
 		
 		String threadName = getClass().getSimpleName()+"_write_"+getId();
-		thread = new Thread(new Runnable() {
+		_writeThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
@@ -88,26 +89,26 @@ public class AsyncOutput extends ProxyOutput{
 							
 							output.write(rows);
 						}catch(InterruptedException e) {
-							logger.info("InterruptedException on write thread,exit thread");
+							logger.info("InterruptedException on write _writeThread,exit _writeThread");
 							return;
 						}catch(Exception e) {
 							Object firstRow = Util.first(rows);
-							logger.warn("ignore error on write thread, one dataRow:"+firstRow,e);
+							logger.warn("ignore error on write _writeThread, one dataRow:"+firstRow,e);
 							lastException = e;
 							lastExceptionData = firstRow;
 						}
 					}
 				}finally {
 					InputOutputUtil.closeQuietly(output);
-					logger.info("exit write thread,threadName:"+threadName);
+					logger.info("exit write _writeThread,threadName:"+threadName);
 				}
 			}
 
 
 		},threadName);
 		
-		thread.setDaemon(true);
-		thread.start();
+		_writeThread.setDaemon(true);
+		_writeThread.start();
 	}
 	
 	@Override
@@ -117,9 +118,9 @@ public class AsyncOutput extends ProxyOutput{
 		
 		running = false;
 		
-		if(thread != null) {
-			thread.interrupt();
-			thread.join();
+		if(_writeThread != null) {
+			_writeThread.interrupt();
+			_writeThread.join();
 		}
 		
 		super.close();
