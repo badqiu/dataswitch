@@ -130,7 +130,7 @@ public class AsyncOutput extends ProxyOutput{
 
 	private void waitQueueIsEmpty() {
 		while(!queue.isEmpty()) {
-			ThreadUtil.sleep(1000);
+			ThreadUtil.sleep(500);
 		}
 	}
 	
