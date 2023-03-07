@@ -54,7 +54,7 @@ public class RocketMqInput implements Input,TableName{
 
 	private int consumptionThreadCount = 20;
 
-	private boolean ignoreMessageProcessError = false;
+	private boolean ignoreReadError = false;
 	
 	
 	private ClientServiceProvider _clientServiceProvider;
@@ -127,12 +127,12 @@ public class RocketMqInput implements Input,TableName{
 		this.consumptionThreadCount = consumptionThreadCount;
 	}
 
-	public boolean isIgnoreMessageProcessError() {
-		return ignoreMessageProcessError;
+	public boolean isIgnoreReadError() {
+		return ignoreReadError;
 	}
 
-	public void setIgnoreMessageProcessError(boolean ignoreMessageProcessError) {
-		this.ignoreMessageProcessError = ignoreMessageProcessError;
+	public void setIgnoreReadError(boolean ignoreReadError) {
+		this.ignoreReadError = ignoreReadError;
 	}
 
 	public PushConsumer buildPushConsumer()  {
@@ -170,8 +170,8 @@ public class RocketMqInput implements Input,TableName{
 	                	}
 	                	
 					} catch (Exception e) {
-						if(ignoreMessageProcessError) {
-							logger.warn("process message error,messageView:"+messageView,e);
+						if(ignoreReadError) {
+							logger.warn("ignore read error,messageView:"+messageView,e);
 						}else {
 							throw new RuntimeException("error",e);
 						}

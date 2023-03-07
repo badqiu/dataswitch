@@ -47,7 +47,7 @@ public class ElasticsearchOutput implements Output,TableName{
 	private int retryInterval;
 	private String settings; // {"index" :{"number_of_shards": 1, "number_of_replicas": 0}};
 	private String columns; //要写的列
-	private String primaryKey;
+	private String primaryKey; //主键
 	
 	private boolean dropIndex; //写入前，删除索引
 	private boolean createIndex;
