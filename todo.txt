@@ -42,7 +42,22 @@ script 需要增加 context, beforeScript put var into context for init.
   // –incremental 参数为append，–last-value参数为5201314即可。表示只从order_id大于5201314后开始导入。
   --incremental append 
   --check-column order_id 
-  --last-value 5201314
+  --last-value 5201314 
+  or
+  --incremental append 
+  --check-column create_time 
+  --last-value “2014-11-09 21:00:00”
+  
+  if(lastValue == null) {
+  	lastValue = select max(check-column) from table;
+  	select * from table check-column <= lastValue;
+  }else {
+    lastValue = select max(check-column) from table;
+  	select * from table where check-column > preLastValue and check-column <= lastValue;
+  }
+  store last-value
+  实现:  
+     
   // –incremental 参数为lastmodified，数据可能修改，需要根据merge-key数据合并，再导入数据
   --incremental lastmodified 
   --merge-key order_id //将后续新的记录与原有记录合并。
