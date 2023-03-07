@@ -121,13 +121,9 @@ public class RocketMqOutput implements Output,TableName{
 		init();
 	}
 
-	private void init() {
+	private synchronized void init() {
 		if(producer == null) {
-			synchronized (this) {
-				if(producer == null) {
-					producer = buildProducer();
-				}
-			}
+			producer = buildProducer();
 		}
 	}
 	
