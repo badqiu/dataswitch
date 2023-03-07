@@ -45,17 +45,18 @@ public class RocketMqInput implements Input,TableName{
 
 	private String tag = "*"; // 订阅消息的过滤规则，表示订阅所有Tag的消息。
 	
-    private String consumerGroup = "YourConsumerGroup"; // 为消费者指定所属的消费者分组，Group需要提前创建。
+    private String consumerGroup; // 为消费者指定所属的消费者分组，Group需要提前创建。
     
     private int asyncReadTimeout = 500; //异步读的超时时间
+    private Class valueType = Map.class;
     
 	private ClientServiceProvider clientServiceProvider;
 	private ClientConfiguration clientConfiguration;
 	private PushConsumer pushConsumer;
 	
-	private BlockingQueue<MessageView> queue = new ArrayBlockingQueue<MessageView>(1000);
+	private BlockingQueue<MessageView> _queue = new ArrayBlockingQueue<MessageView>(1000);
 
-	private Class valueType = Map.class;
+	private int consumptionThreadCount = 20;
 
 	
 	public String getTopic() {
@@ -101,6 +102,8 @@ public class RocketMqInput implements Input,TableName{
 	        
 	        // 初始化PushConsumer，需要绑定消费者分组ConsumerGroup、通信参数以及订阅关系。
 	        PushConsumerBuilder pushConsumerBuilder = clientServiceProvider.newPushConsumerBuilder();
+			pushConsumerBuilder.setConsumptionThreadCount(consumptionThreadCount );
+	        
 			PushConsumer pushConsumer = pushConsumerBuilder
 	            .setClientConfiguration(clientConfiguration)
 	            // 设置消费者分组。
@@ -111,7 +114,7 @@ public class RocketMqInput implements Input,TableName{
 	            .setMessageListener(messageView -> {
 	            	
 	                try {
-						queue.put(messageView);
+						_queue.put(messageView);
 					} catch (InterruptedException e) {
 						throw new RuntimeException("error",e);
 					}
@@ -153,7 +156,7 @@ public class RocketMqInput implements Input,TableName{
 	}
 
 	private List<Object> read0(int size) throws InterruptedException, JsonParseException, JsonMappingException, IOException {
-		List<MessageView> messages = QueueUtil.batchTake(queue,size, asyncReadTimeout);
+		List<MessageView> messages = QueueUtil.batchTake(_queue,size, asyncReadTimeout);
 		List<Object> result = new ArrayList(messages.size());
 		for(MessageView msg : messages) {
 			Object item = processMsg(msg);
