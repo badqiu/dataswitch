@@ -19,7 +19,7 @@ public class ObjectMethodInput extends BaseObject  implements Input{
 	
 	private Object[] args = null;
 	private boolean invoked = false;
-	private Method targetMethod = null;
+	private Method _targetMethod = null;
 	
 	public Object getObject() {
 		return object;
@@ -52,13 +52,13 @@ public class ObjectMethodInput extends BaseObject  implements Input{
 		}
 		invoked = true;
 		
-		Assert.notNull(targetMethod,"targetMethod must be not null");
+		Assert.notNull(_targetMethod,"_targetMethod must be not null");
 		
 		try {
-			Object result = targetMethod.invoke(object,args);
+			Object result = _targetMethod.invoke(object,args);
 			return convert2List(result);
 		} catch (Exception e) {
-			throw new RuntimeException("error invoke method:"+targetMethod+" on object:"+object,e);
+			throw new RuntimeException("error invoke method:"+_targetMethod+" on object:"+object,e);
 		} 
 	}
 	
@@ -92,8 +92,8 @@ public class ObjectMethodInput extends BaseObject  implements Input{
 	public void open(Map<String, Object> params) throws Exception {
 		Input.super.open(params);
 		
-		if(targetMethod == null) {
-			targetMethod = getRequiredMethod(object,method);
+		if(_targetMethod == null) {
+			_targetMethod = getRequiredMethod(object,method);
 		}
 	}
 	
