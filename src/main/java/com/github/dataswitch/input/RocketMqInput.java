@@ -50,14 +50,17 @@ public class RocketMqInput implements Input,TableName{
     private int asyncReadTimeout = 500; //异步读的超时时间
     private Class valueType = Map.class;
     
-	private ClientServiceProvider clientServiceProvider;
-	private ClientConfiguration clientConfiguration;
-	private PushConsumer pushConsumer;
-	
-	private BlockingQueue<MessageView> _queue = new ArrayBlockingQueue<MessageView>(1000);
+	private BlockingQueue<Object> _queue = new ArrayBlockingQueue<Object>(1000);
 
 	private int consumptionThreadCount = 20;
 
+	private boolean ignoreMessageProcessError = false;
+	
+	
+	private ClientServiceProvider _clientServiceProvider;
+	private ClientConfiguration _clientConfiguration;
+	private PushConsumer _pushConsumer;
+	
 	
 	public String getTopic() {
 		return topic;
@@ -84,16 +87,62 @@ public class RocketMqInput implements Input,TableName{
 		this.endpoints = endpoints;
 	}
 
+	public String getTag() {
+		return tag;
+	}
 
+	public void setTag(String tag) {
+		this.tag = tag;
+	}
+
+	public String getConsumerGroup() {
+		return consumerGroup;
+	}
+
+	public void setConsumerGroup(String consumerGroup) {
+		this.consumerGroup = consumerGroup;
+	}
+
+	public int getAsyncReadTimeout() {
+		return asyncReadTimeout;
+	}
+
+	public void setAsyncReadTimeout(int asyncReadTimeout) {
+		this.asyncReadTimeout = asyncReadTimeout;
+	}
+
+	public Class getValueType() {
+		return valueType;
+	}
+
+	public void setValueType(Class valueType) {
+		this.valueType = valueType;
+	}
+
+	public int getConsumptionThreadCount() {
+		return consumptionThreadCount;
+	}
+
+	public void setConsumptionThreadCount(int consumptionThreadCount) {
+		this.consumptionThreadCount = consumptionThreadCount;
+	}
+
+	public boolean isIgnoreMessageProcessError() {
+		return ignoreMessageProcessError;
+	}
+
+	public void setIgnoreMessageProcessError(boolean ignoreMessageProcessError) {
+		this.ignoreMessageProcessError = ignoreMessageProcessError;
+	}
 
 	public PushConsumer buildPushConsumer()  {
 		Assert.hasText(endpoints,"endpoints must be not blank");
 		Assert.hasText(consumerGroup,"consumerGroup must be not blank");
 		Assert.hasText(topic,"topic must be not blank");
 		
-		clientServiceProvider = ClientServiceProvider.loadService();
+		_clientServiceProvider = ClientServiceProvider.loadService();
         ClientConfigurationBuilder clientConfigurationBuilder = ClientConfiguration.newBuilder().setEndpoints(endpoints);
-        clientConfiguration = clientConfigurationBuilder.build();
+        _clientConfiguration = clientConfigurationBuilder.build();
         
         
 		try {
@@ -101,11 +150,11 @@ public class RocketMqInput implements Input,TableName{
 	        FilterExpression filterExpression = new FilterExpression(tag, FilterExpressionType.TAG);
 	        
 	        // 初始化PushConsumer，需要绑定消费者分组ConsumerGroup、通信参数以及订阅关系。
-	        PushConsumerBuilder pushConsumerBuilder = clientServiceProvider.newPushConsumerBuilder();
-			pushConsumerBuilder.setConsumptionThreadCount(consumptionThreadCount );
+	        PushConsumerBuilder pushConsumerBuilder = _clientServiceProvider.newPushConsumerBuilder();
+			pushConsumerBuilder.setConsumptionThreadCount(consumptionThreadCount);
 	        
 			PushConsumer pushConsumer = pushConsumerBuilder
-	            .setClientConfiguration(clientConfiguration)
+	            .setClientConfiguration(_clientConfiguration)
 	            // 设置消费者分组。
 	            .setConsumerGroup(consumerGroup)
 	            // 设置预绑定的订阅关系。
@@ -114,9 +163,18 @@ public class RocketMqInput implements Input,TableName{
 	            .setMessageListener(messageView -> {
 	            	
 	                try {
-						_queue.put(messageView);
-					} catch (InterruptedException e) {
-						throw new RuntimeException("error",e);
+	                	Object value = processMsg(messageView);
+	                	
+	                	if(value != null) {
+	                		_queue.put(value);
+	                	}
+	                	
+					} catch (Exception e) {
+						if(ignoreMessageProcessError) {
+							logger.warn("process message error,messageView:"+messageView,e);
+						}else {
+							throw new RuntimeException("error",e);
+						}
 					}
 	                
 	                return ConsumeResult.SUCCESS;
@@ -131,7 +189,7 @@ public class RocketMqInput implements Input,TableName{
 	
 	@Override
 	public void close() throws IOException {
-		IOUtils.closeQuietly(pushConsumer);
+		IOUtils.closeQuietly(_pushConsumer);
 	}
 	
 	@Override
@@ -141,8 +199,8 @@ public class RocketMqInput implements Input,TableName{
 	}
 
 	private synchronized void init() {
-		if(pushConsumer == null) {
-			pushConsumer = buildPushConsumer();
+		if(_pushConsumer == null) {
+			_pushConsumer = buildPushConsumer();
 		}
 	}
 	
@@ -155,16 +213,9 @@ public class RocketMqInput implements Input,TableName{
 		}
 	}
 
-	private List<Object> read0(int size) throws InterruptedException, JsonParseException, JsonMappingException, IOException {
-		List<MessageView> messages = QueueUtil.batchTake(_queue,size, asyncReadTimeout);
-		List<Object> result = new ArrayList(messages.size());
-		for(MessageView msg : messages) {
-			Object item = processMsg(msg);
-			if(item != null) {
-				result.add(item);
-			}
-		}
-		return result;
+	private List<Object> read0(int size) throws InterruptedException  {
+		List<Object> messages = QueueUtil.batchTake(_queue,size, asyncReadTimeout);
+		return messages;
 	}
 
 	protected Object processMsg(MessageView msg) throws JsonParseException, JsonMappingException, IOException {
