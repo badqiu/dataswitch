@@ -47,6 +47,8 @@ public class RocketMqInput implements Input,TableName{
 	
     private String consumerGroup = "YourConsumerGroup"; // 为消费者指定所属的消费者分组，Group需要提前创建。
     
+    private int asyncReadTimeout = 500; //异步读的超时时间
+    
 	private ClientServiceProvider clientServiceProvider;
 	private ClientConfiguration clientConfiguration;
 	private PushConsumer pushConsumer;
@@ -55,7 +57,6 @@ public class RocketMqInput implements Input,TableName{
 
 	private Class valueType = Map.class;
 
-	private int asyncReadTimeout = 500;
 	
 	public String getTopic() {
 		return topic;
