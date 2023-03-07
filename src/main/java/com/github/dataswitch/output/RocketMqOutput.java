@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.client.apis.ClientConfiguration;
@@ -152,12 +153,15 @@ public class RocketMqOutput implements Output,TableName{
 		}
 		
 		for(Map row : rows) {
+			if(MapUtils.isEmpty(row)) continue;
+			
 			Message message = buildMessage(row);
 			SendReceipt sendReceipt = producer.send(message);
 		}
 	}
 
 	private Message buildMessage(Map row) throws JsonProcessingException {
+		
 		MessageBuilder messageBuilder = clientServiceProvider.newMessageBuilder();
 		
 		if(StringUtils.isNotBlank(messageTag)) {
