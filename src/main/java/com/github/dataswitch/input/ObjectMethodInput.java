@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+
+import org.springframework.util.Assert;
 
 import com.github.dataswitch.BaseObject;
 
@@ -16,7 +19,7 @@ public class ObjectMethodInput extends BaseObject  implements Input{
 	
 	private Object[] args = null;
 	private boolean invoked = false;
-	
+	private Method targetMethod = null;
 	
 	public Object getObject() {
 		return object;
@@ -49,7 +52,8 @@ public class ObjectMethodInput extends BaseObject  implements Input{
 		}
 		invoked = true;
 		
-		Method targetMethod = getRequiredMethod(object,method);
+		Assert.notNull(targetMethod,"targetMethod must be not null");
+		
 		try {
 			Object result = targetMethod.invoke(object,args);
 			return convert2List(result);
@@ -82,6 +86,15 @@ public class ObjectMethodInput extends BaseObject  implements Input{
 			throw new IllegalStateException("not found method:"+method+" on object:"+object);
 		}
 		return targetMethod;
+	}
+	
+	@Override
+	public void open(Map<String, Object> params) throws Exception {
+		Input.super.open(params);
+		
+		if(targetMethod == null) {
+			targetMethod = getRequiredMethod(object,method);
+		}
 	}
 	
 	@Override
