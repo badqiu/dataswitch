@@ -60,6 +60,37 @@ public class RocketMqOutput implements Output,TableName{
 		return getTopic();
 	}
 	
+	public String getEndpoints() {
+		return endpoints;
+	}
+
+	public void setEndpoints(String endpoints) {
+		this.endpoints = endpoints;
+	}
+
+	public String getMessageGroup() {
+		return messageGroup;
+	}
+
+	public void setMessageGroup(String messageGroup) {
+		this.messageGroup = messageGroup;
+	}
+
+	public String getMessageKey() {
+		return messageKey;
+	}
+
+	public void setMessageKey(String messageKey) {
+		this.messageKey = messageKey;
+	}
+
+	public String getMessageTag() {
+		return messageTag;
+	}
+
+	public void setMessageTag(String messageTag) {
+		this.messageTag = messageTag;
+	}
 
 	public Producer buildProducer()  {
 		clientServiceProvider = ClientServiceProvider.loadService();
