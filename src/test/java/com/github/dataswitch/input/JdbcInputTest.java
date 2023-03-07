@@ -11,6 +11,20 @@ import com.github.dataswitch.TestUtil;
 public class JdbcInputTest {
 
 	JdbcInput input = new JdbcInput();
+	
+	@Test
+	public void test_remove_where() throws Exception {
+		DriverManagerDataSource ds = createDataSourceAndInsertData();
+		
+		input.setDataSource(ds);
+		input.setSql("select * from user Where dddd='123' and ddd='234' limit 1");
+		input.setRemoveSqlWhere(true);
+		input.init();
+		
+		int count = TestUtil.printInputReadRows(input);
+		assertEquals(6,count);
+	}
+	
 	@Test
 	public void test() throws Exception {
 		DriverManagerDataSource ds = createDataSourceAndInsertData();

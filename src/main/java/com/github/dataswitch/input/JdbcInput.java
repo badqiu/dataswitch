@@ -33,6 +33,8 @@ public class JdbcInput extends DataSourceProvider implements Input,TableName{
 	
 	private boolean addTableNameColumn = false;
 	
+	private boolean removeSqlWhere = false; //移除where条件，用于全表全量数据同步
+	
 	protected transient ResultSet _rs;
 	protected transient Connection _conn;
 	
@@ -84,6 +86,14 @@ public class JdbcInput extends DataSourceProvider implements Input,TableName{
 	public void setAddTableNameColumn(boolean addTableNameColumn) {
 		this.addTableNameColumn = addTableNameColumn;
 	}
+	
+	public boolean isRemoveSqlWhere() {
+		return removeSqlWhere;
+	}
+
+	public void setRemoveSqlWhere(boolean removeSqlWhere) {
+		this.removeSqlWhere = removeSqlWhere;
+	}
 
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
@@ -97,6 +107,12 @@ public class JdbcInput extends DataSourceProvider implements Input,TableName{
 		if(StringUtils.isBlank(sql)) {
 			Assert.hasText(table,"table or sql must be not blank");
 			sql = "select * from " + table;
+		}
+		
+		if(removeSqlWhere) {
+			String removeWhereSql = sql.replaceFirst("(?mi)\s(WHERE\s.*)", "");
+			logger.info("removeSqlWhere is true, removed where sql:"+removeWhereSql);
+			sql = removeWhereSql;
 		}
 		
 		Assert.hasText(sql,"sql must be not empty");
@@ -116,7 +132,7 @@ public class JdbcInput extends DataSourceProvider implements Input,TableName{
 			_rs = ps.executeQuery();
 			long cost = System.currentTimeMillis() - start;
 			
-			logger.info("execute sql:"+sql+" cost time seconds:"+(cost / 1000)+" fetchSize:"+fetchSize);
+			logger.info("execute sql:["+sql+"], cost time seconds:"+(cost / 1000)+" fetchSize:"+fetchSize);
 		}catch(Exception e) {
 			throw new RuntimeException("executeQuery error,sql:"+sql,e);
 		}
