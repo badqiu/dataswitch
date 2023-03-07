@@ -160,7 +160,7 @@ public class RocketMqOutput implements Output,TableName{
 		}
 	}
 
-	private Message buildMessage(Map row) throws JsonProcessingException {
+	protected Message buildMessage(Map row) throws JsonProcessingException {
 		
 		MessageBuilder messageBuilder = clientServiceProvider.newMessageBuilder();
 		

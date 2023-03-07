@@ -25,8 +25,8 @@ public class QueueUtil {
 		return queue;
 	}
 	
-	public static List<Object> batchTake(BlockingQueue<Object> queue,int size, int timeout) throws InterruptedException {
-		List<Object> results = new ArrayList(100);
+	public static <T> List<T> batchTake(BlockingQueue<T> queue,int size, int timeout) throws InterruptedException {
+		List results = new ArrayList(100);
 		long startReadTime = System.currentTimeMillis();
 		
 		for(int i = 0; i < size; i++) {
