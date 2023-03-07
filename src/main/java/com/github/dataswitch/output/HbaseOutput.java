@@ -166,7 +166,7 @@ public class HbaseOutput extends HbaseProvider implements Output{
 				return;
 			}
 			
-			TableDescriptor tableDesc = TableDescriptor(hTableName, family);
+			TableDescriptor tableDesc = newTableDescriptor(hTableName, family);
 			admin.createTable(tableDesc);
 			checkHbaseTable(admin, hTableName);
 		} catch (Exception e) {
@@ -177,7 +177,7 @@ public class HbaseOutput extends HbaseProvider implements Output{
 		}
 	}
 
-	private static TableDescriptor TableDescriptor(TableName hTableName, String family) {
+	private static TableDescriptor newTableDescriptor(TableName hTableName, String family) {
 		TableDescriptorBuilder builder = TableDescriptorBuilder.newBuilder(hTableName);
 		
 		ColumnFamilyDescriptorBuilder columnFamily = ColumnFamilyDescriptorBuilder.newBuilder(family.getBytes());
