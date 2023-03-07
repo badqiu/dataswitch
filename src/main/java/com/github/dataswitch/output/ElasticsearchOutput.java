@@ -25,7 +25,6 @@ import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.CreateIndexResponse;
-import org.springframework.util.Assert;
 
 import com.github.dataswitch.enums.OutputMode;
 import com.github.dataswitch.util.InputOutputUtil;
