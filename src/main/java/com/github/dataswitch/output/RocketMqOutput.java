@@ -38,9 +38,11 @@ public class RocketMqOutput implements Output,TableName{
 	private String messageGroup;
 	private String messageKey;
 	private String messageTag;
+	private String deliveryTimestamp;
 	
 	private Producer producer;
 	private ClientServiceProvider clientServiceProvider;
+
 
 	
 	public String getTopic() {
@@ -90,6 +92,14 @@ public class RocketMqOutput implements Output,TableName{
 
 	public void setMessageTag(String messageTag) {
 		this.messageTag = messageTag;
+	}
+	
+	public String getDeliveryTimestamp() {
+		return deliveryTimestamp;
+	}
+
+	public void setDeliveryTimestamp(String deliveryTimestamp) {
+		this.deliveryTimestamp = deliveryTimestamp;
 	}
 
 	public Producer buildProducer()  {
@@ -162,6 +172,11 @@ public class RocketMqOutput implements Output,TableName{
 		
 		if(StringUtils.isNotBlank(messageGroup)) {
 			messageBuilder.setMessageGroup(messageGroup);
+		}
+		
+		if(StringUtils.isNotBlank(deliveryTimestamp)) {
+			long deliveryTimestampValue = (Long)row.get(deliveryTimestamp);
+			messageBuilder.setDeliveryTimestamp(deliveryTimestampValue);
 		}
 		
 		Message message = messageBuilder
