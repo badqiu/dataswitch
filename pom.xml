@@ -29,6 +29,8 @@
 		<jackson.version>2.11.3</jackson.version>
 		
 		<elastic.version>7.15.0</elastic.version>
+		
+		<rocketmq-client-java-version>5.0.4</rocketmq-client-java-version>
 	</properties>
 
 
@@ -57,6 +59,13 @@
 			<optional>true</optional>
 		</dependency>
      -->
+
+	<dependency>
+	    <groupId>org.apache.rocketmq</groupId>
+	    <artifactId>rocketmq-client-java</artifactId>
+	    <version>${rocketmq-client-java-version}</version>
+	    <optional>true</optional>
+	</dependency> 
 
     <dependency>
       <groupId>org.apache.kafka</groupId>
