@@ -1,5 +1,7 @@
 package com.github.dataswitch.enums;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * 数据类型枚举
  * 
@@ -44,4 +46,30 @@ public enum DataType {
 		}
 		return false;
 	}
+	
+	public boolean eq(String other) {
+		if(other == null) return false;
+		
+		String upper = other.toUpperCase();
+		return upper.equals(name());
+	}
+	
+	public static DataType getByName(String name) {
+		if(StringUtils.isBlank(name)) return null;
+		
+		String uppperCase = name.toUpperCase();
+		return valueOf(uppperCase);
+		
+//		for(DataType item : values()) {
+//			if(item.eq(name)) {
+//				return item;
+//			}
+//			if(item.name().equals(name)) {
+//				return item;
+//			}
+//		}
+//		
+//		return null;
+	}
+	
 }

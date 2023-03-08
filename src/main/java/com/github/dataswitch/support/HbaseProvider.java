@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import com.github.dataswitch.BaseObject;
+import com.github.dataswitch.enums.DataType;
 import com.github.dataswitch.util.InputOutputUtil;
 import com.github.dataswitch.util.PropertiesUtil;
 
@@ -56,31 +57,33 @@ public class HbaseProvider extends BaseObject implements com.github.dataswitch.u
 		this.table = table;
 	}
 
-	public static Object convertBytesByDataType(byte[] bytes, String columnType,Charset charset) {
+	public static Object convertBytesByDataType(byte[] bytes, String columnTypeName,Charset charset) {
 		if(ArrayUtils.isEmpty(bytes)) return null;
 		
-		if(StringUtils.isBlank(columnType)) {
+		if(StringUtils.isBlank(columnTypeName)) {
 			return guessDataTypeByDataLength(bytes, charset);
 		}
 		
-		if("string".equals(columnType)) {
+		DataType columnType = DataType.getByName(columnTypeName);
+		
+		if(DataType.STRING.equals(columnType)) {
 			return new String(bytes,charset);
-		}else if("int".equals(columnType)) {
+		}else if(DataType.INT.equals(columnType)) {
 			return Bytes.toInt(bytes);
-		}else if("integer".equals(columnType)) {
+		}else if(DataType.INTEGER.equals(columnType)) {
 			return Bytes.toInt(bytes);			
-		}else if("char".equals(columnType)) {
+		}else if(DataType.CHAR.equals(columnType)) {
 			return (char)Bytes.toShort(bytes);			
-		}else if("long".equals(columnType)) {
+		}else if(DataType.LONG.equals(columnType)) {
 			return Bytes.toLong(bytes);
-		}else if("date".equals(columnType)) {
+		}else if(DataType.DATE.equals(columnType)) {
 			long value = Bytes.toLong(bytes);
 			return new Date(value);
-		}else if("double".equals(columnType)) {
+		}else if(DataType.DOUBLE.equals(columnType)) {
 			return Bytes.toDouble(bytes);
-		}else if("float".equals(columnType)) {
+		}else if(DataType.FLOAT.equals(columnType)) {
 			return Bytes.toFloat(bytes);
-		}else if("boolean".equals(columnType)) {
+		}else if(DataType.BOOLEAN.equals(columnType)) {
 			return Bytes.toBoolean(bytes);
 		}else {
 			return new String(bytes,charset);
