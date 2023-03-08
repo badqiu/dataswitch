@@ -126,6 +126,8 @@ public class HbaseProvider extends BaseObject implements com.github.dataswitch.u
     		return Bytes.toBytes((ByteBuffer)value);
     	}else if (value instanceof Date) {
     		return Bytes.toBytes(((Date)value).getTime());
+    	}else if (value instanceof byte[]) {
+    		return (byte[])value;
     	}
     	
 		return value.toString().getBytes(encoding);
