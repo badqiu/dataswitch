@@ -251,6 +251,8 @@ public class JdbcDataTypeUtil {
 	}
 	
 	public static boolean isIntegerNumber(Object value) {
+		if(value == null) return false;
+		
 		if(isDoubleNumber(value)) return false;
 		
 		if(value instanceof Long || value instanceof Integer) {
