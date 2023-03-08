@@ -49,13 +49,12 @@ public class RocketMqInput implements Input,TableName{
     
     private int asyncReadTimeout = 500; //异步读的超时时间
     private Class valueType = Map.class;
+    private int consumptionThreadCount = 20;
+    private boolean ignoreReadError = false;
+
+    
     
 	private BlockingQueue<Object> _queue = new ArrayBlockingQueue<Object>(1000);
-
-	private int consumptionThreadCount = 20;
-
-	private boolean ignoreReadError = false;
-	
 	
 	private ClientServiceProvider _clientServiceProvider;
 	private ClientConfiguration _clientConfiguration;
