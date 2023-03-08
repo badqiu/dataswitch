@@ -264,16 +264,16 @@ public class HbaseOutput extends HbaseProvider implements Output{
 	private void addColumnForPut(Put put, String columnName,Object columnValueObject) {
 		byte[] columnValueBytes = getColumnBytes(columnValueObject);
 		
+		if(skipEmpty && ArrayUtils.isEmpty(columnValueBytes)) {
+			return;
+		}
+		
 		if(columnValueBytes == null) {
 			if(skipNull) {
 				return;
 			}else {
 				columnValueBytes = HConstants.EMPTY_BYTE_ARRAY;
 			}
-		}
-		
-		if(skipEmpty && ArrayUtils.isEmpty(columnValueBytes)) {
-			return;
 		}
 		
 		byte[] columnNameBytes = Bytes.toBytes(columnName);
