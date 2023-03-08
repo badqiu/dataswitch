@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hbase.HConstants;
 import org.apache.hadoop.hbase.KeepDeletedCells;
@@ -47,6 +48,7 @@ public class HbaseOutput extends HbaseProvider implements Output{
 	
 	private boolean skipWal = false; //关闭WAL日志写入，可以提升性能，但存在数据丢失风险
 	private boolean skipNull = true; //是否忽略null值，不忽略将填写byte[0]作为null值
+	private boolean skipEmpty = false; //是否忽略empty字符串
 	private boolean createTable = false; //是否hbase 建表
 	private int writeBufferSize = Constants.DEFAULT_BUFFER_SIZE; //批量写入的大小
 	private OutputMode outputMode = OutputMode.replace;
@@ -109,6 +111,14 @@ public class HbaseOutput extends HbaseProvider implements Output{
 
 	public void setSkipNull(boolean skipNull) {
 		this.skipNull = skipNull;
+	}
+	
+	public boolean isSkipEmpty() {
+		return skipEmpty;
+	}
+
+	public void setSkipEmpty(boolean skipEmpty) {
+		this.skipEmpty = skipEmpty;
 	}
 
 	public int getWriteBufferSize() {
@@ -261,6 +271,10 @@ public class HbaseOutput extends HbaseProvider implements Output{
 			}else {
 				columnValueBytes = HConstants.EMPTY_BYTE_ARRAY;
 			}
+		}
+		
+		if(skipEmpty && ArrayUtils.isEmpty(columnValueBytes)) {
+			return;
 		}
 		
 		byte[] columnNameBytes = Bytes.toBytes(columnName);
