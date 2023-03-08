@@ -16,6 +16,10 @@ InputsOutputs配置文件生成工具
 表字段同步？
 支持调整同步并发数？
 
+process支持
+	JOIN数据
+	去重
+	字段分割？
 
 增加参数生成功能，如-DparamGenerator=somepkg.SomeClass.method
 临时目录支持projectCode及多租户目录，如 /tmp/hivetmp/$projectCode/$zh/xxxxx.tmp.file

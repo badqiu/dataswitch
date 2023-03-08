@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -29,6 +30,7 @@ import org.elasticsearch.client.indices.CreateIndexResponse;
 import com.github.dataswitch.enums.OutputMode;
 import com.github.dataswitch.util.InputOutputUtil;
 import com.github.dataswitch.util.TableName;
+import com.github.dataswitch.util.Util;
 
 public class ElasticsearchOutput implements Output,TableName{
 	private String hosts; //One or more Elasticsearch hosts to connect to, e.g. 'http://host_name:9092;http://host_name:9093'.
@@ -46,7 +48,9 @@ public class ElasticsearchOutput implements Output,TableName{
 	private int retryInterval;
 	private String settings; // {"index" :{"number_of_shards": 1, "number_of_replicas": 0}};
 	private String columns; //要写的列
-	private String primaryKey; //主键
+	
+	private String primaryKeys; //主键
+	private String[] _primaryKeys; //主键
 	
 	private boolean dropIndex; //写入前，删除索引
 	private boolean createIndex;
@@ -178,24 +182,24 @@ public class ElasticsearchOutput implements Output,TableName{
 		if(outputMode == OutputMode.replace || outputMode == OutputMode.insert) {
 			IndexRequest request = new IndexRequest(index);
 			
-			if(org.apache.commons.lang3.StringUtils.isNotBlank(primaryKey)) {
-				String id = (String)row.get(primaryKey);
+			if(org.apache.commons.lang3.StringUtils.isNotBlank(primaryKeys)) {
+				String id = getIdFromData(row);
 				request.id(id);
 			}
 			
 			request.source(row);
 			return request;
 		}if(outputMode == OutputMode.update) {
-			String id = (String)row.get(primaryKey);
+			String id = getIdFromData(row);
 			if(StringUtils.isBlank(id)) {
-				throw new IllegalArgumentException("not found id value by primaryKey:"+primaryKey+" on row:"+row);
+				throw new IllegalArgumentException("not found id value by primaryKeys:"+primaryKeys+" on row:"+row);
 			}
 			UpdateRequest request = new UpdateRequest(index,id);
 			return request;
 		}else if(outputMode == OutputMode.delete) {
-			String id = (String)row.get(primaryKey);
+			String id = getIdFromData(row);
 			if(StringUtils.isBlank(id)) {
-				throw new IllegalArgumentException("not found id value by primaryKey:"+primaryKey+" on row:"+row);
+				throw new IllegalArgumentException("not found id value by primaryKeys:"+primaryKeys+" on row:"+row);
 			}
 			DeleteRequest request = new DeleteRequest(index,id);
 			return request;
@@ -204,9 +208,25 @@ public class ElasticsearchOutput implements Output,TableName{
 		}
 	}
 
+	private String getIdFromData(Map row) {
+		if(_primaryKeys.length == 1) {
+			Object id = row.get(primaryKeys);
+			if(id == null) return null;
+			return String.valueOf(id); 
+		}else {
+			StringJoiner joiner = new StringJoiner(documentIdKeyDelimiter);
+			for(String key : _primaryKeys) {
+				Object id = row.get(key);
+				joiner.add(String.valueOf(id));
+			}
+			return joiner.toString();
+		}
+	}
+
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
 		_client = makeConnection();
+		_primaryKeys = Util.splitColumns(primaryKeys);
 	}
 	
 	@Override
