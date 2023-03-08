@@ -14,6 +14,8 @@ public class FileTypeUtil {
 	private static final String C_REGEX = "(?im)/\\*(.*?)\\*/";
 	private static final String C_LINE_REGEX = "(?im)//(.*)";
 	
+	private static final String CSS_REGEX = C_REGEX;
+	
 	private static final String SQL_REGEX = C_REGEX;
 	private static final String SQL_LINE_REGEX = "(?im)--(.*)";
 	
@@ -38,11 +40,15 @@ public class FileTypeUtil {
 			return findAllByRegexGroup(fileContent, 1,C_REGEX,C_LINE_REGEX);
 		}else if(isPropertiesLike(ext)) {
 			return findAllByRegexGroup(fileContent, 1,PROPERTIES_REGEX);
+		}else if(isCss(ext)) {
+			return findAllByRegexGroup(fileContent, 1,CSS_REGEX);			
 		}else {
 			return Collections.EMPTY_LIST;
 		}
 	}
 	
+
+
 	private static List<String> findAllByRegexGroup(String input,int group,String... regexList) {
 		List<String> all = new ArrayList();
 		for(String regex : regexList) {
@@ -51,7 +57,11 @@ public class FileTypeUtil {
 		}
 		return all;
 	}
-
+	
+	private static boolean isCss(String ext) {
+		return "css".equals(ext);
+	}
+	
 	private static boolean isPython(String ext) {
 		return "py".equals(ext);
 	}
@@ -61,7 +71,9 @@ public class FileTypeUtil {
 	}
 
 	private static boolean isClike(String ext) {
-		return "js".equals(ext) || "ts".equals(ext) || "java".equals(ext) || "c".equals(ext) || "cpp".equals(ext);
+		return "js".equals(ext) || "ts".equals(ext) || "java".equals(ext) 
+				|| "c".equals(ext) || "cpp".equals(ext) || "cs".equals(ext)
+				|| "go".equals(ext) || "kt".equals(ext) || "groovy".equals(ext);
 	}
 
 	private static boolean isSql(String ext) {
