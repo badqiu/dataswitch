@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.util.Assert;
@@ -252,6 +254,9 @@ public class JdbcDataTypeUtil {
 		if(isDoubleNumber(value)) return false;
 		
 		if(value instanceof Long || value instanceof Integer) {
+			return true;
+		}
+		if(value instanceof AtomicLong || value instanceof AtomicInteger) {
 			return true;
 		}
 		if(value.getClass() == int.class) return true;
