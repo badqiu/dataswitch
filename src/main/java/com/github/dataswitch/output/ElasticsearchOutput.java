@@ -49,7 +49,7 @@ public class ElasticsearchOutput implements Output,TableName{
 	private String settings; // {"index" :{"number_of_shards": 1, "number_of_replicas": 0}};
 	private String columns; //要写的列
 	
-	private String primaryKeys; //主键
+	private String primaryKeys; //主键字段,多列用逗号分隔
 	private String[] _primaryKeys; //主键
 	
 	private boolean dropIndex; //写入前，删除索引
