@@ -243,8 +243,7 @@ public class HbaseOutput extends HbaseProvider implements Output{
 	}
 	
     public Put convertRecordToPut(Map record){
-    	if(record == null) return null;
-    	if(record.isEmpty()) return null;
+    	if(MapUtils.isEmpty(record)) return null;
     	
         Put put = newPut(record);
         
