@@ -315,9 +315,9 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
-		InputOutputUtil.openAll(inputs);
-		InputOutputUtil.openAll(processors);
-		InputOutputUtil.openAll(outputs);
+		InputOutputUtil.openAll(params,inputs);
+		InputOutputUtil.openAll(params,processors);
+		InputOutputUtil.openAll(params,outputs);
 	}
 
 }
