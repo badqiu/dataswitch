@@ -1,5 +1,7 @@
 package com.github.dataswitch;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,7 +41,7 @@ import com.github.dataswitch.util.ScriptEngineUtil;
  * @author badqiu
  *
  */
-public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callable<Long>,Function<Map<String,Object>, Long>,InitializingBean,DisposableBean {
+public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callable<Long>,Function<Map<String,Object>, Long>,Openable,Closeable,InitializingBean,DisposableBean {
 
 
 	private static Logger logger = LoggerFactory.getLogger(InputsOutputs.class);
@@ -302,6 +304,20 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 	@Override
 	public void afterPropertiesSet()  {
 		ScriptEngineUtil.eval(language, initScript);
+	}
+
+	@Override
+	public void close() throws IOException {
+		InputOutputUtil.closeAllQuietly(inputs);
+		InputOutputUtil.closeAllQuietly(processors);
+		InputOutputUtil.closeAllQuietly(outputs);
+	}
+
+	@Override
+	public void open(Map<String, Object> params) throws Exception {
+		InputOutputUtil.openAll(inputs);
+		InputOutputUtil.openAll(processors);
+		InputOutputUtil.openAll(outputs);
 	}
 
 }
