@@ -101,6 +101,23 @@ public class ElasticsearchOutput implements Output,TableName{
 	public String getTable() {
 		return getIndex();
 	}
+	
+	public String getDocumentIdKeyDelimiter() {
+		return documentIdKeyDelimiter;
+	}
+
+	public void setDocumentIdKeyDelimiter(String documentIdKeyDelimiter) {
+		this.documentIdKeyDelimiter = documentIdKeyDelimiter;
+	}
+
+	public String getPrimaryKeys() {
+		return primaryKeys;
+	}
+
+	public void setPrimaryKeys(String primaryKeys) {
+		this.primaryKeys = primaryKeys;
+		_primaryKeys = Util.splitColumns(primaryKeys);
+	}
 
 	private synchronized RestHighLevelClient makeConnection() {
         RestHighLevelClient client = null;
@@ -208,7 +225,9 @@ public class ElasticsearchOutput implements Output,TableName{
 		}
 	}
 
-	private String getIdFromData(Map row) {
+	protected String getIdFromData(Map row) {
+		if(_primaryKeys == null) return null;
+		
 		if(_primaryKeys.length == 1) {
 			Object id = row.get(primaryKeys);
 			if(id == null) return null;
@@ -225,8 +244,8 @@ public class ElasticsearchOutput implements Output,TableName{
 
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
-		_client = makeConnection();
 		_primaryKeys = Util.splitColumns(primaryKeys);
+		_client = makeConnection();
 	}
 	
 	@Override
