@@ -194,7 +194,7 @@ public class HbaseProvider extends BaseObject implements com.github.dataswitch.u
 		return hConnection;
 	}
 
-	public static BufferedMutator getBufferedMutator(String hbaseConfig, String userTable, long writeBufferSize) {
+	public static BufferedMutator getBufferedMutator(String hbaseConfig, String userTable, long writeBufferSize,long batchTimeout) {
 		org.apache.hadoop.conf.Configuration hConfiguration = getHbaseConfiguration(hbaseConfig);
 		org.apache.hadoop.hbase.client.Connection hConnection = getHbaseConnection(hbaseConfig);
 		TableName hTableName = TableName.valueOf(userTable);
@@ -206,6 +206,7 @@ public class HbaseProvider extends BaseObject implements com.github.dataswitch.u
 			// 参考HTable getBufferedMutator()
 			bufferedMutator = hConnection.getBufferedMutator(new BufferedMutatorParams(hTableName)
 					.pool(HTable.getDefaultExecutor(hConfiguration)).writeBufferSize(writeBufferSize));
+			bufferedMutator.setWriteBufferPeriodicFlush(batchTimeout,batchTimeout);
 		} catch (Exception e) {
 			InputOutputUtil.close(bufferedMutator);
 			InputOutputUtil.close(admin);

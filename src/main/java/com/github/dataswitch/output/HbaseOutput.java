@@ -50,7 +50,8 @@ public class HbaseOutput extends HbaseProvider implements Output{
 	private boolean skipNull = true; //是否忽略null值，不忽略将填写byte[0]作为null值
 	private boolean skipEmpty = false; //是否忽略empty字符串
 	private boolean createTable = false; //是否hbase 建表
-	private int writeBufferSize = Constants.DEFAULT_BUFFER_SIZE; //批量写入的大小
+	private int batchSize = Constants.DEFAULT_BUFFER_SIZE; //批量写入的大小
+	private int batchTimeout = 0;
 	private OutputMode outputMode = OutputMode.upsert;
 	
 	private BufferedMutator _bufferedMutator;
@@ -121,14 +122,22 @@ public class HbaseOutput extends HbaseProvider implements Output{
 		this.skipEmpty = skipEmpty;
 	}
 
-	public int getWriteBufferSize() {
-		return writeBufferSize;
+	public int getBatchSize() {
+		return batchSize;
 	}
 
-	public void setWriteBufferSize(int writeBufferSize) {
-		this.writeBufferSize = writeBufferSize;
+	public void setBatchSize(int writeBufferSize) {
+		this.batchSize = writeBufferSize;
 	}
 	
+	public int getBatchTimeout() {
+		return batchTimeout;
+	}
+
+	public void setBatchTimeout(int batchTimeout) {
+		this.batchTimeout = batchTimeout;
+	}
+
 	public OutputMode getOutputMode() {
 		return outputMode;
 	}
@@ -157,7 +166,7 @@ public class HbaseOutput extends HbaseProvider implements Output{
 			executeCreateHbaseTable();
 		}
 		
-		_bufferedMutator = getBufferedMutator(getHbaseConfig(),getTable(),writeBufferSize);
+		_bufferedMutator = getBufferedMutator(getHbaseConfig(),getTable(),batchSize,batchTimeout);
 	}
 	
 	private void executeCreateHbaseTable() {

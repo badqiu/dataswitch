@@ -41,8 +41,9 @@ public class ElasticsearchOutput implements Output,TableName{
 	private String documentIdKeyDelimiter = "_"; //Delimiter for composite keys ("_" by default), e.g., "$" would result in IDs "KEY1$KEY2$KEY3".
 	private String connectionPathPrefix; //Prefix string to be added to every REST communication, e.g., '/v1'.
 	
-	private int flushBatchSize;
-	private int flushInterval;
+	private int batchSize;
+	private int batchTimeout;
+	
 	private int flushMaxMemorySize;
 	private int maxRetry;
 	private int retryInterval;
