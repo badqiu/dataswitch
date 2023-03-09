@@ -1,5 +1,5 @@
 字段概念统一:  table,column,primaryKeys
-数据库连接统一: url
+数据库连接统一: url,username,password
 
 支持状态的storage
 
