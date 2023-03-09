@@ -17,9 +17,13 @@ public class BaseObject implements Enabled {
 	private Properties props; // 对象自定义属性
 	
 //	private String createDate; //创建日期
+//	private String modifyDate; //修改日期
 //	private String author; //作者
 //	private String version; //版本
 //	private String changelog; //修改日志
+//	private String see; //查看其它文档链接
+//	private boolean deprecated = false; //己不推荐使用
+	
 	
 	private boolean enabled = true;
 
