@@ -41,7 +41,7 @@ public enum DataType {
 	}
 	
 	public boolean isString() {
-		if(this == STRING) {
+		if(this == STRING || this == CHAR) {
 			return true;
 		}
 		return false;
