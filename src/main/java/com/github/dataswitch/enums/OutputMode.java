@@ -5,6 +5,6 @@ package com.github.dataswitch.enums;
 public enum OutputMode {
 	delete,
 	insert,
-	replace, //insert or update
+	upsert, //insert or update
 	update
 }

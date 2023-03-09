@@ -51,7 +51,7 @@ public class HbaseOutput extends HbaseProvider implements Output{
 	private boolean skipEmpty = false; //是否忽略empty字符串
 	private boolean createTable = false; //是否hbase 建表
 	private int writeBufferSize = Constants.DEFAULT_BUFFER_SIZE; //批量写入的大小
-	private OutputMode outputMode = OutputMode.replace;
+	private OutputMode outputMode = OutputMode.upsert;
 	
 	private BufferedMutator _bufferedMutator;
 	private String[] _columnsArray;

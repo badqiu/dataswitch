@@ -56,7 +56,7 @@ public class ElasticsearchOutput implements Output,TableName{
 	private boolean createIndex;
 	private boolean ignoreWriteError;
 	
-	private OutputMode outputMode = OutputMode.replace;
+	private OutputMode outputMode = OutputMode.upsert;
 	
 	
 	private RestHighLevelClient _client;
@@ -196,7 +196,7 @@ public class ElasticsearchOutput implements Output,TableName{
 	}
 	
 	private DocWriteRequest getRequestByOutputMode(OutputMode outputMode2, Map row) {
-		if(outputMode == OutputMode.replace || outputMode == OutputMode.insert) {
+		if(outputMode == OutputMode.upsert || outputMode == OutputMode.insert) {
 			IndexRequest request = new IndexRequest(index);
 			
 			if(org.apache.commons.lang3.StringUtils.isNotBlank(primaryKeys)) {

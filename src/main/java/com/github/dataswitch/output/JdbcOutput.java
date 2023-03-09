@@ -55,7 +55,7 @@ public class JdbcOutput extends DataSourceProvider implements Output,TableName{
 	private String afterSql; // close退出时执行的SQL
 
 	private String sessionSql; //在获取Mysql连接时，执行session指定的SQL语句，修改当前connection session属性
-	private OutputMode outputMode = OutputMode.insert; //insert/replace/update, 控制写入数据到目标表采用 insert into 或者 replace into 或者 ON DUPLICATE KEY UPDATE 语句
+	private OutputMode outputMode = OutputMode.insert; //insert/upsert/update, 控制写入数据到目标表采用 insert into 或者 upsert into 或者 ON DUPLICATE KEY UPDATE 语句
 
 	
 	/**
@@ -380,7 +380,7 @@ public class JdbcOutput extends DataSourceProvider implements Output,TableName{
 		String resultSql = null;
 		if(OutputMode.insert == outputMode) {
 			resultSql = JdbcSqlUtil.buildInsertSql(table, columns);
-		}else if(OutputMode.replace == outputMode) {
+		}else if(OutputMode.upsert == outputMode) {
 			resultSql = JdbcSqlUtil.buildMysqlInsertOrUpdateSql(table, columns, getPrimaryKeysArray());
 		}else if(OutputMode.update == outputMode) {
 			resultSql = JdbcSqlUtil.buildUpdateSql(table, columns, getPrimaryKeysArray());

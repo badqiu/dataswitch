@@ -102,7 +102,7 @@ public class MongodbOutput extends MongodbProvider implements Output {
 		if(outputMode == OutputMode.insert) {
 			List<Document> documents = toDocuments(rows);
 			_mongoCollection.insertMany(documents);
-		}else if(outputMode == OutputMode.replace) {
+		}else if(outputMode == OutputMode.upsert) {
 			ReplaceOptions replaceOptions = new ReplaceOptions().upsert(true);
 			for(Map<String,Object> row : rows) {
 				_mongoCollection.replaceOne(getFilter(row), getDocByColumns(row),replaceOptions);

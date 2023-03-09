@@ -191,7 +191,7 @@ public class JdbcOutputTest {
 			try {
 				output.write(inputRows);
 			}catch(Exception e) {
-				Assert.isTrue(outputMode == OutputMode.replace,e.toString());
+				Assert.isTrue(outputMode == OutputMode.upsert,e.toString());
 			}
 		}
 		

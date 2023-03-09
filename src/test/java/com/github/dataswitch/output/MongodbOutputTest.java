@@ -50,7 +50,7 @@ public class MongodbOutputTest {
 		assertEquals(dataCount,writeByOutputMode(OutputMode.insert));
 		
 		output._mongoCollection.deleteMany(new Document());
-		assertEquals(dataCount,writeByOutputMode(OutputMode.replace));
+		assertEquals(dataCount,writeByOutputMode(OutputMode.upsert));
 		
 		output._mongoCollection.deleteMany(new Document());
 		assertEquals(0,writeByOutputMode(OutputMode.update));
