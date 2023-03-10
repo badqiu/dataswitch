@@ -341,12 +341,12 @@ public class JdbcOutput extends DataSourceProvider implements Output,TableName{
 		
 		Map allColumnsWithValue = getAllColumnWithValue(rows);
 		
-		Map<String,String> localColumnsSqlType = JdbcDataTypeUtil.getDatabaseDataType(cacheJdbcUrl(), allColumnsWithValue,this.columnsSqlType,this.defaultColumnSqlType);
 		if(autoCreateTable) {
+			Map<String,String> localColumnsSqlType = JdbcDataTypeUtil.getDatabaseDataType(cacheJdbcUrl(), allColumnsWithValue,this.columnsSqlType,this.defaultColumnSqlType);
 			executeCreateTableSql(jdbcTemplate,localColumnsSqlType);
 		}
 		
-		Set<String> tableColumnNames = localColumnsSqlType.keySet();
+		Set<String> tableColumnNames = allColumnsWithValue.keySet();
 		
 		if(autoAlterTableAddColumn) {
 			BiConsumer<String, String> alterTableAddColumnAction = newAlterTableAddColumnFunction(jdbcTemplate);
