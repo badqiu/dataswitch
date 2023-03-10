@@ -72,7 +72,8 @@ public class BufferedOutput extends ProxyOutput{
 	}
 
 	private boolean isTimeout() {
-		return Math.abs(lastSendTime - System.currentTimeMillis()) > batchTimeout;
+		long interval = Math.abs(lastSendTime - System.currentTimeMillis());
+		return interval > batchTimeout;
 	}
 	
 	@Override
