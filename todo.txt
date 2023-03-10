@@ -14,7 +14,6 @@ output能够感知到Input ???,或是感知至Input的columns DataType ???
 InputsOutputs配置文件生成工具
 自动create table建表时，使用模板？？？然后SQL代码，只替换表名？
 自动建表时，支持partition? (mysql)
-支持多进程？？ 
 表字段同步？
 支持调整同步并发数？
 
