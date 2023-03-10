@@ -34,6 +34,10 @@ public class TeeOutput extends BaseObject  implements Output{
 	public FailMode getFailMode() {
 		return failMode;
 	}
+
+	public void setFailMode(FailMode failMode) {
+		this.failMode = failMode;
+	}
 	
 	public Output[] getBranchs() {
 		return branchs;
@@ -41,10 +45,6 @@ public class TeeOutput extends BaseObject  implements Output{
 
 	public void setBranchs(Output... branchs) {
 		this.branchs = branchs;
-	}
-
-	public void setFailMode(FailMode failMode) {
-		this.failMode = failMode;
 	}
 
 	@Override
