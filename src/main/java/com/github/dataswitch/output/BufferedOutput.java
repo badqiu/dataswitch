@@ -45,8 +45,8 @@ public class BufferedOutput extends ProxyOutput{
 		if(batchSize <= 0) {
 			throw new IllegalArgumentException("batchSize > 0 must be true");
 		}
-		this.batchSize = batchSize;
-		this.batchTimeout = batchTimeout;
+		setBatchSize(batchSize);
+		setBatchTimeout(batchTimeout);
 		bufferList = new ArrayList<Object>(batchSize);
 	}
 	
