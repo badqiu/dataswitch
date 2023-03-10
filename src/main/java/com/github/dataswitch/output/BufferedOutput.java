@@ -22,8 +22,8 @@ public class BufferedOutput extends ProxyOutput{
 	private static Logger logger = LoggerFactory.getLogger(BufferedOutput.class);
 	
 	
-	private int bufferSize = Constants.DEFAULT_BUFFER_SIZE;
-	private long bufferTimeout = 0;
+	private int batchSize = Constants.DEFAULT_BUFFER_SIZE;
+	private long batchTimeout = 0;
 	
 	private long lastSendTime = System.currentTimeMillis();
 	private List<Object> bufferList = new ArrayList<Object>();
@@ -36,26 +36,26 @@ public class BufferedOutput extends ProxyOutput{
 		this(proxy,Constants.DEFAULT_BUFFER_SIZE);
 	}
 	
-	public BufferedOutput(Output proxy,int bufferSize) {
-		this(proxy,bufferSize,0);
+	public BufferedOutput(Output proxy,int batchSize) {
+		this(proxy,batchSize,0);
 	}
 	
-	public BufferedOutput(Output proxy,int bufferSize,int bufferTimeout) {
+	public BufferedOutput(Output proxy,int batchSize,int batchTimeout) {
 		super(proxy);
-		if(bufferSize <= 0) {
-			throw new IllegalArgumentException("bufferSize > 0 must be true");
+		if(batchSize <= 0) {
+			throw new IllegalArgumentException("batchSize > 0 must be true");
 		}
-		this.bufferSize = bufferSize;
-		this.bufferTimeout = bufferTimeout;
-		bufferList = new ArrayList<Object>(bufferSize);
+		this.batchSize = batchSize;
+		this.batchTimeout = batchTimeout;
+		bufferList = new ArrayList<Object>(batchSize);
 	}
 	
-	public void setBufferSize(int bufferSize) {
-		this.bufferSize = bufferSize;
+	public void setBatchSize(int batchSize) {
+		this.batchSize = batchSize;
 	}
 
-	public void setBufferTimeout(int bufferTimeout) {
-		this.bufferTimeout = bufferTimeout;
+	public void setBatchTimeout(int batchTimeout) {
+		this.batchTimeout = batchTimeout;
 	}
 
 	@Override
@@ -64,15 +64,15 @@ public class BufferedOutput extends ProxyOutput{
 		
 		bufferList.addAll(rows);
 
-		if(bufferList.size() > bufferSize) {
+		if(bufferList.size() > batchSize) {
 			flushBuffer();
-		}else if(bufferTimeout > 0 && isTimeout()) {
+		}else if(batchTimeout > 0 && isTimeout()) {
 			flushBuffer();
 		}
 	}
 
 	private boolean isTimeout() {
-		return Math.abs(lastSendTime - System.currentTimeMillis()) > bufferTimeout;
+		return Math.abs(lastSendTime - System.currentTimeMillis()) > batchTimeout;
 	}
 	
 	@Override
@@ -86,11 +86,11 @@ public class BufferedOutput extends ProxyOutput{
 		}
 		
 		List<Object> tempBuf = bufferList;
-		bufferList = new ArrayList<Object>(bufferSize);
+		bufferList = new ArrayList<Object>(batchSize);
 		try {
 			super.write(tempBuf);
 		}finally {
-			if(bufferTimeout > 0) {
+			if(batchTimeout > 0) {
 				lastSendTime = System.currentTimeMillis();
 			}
 		}
@@ -112,7 +112,7 @@ public class BufferedOutput extends ProxyOutput{
 	}
 
 	private void startAutoFlushThread() {
-		if(bufferTimeout <= 0) {
+		if(batchTimeout <= 0) {
 			return;
 		}
 		
@@ -120,11 +120,11 @@ public class BufferedOutput extends ProxyOutput{
 		
 		Thread t = new Thread(() -> {
 			
-			logger.info("flush thread started,bufferTimeout:"+bufferTimeout);
+			logger.info("flush thread started,batchTimeout:"+batchTimeout);
 			try {
 				while(running) {
 					try {
-						Thread.sleep(bufferTimeout);
+						Thread.sleep(batchTimeout);
 					} catch (InterruptedException e) {
 						return;
 					}
