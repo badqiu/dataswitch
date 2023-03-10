@@ -346,13 +346,12 @@ public class JdbcOutput extends DataSourceProvider implements Output,TableName{
 			executeCreateTableSql(jdbcTemplate,localColumnsSqlType);
 		}
 		
-		Set<String> tableColumnNames = allColumnsWithValue.keySet();
-		
 		if(autoAlterTableAddColumn) {
 			BiConsumer<String, String> alterTableAddColumnAction = newAlterTableAddColumnFunction(jdbcTemplate);
 			JdbcUtil.alterTableIfColumnMiss(jdbcTemplate, allColumnsWithValue,table,cacheJdbcUrl(),this.columnsSqlType,this.defaultColumnSqlType,alterTableAddColumnAction);
 		}
 		
+		Set<String> tableColumnNames = allColumnsWithValue.keySet();
 		return generateSql(jdbcTemplate, tableColumnNames);
 	}
 
