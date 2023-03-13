@@ -81,6 +81,7 @@ script 需要增加 context, beforeScript put var into context for init.
   OpenTSDB
   Cassandra
   OpenSearch
+  HttpOutput完善，一条数据一个请示，或是N条数据一个请示，不是现在批量，持续写入
   Queue
   	#RocketMQ 未测试
   	RabbitMQ
