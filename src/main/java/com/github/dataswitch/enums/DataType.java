@@ -9,14 +9,15 @@ import org.apache.commons.lang3.StringUtils;
  *
  */
 public enum DataType {
-	STRING,CHAR,
+	STRING,CHAR, // string
 	
-	LONG,INTEGER,INT,BIGINTEGER,SHORT,
-	FLOAT,DOUBLE,BIGDECIMAL,
+	LONG,INTEGER,INT,BIGINTEGER,SHORT, // int
+	
+	FLOAT,DOUBLE,BIGDECIMAL, // double
 	
 	BOOLEAN,
 	
-	TIMESTAMP,DATE,TIME;
+	TIMESTAMP,DATE,TIME; // date
 	
 	
 	public boolean isDouble() {
