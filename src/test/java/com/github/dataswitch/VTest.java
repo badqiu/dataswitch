@@ -1,16 +1,24 @@
 package com.github.dataswitch;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 public class VTest {
 
 	volatile static int count = 0;
 	static AtomicLong acount = new AtomicLong();
+	
+	@Test
+	public void test_exec() throws IOException {
+		Process p1 = Runtime.getRuntime().exec("bin/flume-ng agent --name usbyteplus1 --conf conf/ --conf-file conf/usbyteplus1.conf -Dflume.root.logger=INFO");
+		IOUtils.copy(p1.getInputStream(),System.out);
+	}
 	
 	@Test
 	public void testArray() {
