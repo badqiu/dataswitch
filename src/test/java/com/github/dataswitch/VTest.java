@@ -26,9 +26,10 @@ public class VTest {
 			r = r / Long.MAX_VALUE ;
 		}
 		
-		System.out.println("value: "+df.format(r));
-		System.out.println("double,value: "+df.format(Double.MAX_VALUE));
-		System.out.println("float,value: "+df.format(Float.MAX_VALUE));
+		System.out.println("double/long,value: "+df.format(r));
+		System.out.println("Long.MAX_VALUE:\t\t"+df.format(Long.MAX_VALUE));
+		System.out.println("Double.MAX_VALUE:\t"+df.format(Double.MAX_VALUE));
+		System.out.println("Float.MAX_VALUE: "+df.format(Float.MAX_VALUE));
 		System.out.println("double/long,value: "+df.format(Double.MAX_VALUE/Long.MAX_VALUE));
 		System.out.println("double/float,value: "+df.format(Double.MAX_VALUE/Float.MAX_VALUE));
 		System.out.println("BigInteger,value: "+df.format(new BigInteger("1797693134862315700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000022222200000000000000000000000000000000000000000000000000000000000000000001111")));
