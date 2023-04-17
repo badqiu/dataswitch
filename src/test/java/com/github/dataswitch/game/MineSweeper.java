@@ -1,0 +1,144 @@
+package com.github.dataswitch.game;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.Random;
+import javax.swing.*;
+
+public class MineSweeper extends JFrame {
+    private final int ROWS = 10;        // 行数
+    private final int COLS = 10;        // 列数
+    private final int NUM_MINES = 10;   // 地雷数目
+    private boolean[][] mines = new boolean[ROWS][COLS];  // 地雷数组
+    private int[][] grid = new int[ROWS][COLS];           // 数字方格数组
+    private JButton[][] buttons = new JButton[ROWS][COLS];// 按钮数组
+    
+    public MineSweeper() {
+        setTitle("Mine Sweeper");       // 标题
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(500, 500);              // 宽和高都是500像素
+        setLocationRelativeTo(null);    // 将窗口设置为居中
+        setResizable(false);            // 禁止用户调整大小
+        
+        getContentPane().setLayout(new GridLayout(ROWS, COLS));  // 将GridLayout设置为主窗口布局
+        
+        initGrid();         // 初始化数字方格数组
+        placeMines();       // 放置地雷
+        calculateAdjacentSquares(); // 计算数字方格数组
+        createButtons();    // 创建按钮数组
+        
+        setVisible(true);   // 显示主窗口
+    }
+    
+    private void initGrid() {
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++) {
+                mines[i][j] = false;        // 初始化地雷数组
+                grid[i][j] = 0;             // 初始化数字方格数组
+            }
+        }
+    }
+    
+    private void placeMines() {
+        int count = 0;
+        Random rand = new Random();         
+        while (count < NUM_MINES) {            
+            int row = rand.nextInt(ROWS);
+            int col = rand.nextInt(COLS);
+            if (!mines[row][col]) {
+                mines[row][col] = true;     // 在该格子放置地雷
+                count++;                    // 游戏地雷数加一
+            }
+        }
+    }
+    
+    private void calculateAdjacentSquares() {
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++) {
+                if (!mines[i][j]) {
+                    int count = 0;
+                    if (i > 0 && mines[i-1][j]) count++;
+                    if (i < ROWS-1 && mines[i+1][j]) count++;
+                    if (j > 0 && mines[i][j-1]) count++;
+                    if (j < COLS-1 && mines[i][j+1]) count++;
+                    if (i > 0 && j > 0 && mines[i-1][j-1]) count++;
+                    if (i > 0 && j < COLS-1 && mines[i-1][j+1]) count++;
+                    if (i < ROWS-1 && j > 0 && mines[i+1][j-1]) count++;
+                    if (i < ROWS-1 && j < COLS-1 && mines[i+1][j+1]) count++;
+                    grid[i][j] = count;          // 设置数字方格值
+                }
+            }
+        }
+    }
+    
+    private void createButtons() {
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++) {
+                JButton button = new JButton();
+                button.setPreferredSize(new Dimension(40, 40));   // 按钮大小
+                button.setFont(new Font("Arial", Font.BOLD, 20));  // 设置按钮文本字体
+                
+                // 将ButtonListener添加到每个按钮中 
+                button.addActionListener(new ButtonListener(i, j)); 
+                
+                buttons[i][j] = button;     
+                getContentPane().add(button);  // 将按钮添加到主窗口中
+            }
+        }
+    }
+    
+    private void revealSquare(int row, int col) {
+        buttons[row][col].setEnabled(false);        // 将按钮设置为不可用
+        if (mines[row][col]) {
+            buttons[row][col].setText("*");        // 按钮标记为地雷
+            JOptionPane.showMessageDialog(null, "You lost!"); // 弹出失败窗口
+            System.exit(0);        // 结束程序
+        } else {
+            buttons[row][col].setText(Integer.toString(grid[row][col])); // 显示数字方格值
+            if (grid[row][col] == 0) {      // 如果点击到的数字方格值为0,那么需要递归处理周围的数字方格
+                if (row > 0 && col > 0 && buttons[row-1][col-1].isEnabled()) revealSquare(row-1, col-1);
+                if (row > 0 && buttons[row-1][col].isEnabled()) revealSquare(row-1, col);
+                if (row > 0 && col < COLS-1 && buttons[row-1][col+1].isEnabled()) revealSquare(row-1, col+1);
+                if (col > 0 && buttons[row][col-1].isEnabled()) revealSquare(row, col-1);
+                if (col < COLS-1 && buttons[row][col+1].isEnabled()) revealSquare(row, col+1);
+                if (row < ROWS-1 && col > 0 && buttons[row+1][col-1].isEnabled()) revealSquare(row+1, col-1);
+                if (row < ROWS-1 && buttons[row+1][col].isEnabled()) revealSquare(row+1, col);
+                if (row < ROWS-1 && col < COLS-1 && buttons[row+1][col+1].isEnabled()) revealSquare(row+1, col+1);
+            }
+            checkWin();             // 计算是否赢得游戏
+        }
+    }
+    
+    private void checkWin() {
+        boolean win = true;
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++) {
+                if (!mines[i][j] && buttons[i][j].isEnabled()) {
+                    win = false;    // 游戏未结束
+                    break;
+                }
+            }
+            if (!win) break;
+        }
+        if (win) {
+            JOptionPane.showMessageDialog(null, "You win!"); // 获胜窗口
+            System.exit(0);        // 结束程序
+        }
+    }
+    
+    private class ButtonListener implements ActionListener {
+        private int row, col;
+        
+        public ButtonListener(int row, int col) {
+            this.row = row;
+            this.col = col;
+        }
+        
+        public void actionPerformed(ActionEvent e) {
+            revealSquare(row, col);     // 点击按钮后处理按钮点击事件
+        }
+    }
+    
+    public static void main(String[] args) {
+        new MineSweeper();      // 启动程序
+    }
+}
