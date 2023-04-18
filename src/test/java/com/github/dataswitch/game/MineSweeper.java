@@ -119,6 +119,10 @@ public class MineSweeper extends JFrame {
 		if(flagText.equals(btn.getText())) {
 			btn.setText("");
 		}else {
+			if(!btn.getText().isEmpty()) {
+				return;
+			}
+			
 			btn.setText(flagText);
 		}
 	}
