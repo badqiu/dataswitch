@@ -119,7 +119,7 @@ public class MineSweeper extends JFrame {
 		if(flagText.equals(btn.getText())) {
 			btn.setText("");
 		}else {
-			if(!btn.getText().isEmpty()) {
+			if(!btn.getText().isEmpty()) { //已经打开，并且是数字
 				return;
 			}
 			
