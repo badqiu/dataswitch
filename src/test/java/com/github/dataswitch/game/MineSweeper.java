@@ -89,13 +89,16 @@ public class MineSweeper extends JFrame {
     }
     
     private void revealSquare(int row, int col) {
-        buttons[row][col].setEnabled(false);        // 将按钮设置为不可用
+        JButton btn = buttons[row][col];
+		btn.setEnabled(false);        // 将按钮设置为不可用
+		
         if (mines[row][col]) {
-            buttons[row][col].setText("*");        // 按钮标记为地雷
+            btn.setText("*");        // 按钮标记为地雷
             JOptionPane.showMessageDialog(null, "You lost!"); // 弹出失败窗口
             System.exit(0);        // 结束程序
         } else {
-            buttons[row][col].setText(Integer.toString(grid[row][col])); // 显示数字方格值
+            btn.setText(Integer.toString(grid[row][col])); // 显示数字方格值
+            
             if (grid[row][col] == 0) {      // 如果点击到的数字方格值为0,那么需要递归处理周围的数字方格
                 if (row > 0 && col > 0 && buttons[row-1][col-1].isEnabled()) revealSquare(row-1, col-1);
                 if (row > 0 && buttons[row-1][col].isEnabled()) revealSquare(row-1, col);
