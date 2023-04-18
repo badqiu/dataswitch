@@ -95,7 +95,7 @@ public class MineSweeper extends JFrame {
         if (mines[row][col]) {
             btn.setText("*");        // 按钮标记为地雷
             JOptionPane.showMessageDialog(null, "You lost!"); // 弹出失败窗口
-            System.exit(0);        // 结束程序
+            gameOver();
         } else {
             btn.setText(Integer.toString(grid[row][col])); // 显示数字方格值
             
@@ -112,6 +112,10 @@ public class MineSweeper extends JFrame {
             checkWin();             // 计算是否赢得游戏
         }
     }
+
+	private void gameOver() {
+		System.exit(0);        // 结束程序
+	}
     
 	public void setFlag(int row, int col) {
 		JButton btn = buttons[row][col];
@@ -140,7 +144,7 @@ public class MineSweeper extends JFrame {
         }
         if (win) {
             JOptionPane.showMessageDialog(null, "You win!"); // 获胜窗口
-            System.exit(0);        // 结束程序
+            gameOver();
         }
     }
     
