@@ -78,7 +78,9 @@ public class MineSweeper extends JFrame {
                 button.setFont(new Font("Arial", Font.BOLD, 20));  // 设置按钮文本字体
                 
                 // 将ButtonListener添加到每个按钮中 
-                button.addActionListener(new ButtonListener(i, j)); 
+                ButtonListener buttonListener = new ButtonListener(i, j);
+				button.addActionListener(buttonListener); 
+                button.addMouseListener(buttonListener);
                 
                 buttons[i][j] = button;     
                 getContentPane().add(button);  // 将按钮添加到主窗口中
@@ -108,6 +110,16 @@ public class MineSweeper extends JFrame {
         }
     }
     
+	public void setFlag(int row, int col) {
+		JButton btn = buttons[row][col];
+		String flagText = "F";
+		if(flagText.equals(btn.getText())) {
+			btn.setText("");
+		}else {
+			btn.setText(flagText);
+		}
+	}
+	
     private void checkWin() {
         boolean win = true;
         for (int i = 0; i < ROWS; i++) {
@@ -125,7 +137,7 @@ public class MineSweeper extends JFrame {
         }
     }
     
-    private class ButtonListener implements ActionListener {
+    private class ButtonListener extends MouseAdapter implements ActionListener {
         private int row, col;
         
         public ButtonListener(int row, int col) {
@@ -136,9 +148,20 @@ public class MineSweeper extends JFrame {
         public void actionPerformed(ActionEvent e) {
             revealSquare(row, col);     // 点击按钮后处理按钮点击事件
         }
+        
+        @Override
+        public void mousePressed(MouseEvent e) {
+        	if (SwingUtilities.isRightMouseButton(e)) {
+                System.out.println("Right button clicked, row:"+row+" col:"+col);
+                setFlag(row,col);
+            }
+        }
     }
     
     public static void main(String[] args) {
         new MineSweeper();      // 启动程序
     }
+
+
+    
 }
