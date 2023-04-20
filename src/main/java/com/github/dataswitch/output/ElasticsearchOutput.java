@@ -16,6 +16,7 @@ import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.elasticsearch.action.DocWriteRequest;
 import org.elasticsearch.action.admin.indices.flush.FlushRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.update.UpdateRequest;
@@ -178,7 +179,11 @@ public class ElasticsearchOutput implements Output,TableName{
 			bulkRequest.add(request);
 		}
 		
-		_client.bulk(bulkRequest, RequestOptions.DEFAULT);
+		BulkResponse bulkResponse = _client.bulk(bulkRequest, RequestOptions.DEFAULT);
+		
+	    if (bulkResponse.hasFailures()) {
+	        throw new RuntimeException("Failed to write data to Elasticsearch!,rows.size:"+rows.size()+" firstRow:"+rows.get(0));
+	    }
 	}
 
 	private void writeBySingleAction(List<Map> rows) throws IOException {
