@@ -18,13 +18,19 @@ import com.github.dataswitch.support.MongodbProvider;
 import com.github.dataswitch.util.InputOutputUtil;
 import com.github.dataswitch.util.ScriptEngineUtil;
 import com.github.dataswitch.util.Util;
+import com.mongodb.bulk.BulkWriteResult;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.BulkWriteOptions;
+import com.mongodb.client.model.DeleteOneModel;
 import com.mongodb.client.model.DeleteOptions;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.ReplaceOneModel;
 import com.mongodb.client.model.ReplaceOptions;
+import com.mongodb.client.model.UpdateOneModel;
 import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.model.WriteModel;
 
 public class MongodbOutput extends MongodbProvider implements Output {
 	private OutputMode outputMode = OutputMode.insert;
@@ -103,25 +109,74 @@ public class MongodbOutput extends MongodbProvider implements Output {
 			List<Document> documents = toDocuments(rows);
 			_mongoCollection.insertMany(documents);
 		}else if(outputMode == OutputMode.upsert) {
-			ReplaceOptions replaceOptions = new ReplaceOptions().upsert(true);
-			for(Map<String,Object> row : rows) {
-				_mongoCollection.replaceOne(getFilter(row), getDocByColumns(row),replaceOptions);
-			}
+//			executeBySingleReplace(rows);
+			executeByBatchReplace(rows);
 		}else if(outputMode == OutputMode.update) {
-			UpdateOptions updateOptions = new UpdateOptions();
-			for(Map<String,Object> row : rows) {
-				Document doc = getDocByColumns(row);
-				_mongoCollection.updateOne(getFilter(row), new Document("$set",doc),updateOptions);
-			}
+//			executeBySingleUpdate(rows);
+			executeByBatchUpdate(rows);
 		}else if(outputMode == OutputMode.delete) {
-			DeleteOptions deleteOptions = new DeleteOptions();
-			for(Map<String,Object> row : rows) {
-				_mongoCollection.deleteOne(getFilter(row),deleteOptions);
-			}
+//			executeBySingleDelete(rows);
+			executeByBatchDelete(rows);
 		}else {
 			throw new UnsupportedOperationException("unsupport outputMode:"+outputMode);
 		}
 		
+	}
+
+	private void executeByBatchDelete(List<Map<String, Object>> rows) {
+		List<WriteModel<Document>> writes = new ArrayList<>();
+		for (Map<String, Object> row : rows) {
+		    Bson filter = getFilter(row);
+		    DeleteOneModel<Document> deleteOne = new DeleteOneModel<>(filter);
+		    writes.add(deleteOne);
+		}
+		BulkWriteOptions bulkWriteOptions = new BulkWriteOptions().ordered(false);
+		BulkWriteResult bulkResult = _mongoCollection.bulkWrite(writes, bulkWriteOptions);
+	}
+
+	private void executeByBatchUpdate(List<Map<String, Object>> rows) {
+		List<UpdateOneModel<Document>> updates = new ArrayList<UpdateOneModel<Document>>();
+		for (Map<String, Object> row : rows) {
+		    Document doc = getDocByColumns(row);
+		    Bson filter = getFilter(row);
+		    UpdateOneModel<Document> update = new UpdateOneModel<Document>(filter, new Document("$set", doc));
+		    updates.add(update);
+		}
+		BulkWriteResult result = _mongoCollection.bulkWrite(updates);
+	}
+
+	private void executeByBatchReplace(List<Map<String, Object>> rows) {
+		List<WriteModel<Document>> writes = new ArrayList<>();
+		for (Map<String, Object> row : rows) {
+		    Bson filter = getFilter(row);
+		    Document replacement = getDocByColumns(row);
+		    ReplaceOneModel<Document> replaceOne = new ReplaceOneModel<>(filter, replacement, new ReplaceOptions().upsert(true));
+		    writes.add(replaceOne);
+		}
+		BulkWriteOptions bulkWriteOptions = new BulkWriteOptions().ordered(false);
+		BulkWriteResult bulkResult = _mongoCollection.bulkWrite(writes, bulkWriteOptions);
+	}
+
+	private void executeBySingleDelete(List<Map<String, Object>> rows) {
+		DeleteOptions deleteOptions = new DeleteOptions();
+		for(Map<String,Object> row : rows) {
+			_mongoCollection.deleteOne(getFilter(row),deleteOptions);
+		}
+	}
+
+	private void executeBySingleUpdate(List<Map<String, Object>> rows) {
+		UpdateOptions updateOptions = new UpdateOptions();
+		for(Map<String,Object> row : rows) {
+			Document doc = getDocByColumns(row);
+			_mongoCollection.updateOne(getFilter(row), new Document("$set",doc),updateOptions);
+		}
+	}
+
+	private void executeBySingleReplace(List<Map<String, Object>> rows) {
+		ReplaceOptions replaceOptions = new ReplaceOptions().upsert(true);
+		for(Map<String,Object> row : rows) {
+			_mongoCollection.replaceOne(getFilter(row), getDocByColumns(row),replaceOptions);
+		}
 	}
 	
 	public Document getDocByColumns(Map row) {
