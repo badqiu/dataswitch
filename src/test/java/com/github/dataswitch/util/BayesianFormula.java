@@ -38,6 +38,7 @@ public class BayesianFormula {
         double posterior = calculatePosteriorProbability(prior, likelihood, evidence);
         
         // 输出计算结果
-        System.out.println("事件 A 发生的后验概率为：" + (posterior * 100) + "%");
+        double percent = (long)(posterior * 10000) / 100.0;
+		System.out.println("事件 A 发生的后验概率为：" + percent + "%");
     }
 }
