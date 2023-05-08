@@ -17,8 +17,8 @@ public class BayesianFormula {
      */
     public static double calculatePosteriorProbability(double a_prior, double a_likelihood, double b_evidence) {
         // 根据贝叶斯公式计算后验概率
-        double b_posterior = (a_likelihood * a_prior) / b_evidence;
-        return b_posterior;
+        double posterior = (a_likelihood * a_prior) / b_evidence;
+        return posterior;
     }
  
     public static void main(String[] args) {
@@ -35,9 +35,9 @@ public class BayesianFormula {
         double evidence = 0.11;
  
         // 计算更新后的后验概率
-        double b_posterior = calculatePosteriorProbability(prior, likelihood, evidence);
+        double posterior = calculatePosteriorProbability(prior, likelihood, evidence);
         
         // 输出计算结果
-        System.out.println("事件 A 发生的后验概率为：" + (b_posterior * 100) + "%");
+        System.out.println("事件 A 发生的后验概率为：" + (posterior * 100) + "%");
     }
 }
