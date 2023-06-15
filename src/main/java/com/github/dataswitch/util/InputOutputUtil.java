@@ -111,7 +111,7 @@ public class InputOutputUtil {
 		try {
 			openable.open(params);
 		}catch(Exception e) {
-			throw new RuntimeException("open() error,openable:"+openable,e);
+			throw new RuntimeException("open() error,openable:"+openable+" params:"+params,e);
 		}
 	}
 	
