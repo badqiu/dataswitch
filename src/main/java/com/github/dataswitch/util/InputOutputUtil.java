@@ -216,8 +216,8 @@ public class InputOutputUtil {
 		return copy(input,output,bufferSize,processor,null,failMode,null);
 	}
 
-	public static CopyResult copy(Input input,Output output,int bufferSize,Processor processor,Map params,String failMode) {
-		return copy(input,output,bufferSize,processor,params,FailMode.getRequiredByName(failMode),null);
+	public static CopyResult copy(Input input,Output output,int bufferSize,Processor processor,Map params,FailMode failMode) {
+		return copy(input,output,bufferSize,processor,params,failMode,null);
 	}
 
 	/**
