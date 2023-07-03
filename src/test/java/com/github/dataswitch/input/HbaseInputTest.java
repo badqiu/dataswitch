@@ -12,10 +12,8 @@ import com.github.dataswitch.util.InputOutputUtil;
 
 public class HbaseInputTest {
 
-	public static String mongodbUrl = "mongodb://172.17.38.121:27017/?directConnection=true&serverSelectionTimeoutMS=2000";
 	
 	HbaseInput input = new HbaseInput();
-	
 	
 	@Before
 	public void before() throws Exception {
