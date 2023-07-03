@@ -64,7 +64,7 @@ public class FileBufferedInput extends ProxyInput{
 			return filename;
 		}
 		if(randomFilename) {
-			this.filename = UUID.randomUUID().toString();
+			this.filename = "buffer_"+UUID.randomUUID().toString();
 		}
 		
 		return this.filename;
