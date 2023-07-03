@@ -4,6 +4,7 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.Map;
 
@@ -22,9 +23,6 @@ public class HttpOutput extends BaseOutput implements Output {
 	
 	private Serializer serializer  = null;
 
-	private transient HttpURLConnection  conn;
-	private transient OutputStream outputStream;
-	
 	public String getUrl() {
 		return url;
 	}
@@ -52,10 +50,11 @@ public class HttpOutput extends BaseOutput implements Output {
 		
 		Assert.hasText(url,"url must be not empty");
 		Assert.notNull(serializer,"serializer must be not null");
-		URL url = new URL(this.url);
-		
-        // 打开和URL之间的连接
-        conn = (HttpURLConnection)url.openConnection();
+	}
+
+	private HttpURLConnection openConnectionByConfig(URL url) throws IOException, ProtocolException {
+		// 打开和URL之间的连接
+		HttpURLConnection conn = (HttpURLConnection)url.openConnection();
         // 设置通用的请求属性
         
         // Post cannot use caches  
@@ -69,35 +68,31 @@ public class HttpOutput extends BaseOutput implements Output {
         conn.setRequestProperty("connection", "Keep-Alive");
         conn.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)");
         conn.setRequestMethod("POST");  
-        conn.setRequestProperty( "Content-Type", "application/octet-stream"); 
-        
-        outputStream = new BufferedOutputStream(conn.getOutputStream());
+        conn.setRequestProperty( "Content-Type", "application/octet-stream");
+		return conn;
 	}
 
 	@Override
 	public void close() throws IOException {
-		try {
-			if(serializer != null) serializer.flush();
-			if(outputStream != null) outputStream.flush();
-		} catch (IOException e) {
-			throw new RuntimeException("flush error",e);
-		}
-		IOUtils.closeQuietly(outputStream);
-		
-		if(conn != null) {
-			String response = IOUtils.toString(conn.getInputStream());
-			log.info("responseCode:"+conn.getResponseCode()+" response::"+response);
-			
-			conn.disconnect();
-		}
 	}
 
 	@Override
 	public void writeObject(Object object) {
 		try {
-			
-
+			URL url = new URL(this.url);
+	        HttpURLConnection conn = openConnectionByConfig(url); 
+	        
+	        OutputStream outputStream = new BufferedOutputStream(conn.getOutputStream());
 			serializer.serialize(object, outputStream);
+			serializer.flush();
+			outputStream.flush();
+			
+			int responseCode = conn.getResponseCode();
+			String response = IOUtils.toString(conn.getInputStream());
+			log.info("responseCode:"+responseCode+" response::"+response);
+			
+			IOUtils.closeQuietly(outputStream);
+			conn.disconnect();
 		}catch(Exception e) {
 			throw new RuntimeException("write error,id:"+getId(),e);
 		}
