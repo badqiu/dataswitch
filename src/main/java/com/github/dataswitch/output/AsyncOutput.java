@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.function.Consumer;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
@@ -28,6 +29,8 @@ public class AsyncOutput extends ProxyOutput{
 	private Exception lastException;
 	private Object lastExceptionData;
 	private FailMode failMode = FailMode.FAIL_FAST;
+	
+	private Consumer<Exception> exceptionHandler = null;
 
 	private Thread _writeThread = null;
 	
@@ -45,6 +48,14 @@ public class AsyncOutput extends ProxyOutput{
 
 	public void setQueue(BlockingQueue<List> queue) {
 		this.queue = queue;
+	}
+	
+	public Consumer<Exception> getExceptionHandler() {
+		return exceptionHandler;
+	}
+
+	public void setExceptionHandler(Consumer<Exception> exceptionHandler) {
+		this.exceptionHandler = exceptionHandler;
 	}
 
 	@Override
@@ -96,6 +107,10 @@ public class AsyncOutput extends ProxyOutput{
 							logger.warn("ignore error on write _writeThread, one dataRow:"+firstRow,e);
 							lastException = e;
 							lastExceptionData = firstRow;
+							
+							if(exceptionHandler != null) {
+								exceptionHandler.accept(e);
+							}
 						}
 					}
 				}finally {

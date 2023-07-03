@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.function.Consumer;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
@@ -26,6 +27,8 @@ public class AsyncInput extends ProxyInput{
 	private Thread thread = null;
 	private FailMode failMode = FailMode.FAIL_FAST;
 	private int readSize = Constants.DEFAULT_BUFFER_SIZE;
+	
+	private Consumer<Exception> exceptionHandler = null;
 	
 	public AsyncInput() {
 		super();
@@ -49,6 +52,14 @@ public class AsyncInput extends ProxyInput{
 
 	public void setFailMode(FailMode failMode) {
 		this.failMode = failMode;
+	}
+	
+	public Consumer<Exception> getExceptionHandler() {
+		return exceptionHandler;
+	}
+
+	public void setExceptionHandler(Consumer<Exception> exceptionHandler) {
+		this.exceptionHandler = exceptionHandler;
 	}
 
 	@Override
@@ -118,6 +129,10 @@ public class AsyncInput extends ProxyInput{
 							logger.warn("ignore error on read thread, one dataRow:"+firstRow,e);
 							lastException = e;
 							lastExceptionData = firstRow;
+							
+							if(exceptionHandler != null) {
+								exceptionHandler.accept(e);
+							}
 						}
 					}
 				}finally {
