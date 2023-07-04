@@ -11,7 +11,7 @@ import com.github.dataswitch.util.Util;
 
 public enum FailMode {
 	//RETRY ??
-	//FAIL_BY_EXCEPTION ??
+	//FAIL_BY_EXCEPTION_TYPE ??
 	FAIL_FAST("failFast","快速失败"),
 	FAIL_AT_END("failAtEnd","结束时失败"),
 	FAIL_NEVER("failNever","从不失败");
