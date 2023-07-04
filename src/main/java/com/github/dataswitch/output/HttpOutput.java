@@ -88,14 +88,24 @@ public class HttpOutput extends BaseOutput implements Output {
 			outputStream.flush();
 			
 			int responseCode = conn.getResponseCode();
-			String response = IOUtils.toString(conn.getInputStream());
-			log.info("responseCode:"+responseCode+" response::"+response);
+			validateResponseCode(responseCode,conn);
+			
+//			log.info("responseCode:"+responseCode+" response::"+response);
 			
 			IOUtils.closeQuietly(outputStream);
 			conn.disconnect();
 		}catch(Exception e) {
 			throw new RuntimeException("write error,id:"+getId(),e);
 		}
+	}
+
+	private void validateResponseCode(int responseCode,HttpURLConnection conn) throws IOException {
+		if(responseCode >= 200 && responseCode <300) {
+			return;
+		}
+		
+		String response = IOUtils.toString(conn.getInputStream());
+		throw new RuntimeException("error response code:" + responseCode+", response:"+response);
 	}
 	
 }

@@ -21,6 +21,26 @@ import com.github.dataswitch.util.MapUtil;
 public class HttpOutputTest {
 
 	HttpOutput output = new HttpOutput();
+	
+	@Test
+	public void test2() throws Exception {
+//		String result = sendPost("http://localhost:8080/userdata/importData.do?username=yuminxiong&password=iXZfu38dfdo20M8Odw9eJR5dfeQ2ogy4o0Oet4G&importMode=append&appId=lj&module=master","badqiu,data1\njane,data2\nxm,data3");
+//		System.out.println(result);
+		
+		output.setUrl("http://www.baidu.com");
+		TxtSerializer txt = new TxtSerializer();
+		txt.setColumnSplit(",");
+		txt.setColumns("account,data");
+		output.setSerializer(txt);
+		output.open(null);
+		for(int i = 0; i < 100; i++) {
+			output.writeObject(MapUtil.newMap("account","a"+i,"data","data"+i));
+		}
+		output.close();
+		
+	}
+	
+	
 	@Test
 	public void test() throws Exception {
 //		String result = sendPost("http://localhost:8080/userdata/importData.do?username=yuminxiong&password=iXZfu38dfdo20M8Odw9eJR5dfeQ2ogy4o0Oet4G&importMode=append&appId=lj&module=master","badqiu,data1\njane,data2\nxm,data3");
