@@ -263,14 +263,14 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 
 	private long exec(Map<String, Object> params, Input input, Output output, Processor processor) {
 		long rows = 0;
-
-		long start = System.currentTimeMillis();
 		long costTime = 0;
+		
 		try {
 			
 			CopyResult copyResult = InputOutputUtil.copy(input, output,bufferSize,processor,params,failMode,exceptionHandler);
+			
 			rows = copyResult.getCount();
-			costTime = System.currentTimeMillis() - start;
+			costTime = copyResult.getTotalCostTime();
 			
 			return rows;
 		}catch(Exception e) {
