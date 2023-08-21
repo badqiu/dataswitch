@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +29,8 @@ public class FileBufferedInput extends ProxyInput{
 	private FileInput _bufferedInput;
 	
 	private boolean randomFilename = false;
+	private boolean deleteFileOnClose = true;
+	private File _tempFile = null;
 	
 	public FileBufferedInput() {
 	}
@@ -58,6 +62,14 @@ public class FileBufferedInput extends ProxyInput{
 	public void setRandomFilename(boolean randomFilename) {
 		this.randomFilename = randomFilename;
 	}
+	
+	public boolean isDeleteFileOnClose() {
+		return deleteFileOnClose;
+	}
+
+	public void setDeleteFileOnClose(boolean deleteFileOnClose) {
+		this.deleteFileOnClose = deleteFileOnClose;
+	}
 
 	public String finalFilename() {
 		if(StringUtils.isNotBlank(filename)) {
@@ -72,14 +84,14 @@ public class FileBufferedInput extends ProxyInput{
 	
 	@Override
 	public List<Object> read(int size) {
-		File file = new File(dir,finalFilename());
-		if(!file.exists() || file.length() <= 0) {
-			saveIntoBufferdFile(file);
+		_tempFile = new File(dir,finalFilename());
+		if(!_tempFile.exists() || _tempFile.length() <= 0) {
+			saveIntoBufferdFile(_tempFile);
 		}
 		
 		if(_bufferedInput == null) {
 			_bufferedInput = new FileInput();
-			_bufferedInput.setDir(file.getAbsolutePath());;
+			_bufferedInput.setDir(_tempFile.getAbsolutePath());;
 			_bufferedInput.setDeserializer(new ByteDeserializer());
 		}
 		
@@ -88,9 +100,10 @@ public class FileBufferedInput extends ProxyInput{
 
 	private void saveIntoBufferdFile(File file) {
 		logger.info("create buf file:"+file);
+		
 		FileOutput bufferedOutput = new FileOutput();
-		bufferedOutput.setDir(dir);
-		bufferedOutput.setFilename(finalFilename());
+		bufferedOutput.setDir(file.getParentFile().getAbsolutePath());
+		bufferedOutput.setFilename(file.getName());
 		bufferedOutput.setSerializer(new ByteSerializer());
 		Input proxy = getProxy();
 		try {
@@ -105,6 +118,10 @@ public class FileBufferedInput extends ProxyInput{
 	public void close() {
 		IOUtil.closeQuietly(_bufferedInput);
 		IOUtil.closeQuietly(getProxy());
+		
+		if(deleteFileOnClose) {
+			FileUtils.deleteQuietly(_tempFile);
+		}
 	}
 	
 }
