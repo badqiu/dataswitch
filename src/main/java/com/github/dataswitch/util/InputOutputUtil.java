@@ -145,16 +145,16 @@ public class InputOutputUtil {
 	}
 	
 	
-	public static void collectExceptionIfFailAtEnd(FailMode failMode, final List<Exception> exceptions,Exception e) {
-		if(exceptions == null) return;
-		if(e == null) return;
-		
-		if(failMode == FailMode.FAIL_AT_END) {
-			if(exceptions.size() < 100) { // limit size for OutOfMemoryError
-				exceptions.add(e);
-			}
-		}
-	}
+//	public static void collectExceptionIfFailAtEnd(FailMode failMode, final List<Exception> exceptions,Exception e) {
+//		if(exceptions == null) return;
+//		if(e == null) return;
+//		
+//		if(failMode == FailMode.FAIL_AT_END) {
+//			if(exceptions.size() < 100) { // limit size for OutOfMemoryError
+//				exceptions.add(e);
+//			}
+//		}
+//	}
 	
 	/**
 	 * 拷贝数据
@@ -274,8 +274,6 @@ public class InputOutputUtil {
 					
 					
 					logger.warn("copy warn,input:"+input+" output:"+output+" processor:"+processor+" one rowData:"+firstRow,e);
-					
-//					collectExceptionIfFailAtEnd(failMode, exceptions, e);
 					
 					handleException(exceptionHandler, e);
 				}
