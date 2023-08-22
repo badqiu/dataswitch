@@ -47,7 +47,7 @@ public class BufferedInput extends ProxyInput{
 		}
 		
 		
-		List<Object> list = super.read(bufferSize);
+		List<Object> list = super.read(size);
 		if(CollectionUtils.isEmpty(list)) {
 			_reachEnd = true;
 			return returnBufferList();
