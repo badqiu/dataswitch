@@ -11,10 +11,11 @@ public class BufferedInputTest {
 		RandomStringInput input = new RandomStringInput(20);
 		
 		OutputStreamOutput output = new OutputStreamOutput(System.out);
-		BufferedInput bufferedInput = new BufferedInput(input,5);
+		BufferedInput bufferedInput = new BufferedInput(input,5,500);
 		
 		InputOutputUtil.copy(bufferedInput, output,1);
 		InputOutputUtil.close(bufferedInput);
 		InputOutputUtil.close(output);
 	}
+	
 }

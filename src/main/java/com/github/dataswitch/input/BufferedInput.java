@@ -15,6 +15,10 @@ public class BufferedInput extends ProxyInput{
 	private static Logger logger = LoggerFactory.getLogger(BufferedInput.class);
 	
 	private int bufferSize = Constants.DEFAULT_BUFFER_SIZE;
+	private int bufferTimeout = 0;
+	
+	
+	private long _lastFlushTime = System.currentTimeMillis();
 	private List<Object> _bufferList;
 	private boolean _reachEnd = false;
 	
@@ -23,14 +27,32 @@ public class BufferedInput extends ProxyInput{
 	}
 
 	public BufferedInput(Input proxy) {
-		this(proxy,Constants.DEFAULT_BUFFER_SIZE);
+		this(proxy,Constants.DEFAULT_BUFFER_SIZE,0);
 	}
 	
-	public BufferedInput(Input proxy,int bufferSize) {
+	public BufferedInput(Input proxy,int bufferSize,int bufferTimeout) {
 		super(proxy);
+		
+		this.bufferSize = bufferSize;
+		this.bufferTimeout = bufferTimeout;
+	}
+	
+	public int getBufferSize() {
+		return bufferSize;
+	}
+
+	public void setBufferSize(int bufferSize) {
 		this.bufferSize = bufferSize;
 	}
-	
+
+	public int getBufferTimeout() {
+		return bufferTimeout;
+	}
+
+	public void setBufferTimeout(int bufferTimeout) {
+		this.bufferTimeout = bufferTimeout;
+	}
+
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
 		super.open(params);
@@ -58,13 +80,30 @@ public class BufferedInput extends ProxyInput{
 		if(_bufferList.size() >= bufferSize) {
 			return returnBufferList();
 		}
+		if(isTimeout()) {
+			return returnBufferList();
+		}
 		
 		return read(size);
 	}
 	
+	private boolean isTimeout() {
+		if(bufferTimeout <= 0) {
+			return false;
+		}
+		
+		long interval = System.currentTimeMillis() - _lastFlushTime;
+		return interval > bufferTimeout;
+	}
+
 	private List<Object> returnBufferList() {
 		List result = _bufferList;
 		_bufferList = new ArrayList(bufferSize);
+		
+		if(bufferTimeout > 0) {
+			_lastFlushTime = System.currentTimeMillis();
+		}
+		
 		return result;
 	}
 	
