@@ -16,7 +16,7 @@ import com.github.dataswitch.output.RetryOutput;
 
 public class MultiFunctionInput extends ProxyInput{
 
-	private static Logger logger = LoggerFactory.getLogger(MultiFunctionInput.class);
+	private static Logger _log = LoggerFactory.getLogger(MultiFunctionInput.class);
 	
 	private boolean async = false; //done
 	private boolean sync = false; //done
@@ -120,10 +120,6 @@ public class MultiFunctionInput extends ProxyInput{
 		this.failMode = failMode;
 	}
 
-	public static void setLogger(Logger logger) {
-		MultiFunctionInput.logger = logger;
-	}
-
 	private Input newMultiFunctionProxy(Input proxy) {
 		Input input = proxy;
 		
@@ -167,7 +163,7 @@ public class MultiFunctionInput extends ProxyInput{
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
 		Input newProxy = newMultiFunctionProxy(getProxy());
-		logger.info("final MultiFunction inputClass:"+newProxy.getClass()+" input:"+newProxy);
+		_log.info("final MultiFunction inputClass:"+newProxy.getClass()+" input:"+newProxy);
 		setProxy(newProxy);
 		
 		super.open(params);
