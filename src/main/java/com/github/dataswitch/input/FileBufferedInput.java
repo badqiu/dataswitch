@@ -120,6 +120,7 @@ public class FileBufferedInput extends ProxyInput{
 		IOUtil.closeQuietly(getProxy());
 		
 		if(deleteFileOnClose) {
+			logger.info("delete temp buffer file:"+_tempFile);
 			FileUtils.deleteQuietly(_tempFile);
 		}
 	}
