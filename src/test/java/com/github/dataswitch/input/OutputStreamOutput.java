@@ -17,7 +17,9 @@ public class OutputStreamOutput implements Output{
 
 	@Override
 	public void close() throws IOException {
-		
+		if(output != null) {
+			output.close();
+		}
 	}
 
 	@Override

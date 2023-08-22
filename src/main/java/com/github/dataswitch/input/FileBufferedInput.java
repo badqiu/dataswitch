@@ -2,6 +2,7 @@ package com.github.dataswitch.input;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
@@ -31,6 +32,7 @@ public class FileBufferedInput extends ProxyInput{
 	private boolean randomFilename = false;
 	private boolean deleteFileOnClose = true;
 	private File _tempFile = null;
+	private Map<String,Object> _params = null;
 	
 	public FileBufferedInput() {
 	}
@@ -83,16 +85,29 @@ public class FileBufferedInput extends ProxyInput{
 	}
 	
 	@Override
+	public void open(Map<String, Object> params) throws Exception {
+		super.open(params);
+		this._params = params;
+	}
+	
+	@Override
 	public List<Object> read(int size) {
-		_tempFile = new File(dir,finalFilename());
-		if(!_tempFile.exists() || _tempFile.length() <= 0) {
-			saveIntoBufferdFile(_tempFile);
+		if(_tempFile == null) {
+			_tempFile = new File(dir,finalFilename());
+			if(!_tempFile.exists() || _tempFile.length() <= 0) {
+				saveIntoBufferdFile(_tempFile);
+			}
 		}
 		
 		if(_bufferedInput == null) {
 			_bufferedInput = new FileInput();
-			_bufferedInput.setDir(_tempFile.getAbsolutePath());;
+			_bufferedInput.setDir(_tempFile.getAbsolutePath());
 			_bufferedInput.setDeserializer(new ByteDeserializer());
+			try {
+				_bufferedInput.open(_params);
+			} catch (Exception e) {
+				throw new RuntimeException("error on bufferInput open,_tempFile:"+_tempFile,e);
+			}
 		}
 		
 		return _bufferedInput.read(size);
