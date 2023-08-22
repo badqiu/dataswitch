@@ -16,6 +16,7 @@ InputsOutputs配置文件生成工具
 自动建表时，支持partition? (mysql)
 表字段同步？
 支持调整同步并发数？
+支持BreakException
 
 process支持
 	JOIN数据
