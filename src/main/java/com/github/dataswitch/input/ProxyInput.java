@@ -15,7 +15,7 @@ public class ProxyInput extends BaseObject  implements Input{
 	
 	public ProxyInput(Input proxy) {
 		super();
-		this.proxy = proxy;
+		setProxy(proxy);
 	}
 
 	public List<Object> read(int size) {

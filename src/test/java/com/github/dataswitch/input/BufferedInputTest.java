@@ -4,21 +4,17 @@ import org.junit.Test;
 
 import com.github.dataswitch.util.InputOutputUtil;
 
-public class FileBufferedInputTest {
+public class BufferedInputTest {
 
 	@Test
 	public void test() {
-		RandomStringInput input = new RandomStringInput(1000);
+		RandomStringInput input = new RandomStringInput(20);
 		
 		OutputStreamOutput output = new OutputStreamOutput(System.out);
-		FileBufferedInput bufferedInput = new FileBufferedInput(input);
-		bufferedInput.setDir("/tmp");
-		bufferedInput.setFilename("FileBufferedInputTest.test");
-		bufferedInput.setDeleteFileOnClose(true);
+		BufferedInput bufferedInput = new BufferedInput(input,5);
 		
 		InputOutputUtil.copy(bufferedInput, output,1);
 		InputOutputUtil.close(bufferedInput);
 		InputOutputUtil.close(output);
 	}
-
 }
