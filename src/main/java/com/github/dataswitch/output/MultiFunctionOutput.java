@@ -43,7 +43,7 @@ public class MultiFunctionOutput extends ProxyOutput {
 	private Consumer<List<Object>> consumer; //done
 	private String logger = null; //done
 	
-	private FailMode failMode;
+	private FailMode failMode = FailMode.FAIL_FAST;
 	
 	
 	public MultiFunctionOutput() {

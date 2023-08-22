@@ -40,7 +40,7 @@ public class MultiFunctionInput extends ProxyInput{
 	
 	private Function<Integer,List<Object>> function; //done
 	
-	private FailMode failMode;
+	private FailMode failMode = FailMode.FAIL_FAST;
 	
 	
 	public MultiFunctionInput() {
