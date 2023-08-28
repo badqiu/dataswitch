@@ -13,7 +13,11 @@ import org.slf4j.LoggerFactory;
 import com.github.dataswitch.enums.Constants;
 import com.github.dataswitch.enums.FailMode;
 import com.github.dataswitch.output.RetryOutput;
-
+/**
+ * 多功能的Input
+ * @author badqiu
+ *
+ */
 public class MultiFunctionInput extends ProxyInput{
 
 	private static Logger _log = LoggerFactory.getLogger(MultiFunctionInput.class);
