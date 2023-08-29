@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
+import com.github.dataswitch.serializer.JsonSerializer;
 import com.github.dataswitch.serializer.Serializer;
 
 public class HttpOutput extends BaseOutput implements Output {
@@ -21,7 +22,7 @@ public class HttpOutput extends BaseOutput implements Output {
 	
 	private String url;
 	
-	private Serializer serializer  = null;
+	private Serializer serializer  = new JsonSerializer();
 
 	public String getUrl() {
 		return url;
@@ -95,7 +96,7 @@ public class HttpOutput extends BaseOutput implements Output {
 			IOUtils.closeQuietly(outputStream);
 			conn.disconnect();
 		}catch(Exception e) {
-			throw new RuntimeException("write error,id:"+getId()+" url:"+url,e);
+			throw new RuntimeException("write error,id:"+getId()+" url:"+url+" serializer:"+serializer,e);
 		}
 	}
 
