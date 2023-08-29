@@ -95,7 +95,7 @@ public class HttpOutput extends BaseOutput implements Output {
 			IOUtils.closeQuietly(outputStream);
 			conn.disconnect();
 		}catch(Exception e) {
-			throw new RuntimeException("write error,id:"+getId(),e);
+			throw new RuntimeException("write error,id:"+getId()+" url:"+url,e);
 		}
 	}
 
