@@ -44,7 +44,7 @@ public enum FailMode {
 	 * @return 最后的异常，如果是FailNever
 	 */
 	public <T> Exception  forEach(T[] items,Consumer<T> action) {
-		if(items == null) return null;
+		if(items == null || items.length == 0) return null;
 		
 		return forEach(Arrays.asList(items),action);
 	}
