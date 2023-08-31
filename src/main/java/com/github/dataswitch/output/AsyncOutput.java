@@ -85,51 +85,56 @@ public class AsyncOutput extends ProxyOutput{
 		Output output = getProxy();
 		
 		String threadName = getClass().getSimpleName()+"_write_"+getId();
-		Runnable runnable = newRunnable(output, threadName);
+		Runnable runnable = new WriteRunnable(output, threadName);
 		_writeThread = new Thread(runnable,threadName);
 		
 		_writeThread.setDaemon(true);
 		_writeThread.start();
 	}
+	
+	private class WriteRunnable implements Runnable {
+		Output output;
+		String threadName;
+		
+		public WriteRunnable(Output output, String threadName) {
+			this.output = output;
+			this.threadName = threadName;
+		}
 
-	protected Runnable newRunnable(Output output, String threadName) {
-		return new Runnable() {
-			@Override
-			public void run() {
-				try {
-					
-					while(running) {
-						List rows = null;
-						try {
-							rows = queue.take();
-							if(CollectionUtils.isEmpty(rows)) {
-								continue;
-							}
-							
-							output.write(rows);
-						}catch(InterruptedException e) {
-							logger.info("InterruptedException on write _writeThread,exit _writeThread");
-							return;
-						}catch(Exception e) {
-							Object firstRow = Util.first(rows);
-							logger.warn("ignore error on write _writeThread, one dataRow:"+firstRow,e);
-							lastException = e;
-							lastExceptionData = firstRow;
-							
-							if(exceptionHandler != null) {
-								exceptionHandler.accept(e);
-							}
+		@Override
+		public void run() {
+			try {
+				
+				while(running) {
+					List rows = null;
+					try {
+						rows = queue.take();
+						if(CollectionUtils.isEmpty(rows)) {
+							continue;
+						}
+						
+						output.write(rows);
+					}catch(InterruptedException e) {
+						logger.info("InterruptedException on write _writeThread,exit _writeThread");
+						return;
+					}catch(Exception e) {
+						Object firstRow = Util.first(rows);
+						logger.warn("ignore error on write _writeThread, one dataRow:"+firstRow,e);
+						lastException = e;
+						lastExceptionData = firstRow;
+						
+						if(exceptionHandler != null) {
+							exceptionHandler.accept(e);
 						}
 					}
-				}finally {
-					InputOutputUtil.closeQuietly(output);
-					logger.info("exit write _writeThread,threadName:"+threadName);
 				}
+			}finally {
+				InputOutputUtil.closeQuietly(output);
+				logger.info("exit write _writeThread,threadName:"+threadName);
 			}
-
-
-		};
+		}
 	}
+
 	
 	@Override
 	public void close() throws Exception {
