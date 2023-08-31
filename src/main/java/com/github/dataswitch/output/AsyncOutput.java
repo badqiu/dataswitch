@@ -24,14 +24,13 @@ public class AsyncOutput extends ProxyOutput{
 	private static Logger logger = LoggerFactory.getLogger(AsyncOutput.class);
 	
 	private BlockingQueue<List> queue = new ArrayBlockingQueue<List>(100);
+	private FailMode failMode = FailMode.FAIL_FAST;
+	private Consumer<Exception> exceptionHandler = null;
 
 	private boolean running = true;
 	private Exception lastException;
 	private Object lastExceptionData;
-	private FailMode failMode = FailMode.FAIL_FAST;
 	
-	private Consumer<Exception> exceptionHandler = null;
-
 	private Thread _writeThread = null;
 	
 	public AsyncOutput() {
