@@ -85,7 +85,15 @@ public class AsyncOutput extends ProxyOutput{
 		Output output = getProxy();
 		
 		String threadName = getClass().getSimpleName()+"_write_"+getId();
-		_writeThread = new Thread(new Runnable() {
+		Runnable runnable = newRunnable(output, threadName);
+		_writeThread = new Thread(runnable,threadName);
+		
+		_writeThread.setDaemon(true);
+		_writeThread.start();
+	}
+
+	protected Runnable newRunnable(Output output, String threadName) {
+		return new Runnable() {
 			@Override
 			public void run() {
 				try {
@@ -120,10 +128,7 @@ public class AsyncOutput extends ProxyOutput{
 			}
 
 
-		},threadName);
-		
-		_writeThread.setDaemon(true);
-		_writeThread.start();
+		};
 	}
 	
 	@Override
