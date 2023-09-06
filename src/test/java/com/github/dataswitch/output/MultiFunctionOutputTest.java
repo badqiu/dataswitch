@@ -14,6 +14,7 @@ public class MultiFunctionOutputTest {
 		output.setPrint(true);
 		output.setBatchSize(200);
 		output.setBatchTimeout(1000);
+		output.setStat(true);
 		output.open(null);
 		
 		output.write(Arrays.asList(1,2,3,4,5));

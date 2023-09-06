@@ -117,6 +117,10 @@ public class MultiFunctionInput extends ProxyInput{
 		this.nullInput = nullInput;
 	}
 
+	public void setStat(boolean stat) {
+		this.stat = stat;
+	}
+	
 	public void setFunction(Function<Integer, List<Object>> function) {
 		this.function = function;
 	}

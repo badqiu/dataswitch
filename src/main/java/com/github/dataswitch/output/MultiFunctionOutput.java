@@ -129,6 +129,10 @@ public class MultiFunctionOutput extends ProxyOutput {
 		this.print = print;
 	}
 
+	public void setStat(boolean stat) {
+		this.stat = stat;
+	}
+	
 	private Output newMultiFunctionProxy(Output proxy) {
 		Output output = proxy;
 		
