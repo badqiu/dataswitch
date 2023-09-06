@@ -34,7 +34,7 @@ public class MultiFunctionInput extends ProxyInput{
 	private int batchSize = Constants.DEFAULT_BUFFER_SIZE;
 	private int batchTimeout = Constants.DEFAULT_BUFFER_TIMEOUT;
 	
-	private boolean retry = false;  
+	private boolean retry = false;  //done
 	private int retryTimes = 0; //重试次数
 	private long retryIntervalMills = RetryOutput.DEFAULT_RETRY_INTERVAL_MILLS; //重试间隔(毫秒)
 	private long retryTimeoutMills = 0; //重试超时时间
@@ -135,13 +135,13 @@ public class MultiFunctionInput extends ProxyInput{
 			input = new NullInput();
 		}
 		
-//		if(retry) {
-//			RetryInput retryOutput = new RetryInput(input);
-//			retryOutput.setRetryIntervalMills(retryIntervalMills);
-//			retryOutput.setRetryTimeoutMills(retryTimeoutMills);
-//			retryOutput.setRetryTimes(retryTimes);
-//			input = retryOutput;
-//		}
+		if(retry) {
+			RetryInput retryInput = new RetryInput(input);
+			retryInput.setRetryIntervalMills(retryIntervalMills);
+			retryInput.setRetryTimeoutMills(retryTimeoutMills);
+			retryInput.setRetryTimes(retryTimes);
+			input = retryInput;
+		}
 		
 		if(lock) {
 			LockInput lockInput = new LockInput(input);
