@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.slf4j.Logger;
@@ -24,6 +23,8 @@ public class MultiFunctionInput extends ProxyInput{
 	
 	private boolean async = false; //done
 	private boolean sync = false; //done
+	
+	private boolean stat = false; //done
 	
 	private boolean lock = false; //done
 	private String lockGroup = Constants.DEFAULT_LOCK_GROUP;
@@ -123,6 +124,8 @@ public class MultiFunctionInput extends ProxyInput{
 	public void setFailMode(FailMode failMode) {
 		this.failMode = failMode;
 	}
+	
+	
 
 	private Input newMultiFunctionProxy(Input proxy) {
 		Input input = proxy;
@@ -133,6 +136,12 @@ public class MultiFunctionInput extends ProxyInput{
 
 		if(nullInput) {
 			input = new NullInput();
+		}
+		
+		if(stat) {
+			StatInput statInput = new StatInput(input);
+			statInput.setPrintLog(true);
+			input = statInput;
 		}
 		
 		if(retry) {
@@ -156,6 +165,7 @@ public class MultiFunctionInput extends ProxyInput{
 		if(async) {
 			input = new AsyncInput(input);
 		}
+
 		
 		if(buffered) {
 			input = new BufferedInput(input,batchSize,batchTimeout);

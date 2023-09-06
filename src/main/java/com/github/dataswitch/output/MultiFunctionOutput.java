@@ -23,6 +23,8 @@ public class MultiFunctionOutput extends ProxyOutput {
 	private boolean async = false; //done
 	private boolean sync = false; //done
 	
+	private boolean stat = false; //done
+	
 	private boolean lock = false; //done
 	private String lockGroup = Constants.DEFAULT_LOCK_GROUP;
 	private String lockId;
@@ -145,6 +147,11 @@ public class MultiFunctionOutput extends ProxyOutput {
 			output = new PrintOutput();
 		}
 		
+		if(stat) {
+			StatOutput statOutput = new StatOutput(output);
+			statOutput.setPrintLog(true);
+			output = statOutput;
+		}
 		
 		if(retry) {
 			RetryOutput retryOutput = new RetryOutput(output);
