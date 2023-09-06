@@ -53,6 +53,7 @@ public class LockOutput extends LockProvider implements Output {
 
 	public void open(Map<String, Object> params) throws Exception {
 		proxy.open(params);
+		super.open(params);
 	}
 	
 }

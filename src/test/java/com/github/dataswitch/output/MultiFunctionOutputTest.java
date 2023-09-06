@@ -15,6 +15,14 @@ public class MultiFunctionOutputTest {
 		output.setBatchSize(200);
 		output.setBatchTimeout(1000);
 		output.setStat(true);
+		output.setSync(true);
+		output.setAsync(true);
+		output.setBuffered(true);
+		output.setRetry(true);
+		output.setRetryTimes(3);
+		output.setLock(true);
+		output.setLockId("hello_id");
+		
 		output.open(null);
 		
 		output.write(Arrays.asList(1,2,3,4,5));

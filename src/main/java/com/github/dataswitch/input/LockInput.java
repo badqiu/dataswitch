@@ -40,6 +40,7 @@ public class LockInput extends LockProvider implements Input {
 
 	public void open(Map<String, Object> params) throws Exception {
 		proxy.open(params);
+		super.open(params);
 	}
 	
 	@Override
