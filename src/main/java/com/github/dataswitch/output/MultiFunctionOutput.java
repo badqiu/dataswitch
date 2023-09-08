@@ -47,6 +47,7 @@ public class MultiFunctionOutput extends ProxyOutput {
 	
 	private FailMode failMode = FailMode.FAIL_FAST;
 	
+	private List list = null;
 	
 	public MultiFunctionOutput() {
 		super();
@@ -133,6 +134,14 @@ public class MultiFunctionOutput extends ProxyOutput {
 		this.stat = stat;
 	}
 	
+	public List getList() {
+		return list;
+	}
+
+	public void setList(List list) {
+		this.list = list;
+	}
+
 	private Output newMultiFunctionProxy(Output proxy) {
 		Output output = proxy;
 		
@@ -149,6 +158,10 @@ public class MultiFunctionOutput extends ProxyOutput {
 		}
 		if(print) {
 			output = new PrintOutput();
+		}
+		
+		if(list != null) {
+			output = new ListOutput(list);
 		}
 		
 		if(stat) {

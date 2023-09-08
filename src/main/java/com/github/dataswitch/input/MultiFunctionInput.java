@@ -47,6 +47,7 @@ public class MultiFunctionInput extends ProxyInput{
 	
 	private FailMode failMode = FailMode.FAIL_FAST;
 	
+	private List list = null;
 	
 	public MultiFunctionInput() {
 		super();
@@ -129,7 +130,13 @@ public class MultiFunctionInput extends ProxyInput{
 		this.failMode = failMode;
 	}
 	
-	
+	public List getList() {
+		return list;
+	}
+
+	public void setList(List list) {
+		this.list = list;
+	}
 
 	private Input newMultiFunctionProxy(Input proxy) {
 		Input input = proxy;
@@ -140,6 +147,10 @@ public class MultiFunctionInput extends ProxyInput{
 
 		if(nullInput) {
 			input = new NullInput();
+		}
+		
+		if(list != null) {
+			input = new ListInput(list);
 		}
 		
 		if(stat) {
