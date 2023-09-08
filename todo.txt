@@ -75,6 +75,8 @@ script 需要增加 context, beforeScript put var into context for init.
   #MongoDB
   #Hbase 未测试，读写
   #HttpOutput完善，一条数据一个请示，或是N条数据一个请示，不是现在批量，持续写入
+  RedisInput
+  RandomInput
   ES 未测试,(性能用批量写,是否可提升)?,  
   	缺少字段指定中文分词器
   	联合主键？现在只能指定一个主键

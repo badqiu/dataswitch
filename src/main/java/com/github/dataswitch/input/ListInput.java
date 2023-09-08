@@ -1,25 +1,26 @@
 package com.github.dataswitch.input;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ListInput implements Input{
+public class ListInput<T> implements Input{
 
-	private List list;
+	private List<T> list = new ArrayList<T>();
 	private boolean read = false;
 	
 	public ListInput() {
 	}
 	
-	public ListInput(List list) {
+	public ListInput(List<T> list) {
 		this.list = list;
 	}
 	
-	public List getList() {
+	public List<T> getList() {
 		return list;
 	}
 
-	public void setList(List list) {
+	public void setList(List<T> list) {
 		this.list = list;
 	}
 
@@ -28,7 +29,7 @@ public class ListInput implements Input{
 		if(read) return Collections.EMPTY_LIST;
 		
 		read = true;
-		return list;
+		return (List)list;
 	}
 	
 }
