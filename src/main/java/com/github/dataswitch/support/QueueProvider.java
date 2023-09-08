@@ -31,14 +31,16 @@ public class QueueProvider extends BaseObject implements Openable,TableName{
 	}
 	
 	public void init() {
-		
+		createQueueIfNull();
+	}
+
+	protected void createQueueIfNull() {
 		if(queue == null) {
 			Assert.hasText(queueGroup,"queueGroup must be not blank");
 			Assert.hasText(queueName,"queueName must be not blank");
 			String queueId = queueGroup + "|" + queueName;
 			queue = newBlockingQueue(queueId,queueSize);
 		}
-		
 	}
 	
 	protected BlockingQueue newBlockingQueue(String queueId,int queueSize) {
