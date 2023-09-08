@@ -26,7 +26,7 @@ public class SqlFuncProcessor extends BaseProcessor{
 	// group by columns, having
 	// limit offset,limit
 	
-	private String where; //过滤数据
+	private String where; //过滤数据,语法使用MVEL，类似java条件表达式
 	private String select; //要select的列
 	private String remove; //要删除的列
 	private long limit; //
