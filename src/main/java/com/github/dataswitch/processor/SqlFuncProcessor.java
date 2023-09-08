@@ -137,18 +137,22 @@ public class SqlFuncProcessor extends BaseProcessor{
 		}
 		
 		if(ArrayUtils.isNotEmpty(_selectKeys)) {
-			Map result = new LinkedHashMap(_selectKeys.length * 2);
-			for(String key : _selectKeys) {
-				Object value = map.get(key);
-				
-				if(value != null) {
-					result.put(key, value);
-				}
-			}
-			return result;
+			return selectByKeys(map,_selectKeys);
 		}
 		
 		return map;
+	}
+
+	private Object selectByKeys(Map map,String[] keys) {
+		Map result = new LinkedHashMap(keys.length * 2);
+		for(String key : keys) {
+			Object value = map.get(key);
+			
+			if(value != null) {
+				result.put(key, value);
+			}
+		}
+		return result;
 	}
 	
 	
