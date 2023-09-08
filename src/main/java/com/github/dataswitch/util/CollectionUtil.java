@@ -192,13 +192,13 @@ public class CollectionUtil {
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-    public static <T> List<List<T>> chunk(List<T> list, int chunkSize) {
+    public static List<List> chunk(List list, int chunkSize) {
     	if(CollectionUtils.isEmpty(list)) return Collections.EMPTY_LIST;
     	
-        List<List<T>> splitLists = new ArrayList<>();
+        List<List> splitLists = new ArrayList<>();
         for (int i = 0; i < list.size(); i += chunkSize) {
             int endIndex = Math.min(i + chunkSize, list.size());
-            List<T> sublist = list.subList(i, endIndex);
+            List sublist = list.subList(i, endIndex);
             splitLists.add(sublist);
         }
         return splitLists;
