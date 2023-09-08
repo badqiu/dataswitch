@@ -12,9 +12,11 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.springframework.util.Assert;
 
+import com.github.dataswitch.enums.Constants;
 import com.github.dataswitch.enums.OutputMode;
 import com.github.dataswitch.input.MongodbInput;
 import com.github.dataswitch.support.MongodbProvider;
+import com.github.dataswitch.util.CollectionUtil;
 import com.github.dataswitch.util.InputOutputUtil;
 import com.github.dataswitch.util.ScriptEngineUtil;
 import com.github.dataswitch.util.Util;
@@ -43,6 +45,8 @@ public class MongodbOutput extends MongodbProvider implements Output {
 	
 	private String columns; //要写入的列
 	private String[] _columnsArray; //要写入的列
+	
+	private int batchSize = Constants.DEFAULT_BUFFER_SIZE;
 
 	MongoClient _client;
 	MongoDatabase _database = null;
@@ -96,10 +100,27 @@ public class MongodbOutput extends MongodbProvider implements Output {
 	public void setColumns(String columns) {
 		this.columns = columns;
 	}
+	
+	public int getBatchSize() {
+		return batchSize;
+	}
+
+	public void setBatchSize(int batchSize) {
+		this.batchSize = batchSize;
+	}
 
 	@Override
 	public void write(List<Object> rows) {
-		writeByOutputMode((List)rows,outputMode);
+		if(CollectionUtils.isEmpty(rows)) return;
+		
+		if(batchSize > 0) {
+			List<List> multiChunkRows = CollectionUtil.chunk(rows, batchSize);
+			multiChunkRows.forEach(list -> {
+				writeByOutputMode((List)list,outputMode);
+			});
+		}else {
+			writeByOutputMode((List)rows,outputMode);
+		}
 	}
 
 	protected void writeByOutputMode(List<Map<String,Object>> rows,OutputMode outputMode) {
