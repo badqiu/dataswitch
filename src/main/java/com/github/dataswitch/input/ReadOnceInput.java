@@ -24,7 +24,6 @@ public class ReadOnceInput extends ProxyInput implements Input {
 	public synchronized List<Object> read(int size) {
 		if(_readOnce) return Collections.EMPTY_LIST;
 		
-		if(_readOnce) return Collections.EMPTY_LIST;
 		_readOnce = true;
 		
 		try {
