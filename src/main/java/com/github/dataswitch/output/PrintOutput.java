@@ -22,7 +22,7 @@ public class PrintOutput extends BaseObject implements Output{
 	}
 	
 	public PrintOutput(PrintStream out) {
-		setOut(out);
+		this.out = out;
 	}
 
 	public OutputStream getOut() {
