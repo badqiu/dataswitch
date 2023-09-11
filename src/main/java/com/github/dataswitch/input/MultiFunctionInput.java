@@ -26,6 +26,8 @@ public class MultiFunctionInput extends ProxyInput{
 	
 	private boolean stat = false; //done
 	
+	private boolean readOnce = false; //done, 只读一次
+	
 	private boolean lock = false; //done
 	private String lockGroup = Constants.DEFAULT_LOCK_GROUP;
 	private String lockId;
@@ -68,6 +70,10 @@ public class MultiFunctionInput extends ProxyInput{
 
 	public void setSync(boolean sync) {
 		this.sync = sync;
+	}
+	
+	public void setReadOnce(boolean readOnce) {
+		this.readOnce = readOnce;
 	}
 
 	public void setLock(boolean lock) {
@@ -157,6 +163,11 @@ public class MultiFunctionInput extends ProxyInput{
 			StatInput statInput = new StatInput(input);
 			statInput.setPrintLog(true);
 			input = statInput;
+		}
+		
+		if(readOnce) {
+			ReadOnceInput readOnceInput = new ReadOnceInput(input);
+			input = readOnceInput;
 		}
 		
 		if(retry) {
