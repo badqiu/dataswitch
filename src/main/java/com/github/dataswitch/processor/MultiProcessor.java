@@ -36,6 +36,10 @@ public class MultiProcessor implements Processor{
 		this.processors = processors.toArray(new Processor[0]);
 	}
 	
+	public void setProcessor(Processor processor) {
+		setProcessors(processor);
+	}
+	
 	@Override
 	public List<Object> process(List<Object> datas) throws Exception {
 		List<Object> tempDatas = datas;
