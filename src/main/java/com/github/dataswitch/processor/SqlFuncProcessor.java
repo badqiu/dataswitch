@@ -1,7 +1,11 @@
 package com.github.dataswitch.processor;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -32,8 +36,8 @@ public class SqlFuncProcessor extends BaseProcessor{
 	private long limit; //
 	private long offset; //从0开始
 	
-//	private String orderBy;
-//	private String groupBy;
+	private String orderBy;
+	private String groupBy;
 //	private String having;
 	private String print; //条件成立时打印日志
 	
@@ -90,6 +94,61 @@ public class SqlFuncProcessor extends BaseProcessor{
 
 	public void setOffset(long offset) {
 		this.offset = offset;
+	}
+	
+	public String getOrderBy() {
+		return orderBy;
+	}
+
+	public void setOrderBy(String orderBy) {
+		this.orderBy = orderBy;
+	}
+	
+	public String getGroupBy() {
+		return groupBy;
+	}
+
+	public void setGroupBy(String groupBy) {
+		this.groupBy = groupBy;
+	}
+
+	@Override
+	public List<Object> process(List<Object> datas) throws Exception {
+		List<Object> list = super.process(datas);
+		if(StringUtils.isNotBlank(groupBy)) {
+			list = groupBy((List)list);
+		}
+		
+		if(StringUtils.isNotBlank(orderBy)) {
+			list = orderBy(list);
+		}
+		return list;
+	}
+
+	private List<Object> groupBy(List<Map> list) {
+		Map r = list.stream().collect(Collectors.groupingBy((o) -> {
+			return o.get(groupBy);
+		}));
+		return Arrays.asList(r);
+	}
+
+	private List<Object> orderBy(List<Object> list) {
+		List result = (List)list.stream().sorted(new Comparator() {
+			@Override
+			public int compare(Object o1, Object o2) {
+				if(o1 == o2) return 0;
+				
+				Map a1 = (Map)o1;
+				Map a2 = (Map)o2;
+				Comparable v1 = (Comparable)a1.get(orderBy);
+				Comparable v2 = (Comparable)a2.get(orderBy);
+				
+				if(v1 == v2) return 0;
+				
+				return v1.compareTo(v2);
+			}
+		}).collect(Collectors.toList());
+		return result;
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.math.RandomUtils;
 import org.junit.Test;
 
 import com.github.dataswitch.util.MapUtil;
@@ -107,6 +108,42 @@ public class SqlFuncProcessorTest {
 	
 	}
 	
+	@Test
+	public void test_orderBy() throws Exception {
+		List rows = newListWithName(10);
+		
+		p.setOrderBy("name");
+		p.open(null);
+		List results = p.process(rows);
+		System.out.println(results);
+		assertEquals("[{count=9, name=n1}, {count=0, name=n10}, {count=8, name=n2}, {count=7, name=n3}, {count=6, name=n4}, {count=5, name=n5}, {count=4, name=n6}, {count=3, name=n7}, {count=2, name=n8}, {count=1, name=n9}]",results.toString());
+
+		p.setOrderBy("count");
+		p.open(null);
+		results = p.process(rows);
+		System.out.println(results);
+		assertEquals("[{count=0, name=n10}, {count=1, name=n9}, {count=2, name=n8}, {count=3, name=n7}, {count=4, name=n6}, {count=5, name=n5}, {count=6, name=n4}, {count=7, name=n3}, {count=8, name=n2}, {count=9, name=n1}]",results.toString());
+	
+	}
+	
+	@Test
+	public void test_groupBy() throws Exception {
+		List rows = newListWithName(10);
+		
+		p.setGroupBy("name");
+		p.open(null);
+		List results = p.process(rows);
+		System.out.println(results);
+		assertEquals("[{n1=[{count=9, name=n1}], n2=[{count=8, name=n2}], n3=[{count=7, name=n3}], n4=[{count=6, name=n4}], n5=[{count=5, name=n5}], n6=[{count=4, name=n6}], n7=[{count=3, name=n7}], n8=[{count=2, name=n8}], n9=[{count=1, name=n9}], n10=[{count=0, name=n10}]}]",results.toString());
+
+		p.setGroupBy("count");
+		p.open(null);
+		results = p.process(rows);
+		System.out.println(results);
+		assertEquals("[{0=[{count=0, name=n10}], 1=[{count=1, name=n9}], 2=[{count=2, name=n8}], 3=[{count=3, name=n7}], 4=[{count=4, name=n6}], 5=[{count=5, name=n5}], 6=[{count=6, name=n4}], 7=[{count=7, name=n3}], 8=[{count=8, name=n2}], 9=[{count=9, name=n1}]}]",results.toString());
+	
+	}
+	
 	public List<Map> newList(int count) {
 		List r = new ArrayList();
 		for(int i = 0; i < count; i++) {
@@ -115,4 +152,12 @@ public class SqlFuncProcessorTest {
 		return r;
 	}
 
+	public List<Map> newListWithName(int count) {
+		List r = new ArrayList();
+		for(int i = 0; i < count; i++) {
+			r.add(MapUtil.newMap("count",i,"name","n"+(count-i)));
+		}
+		return r;
+	}
+	
 }
