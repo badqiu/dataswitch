@@ -14,6 +14,7 @@ import java.util.function.Function;
 
 import com.github.dataswitch.util.BeanUtils;
 import com.github.dataswitch.util.PropertyUtils;
+import com.github.dataswitch.util.CollectionUtil.SortOrder;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -203,6 +204,11 @@ public class CollectionUtil {
         }
         return splitLists;
     }
+	
+	public static <T> void sort(List<T> list,Function<T,Object> sortValueFunc,String sortOrder){
+		SortOrder sortOrderEnum = SortOrder.DESC.name().equalsIgnoreCase(sortOrder) ? SortOrder.DESC : SortOrder.ASC;
+		sort(list,sortValueFunc,sortOrderEnum);
+	}
 	
 	public static <T> void sort(List<T> list,Function<T,Object> sortValueFunc,SortOrder sortOrder){
 		Assert.notNull(sortOrder,"sortOrder must be not null");

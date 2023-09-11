@@ -138,12 +138,11 @@ public class SqlFuncProcessor extends BaseProcessor{
 		String[] array = orderBy.split("\\s+");
 		String orderByKey = array[0];
 		String sortOrderStr = array.length >= 2 ? array[1] : null;
-		SortOrder sortOrder = SortOrder.DESC.name().equalsIgnoreCase(sortOrderStr) ? SortOrder.DESC : SortOrder.ASC;
 		CollectionUtil.sort(list, (input) -> {
 			if(input == null) return null;
 			
 			return input.get(orderByKey);
-		}, sortOrder);
+		}, sortOrderStr);
 		return list;
 	}
 
