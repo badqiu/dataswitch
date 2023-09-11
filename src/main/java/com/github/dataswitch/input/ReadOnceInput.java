@@ -21,13 +21,11 @@ public class ReadOnceInput extends ProxyInput implements Input {
 		super(proxy);
 	}
 
-	public List<Object> read(int size) {
+	public synchronized List<Object> read(int size) {
 		if(_readOnce) return Collections.EMPTY_LIST;
 		
-		synchronized (this) {
-			if(_readOnce) return Collections.EMPTY_LIST;
-			_readOnce = true;
-		}
+		if(_readOnce) return Collections.EMPTY_LIST;
+		_readOnce = true;
 		
 		try {
 			return getProxy().read(size);
