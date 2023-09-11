@@ -116,15 +116,17 @@ public class SqlFuncProcessor extends BaseProcessor{
 
 	@Override
 	public List<Object> process(List<Object> datas) throws Exception {
-		List<Object> list = super.process(datas);
-		if(StringUtils.isNotBlank(groupBy)) {
-			list = groupBy((List)list);
-		}
+		List<Map> list = (List)super.process(datas);
 		
-		return orderBy((List)list);
+		list = groupBy(list);
+		return (List)orderBy(list);
 	}
 
-	private List<Object> groupBy(List<Map> list) {
+	private List<Map> groupBy(List<Map> list) {
+		if(StringUtils.isBlank(groupBy)) {
+			return list;
+		}
+		
 		Map r = list.stream().collect(Collectors.groupingBy((o) -> {
 			return o.get(groupBy);
 		}));
