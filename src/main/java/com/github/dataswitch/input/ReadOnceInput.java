@@ -1,5 +1,6 @@
 package com.github.dataswitch.input;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -21,10 +22,10 @@ public class ReadOnceInput extends ProxyInput implements Input {
 	}
 
 	public List<Object> read(int size) {
-		if(_readOnce) return null;
+		if(_readOnce) return Collections.EMPTY_LIST;
 		
 		synchronized (this) {
-			if(_readOnce) return null;
+			if(_readOnce) return Collections.EMPTY_LIST;
 			_readOnce = true;
 		}
 		
