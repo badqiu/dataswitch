@@ -210,6 +210,11 @@ public class CollectionUtil {
 		Comparator<Object> comparator = new Comparator<Object>() {
 			@Override
 			public int compare(Object o1, Object o2) {
+				if(o1 == o2) return 0;
+				if(o1 == null && o2 == null) return 0;
+				if(o1 == null) return -1;
+				if(o2 == null) return 1;
+				
 				Object s1 = sortValueFunc.apply((T)o1);
 				Object s2 = sortValueFunc.apply((T)o2);
 				

@@ -13,6 +13,8 @@ import org.mvel2.MVEL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.dataswitch.util.CollectionUtil;
+import com.github.dataswitch.util.CollectionUtil.SortOrder;
 import com.github.dataswitch.util.Util;
 
 /**
@@ -120,7 +122,7 @@ public class SqlFuncProcessor extends BaseProcessor{
 		}
 		
 		if(StringUtils.isNotBlank(orderBy)) {
-			list = orderBy(list);
+			list = (List)orderBy((List)list);
 		}
 		return list;
 	}
@@ -132,23 +134,15 @@ public class SqlFuncProcessor extends BaseProcessor{
 		return Arrays.asList(r);
 	}
 
-	private List<Object> orderBy(List<Object> list) {
-		List result = (List)list.stream().sorted(new Comparator() {
-			@Override
-			public int compare(Object o1, Object o2) {
-				if(o1 == o2) return 0;
-				
-				Map a1 = (Map)o1;
-				Map a2 = (Map)o2;
-				Comparable v1 = (Comparable)a1.get(orderBy);
-				Comparable v2 = (Comparable)a2.get(orderBy);
-				
-				if(v1 == v2) return 0;
-				
-				return v1.compareTo(v2);
-			}
-		}).collect(Collectors.toList());
-		return result;
+	private List<Map> orderBy(List<Map> list) {
+		String orderByKey = orderBy;
+		SortOrder sortOrder = SortOrder.ASC;
+		CollectionUtil.sort(list, (input) -> {
+			if(input == null) return null;
+			
+			return input.get(orderByKey);
+		}, sortOrder);
+		return list;
 	}
 
 	@Override
