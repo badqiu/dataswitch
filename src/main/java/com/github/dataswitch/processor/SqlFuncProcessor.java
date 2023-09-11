@@ -121,10 +121,7 @@ public class SqlFuncProcessor extends BaseProcessor{
 			list = groupBy((List)list);
 		}
 		
-		if(StringUtils.isNotBlank(orderBy)) {
-			list = (List)orderBy((List)list);
-		}
-		return list;
+		return orderBy((List)list);
 	}
 
 	private List<Object> groupBy(List<Map> list) {
@@ -135,8 +132,13 @@ public class SqlFuncProcessor extends BaseProcessor{
 	}
 
 	private List<Map> orderBy(List<Map> list) {
-		String orderByKey = orderBy;
-		SortOrder sortOrder = SortOrder.ASC;
+		if(StringUtils.isBlank(orderBy))
+			return list;
+		
+		String[] array = orderBy.split("\\s+");
+		String orderByKey = array[0];
+		String sortOrderStr = array.length >= 2 ? array[1] : null;
+		SortOrder sortOrder = SortOrder.DESC.name().equalsIgnoreCase(sortOrderStr) ? SortOrder.DESC : SortOrder.ASC;
 		CollectionUtil.sort(list, (input) -> {
 			if(input == null) return null;
 			

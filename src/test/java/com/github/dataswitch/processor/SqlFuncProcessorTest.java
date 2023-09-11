@@ -124,6 +124,12 @@ public class SqlFuncProcessorTest {
 		System.out.println(results);
 		assertEquals("[{count=0, name=n10}, {count=1, name=n9}, {count=2, name=n8}, {count=3, name=n7}, {count=4, name=n6}, {count=5, name=n5}, {count=6, name=n4}, {count=7, name=n3}, {count=8, name=n2}, {count=9, name=n1}]",results.toString());
 	
+		p.setOrderBy("count desc");
+		p.open(null);
+		results = p.process(rows);
+		System.out.println(results);
+		assertEquals("[{count=9, name=n1}, {count=8, name=n2}, {count=7, name=n3}, {count=6, name=n4}, {count=5, name=n5}, {count=4, name=n6}, {count=3, name=n7}, {count=2, name=n8}, {count=1, name=n9}, {count=0, name=n10}]",results.toString());
+	
 	}
 	
 	@Test
