@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import com.github.dataswitch.Enabled;
 import com.github.dataswitch.util.InputOutputUtil;
 /**
@@ -44,6 +46,10 @@ public class MultiProcessor implements Processor{
 	public List<Object> process(List<Object> datas) throws Exception {
 		List<Object> tempDatas = datas;
 		for(Processor p : processors) {
+			if(CollectionUtils.isEmpty(tempDatas)) {
+				break;
+			}
+			
 			tempDatas = p.process(tempDatas);
 		}
 		return tempDatas;
