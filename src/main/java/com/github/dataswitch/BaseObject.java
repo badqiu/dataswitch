@@ -1,7 +1,7 @@
 package com.github.dataswitch;
 
-import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -115,7 +115,9 @@ public class BaseObject implements Enabled {
 		
 		XStream xstream = new XStream();
 		try {
-			Map<String,String> params = (Map)xstream.fromXML(xml);
+			Map root = new HashMap();
+			Map<String,String> params = (Map)xstream.fromXML(xml,root);
+			
 			BeanUtils.copyProperties(this, params);
 		} catch (Exception e) {
 			throw new RuntimeException(id + " error configByXml:"+xml,e);
