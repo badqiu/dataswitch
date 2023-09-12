@@ -1,7 +1,9 @@
 package com.github.dataswitch.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
@@ -12,14 +14,22 @@ public class PropertiesUtil {
 		Properties custom = new Properties();
 		if(StringUtils.isNotBlank(content)) {
 			try {
-				custom.load(new StringReader(content));
-				custom.putAll(trim(custom));
+				smartLoadFromString(content, custom);
+				return trim(custom);
 			}catch(Exception e) {
 				throw new RuntimeException("error on content:"+content,e);
 			}
 		}
 		
 		return custom;
+	}
+
+	private static void smartLoadFromString(String content, Properties custom) throws IOException, InvalidPropertiesFormatException {
+		if(content.contains("<properties>") && content.contains("</properties>")) {
+			custom.loadFromXML(new ByteArrayInputStream(content.getBytes()));
+		}else {
+			custom.load(new StringReader(content));
+		}
 	}
 
 	private static Properties trim(Properties custom) {

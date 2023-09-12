@@ -19,6 +19,7 @@ public class BaseObjectTest {
 		
 		obj.setConfigByQuery("  ");
 		obj.setConfigByQuery(null);
+		
 		assertFalse(obj.isEnabled());
 		assertEquals(obj.getId(),"hello_id");
 	}
@@ -36,6 +37,7 @@ public class BaseObjectTest {
 		
 		obj.setConfigByProperties("  ");
 		obj.setConfigByProperties(null);
+		
 		assertFalse(obj.isEnabled());
 		assertEquals(obj.getId(),"hello_id");
 	}
@@ -50,8 +52,10 @@ public class BaseObjectTest {
 		
 		assertFalse(obj.isEnabled());
 		assertEquals(obj.getId(),"hello_id");
+		
 		obj.setConfigByJson("  ");
 		obj.setConfigByJson(null);
+		
 		assertFalse(obj.isEnabled());
 		assertEquals(obj.getId(),"hello_id");
 	}
@@ -76,10 +80,29 @@ public class BaseObjectTest {
 		
 		assertFalse(obj.isEnabled());
 		assertEquals(obj.getId(),"hello_id");
+		
 		obj.setConfigByXml("  ");
 		obj.setConfigByXml(null);
+		
 		assertFalse(obj.isEnabled());
 		assertEquals(obj.getId(),"hello_id");
 	}
 
+	@Test
+	public void setConfigByYaml() {
+		BaseObject obj = new BaseObject();
+		assertTrue(obj.isEnabled());
+		assertEquals(obj.getId(),null);
+		
+		obj.setConfigByYaml("id: hello_id\nenabled: false");
+		
+		assertFalse(obj.isEnabled());
+		assertEquals(obj.getId(),"hello_id");
+		
+		obj.setConfigByYaml("  ");
+		obj.setConfigByYaml(null);
+		
+		assertFalse(obj.isEnabled());
+		assertEquals(obj.getId(),"hello_id");
+	}
 }

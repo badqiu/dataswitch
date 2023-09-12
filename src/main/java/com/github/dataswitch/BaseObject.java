@@ -1,11 +1,14 @@
 package com.github.dataswitch;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.github.dataswitch.util.BeanUtils;
 import com.github.dataswitch.util.PropertiesUtil;
 import com.github.dataswitch.util.URLQueryUtil;
@@ -111,4 +114,17 @@ public class BaseObject implements Enabled {
 		} 
 	}
 	
+	public void setConfigByYaml(String yaml) {
+		if(StringUtils.isBlank(yaml)) return;
+		
+		YAMLMapper mapper = new YAMLMapper();
+        try {
+            Map<String, String> params = mapper.readValue(yaml, Map.class);
+            BeanUtils.copyProperties(this, params);
+        } catch (IOException e) {
+        	throw new RuntimeException("error configByYaml:"+yaml,e);
+        }
+	}
+	
+
 }
