@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map>
+  <entry>
+    <string>id</string>
+    <string>hello_id</string>
+  </entry>
+  <entry>
+    <string>enabled</string>
+    <string>false</string>
+  </entry>
+</map>

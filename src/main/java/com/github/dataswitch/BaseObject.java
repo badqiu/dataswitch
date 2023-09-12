@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dataswitch.util.BeanUtils;
 import com.github.dataswitch.util.PropertiesUtil;
 import com.github.dataswitch.util.URLQueryUtil;
+import com.thoughtworks.xstream.XStream;
 
 public class BaseObject implements Enabled {
 
@@ -77,6 +78,8 @@ public class BaseObject implements Enabled {
 	}
 	
 	public void setConfigByQuery(String query) {
+		if(StringUtils.isBlank(query)) return;
+		
 		Map<String,String> params = URLQueryUtil.splitQueryForSingleValue(query);
 		try {
 			BeanUtils.copyProperties(this, params);
@@ -86,6 +89,8 @@ public class BaseObject implements Enabled {
 	}
 	
 	public void setConfigByProperties(String properties) {
+		if(StringUtils.isBlank(properties)) return;
+		
 		Map<String,String> params = (Map)PropertiesUtil.createProperties(properties);
 		try {
 			BeanUtils.copyProperties(this, params);
@@ -94,4 +99,16 @@ public class BaseObject implements Enabled {
 		}
 	}
 
+	public void setConfigByXml(String xml) {
+		if(StringUtils.isBlank(xml)) return;
+		
+		XStream xstream = new XStream();
+		try {
+			Map<String,String> params = (Map)xstream.fromXML(xml);
+			BeanUtils.copyProperties(this, params);
+		} catch (Exception e) {
+			throw new RuntimeException("error configByXml:"+xml,e);
+		} 
+	}
+	
 }
