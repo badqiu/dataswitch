@@ -76,7 +76,7 @@ public class BaseObject implements Enabled {
 			Map<String,String> params = objectMapper.readValue(json, Map.class);
 			BeanUtils.copyProperties(this, params);
 		} catch (Exception e) {
-			throw new RuntimeException("error configByJson:"+json,e);
+			throw new RuntimeException(id + " error configByJson:"+json,e);
 		} 
 	}
 	
@@ -87,7 +87,7 @@ public class BaseObject implements Enabled {
 		try {
 			BeanUtils.copyProperties(this, params);
 		} catch (Exception e) {
-			throw new RuntimeException("error configByQuery:"+query,e);
+			throw new RuntimeException(id + " error configByQuery:"+query,e);
 		} 
 	}
 	
@@ -98,7 +98,7 @@ public class BaseObject implements Enabled {
 		try {
 			BeanUtils.copyProperties(this, params);
 		} catch (Exception e) {
-			throw new RuntimeException("error setConfigByProperties:"+properties,e);
+			throw new RuntimeException(id + " error setConfigByProperties:"+properties,e);
 		}
 	}
 
@@ -110,7 +110,7 @@ public class BaseObject implements Enabled {
 			Map<String,String> params = (Map)xstream.fromXML(xml);
 			BeanUtils.copyProperties(this, params);
 		} catch (Exception e) {
-			throw new RuntimeException("error configByXml:"+xml,e);
+			throw new RuntimeException(id + " error configByXml:"+xml,e);
 		} 
 	}
 	
@@ -122,7 +122,7 @@ public class BaseObject implements Enabled {
             Map<String, String> params = mapper.readValue(yaml, Map.class);
             BeanUtils.copyProperties(this, params);
         } catch (IOException e) {
-        	throw new RuntimeException("error configByYaml:"+yaml,e);
+        	throw new RuntimeException(id + " error configByYaml:"+yaml,e);
         }
 	}
 	
