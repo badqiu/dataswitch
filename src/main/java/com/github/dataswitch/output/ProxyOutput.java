@@ -29,6 +29,10 @@ public class ProxyOutput extends BaseObject implements Output{
 		this.proxy = proxy;
 	}
 
+	public void setTarget(Output proxy) {
+		setProxy(proxy);
+	}
+	
 	public void write(List<Object> rows) {
 		if(CollectionUtils.isEmpty(rows)) return;
 		proxy.write(rows);
