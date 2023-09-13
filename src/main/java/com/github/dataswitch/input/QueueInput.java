@@ -34,6 +34,11 @@ public class QueueInput extends QueueProvider implements Input{
 	public synchronized QueueOutput toOutput() {
 		if(_output == null) {
 			_output = new QueueOutput(getQueue());
+			try {
+				_output.open(null);
+			} catch (Exception e) {
+				throw new RuntimeException("open error",e);
+			}
 		}
 		return _output;
 	}
