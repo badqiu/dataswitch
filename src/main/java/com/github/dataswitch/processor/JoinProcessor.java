@@ -36,6 +36,14 @@ public class JoinProcessor implements Processor {
 	public void setJoinDatas(List<Map> joinDatas) {
 		this.joinDatas = joinDatas;
 	}
+	
+	public boolean isNewMapForJoinResult() {
+		return newMapForJoinResult;
+	}
+
+	public void setNewMapForJoinResult(boolean newMapForJoinResult) {
+		this.newMapForJoinResult = newMapForJoinResult;
+	}
 
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
