@@ -124,8 +124,6 @@ public class JoinProcessor implements Processor {
 	}
 
 	private Map join(Map row, String[] joinKeys) {
-		if(_dataMap == null) return null;
-		
 		Map joinData = lookupData(joinKeys);
 		if(joinData == null) {
 			return row;
@@ -148,6 +146,7 @@ public class JoinProcessor implements Processor {
 			return result;
 		}
 		
+		if(_dataMap == null) return null;
 		String key = buildMapKey(joinKeys);
 		Map joinData = _dataMap.get(key);
 		return joinData;
