@@ -46,11 +46,11 @@ public class MultiProcessor implements Processor{
 	public List<Object> process(List<Object> datas) throws Exception {
 		List<Object> tempDatas = datas;
 		for(Processor p : processors) {
+			tempDatas = p.process(tempDatas);
+			
 			if(CollectionUtils.isEmpty(tempDatas)) {
 				break;
 			}
-			
-			tempDatas = p.process(tempDatas);
 		}
 		return tempDatas;
 	}
