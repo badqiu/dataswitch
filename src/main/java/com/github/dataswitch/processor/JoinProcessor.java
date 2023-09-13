@@ -115,7 +115,7 @@ public class JoinProcessor implements Processor {
 	}
 
 	protected static String buildMapKey(String[] joinKeys) {
-		String key = StringUtils.join(joinKeys,"$");
+		String key = StringUtils.join(joinKeys,"#");
 		return key;
 	}
 
