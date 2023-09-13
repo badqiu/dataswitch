@@ -460,8 +460,8 @@ public class JdbcOutput extends DataSourceProvider implements Output,TableName{
 		String finalSql = executeWithJdbc(rows);
 		
 		long costTime = System.currentTimeMillis() - start;
-		if(rows.size() >= 1000 || costTime >= 1000) {
-			long tps = Util.getTPS(rows.size(), costTime);
+		long tps = Util.getTPS(rows.size(), costTime);
+		if((rows.size() >= 500 && tps < 1000 && costTime > 1000) || costTime > 3000) {
 			logger.info("execute update sql with rows:"+rows.size()+" costTimeMills:"+costTime+" tps:"+ tps +" for sql:"+getOutputDigestInfo(finalSql));
 		}
 	}
