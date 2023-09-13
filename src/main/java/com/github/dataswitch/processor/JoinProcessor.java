@@ -61,12 +61,12 @@ public class JoinProcessor implements Processor {
 
 	@Override
 	public List<Object> process(List<Object> datas) throws Exception {
-		if(CollectionUtils.isEmpty(datas)) return datas;
-		
 		return (List)processMaps((List)datas);
 	}
 
 	private List<Map> processMaps(List<Map> datas) {
+		if(CollectionUtils.isEmpty(datas)) return datas;
+		
 		List<Map> result = new ArrayList(datas.size());
 		for(Map row : datas) {
 			Map newRow = join(row,_joinKeys);
