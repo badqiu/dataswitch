@@ -22,6 +22,10 @@ public class QueueOutputTest {
 		QueueInput input = new QueueInput();
 		input.setQueue(queue);
 		
+		testQueueReadWrite(output, input);
+	}
+
+	private void testQueueReadWrite(QueueOutput output, QueueInput input) {
 		int count = 20;
 		for(int i = 0; i < count; i++) {
 			output.write(Arrays.asList(i));
@@ -36,5 +40,22 @@ public class QueueOutputTest {
 		ThreadUtil.sleep(2000);
 		assertEquals(statOutput.getTotalRows(),count);
 	}
+	
+	@Test
+	public void test_to_input() throws Exception {
+		QueueOutput output = new QueueOutput("default","q1");
+		output.open(null);
+		QueueInput input = output.toInput();
+		
+		testQueueReadWrite(output, input);
+	}
 
+	@Test
+	public void test_to_output() throws Exception {
+		QueueInput input = new QueueInput("default","q2");
+		input.open(null);
+		QueueOutput output = input.toOutput();
+		
+		testQueueReadWrite(output, input);
+	}
 }
