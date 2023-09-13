@@ -1,6 +1,5 @@
 package com.github.dataswitch.processor;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +45,7 @@ public class MultiProcessor implements Processor{
 	@Override
 	public List<Object> process(List<Object> datas) throws Exception {
 		if(ArrayUtils.isEmpty(processors)) return datas;
+		if(CollectionUtils.isEmpty(datas)) return datas;
 		
 		List<Object> tempDatas = datas;
 		for(Processor p : processors) {
