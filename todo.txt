@@ -4,6 +4,7 @@
 
 支持状态的storage
 
+序列化增长简单配置：txt,json,xml
 select实现 column rename,增加计算列等功能
 实现PipedOutput and PipedInput
 runner支持数据库配置变量
