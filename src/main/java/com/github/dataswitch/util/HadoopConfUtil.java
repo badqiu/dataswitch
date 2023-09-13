@@ -36,8 +36,16 @@ public class HadoopConfUtil {
 	
 	public static Configuration newConf() {
 		Configuration conf = new Configuration();
+		
 		String hadoopConfDir = System.getenv("HADOOP_CONF_DIR");
+		if(StringUtils.isBlank(hadoopConfDir)) {
+			hadoopConfDir = System.getProperty("hadoop.conf.dir");
+		}
+		
 		String hadoopHome = System.getenv("HADOOP_HOME");
+		if(StringUtils.isBlank(hadoopHome)) {
+			hadoopHome = System.getProperty("hadoop.home.dir");
+		}
 		
 		if(StringUtils.isNotBlank(hadoopConfDir)) {
 			logger.info("found HADOOP_CONF_DIR env:"+hadoopConfDir+" for load core-site.xml and hdfs-site.xml");
