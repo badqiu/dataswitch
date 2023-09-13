@@ -1,7 +1,7 @@
 package com.github.dataswitch.processor;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dataswitch.util.CollectionUtil;
-import com.github.dataswitch.util.CollectionUtil.SortOrder;
 import com.github.dataswitch.util.Util;
 
 /**
@@ -46,6 +45,7 @@ public class SqlFuncProcessor extends BaseProcessor{
 	
 	private String[] _removeKeys = null;
 	private String[] _selectKeys = null;
+	private String[] _groupByKeys = null;
 	private long _limitCount = 0;
 	private long _OffsetCount = 0;
 	
@@ -123,14 +123,26 @@ public class SqlFuncProcessor extends BaseProcessor{
 	}
 
 	private List<Map> groupBy(List<Map> list) {
-		if(StringUtils.isBlank(groupBy)) {
+		if(ArrayUtils.isEmpty(_groupByKeys)) {
 			return list;
 		}
 		
 		Map r = list.stream().collect(Collectors.groupingBy((o) -> {
-			return o.get(groupBy);
+			return buildKey(o,_groupByKeys);
 		}));
 		return Arrays.asList(r);
+	}
+
+	private Object buildKey(Map o, String[] keys) {
+		if(keys == null) return null;
+		if(keys.length == 1) return o.get(keys[0]);
+		
+		List values =new ArrayList();
+		for(String key : keys) {
+			Object value = o.get(key);
+			values.add(value);
+		}
+		return values;
 	}
 
 	private List<Map> orderBy(List<Map> list) {
@@ -219,6 +231,7 @@ public class SqlFuncProcessor extends BaseProcessor{
 //		where = convertSqlWhere2JavaWhere(where);
 		_removeKeys = Util.splitColumns(remove);
 		_selectKeys = Util.splitColumns(select);
+		_groupByKeys = Util.splitColumns(groupBy);
 	}
 
 	private String convertSqlWhere2JavaWhere(String where) {

@@ -148,6 +148,12 @@ public class SqlFuncProcessorTest {
 		System.out.println(results);
 		assertEquals("[{0=[{count=0, name=n10}], 1=[{count=1, name=n9}], 2=[{count=2, name=n8}], 3=[{count=3, name=n7}], 4=[{count=4, name=n6}], 5=[{count=5, name=n5}], 6=[{count=6, name=n4}], 7=[{count=7, name=n3}], 8=[{count=8, name=n2}], 9=[{count=9, name=n1}]}]",results.toString());
 	
+		p.setGroupBy("name,count");
+		p.open(null);
+		results = p.process(rows);
+		System.out.println(results);
+		assertEquals("[{[n4, 6]=[{count=6, name=n4}], [n3, 7]=[{count=7, name=n3}], [n2, 8]=[{count=8, name=n2}], [n1, 9]=[{count=9, name=n1}], [n9, 1]=[{count=1, name=n9}], [n10, 0]=[{count=0, name=n10}], [n8, 2]=[{count=2, name=n8}], [n7, 3]=[{count=3, name=n7}], [n6, 4]=[{count=4, name=n6}], [n5, 5]=[{count=5, name=n5}]}]",results.toString());
+
 	}
 	
 	public List<Map> newList(int count) {
