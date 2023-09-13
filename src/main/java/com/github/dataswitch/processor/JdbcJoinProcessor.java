@@ -100,7 +100,7 @@ public class JdbcJoinProcessor extends JoinProcessor {
 
 	private void initJoinDatas() {
 		List<Map> datas = (List)getJdbcTemplate().queryForList(getQuerySql());
-		setJoinDatas(datas);
+		setDataList(datas);
 	}
 
 	private String getQuerySql() {

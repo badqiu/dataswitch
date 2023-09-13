@@ -22,7 +22,7 @@ public class JoinProcessor implements Processor {
 
 	private Map<String,Map> _dataMap;
 	
-	private List<Map> joinDatas = new ArrayList();
+	private List<Map> dataList = new ArrayList();
 	private String joinKeys;
 	private String[] _joinKeys;
 	private boolean newMapForJoinResult = false;
@@ -36,12 +36,12 @@ public class JoinProcessor implements Processor {
 		_joinKeys = Util.splitColumns(joinKeys);
 	}
 	
-	public List<Map> getJoinDatas() {
-		return joinDatas;
+	public List<Map> getDataList() {
+		return dataList;
 	}
 
-	public void setJoinDatas(List<Map> joinDatas) {
-		this.joinDatas = joinDatas;
+	public void setDataList(List<Map> dataList) {
+		this.dataList = dataList;
 	}
 	
 	public boolean isNewMapForJoinResult() {
@@ -59,7 +59,7 @@ public class JoinProcessor implements Processor {
 
 	protected void init() {
 		setJoinKeys(joinKeys);
-		_dataMap = buildDataMapFromJoinDatas(joinDatas,_joinKeys);
+		_dataMap = buildDataMapFromJoinDatas(dataList,_joinKeys);
 	}
 	
 	private static Map<String, Map> buildDataMapFromJoinDatas(List<Map> joinDatas,String[] joinKeys) {
