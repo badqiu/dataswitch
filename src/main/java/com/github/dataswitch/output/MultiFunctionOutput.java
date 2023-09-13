@@ -6,12 +6,14 @@ import java.util.concurrent.locks.Lock;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dataswitch.enums.Constants;
 import com.github.dataswitch.enums.FailMode;
+import com.github.dataswitch.processor.Processor;
 
 /**
  * 多功能的Output
@@ -48,6 +50,8 @@ public class MultiFunctionOutput extends ProxyOutput {
 	private FailMode failMode = FailMode.FAIL_FAST;
 	
 	private List list = null;
+	
+	private Processor[] processors;
 	
 	public MultiFunctionOutput() {
 		super();
@@ -141,6 +145,14 @@ public class MultiFunctionOutput extends ProxyOutput {
 	public void setList(List list) {
 		this.list = list;
 	}
+	
+	public Processor[] getProcessors() {
+		return processors;
+	}
+
+	public void setProcessors(Processor... processors) {
+		this.processors = processors;
+	}
 
 	private Output newMultiFunctionProxy(Output proxy) {
 		Output output = proxy;
@@ -162,6 +174,10 @@ public class MultiFunctionOutput extends ProxyOutput {
 		
 		if(list != null) {
 			output = new ListOutput(list);
+		}
+		
+		if(ArrayUtils.isNotEmpty(processors)) {
+			output = new ProcessorOutput(output);
 		}
 		
 		if(stat) {
