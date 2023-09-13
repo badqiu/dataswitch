@@ -34,6 +34,10 @@ public class ProxyInput extends BaseObject  implements Input{
 		this.proxy = proxy;
 	}
 	
+	public void setTarget(Input proxy) {
+		setProxy(proxy);
+	}
+	
 	@Override
 	public void commitInput() {
 		this.proxy.commitInput();
