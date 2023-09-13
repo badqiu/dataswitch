@@ -4,6 +4,7 @@
 
 支持状态的storage
 
+select实现 column rename,增加计算列等功能
 实现PipedOutput and PipedInput
 runner支持数据库配置变量
 集成runner with xstream
