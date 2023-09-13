@@ -9,6 +9,19 @@ public class ProcessorOutput extends ProxyOutput {
 
 	private Processor processor;
 	
+	public ProcessorOutput() {
+		super();
+	}
+
+	public ProcessorOutput(Output proxy) {
+		super(proxy);
+	}
+
+	public ProcessorOutput(Output proxy,Processor processor) {
+		super(proxy);
+		setProcessor(processor);
+	}
+	
 	public Processor getProcessor() {
 		return processor;
 	}
