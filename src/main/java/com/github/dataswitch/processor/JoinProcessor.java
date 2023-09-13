@@ -11,6 +11,13 @@ import org.apache.commons.lang.StringUtils;
 
 import com.github.dataswitch.util.Util;
 
+/**
+ * 将数据放在内存中进行join
+ * join条件通过joinKeys指定，只能等值join
+ * 
+ * @author badqiu
+ *
+ */
 public class JoinProcessor implements Processor {
 
 	private Map<String,Map> _dataMap;
