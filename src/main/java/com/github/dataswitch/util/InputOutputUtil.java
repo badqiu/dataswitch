@@ -1,5 +1,6 @@
 package com.github.dataswitch.util;
 
+import java.io.EOFException;
 import java.io.Flushable;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,7 +10,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -262,6 +262,8 @@ public class InputOutputUtil {
 					writeCostSum += writeCost;
 					
 					input.commitInput();
+				}catch(EOFException e) {
+					break;
 				}catch(Exception e) {
 					lastException = e;
 					
