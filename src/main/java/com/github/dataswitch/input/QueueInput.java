@@ -1,10 +1,24 @@
 package com.github.dataswitch.input;
 
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 
+import com.github.dataswitch.output.QueueOutput;
 import com.github.dataswitch.support.QueueProvider;
 
 public class QueueInput extends QueueProvider implements Input{
+
+	public QueueInput() {
+		super();
+	}
+
+	public QueueInput(BlockingQueue<List<Object>> queue) {
+		super(queue);
+	}
+
+	public QueueInput(String queueGroup, String queueName) {
+		super(queueGroup, queueName);
+	}
 
 	@Override
 	public List<Object> read(int size) {
@@ -15,4 +29,12 @@ public class QueueInput extends QueueProvider implements Input{
 		}
 	}
 
+	private QueueOutput _output = null;
+	
+	public synchronized QueueOutput toOutput() {
+		if(_output == null) {
+			_output = new QueueOutput(getQueue());
+		}
+		return _output;
+	}
 }

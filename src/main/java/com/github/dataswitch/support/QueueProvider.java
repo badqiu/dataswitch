@@ -24,7 +24,18 @@ public class QueueProvider extends BaseObject implements Openable,TableName{
 
 	private BlockingQueue<List<Object>> queue = null;
 	
+	public QueueProvider() {
+	}
 	
+	public QueueProvider(BlockingQueue<List<Object>> queue) {
+		this.queue = queue;
+	}
+
+	public QueueProvider(String queueGroup, String queueName) {
+		this.queueGroup = queueGroup;
+		this.queueName = queueName;
+	}
+
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
 		init();
