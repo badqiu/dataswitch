@@ -18,7 +18,7 @@ public class JoinProcessor implements Processor {
 	private List<Map> joinDatas = new ArrayList();
 	private String joinKeys;
 	private String[] _joinKeys;
-	
+	private boolean newMapForJoinResult = false;
 
 	public String getJoinKeys() {
 		return joinKeys;
@@ -88,12 +88,15 @@ public class JoinProcessor implements Processor {
 			return row;
 		}
 		
-//		Map result = new HashMap(row);
-//		result.putAll(row);
-//		return result;
 		
-		row.putAll(row);
-		return row;
+		if(newMapForJoinResult) {
+			Map result = new HashMap(row);
+			result.putAll(row);
+			return result;
+		}else {
+			row.putAll(row);
+			return row;
+		}
 	}
 
 	protected static String buildMapKey(String[] joinKeys) {
