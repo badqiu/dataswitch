@@ -26,6 +26,15 @@ public class JoinProcessor implements Processor {
 
 	public void setJoinKeys(String joinKeys) {
 		this.joinKeys = joinKeys;
+		_joinKeys = Util.splitColumns(joinKeys);
+	}
+	
+	public List<Map> getJoinDatas() {
+		return joinDatas;
+	}
+
+	public void setJoinDatas(List<Map> joinDatas) {
+		this.joinDatas = joinDatas;
 	}
 
 	@Override
@@ -34,7 +43,7 @@ public class JoinProcessor implements Processor {
 	}
 
 	protected void init() {
-		_joinKeys = Util.splitColumns(joinKeys);
+		setJoinKeys(joinKeys);
 		_dataMap = buildDataMapFromJoinDatas(joinDatas,_joinKeys);
 	}
 	
