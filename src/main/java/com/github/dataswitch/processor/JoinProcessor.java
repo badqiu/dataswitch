@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -146,7 +147,8 @@ public class JoinProcessor implements Processor {
 			return result;
 		}
 		
-		if(_dataMap == null) return null;
+		if(MapUtils.isEmpty(_dataMap)) return null;
+		
 		String key = buildMapKey(joinKeys);
 		Map joinData = _dataMap.get(key);
 		return joinData;
