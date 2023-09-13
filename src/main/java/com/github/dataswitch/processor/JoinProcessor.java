@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -30,6 +31,8 @@ public class JoinProcessor implements Processor {
 	private boolean newMapForJoinResult = false;
 	
 	private Input input;
+	
+	private Function<String[],Map> lookupFunction;
 
 	public String getJoinKeys() {
 		return joinKeys;
@@ -62,6 +65,14 @@ public class JoinProcessor implements Processor {
 
 	public void setNewMapForJoinResult(boolean newMapForJoinResult) {
 		this.newMapForJoinResult = newMapForJoinResult;
+	}
+	
+	public Function<String[], Map> getLookupFunction() {
+		return lookupFunction;
+	}
+
+	public void setLookupFunction(Function<String[], Map> lookupFunction) {
+		this.lookupFunction = lookupFunction;
 	}
 
 	@Override
@@ -115,8 +126,7 @@ public class JoinProcessor implements Processor {
 	private Map join(Map row, String[] joinKeys) {
 		if(_dataMap == null) return null;
 		
-		String key = buildMapKey(joinKeys);
-		Map joinData = _dataMap.get(key);
+		Map joinData = lookupData(joinKeys);
 		if(joinData == null) {
 			return row;
 		}
@@ -130,6 +140,17 @@ public class JoinProcessor implements Processor {
 			row.putAll(row);
 			return row;
 		}
+	}
+
+	protected Map lookupData(String[] joinKeys) {
+		if(lookupFunction != null) {
+			Map result = lookupFunction.apply(joinKeys);
+			return result;
+		}
+		
+		String key = buildMapKey(joinKeys);
+		Map joinData = _dataMap.get(key);
+		return joinData;
 	}
 
 	protected static String buildMapKey(String[] joinKeys) {
