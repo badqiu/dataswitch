@@ -3,6 +3,8 @@ package com.github.dataswitch.input;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import com.github.dataswitch.processor.MultiProcessor;
 import com.github.dataswitch.processor.Processor;
 
