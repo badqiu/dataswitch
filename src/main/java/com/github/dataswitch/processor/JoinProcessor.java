@@ -9,6 +9,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.github.dataswitch.input.Input;
+import com.github.dataswitch.util.InputOutputUtil;
 import com.github.dataswitch.util.Util;
 
 /**
@@ -22,10 +24,12 @@ public class JoinProcessor implements Processor {
 
 	private Map<String,Map> _dataMap;
 	
-	private List<Map> dataList = new ArrayList();
+	private List<Map> dataList = null;
 	private String joinKeys;
 	private String[] _joinKeys;
 	private boolean newMapForJoinResult = false;
+	
+	private Input input;
 
 	public String getJoinKeys() {
 		return joinKeys;
@@ -44,6 +48,14 @@ public class JoinProcessor implements Processor {
 		this.dataList = dataList;
 	}
 	
+	public Input getInput() {
+		return input;
+	}
+
+	public void setInput(Input input) {
+		this.input = input;
+	}
+
 	public boolean isNewMapForJoinResult() {
 		return newMapForJoinResult;
 	}
@@ -59,12 +71,18 @@ public class JoinProcessor implements Processor {
 
 	protected void init() {
 		setJoinKeys(joinKeys);
+		if(dataList == null) {
+			if(input != null) {
+				dataList = (List)InputOutputUtil.readFully(input, 1000);
+			}
+		}
+		
 		_dataMap = buildDataMapFromJoinDatas(dataList,_joinKeys);
 	}
 	
 	private static Map<String, Map> buildDataMapFromJoinDatas(List<Map> joinDatas,String[] joinKeys) {
-		if(ArrayUtils.isEmpty(joinKeys)) return new HashMap();
-		if(CollectionUtils.isEmpty(joinDatas)) return new HashMap();
+		if(ArrayUtils.isEmpty(joinKeys)) return null;
+		if(CollectionUtils.isEmpty(joinDatas)) return null;
 		
 		Map resultMap = new HashMap();
 		for(Map row : joinDatas) {
