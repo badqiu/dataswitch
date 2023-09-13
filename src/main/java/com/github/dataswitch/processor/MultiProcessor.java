@@ -1,5 +1,7 @@
 package com.github.dataswitch.processor;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -47,6 +49,10 @@ public class MultiProcessor implements Processor{
 		if(ArrayUtils.isEmpty(processors)) return datas;
 		if(CollectionUtils.isEmpty(datas)) return datas;
 		
+		return process0(datas);
+	}
+
+	private List<Object> process0(List<Object> datas) throws Exception {
 		List<Object> tempDatas = datas;
 		for(Processor p : processors) {
 			tempDatas = p.process(tempDatas);
@@ -57,6 +63,27 @@ public class MultiProcessor implements Processor{
 		}
 		return tempDatas;
 	}
+	
+//	private List<Object> process1(List<Object> datas) throws Exception {
+//		List result = new ArrayList(datas.size());
+//		
+//		for(Object row : datas) {
+//			List rowList = processRowByProcessors(row);
+//			if(CollectionUtils.isNotEmpty(rowList)) {
+//				result.addAll(rowList);
+//			}
+//		}
+//		
+//		return result;
+//	}
+//
+//	private List processRowByProcessors(Object row) throws Exception {
+//		List rowList = Arrays.asList(row);
+//		for(Processor p : processors) {
+//			rowList = p.process(rowList);
+//		}
+//		return rowList;
+//	}
 
 	@Override
 	public void close() throws Exception {
