@@ -43,6 +43,10 @@ public class ProcessorInput extends ProxyInput {
 	public List read(int size) {
 		try {
 			List list = getProxy().read(size);
+			if(CollectionUtils.isEmpty(list)) {
+				return list;
+			}
+			
 			return _multiProcessor.process(list);
 		}catch(Exception e) {
 			throw new RuntimeException("error on processor:"+_multiProcessor,e);
