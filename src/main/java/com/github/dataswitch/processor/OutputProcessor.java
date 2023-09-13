@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.dataswitch.output.Output;
-import com.github.dataswitch.util.ObjectSqlQueryUtil;
 
 public class OutputProcessor implements Processor {
 
