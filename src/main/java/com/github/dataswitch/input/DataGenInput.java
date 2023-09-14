@@ -20,7 +20,9 @@ import com.github.dataswitch.util.ThreadUtil;
 public class DataGenInput implements Input{
 
 	private int rowsPerSecond = 1000;
+	private int intervalSecond = 1;
 	private long rowsLimit;
+
 	private long _count = 0;
 	private long _systemStartTime = System.currentTimeMillis();
 	
@@ -47,6 +49,13 @@ public class DataGenInput implements Input{
 		this.rowsLimit = rowsLimit;
 	}
 
+	public int getIntervalSecond() {
+		return intervalSecond;
+	}
+
+	public void setIntervalSecond(int intervalSecond) {
+		this.intervalSecond = intervalSecond;
+	}
 
 	@Override
 	public List<Object> read(int size) {
@@ -72,7 +81,7 @@ public class DataGenInput implements Input{
 			_count++;
 		}
 		
-		ThreadUtil.sleepSeconds(1);
+		ThreadUtil.sleepSeconds(intervalSecond);
 		return result;
 	}
 

@@ -40,5 +40,25 @@ public class DataGenInputTest {
 		assertTrue(costSeconds >= totalSeconds);
 		assertTrue(costSeconds <= totalSeconds + 1);
 	}
+	
+	@Test
+	public void testIntervalSecond() {
+		int intervalSecond = 3;
+		int rowsPerSecond = 1;
+		int rowsLimit = 5;
+
+		input.setRowsPerSecond(rowsPerSecond);
+		input.setRowsLimit(rowsLimit);
+		input.setIntervalSecond(intervalSecond);
+		StatOutput output = new StatOutput(new PrintOutput());
+		
+		long start = System.currentTimeMillis();
+		InputOutputUtil.copy(input, output);
+		
+		long costSeconds = (System.currentTimeMillis() - start) / 1000;
+		long totalSeconds = rowsLimit / rowsPerSecond * intervalSecond;
+		assertTrue(costSeconds >= totalSeconds);
+		assertTrue(costSeconds <= totalSeconds + 1);
+	}
 
 }
