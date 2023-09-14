@@ -96,7 +96,7 @@ public class DataGenInput implements Input{
 
 	protected Object genRow(int i,long count) {
 		long age = 10 + (count % 20);
-		Date birthDate = new Date(_systemStartTime);
+		Date date = new Date(_systemStartTime);
 		int days = (int)(count % 10000 + 1);
 		long money = _systemStartTime + i * 100;
 		String email = "hi"+(_count % 10000)+"@qq.com";
@@ -107,8 +107,8 @@ public class DataGenInput implements Input{
 		map.put("name", "name_"+(count % 100));
 		map.put("type", "type_"+(count % 1000));
 		map.put("age", (int)age);
-		map.put("birthDate", DateUtils.addDays(birthDate,-days));
-		map.put("offlineDate", DateUtils.addDays(birthDate,days));
+		map.put("birthDate", DateUtils.addDays(date,-days));
+		map.put("offlineDate", DateUtils.addDays(date,days));
 		map.put("random1", RandomUtils.nextInt(10));
 		map.put("random2", RandomUtils.nextInt(100));
 		map.put("random3", RandomUtils.nextInt(1000));
@@ -123,6 +123,7 @@ public class DataGenInput implements Input{
 		map.put("nullAge", count % 10 == 1 ? null : i);
 		map.put("nullEmail", count % 100 == 1 ? null : email);
 		map.put("nullMoney", count % 1000 == 1 ? null : money);
+		map.put("nullBirthDate", count % 10 == 1 ? null :DateUtils.addDays(date,-days));
 		
 		return map;
 	}
