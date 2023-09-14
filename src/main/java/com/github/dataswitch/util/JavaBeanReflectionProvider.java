@@ -58,7 +58,8 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 		if(type.isPrimitive()) {
 			return true;
 		}
-		if(type == Long.class || type == Integer.class || type == Double.class || type == Float.class
+		if(type == Long.class || type == Integer.class 
+				|| type == Double.class || type == Float.class
 				|| type == Boolean.class || type == String.class) {
 			return true;
 		}
