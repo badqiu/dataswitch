@@ -4,7 +4,6 @@
 
 支持状态的storage
 
-序列化增长简单配置：txt,json,xml
 select实现 column rename,增加计算列等功能
 runner支持数据库配置变量
 集成runner with xstream
@@ -19,6 +18,7 @@ InputsOutputs配置文件生成工具
 表字段同步？
 支持调整同步并发数？
 支持BreakException
+#序列化增长简单配置：txt,json,xml
 
 process支持
 	JOIN数据
