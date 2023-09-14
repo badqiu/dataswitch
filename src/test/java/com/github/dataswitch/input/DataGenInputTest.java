@@ -37,6 +37,8 @@ public class DataGenInputTest {
 		
 		long costSeconds = (System.currentTimeMillis() - start) / 1000;
 		long totalSeconds = rowsLimit / rowsPerSecond;
+		
+		System.out.println("testRowsPerSecond() costSeconds:"+costSeconds+" totalSeconds:"+totalSeconds);
 		assertTrue(costSeconds >= totalSeconds);
 		assertTrue(costSeconds <= totalSeconds + 1);
 	}
@@ -55,8 +57,10 @@ public class DataGenInputTest {
 		long start = System.currentTimeMillis();
 		InputOutputUtil.copy(input, output);
 		
+		
 		long costSeconds = (System.currentTimeMillis() - start) / 1000;
 		long totalSeconds = rowsLimit / rowsPerSecond * intervalSecond;
+		System.out.println("testIntervalSecond() costSeconds:"+costSeconds+" totalSeconds:"+totalSeconds);
 		assertTrue(costSeconds >= totalSeconds);
 		assertTrue(costSeconds <= totalSeconds + 1);
 	}
