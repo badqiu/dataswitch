@@ -86,13 +86,13 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 	@Override
 	public void writeField(Object object, String fieldName, Object value, Class definedIn) {
 		try {
-			invokePerfetMethod(object,fieldName,value,definedIn);
+			invokePerfetMethod(object,fieldName,value);
 		}catch(Exception e) {
 	        super.writeField(object, fieldName, value, definedIn);
 		}
 	}
 
-	private void invokePerfetMethod(Object object, String fieldName, Object value, Class definedIn) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	protected void invokePerfetMethod(Object object, String fieldName, Object value) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		if(object == null) return;
 		
 		try {
