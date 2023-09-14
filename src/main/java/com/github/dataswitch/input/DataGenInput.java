@@ -105,7 +105,7 @@ public class DataGenInput implements Input{
 		long money = _systemStartTime + i * 100;
 		String email = "hi"+(_count % 10000)+"@qq.com";
 		
-		Map map = new HashMap(30);
+		Map map = new HashMap(50);
 		map.put("id", count);
 		map.put("group", "group_"+(count % 10));
 		map.put("name", "name_"+(count % 100));
