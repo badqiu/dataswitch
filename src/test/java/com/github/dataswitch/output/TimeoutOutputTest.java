@@ -4,14 +4,19 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-public class TimeoutOutputTest {
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.reflection.PureJavaReflectionProvider;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 
+public class TimeoutOutputTest {
+	long hour = 3600 * 1000;
+	long minute = 60 * 1000;
+	long second =  1000;
+	
 	TimeoutOutput output = new TimeoutOutput();
 	@Test
 	public void setTimeout() {
-		long hour = 3600 * 1000;
-		long minute = 60 * 1000;
-		long second =  1000;
+
 		
 		output.setTimeout("3s");
 		assertEquals(3 * second,output.getTimeout());
@@ -31,6 +36,18 @@ public class TimeoutOutputTest {
 		output.setTimeout("5h30m30s");
 		assertEquals(5 * hour + 30 * minute + 30 * second,output.getTimeout());
 		
+	}
+	
+	@Test
+	public void setTimeoutFromXml() {
+		XStream xstream = new XStream(new PureJavaReflectionProvider(),new DomDriver());
+		
+		output = (TimeoutOutput)xstream.fromXML("<com.github.dataswitch.output.TimeoutOutput><timeout>2100</timeout></com.github.dataswitch.output.TimeoutOutput>");
+		assertEquals(2100,output.getTimeout());
+		
+		output = (TimeoutOutput)xstream.fromXML("<com.github.dataswitch.output.TimeoutOutput><timeout>888</timeout></com.github.dataswitch.output.TimeoutOutput>");
+		//assertEquals(30 * minute + 20 * second,output.getTimeout());
+		assertEquals(888,output.getTimeout());
 	}
 
 }
