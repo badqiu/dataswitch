@@ -76,7 +76,7 @@ public class DataGenInput implements Input{
 				break;
 			}
 			
- 			Object row = genRow(i);
+ 			Object row = genRow(i,_count);
 			result.add(row);
 
 			_count++;
@@ -93,16 +93,16 @@ public class DataGenInput implements Input{
 	}
 
 
-	private Object genRow(int i) {
-		long age = 10 + (_count % 20);
+	private Object genRow(int i,long count) {
+		long age = 10 + (count % 20);
 		Date birthDate = new Date(_systemStartTime);
-		int days = (int)(_count % 10000 + 1);
+		int days = (int)(count % 10000 + 1);
 
 		Map map = new HashMap();
-		map.put("id", _count);
-		map.put("group", "group_"+(_count % 10));
-		map.put("name", "name_"+(_count % 100));
-		map.put("type", "type_"+(_count % 1000));
+		map.put("id", count);
+		map.put("group", "group_"+(count % 10));
+		map.put("name", "name_"+(count % 100));
+		map.put("type", "type_"+(count % 1000));
 		map.put("age", (int)age);
 		map.put("birthDate", DateUtils.addDays(birthDate,-days));
 		map.put("offlineDate", DateUtils.addDays(birthDate,days));
@@ -110,10 +110,10 @@ public class DataGenInput implements Input{
 		map.put("random2", RandomUtils.nextInt(100));
 		map.put("random3", RandomUtils.nextInt(1000));
 		map.put("money", _systemStartTime + i * 100);
-		map.put("pay", _count * 100);
+		map.put("pay", count * 100);
 		map.put("fee", (_systemStartTime + i * 50) / 10000.0);
 		map.put("createTime", new Timestamp(System.currentTimeMillis()));
-		map.put("enabled", _count % 5 == 1 ? false : true);
+		map.put("enabled", count % 5 == 1 ? false : true);
 		
 		return map;
 	}
