@@ -70,8 +70,9 @@ public class DataGenInput implements Input{
 			return Collections.EMPTY_LIST;
 		}
 		
-		List result = new ArrayList();
+		List result = new ArrayList(rowsPerSecond);
 		
+		long start = System.currentTimeMillis();
 		for(int i = 0; i < rowsPerSecond; i++) {
 			if(reachRowsLimit()) {
 				break;
@@ -82,8 +83,11 @@ public class DataGenInput implements Input{
 
 			_count++;
 		}
+		long costMills = System.currentTimeMillis() - start;
 		
-		ThreadUtil.sleepSeconds(intervalSecond);
+		long sleepMills = intervalSecond * 1000 - costMills;
+		System.out.println("sleepMills:"+sleepMills+" costMills:"+costMills);
+		ThreadUtil.sleep(sleepMills);
 		return result;
 	}
 
@@ -101,7 +105,7 @@ public class DataGenInput implements Input{
 		long money = _systemStartTime + i * 100;
 		String email = "hi"+(_count % 10000)+"@qq.com";
 		
-		Map map = new HashMap();
+		Map map = new HashMap(30);
 		map.put("id", count);
 		map.put("group", "group_"+(count % 10));
 		map.put("name", "name_"+(count % 100));
