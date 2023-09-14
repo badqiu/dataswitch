@@ -139,7 +139,7 @@ public class FileOutput extends BaseOutput implements Output,TableName{
 	protected Serializer getSerializerByFormat() {
 		Serializer r = SerDesUtil.getSerializerByFormat(format);
 		Properties props = getProps();
-		if(props != null) {
+		if(r != null && props != null) {
 			BeanUtils.copyProperties(r, props);
 		}
 		return r;

@@ -159,7 +159,7 @@ public class FileInput extends BaseInput implements Input{
 	protected Deserializer getDeserializerByFormat() {
 		Deserializer r = SerDesUtil.getDeserializerByFormat(format);
 		Properties props = getProps();
-		if(props != null) {
+		if(r != null && props != null) {
 			BeanUtils.copyProperties(r, props);
 		}
 		return r;
