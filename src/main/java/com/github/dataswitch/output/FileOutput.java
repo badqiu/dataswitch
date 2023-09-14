@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -21,6 +22,7 @@ import com.github.dataswitch.serializer.SerDesUtil;
 import com.github.dataswitch.serializer.Serializer;
 import com.github.dataswitch.serializer.TxtSerializer;
 import com.github.dataswitch.serializer.XmlSerializer;
+import com.github.dataswitch.util.BeanUtils;
 import com.github.dataswitch.util.CompressUtil;
 import com.github.dataswitch.util.TableName;
 
@@ -135,7 +137,12 @@ public class FileOutput extends BaseOutput implements Output,TableName{
 	}
 
 	protected Serializer getSerializerByFormat() {
-		return SerDesUtil.getSerializerByFormat(format);
+		Serializer r = SerDesUtil.getSerializerByFormat(format);
+		Properties props = getProps();
+		if(props != null) {
+			BeanUtils.copyProperties(r, props);
+		}
+		return r;
 	}
 
 	private String newFilenameByCompressType() {

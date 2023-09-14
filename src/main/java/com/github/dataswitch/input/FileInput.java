@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
@@ -24,11 +25,8 @@ import org.springframework.util.Assert;
 import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
 
-import com.github.dataswitch.serializer.ByteDeserializer;
-import com.github.dataswitch.serializer.JsonDeserializer;
 import com.github.dataswitch.serializer.SerDesUtil;
-import com.github.dataswitch.serializer.TxtDeserializer;
-import com.github.dataswitch.serializer.XmlDeserializer;
+import com.github.dataswitch.util.BeanUtils;
 import com.github.dataswitch.util.CompressUtil;
 
 public class FileInput extends BaseInput implements Input{
@@ -159,7 +157,12 @@ public class FileInput extends BaseInput implements Input{
 	}
 
 	protected Deserializer getDeserializerByFormat() {
-		return SerDesUtil.getDeserializerByFormat(format);
+		Deserializer r = SerDesUtil.getDeserializerByFormat(format);
+		Properties props = getProps();
+		if(props != null) {
+			BeanUtils.copyProperties(r, props);
+		}
+		return r;
 	}
 
 	protected InputStream openFileInputStream(File currentFile)throws FileNotFoundException {
