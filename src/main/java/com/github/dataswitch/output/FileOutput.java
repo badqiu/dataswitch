@@ -15,7 +15,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
+import com.github.dataswitch.serializer.ByteSerializer;
+import com.github.dataswitch.serializer.JsonSerializer;
+import com.github.dataswitch.serializer.SerDesUtil;
 import com.github.dataswitch.serializer.Serializer;
+import com.github.dataswitch.serializer.TxtSerializer;
+import com.github.dataswitch.serializer.XmlSerializer;
 import com.github.dataswitch.util.CompressUtil;
 import com.github.dataswitch.util.TableName;
 
@@ -25,11 +30,12 @@ public class FileOutput extends BaseOutput implements Output,TableName{
 	private static Logger log = LoggerFactory.getLogger(FileOutput.class);
 	
 	private String dir; //文件存储目录
-	private int maxFileSize; //最大文件大小
+	private long maxFileSize; //最大文件大小
 	private String compressType; // 压缩类型: gzip, snappy,bzip2
 	private boolean deleteDir = false; //是否写入之前，删除目录
 	private String filename = "fileoutput_0000_";
 	
+	private String format = null;
 	private transient  Serializer serializer;
 	private transient OutputStream outputStream;
 	
@@ -83,6 +89,22 @@ public class FileOutput extends BaseOutput implements Output,TableName{
 		this.serializer = serializer;
 	}
 	
+	public long getMaxFileSize() {
+		return maxFileSize;
+	}
+
+	public void setMaxFileSize(long maxFileSize) {
+		this.maxFileSize = maxFileSize;
+	}
+
+	public String getFormat() {
+		return format;
+	}
+
+	public void setFormat(String format) {
+		this.format = format;
+	}
+
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
 		super.open(params);
@@ -90,6 +112,10 @@ public class FileOutput extends BaseOutput implements Output,TableName{
 	}
 	
 	public void init() throws IOException {
+		if(serializer == null) {
+			serializer = getSerializerByFormat();
+		}
+		
 		Assert.notNull(serializer,"serializer must be not null");
 		File dirFile = newFile(dir);
 		
@@ -104,6 +130,12 @@ public class FileOutput extends BaseOutput implements Output,TableName{
 		
 		log.info("fileoutput:"+file.getPath());
 		outputStream = new BufferedOutputStream(CompressUtil.newCompressOutput(compressType,openOutputStream(file)));
+		
+		
+	}
+
+	protected Serializer getSerializerByFormat() {
+		return SerDesUtil.getSerializerByFormat(format);
 	}
 
 	private String newFilenameByCompressType() {

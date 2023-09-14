@@ -24,6 +24,11 @@ import org.springframework.util.Assert;
 import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
 
+import com.github.dataswitch.serializer.ByteDeserializer;
+import com.github.dataswitch.serializer.JsonDeserializer;
+import com.github.dataswitch.serializer.SerDesUtil;
+import com.github.dataswitch.serializer.TxtDeserializer;
+import com.github.dataswitch.serializer.XmlDeserializer;
 import com.github.dataswitch.util.CompressUtil;
 
 public class FileInput extends BaseInput implements Input{
@@ -46,6 +51,7 @@ public class FileInput extends BaseInput implements Input{
 	private String include;
 	private String exclude;
 	
+	private String format;
 	
 	private transient AntPathMatcher antPathMatcher = new AntPathMatcher();
 	
@@ -96,6 +102,14 @@ public class FileInput extends BaseInput implements Input{
 	public void setErrorOnEmptyFile(boolean errorOnEmptyFile) {
 		this.errorOnEmptyFile = errorOnEmptyFile;
 	}
+	
+	public String getFormat() {
+		return format;
+	}
+
+	public void setFormat(String format) {
+		this.format = format;
+	}
 
 	@Override
 	public Object readObject() {
@@ -130,6 +144,9 @@ public class FileInput extends BaseInput implements Input{
 	}
 
 	private void init() {
+		if(deserializer == null) {
+			deserializer = getDeserializerByFormat();
+		}
 		Assert.notNull(deserializer,"deserializer must be not null");
 		this._files = listAllFiles();
 		if(CollectionUtils.isEmpty(this._files)) {
@@ -139,6 +156,10 @@ public class FileInput extends BaseInput implements Input{
 		if(errorOnEmptyFile) {
 			Assert.notEmpty(this._files,"not found any file by dirs:"+getDirs());
 		}
+	}
+
+	protected Deserializer getDeserializerByFormat() {
+		return SerDesUtil.getDeserializerByFormat(format);
 	}
 
 	protected InputStream openFileInputStream(File currentFile)throws FileNotFoundException {
