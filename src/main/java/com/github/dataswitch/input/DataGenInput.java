@@ -86,7 +86,6 @@ public class DataGenInput implements Input{
 		long costMills = System.currentTimeMillis() - start;
 		
 		long sleepMills = intervalSecond * 1000 - costMills;
-		System.out.println("sleepMills:"+sleepMills+" costMills:"+costMills);
 		ThreadUtil.sleep(sleepMills);
 		return result;
 	}
