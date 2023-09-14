@@ -143,8 +143,10 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 	}
 	
 
-	private void invokeMethod(Object object, Method method,Object...args)
+	public static void invokeMethod(Object object, Method method,Object...args)
 			throws IllegalAccessException, InvocationTargetException {
+		if(object == null) return;
+		
 		if(method == null) {
 			return;
 		}
