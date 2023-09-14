@@ -54,13 +54,17 @@ public class TimeoutInput extends ProxyInput{
 		try {
 			return super.read(size);
 		}finally {
-			if(timeout > 0) {
-				long cost = System.currentTimeMillis() - _startTime;
-				
-				if(isTimeout(cost)) {
-					_timeoutStatus = true;
-					throwTimeoutExceptionIfTrue();
-				}
+			checkTimeout();
+		}
+	}
+
+	private void checkTimeout() {
+		if(timeout > 0) {
+			long cost = System.currentTimeMillis() - _startTime;
+			
+			if(isTimeout(cost)) {
+				_timeoutStatus = true;
+				throwTimeoutExceptionIfTrue();
 			}
 		}
 	}

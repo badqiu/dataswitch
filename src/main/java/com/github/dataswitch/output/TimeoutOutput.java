@@ -51,7 +51,10 @@ public class TimeoutOutput extends ProxyOutput{
 		
 		super.write(rows);
 		
-		
+		checkTimeout();
+	}
+
+	private void checkTimeout() {
 		if(timeout > 0) {
 			long cost = System.currentTimeMillis() - _startTime;
 			
