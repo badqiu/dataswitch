@@ -70,6 +70,7 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 		Field copy = definedIn.getDeclaredFields()[0];
 		FieldUtils.writeDeclaredField(copy, "type", fieldType,true);
 		FieldUtils.writeDeclaredField(copy, "name", fieldName,true);
+		copy.setAccessible(true);
 		return copy;
 	}
 
