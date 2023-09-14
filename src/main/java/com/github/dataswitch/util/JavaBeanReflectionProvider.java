@@ -10,7 +10,7 @@ import org.apache.hadoop.util.StringUtils;
 import com.thoughtworks.xstream.converters.reflection.PureJavaReflectionProvider;
 
 /**
- * 提供优先使用java bean的反射进行数据写入
+ * 提供优先使用java bean的property反射进行数据写入
  * 
  * @author badqiu
  *
