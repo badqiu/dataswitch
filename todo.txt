@@ -92,13 +92,3 @@ script 需要增加 context, beforeScript put var into context for init.
   	#RocketMQ 未测试
   	RabbitMQ
   #ClickHouse
-实现random_input
-	long,int,date,time,timestamp,datetime,long,float,double,string,boolean
-	id      
-	name
-	age
-	birth_date
-	email
-	money
-	rows-per-second
-	number-of-rows  
