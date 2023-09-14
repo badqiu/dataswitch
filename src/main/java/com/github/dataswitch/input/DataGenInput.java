@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.math.RandomUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 
 import com.github.dataswitch.util.ThreadUtil;
 /**
@@ -114,6 +115,8 @@ public class DataGenInput implements Input{
 		map.put("fee", (_systemStartTime + i * 50) / 10000.0);
 		map.put("createTime", new Timestamp(System.currentTimeMillis()));
 		map.put("enabled", count % 5 == 1 ? false : true);
+		map.put("email", "hi"+(_count % 10000)+"@qq.com");
+		map.put("password", RandomStringUtils.randomAlphanumeric(32));
 		
 		return map;
 	}
