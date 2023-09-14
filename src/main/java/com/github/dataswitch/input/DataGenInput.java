@@ -93,7 +93,7 @@ public class DataGenInput implements Input{
 	}
 
 
-	private Object genRow(int i,long count) {
+	protected Object genRow(int i,long count) {
 		long age = 10 + (count % 20);
 		Date birthDate = new Date(_systemStartTime);
 		int days = (int)(count % 10000 + 1);
