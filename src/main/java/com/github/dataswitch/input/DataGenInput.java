@@ -115,8 +115,11 @@ public class DataGenInput implements Input{
 		map.put("fee", (_systemStartTime + i * 50) / 10000.0);
 		map.put("createTime", new Timestamp(System.currentTimeMillis()));
 		map.put("enabled", count % 5 == 1 ? false : true);
-		map.put("email", "hi"+(_count % 10000)+"@qq.com");
+		String email = "hi"+(_count % 10000)+"@qq.com";
+		map.put("email", email);
 		map.put("password", RandomStringUtils.randomAlphanumeric(32));
+		map.put("nullAge", count % 10 == 1 ? null : i);
+		map.put("nullEmail", count % 100 == 1 ? null : email);
 		
 		return map;
 	}
