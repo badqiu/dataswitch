@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import com.github.dataswitch.output.NullOutput;
 import com.github.dataswitch.output.PrintOutput;
 import com.github.dataswitch.output.StatOutput;
 import com.github.dataswitch.util.InputOutputUtil;
@@ -12,6 +13,16 @@ import com.github.dataswitch.util.InputOutputUtil;
 public class DataGenInputTest {
 
 	DataGenInput input = new DataGenInput();
+	
+	@Test
+	public void setRowsPerSecond_Max() {
+		long rowsLimit = 1000000;
+		input.setRowsPerSecond(100000);
+		input.setRowsLimit(rowsLimit);
+		StatOutput output = new StatOutput(new NullOutput());
+		InputOutputUtil.copy(input, output);
+		assertEquals(output.getTotalRows(),rowsLimit);
+	}
 	
 	@Test
 	public void testRowsLimit() {
