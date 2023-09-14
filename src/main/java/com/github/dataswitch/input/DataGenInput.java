@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.math.RandomUtils;
 import org.apache.commons.lang.time.DateUtils;
 
 import com.github.dataswitch.util.ThreadUtil;
@@ -105,6 +106,9 @@ public class DataGenInput implements Input{
 		map.put("age", (int)age);
 		map.put("birthDate", DateUtils.addDays(birthDate,-days));
 		map.put("offlineDate", DateUtils.addDays(birthDate,days));
+		map.put("random1", RandomUtils.nextInt(10));
+		map.put("random2", RandomUtils.nextInt(100));
+		map.put("random3", RandomUtils.nextInt(1000));
 		map.put("money", _systemStartTime + i * 100);
 		map.put("pay", _count * 100);
 		map.put("fee", (_systemStartTime + i * 50) / 10000.0);
