@@ -45,7 +45,7 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 			if(field == null) {
 				String setMethodName = "set"+StringUtils.capitalize(fieldName);
 				if(hasMethod(definedIn,setMethodName)) {
-					return newField(fieldName,String.class);
+					return newField(definedIn,fieldName,String.class);
 				}
 				
 				return null;
@@ -54,8 +54,9 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 			
 			Class<?> type = field.getType();
 			if(isSimpleType(type)) {
-				FieldUtils.writeDeclaredField(field, "type", String.class,true);
-				return field;
+//				FieldUtils.writeDeclaredField(field, "type", String.class,true);
+//				return field;
+				return newField(definedIn,fieldName,String.class);
 			}
 			
 			return field;
@@ -65,8 +66,8 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 		}
 	}
 
-	public static Field newField(String fieldName, Class fieldType) throws IllegalAccessException {
-		Field copy = JavaBeanReflectionProvider.class.getDeclaredFields()[0];
+	public static Field newField(Class definedIn,String fieldName, Class fieldType) throws IllegalAccessException {
+		Field copy = definedIn.getDeclaredFields()[0];
 		FieldUtils.writeDeclaredField(copy, "type", fieldType,true);
 		FieldUtils.writeDeclaredField(copy, "name", fieldName,true);
 		return copy;
