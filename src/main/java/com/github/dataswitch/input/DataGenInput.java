@@ -86,6 +86,7 @@ public class DataGenInput implements Input{
 	private Object genRow(int i) {
 		long age = 10 + (_count % 20);
 		Date birthDate = new Date(_systemStartTime);
+		int days = (int)(_count % 10000 + 1);
 
 		Map map = new HashMap();
 		map.put("id", _count);
@@ -93,7 +94,7 @@ public class DataGenInput implements Input{
 		map.put("name", "name_"+(_count % 100));
 		map.put("type", "type_"+(_count % 1000));
 		map.put("age", (int)age);
-		map.put("birthDate", DateUtils.addDays(birthDate,i+1));
+		map.put("birthDate", DateUtils.addDays(birthDate,days));
 		map.put("money", _systemStartTime + i * 100);
 		map.put("fee", (_systemStartTime + i * 50) / 10000.0);
 		map.put("createTime", new Timestamp(System.currentTimeMillis()));
