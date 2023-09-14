@@ -105,6 +105,7 @@ public class DataGenInput implements Input{
 		map.put("age", (int)age);
 		map.put("birthDate", DateUtils.addDays(birthDate,days));
 		map.put("money", _systemStartTime + i * 100);
+		map.put("pay", _count * 100);
 		map.put("fee", (_systemStartTime + i * 50) / 10000.0);
 		map.put("createTime", new Timestamp(System.currentTimeMillis()));
 		map.put("enabled", _count % 5 == 1 ? false : true);
