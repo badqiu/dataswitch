@@ -45,10 +45,7 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 			if(field == null) {
 				String setMethodName = "set"+StringUtils.capitalize(fieldName);
 				if(hasMethod(definedIn,setMethodName)) {
-					Field copy = definedIn.getDeclaredFields()[0];
-					FieldUtils.writeDeclaredField(copy, "type", String.class,true);
-					FieldUtils.writeDeclaredField(copy, "name", fieldName,true);
-					return copy;
+					return newField(fieldName,String.class);
 				}
 				
 				return null;
@@ -66,6 +63,13 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 			e.printStackTrace();
 			throw new RuntimeException("error on field:"+field.getName(),e);
 		}
+	}
+
+	public static Field newField(String fieldName, Class fieldType) throws IllegalAccessException {
+		Field copy = JavaBeanReflectionProvider.class.getDeclaredFields()[0];
+		FieldUtils.writeDeclaredField(copy, "type", fieldType,true);
+		FieldUtils.writeDeclaredField(copy, "name", fieldName,true);
+		return copy;
 	}
 
 	private boolean hasMethod(Class definedIn, String method) {
