@@ -54,15 +54,12 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 			
 			Class<?> type = field.getType();
 			if(isSimpleType(type)) {
-//				FieldUtils.writeDeclaredField(field, "type", String.class,true);
-//				return field;
 				return newField(definedIn,fieldName,String.class);
 			}
 			
 			return field;
 		}catch(Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException("error on field:"+field.getName(),e);
+			throw new RuntimeException("error on field:"+fieldName,e);
 		}
 	}
 
