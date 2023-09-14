@@ -98,7 +98,9 @@ public class DataGenInput implements Input{
 		long age = 10 + (count % 20);
 		Date birthDate = new Date(_systemStartTime);
 		int days = (int)(count % 10000 + 1);
-
+		long money = _systemStartTime + i * 100;
+		String email = "hi"+(_count % 10000)+"@qq.com";
+		
 		Map map = new HashMap();
 		map.put("id", count);
 		map.put("group", "group_"+(count % 10));
@@ -110,16 +112,17 @@ public class DataGenInput implements Input{
 		map.put("random1", RandomUtils.nextInt(10));
 		map.put("random2", RandomUtils.nextInt(100));
 		map.put("random3", RandomUtils.nextInt(1000));
-		map.put("money", _systemStartTime + i * 100);
+		map.put("money", money);
 		map.put("pay", count * 100);
 		map.put("fee", (_systemStartTime + i * 50) / 10000.0);
 		map.put("createTime", new Timestamp(System.currentTimeMillis()));
 		map.put("enabled", count % 5 == 1 ? false : true);
-		String email = "hi"+(_count % 10000)+"@qq.com";
+		
 		map.put("email", email);
 		map.put("password", RandomStringUtils.randomAlphanumeric(32));
 		map.put("nullAge", count % 10 == 1 ? null : i);
 		map.put("nullEmail", count % 100 == 1 ? null : email);
+		map.put("nullMoney", count % 1000 == 1 ? null : money);
 		
 		return map;
 	}
