@@ -44,7 +44,7 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 		try {
 			if(field == null) {
 				String setMethodName = "set"+StringUtils.capitalize(fieldName);
-				if(hasMethod(definedIn,setMethodName)) {
+				if(findMethod(definedIn,setMethodName) != null) {
 					return newField(definedIn,fieldName,String.class);
 				}
 				
@@ -66,26 +66,7 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 		}
 	}
 
-	public static Field newField(Class definedIn,String fieldName, Class fieldType) throws IllegalAccessException {
-		Field copy = definedIn.getDeclaredFields()[0];
-		FieldUtils.writeDeclaredField(copy, "type", fieldType,true);
-		FieldUtils.writeDeclaredField(copy, "name", fieldName,true);
-		copy.setAccessible(true);
-		return copy;
-	}
 
-	private boolean hasMethod(Class definedIn, String method) {
-		try {
-			for(Method m : definedIn.getDeclaredMethods()) {
-				if(m.getName().equals(method)) {
-					return true;
-				}
-			}
-			return false;
-		} catch (SecurityException e) {
-			throw new RuntimeException(e);
-		}
-	}
 
 	private boolean isSimpleType(Class<?> type) {
 		if(type.isPrimitive()) {
@@ -143,6 +124,27 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 	}
 	
 
+	public static Field newField(Class definedIn,String fieldName, Class fieldType) throws IllegalAccessException {
+		Field copy = definedIn.getDeclaredFields()[0];
+		FieldUtils.writeDeclaredField(copy, "type", fieldType,true);
+		FieldUtils.writeDeclaredField(copy, "name", fieldName,true);
+		copy.setAccessible(true);
+		return copy;
+	}
+
+	public static Method findMethod(Class definedIn, String method) {
+		try {
+			for(Method m : definedIn.getDeclaredMethods()) {
+				if(m.getName().equals(method)) {
+					return m;
+				}
+			}
+			return null;
+		} catch (SecurityException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 	public static void invokeMethod(Object object, Method method,Object...args)
 			throws IllegalAccessException, InvocationTargetException {
 		if(object == null) return;
