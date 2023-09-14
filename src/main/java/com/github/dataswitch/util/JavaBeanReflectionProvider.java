@@ -131,7 +131,9 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 			for(Method method : object.getClass().getDeclaredMethods()) {
 				if(method.getName().equals(setMethodName)) {
 					Class targetType = method.getParameterTypes()[0];
-					invokeMethod(object, method,ConvertUtils.convert(value,targetType));
+					Object finalValue = ConvertUtils.convert(value,targetType);
+					invokeMethod(object, method,finalValue);
+					return;
 				}
 			}
 			
