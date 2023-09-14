@@ -52,6 +52,12 @@ public class TimeoutOutputTest {
 		
 		output = (TimeoutOutput)xstream.fromXML("<com.github.dataswitch.output.TimeoutOutput><timeout>30m20s</timeout></com.github.dataswitch.output.TimeoutOutput>");
 		assertEquals(30 * minute + 20 * second,output.getTimeout());
+		
+		output = (TimeoutOutput)xstream.fromXML("<com.github.dataswitch.output.TimeoutOutput><timeout><null/></timeout></com.github.dataswitch.output.TimeoutOutput>");
+		assertEquals(0,output.getTimeout());
+		
+		output = (TimeoutOutput)xstream.fromXML("<com.github.dataswitch.output.TimeoutOutput><timeoutSecond>10</timeoutSecond></com.github.dataswitch.output.TimeoutOutput>");
+		assertEquals(10 * second,output.getTimeout());
 	}
 
 }

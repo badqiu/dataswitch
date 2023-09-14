@@ -4,8 +4,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.hadoop.util.StringUtils;
 
 import com.thoughtworks.xstream.converters.reflection.PureJavaReflectionProvider;
 
@@ -20,7 +21,7 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 	@Override
 	public Field getField(Class definedIn, String fieldName) {
 		Field field = super.getField(definedIn, fieldName);
-		return toStringFieldIfSimple(field);
+		return toStringFieldIfSimple(definedIn,field,fieldName);
 	}
 	
 	@Override
@@ -35,13 +36,25 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 	@Override
 	public Field getFieldOrNull(Class definedIn, String fieldName) {
 		Field fieldOrNull = super.getFieldOrNull(definedIn, fieldName);
-		return toStringFieldIfSimple(fieldOrNull);
+		return toStringFieldIfSimple(definedIn,fieldOrNull,fieldName);
 	}
 	
-	private Field toStringFieldIfSimple(Field field) {
-		if(field == null) return null;
+	private Field toStringFieldIfSimple(Class definedIn, Field field,String fieldName) {
 		
 		try {
+			if(field == null) {
+				String setMethodName = "set"+StringUtils.capitalize(fieldName);
+				if(hasMethod(definedIn,setMethodName)) {
+					Field copy = definedIn.getDeclaredFields()[0];
+					FieldUtils.writeDeclaredField(copy, "type", String.class,true);
+					FieldUtils.writeDeclaredField(copy, "name", fieldName,true);
+					return copy;
+				}
+				
+				return null;
+			}
+			
+			
 			Class<?> type = field.getType();
 			if(isSimpleType(type)) {
 				FieldUtils.writeDeclaredField(field, "type", String.class,true);
@@ -50,7 +63,21 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 			
 			return field;
 		}catch(Exception e) {
+			e.printStackTrace();
 			throw new RuntimeException("error on field:"+field.getName(),e);
+		}
+	}
+
+	private boolean hasMethod(Class definedIn, String method) {
+		try {
+			for(Method m : definedIn.getDeclaredMethods()) {
+				if(m.getName().equals(method)) {
+					return true;
+				}
+			}
+			return false;
+		} catch (SecurityException e) {
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -58,7 +85,9 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 		if(type.isPrimitive()) {
 			return true;
 		}
+		
 		if(type == Long.class || type == Integer.class 
+				|| type == Short.class || type == Byte.class
 				|| type == Double.class || type == Float.class
 				|| type == Boolean.class || type == String.class) {
 			return true;
@@ -77,16 +106,34 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 	}
 
 	private void invokePerfetMethod(Object object, String fieldName, Object value, Class definedIn) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		if(object == null) return;
+		
 		try {
-			Method method = object.getClass().getDeclaredMethod("set"+StringUtils.camelize(fieldName),String.class);
-			if(method != null) {
-				invokeMethod(object, method,value);
-				return;
+			String setMethodName = "set"+StringUtils.capitalize(fieldName);
+			
+			try {
+				Class valueClass = value != null ? value.getClass() : String.class;
+				Method method = object.getClass().getDeclaredMethod(setMethodName,valueClass);
+				if(method != null) {
+					invokeMethod(object, method,value);
+					return;
+				}
+			}catch(java.lang.NoSuchMethodException e) {
+				//ignore
 			}
+			
+			for(Method method : object.getClass().getDeclaredMethods()) {
+				if(method.getName().equals(setMethodName)) {
+					Class targetType = method.getParameterTypes()[0];
+					invokeMethod(object, method,ConvertUtils.convert(value,targetType));
+				}
+			}
+			
 		}catch(Exception e) {
 			BeanUtils.setProperty(object, fieldName, value);
 		}
 	}
+	
 
 	private void invokeMethod(Object object, Method method,Object...args)
 			throws IllegalAccessException, InvocationTargetException {
@@ -98,7 +145,5 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 		method.invoke(object, args);
 		return;
 	}
-	
-
 	
 }
