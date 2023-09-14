@@ -11,7 +11,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import com.thoughtworks.xstream.converters.reflection.PureJavaReflectionProvider;
 
 /**
- * 提供优先使用java bean的property反射进行数据写入
+ * 提供优先使用java bean的property或method反射进行数据写入
  * 
  * @author badqiu
  *
