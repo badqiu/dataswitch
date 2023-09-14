@@ -33,6 +33,7 @@ public class TimeoutOutput extends ProxyOutput{
 	public void setTimeoutSecond(long timeoutSecond) {
 		this.timeout = timeoutSecond * 1000;
 	}
+	
 	/**
 	 * 超时设置如  5h30m30s  = 5小时30分钟30秒
 	 * @param timeout

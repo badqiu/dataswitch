@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import com.github.dataswitch.util.JavaBeanReflectionProvider;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.reflection.PureJavaReflectionProvider;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -40,14 +41,17 @@ public class TimeoutOutputTest {
 	
 	@Test
 	public void setTimeoutFromXml() {
-		XStream xstream = new XStream(new PureJavaReflectionProvider(),new DomDriver());
+		XStream xstream = new XStream(new JavaBeanReflectionProvider(),new DomDriver());
 		
 		output = (TimeoutOutput)xstream.fromXML("<com.github.dataswitch.output.TimeoutOutput><timeout>2100</timeout></com.github.dataswitch.output.TimeoutOutput>");
 		assertEquals(2100,output.getTimeout());
 		
 		output = (TimeoutOutput)xstream.fromXML("<com.github.dataswitch.output.TimeoutOutput><timeout>888</timeout></com.github.dataswitch.output.TimeoutOutput>");
-		//assertEquals(30 * minute + 20 * second,output.getTimeout());
 		assertEquals(888,output.getTimeout());
+		
+		
+		output = (TimeoutOutput)xstream.fromXML("<com.github.dataswitch.output.TimeoutOutput><timeout>30m20s</timeout></com.github.dataswitch.output.TimeoutOutput>");
+		assertEquals(30 * minute + 20 * second,output.getTimeout());
 	}
 
 }
