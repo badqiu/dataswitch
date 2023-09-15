@@ -43,8 +43,8 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 		
 		try {
 			if(field == null) {
-				String setMethodName = "set"+StringUtils.capitalize(fieldName);
-				if(findMethod(definedIn,setMethodName) != null) {
+				String methodName = toSetMethodName(fieldName);
+				if(findMethod(definedIn,methodName) != null) {
 					return newField(definedIn,fieldName,String.class);
 				}
 				
@@ -103,7 +103,7 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 	private void invokeBySetMethod(Object object, String fieldName, Object value)
 			throws IllegalAccessException, InvocationTargetException {
 		
-		String methodName = "set"+StringUtils.capitalize(fieldName);
+		String methodName = toSetMethodName(fieldName);
 		
 		try {
 			Class valueClass = value != null ? value.getClass() : String.class;
@@ -122,6 +122,13 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 			Object finalValue = ConvertUtils.convert(value,targetType);
 			invokeMethod(object, method,finalValue);
 		}
+	}
+
+	private String toSetMethodName(String fieldName) {
+		if(fieldName == null) return null;
+		
+		String methodName = "set"+StringUtils.capitalize(fieldName);
+		return methodName;
 	}
 	
 
