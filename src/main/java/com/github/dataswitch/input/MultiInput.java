@@ -23,10 +23,12 @@ public class MultiInput extends BaseObject implements Input{
 
 	private List<Input> inputs = new ArrayList<Input>();
 	
-	private transient Input currentInput;
-	private AtomicInteger currentIndex = new AtomicInteger();
-	
 	private boolean concurrent = false; //并发读
+
+	
+	private transient Input _currentInput;
+	private AtomicInteger _currentIndex = new AtomicInteger();
+	
 	
 	public MultiInput() {
 	}
@@ -105,19 +107,19 @@ public class MultiInput extends BaseObject implements Input{
 	
 
 	private List<Object> sequenceRead(int size) {
-		if(currentInput == null) {
-			int i = currentIndex.get();
+		if(_currentInput == null) {
+			int i = _currentIndex.get();
 			if(i >= inputs.size()) {
 				return Collections.EMPTY_LIST;
 			}
 			
-			currentInput = inputs.get(i);
-			currentIndex.incrementAndGet();
+			_currentInput = inputs.get(i);
+			_currentIndex.incrementAndGet();
 		}
 		
-		List<Object> result = currentInput.read(size);
+		List<Object> result = _currentInput.read(size);
 		if(CollectionUtils.isEmpty(result)) {
-			currentInput = null;
+			_currentInput = null;
 			return read(size);
 		}
 		return result;
