@@ -106,15 +106,12 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 				//ignore
 			}
 			
-			for(Method method : object.getClass().getDeclaredMethods()) {
-				if(method.getName().equals(methodName)) {
-					Class targetType = method.getParameterTypes()[0];
-					Object finalValue = ConvertUtils.convert(value,targetType);
-					invokeMethod(object, method,finalValue);
-					return;
-				}
+			Method method = findMethod(methodName, object.getClass().getDeclaredMethods());
+			if(method != null) {
+				Class targetType = method.getParameterTypes()[0];
+				Object finalValue = ConvertUtils.convert(value,targetType);
+				invokeMethod(object, method,finalValue);
 			}
-			
 		}catch(Exception e) {
 			BeanUtils.setProperty(object, fieldName, value);
 		}
@@ -131,24 +128,26 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 
 	public static Method findMethod(Class definedIn, String method) {
 		try {
-			for(Method m : definedIn.getDeclaredMethods()) {
-				if(m.getName().equals(method)) {
-					return m;
-				}
-			}
-			return null;
+			Method[] methods = definedIn.getDeclaredMethods();
+			return findMethod(method, methods);
 		} catch (SecurityException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public static Method findMethod(String method, Method[] methods) {
+		for(Method m : methods) {
+			if(m.getName().equals(method)) {
+				return m;
+			}
+		}
+		return null;
 	}
 	
 	public static void invokeMethod(Object object, Method method,Object...args)
 			throws IllegalAccessException, InvocationTargetException {
 		if(object == null) return;
-		
-		if(method == null) {
-			return;
-		}
+		if(method == null) return;
 		
 		method.setAccessible(true);
 		method.invoke(object, args);
