@@ -16,6 +16,8 @@ import com.thoughtworks.xstream.converters.reflection.PureJavaReflectionProvider
 /**
  * 提供优先使用java bean的property或method反射进行数据写入
  * 
+ * 原有问题:  直接通过field进行数据读写，绕过了bean属性方法，绕过了方法检查
+ * 
  * @author badqiu
  *
  */
