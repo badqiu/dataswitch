@@ -93,11 +93,11 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 		if(object == null) return;
 		
 		try {
-			String setMethodName = "set"+StringUtils.capitalize(fieldName);
+			String methodName = "set"+StringUtils.capitalize(fieldName);
 			
 			try {
 				Class valueClass = value != null ? value.getClass() : String.class;
-				Method method = object.getClass().getDeclaredMethod(setMethodName,valueClass);
+				Method method = object.getClass().getDeclaredMethod(methodName,valueClass);
 				if(method != null) {
 					invokeMethod(object, method,value);
 					return;
@@ -107,7 +107,7 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 			}
 			
 			for(Method method : object.getClass().getDeclaredMethods()) {
-				if(method.getName().equals(setMethodName)) {
+				if(method.getName().equals(methodName)) {
 					Class targetType = method.getParameterTypes()[0];
 					Object finalValue = ConvertUtils.convert(value,targetType);
 					invokeMethod(object, method,finalValue);
