@@ -1,11 +1,13 @@
 package com.github.dataswitch.util;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
 import com.thoughtworks.xstream.converters.reflection.PureJavaReflectionProvider;
@@ -43,12 +45,7 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 		
 		try {
 			if(field == null) {
-				String methodName = toSetMethodName(fieldName);
-				if(findMethod(definedIn,methodName) != null) {
-					return newField(definedIn,fieldName,String.class);
-				}
-				
-				return null;
+				return getBeanPropertyAsField(definedIn, fieldName);
 			}
 			
 			
@@ -63,23 +60,41 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 		}
 	}
 
+	private Field getBeanPropertyAsField(Class definedIn, String fieldName) throws IllegalAccessException {
+		PropertyDescriptor pd = org.springframework.beans.BeanUtils.getPropertyDescriptor(definedIn, fieldName);
+		if(pd != null) {
+			if(isSimpleType(pd.getPropertyType())) {
+				return newField(definedIn,fieldName,String.class);
+			}else {
+				return newField(definedIn,fieldName,pd.getPropertyType());
+			}
+		}
+		
+		String methodName = toSetMethodName(fieldName);
+		if(findMethod(definedIn,methodName) != null) {
+			return newField(definedIn,fieldName,String.class);
+		}
+		
+		return null;
+	}
+
 
 
 	private boolean isSimpleType(Class<?> type) {
-		if(type == null) return false;
-		
-		if(type.isPrimitive()) {
-			return true;
-		}
-		
-		if(type == Long.class || type == Integer.class 
-				|| type == Short.class || type == Byte.class
-				|| type == Double.class || type == Float.class
-				|| type == Boolean.class || type == String.class) {
-			return true;
-		}
-
-		return false;
+//		if(type == null) return false;
+//		if(type.isPrimitive()) {
+//			return true;
+//		}
+//		
+//		if(type == Long.class || type == Integer.class 
+//				|| type == Short.class || type == Byte.class
+//				|| type == Double.class || type == Float.class
+//				|| type == Boolean.class || type == String.class) {
+//			return true;
+//		}
+//
+//		return false;
+		return ClassUtils.isPrimitiveOrWrapper(type);
 	}
 
 	@Override
@@ -142,13 +157,13 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 
 	public static Method findMethod(Class definedIn, String method) {
 		if(definedIn == null) return null;
-		
-		try {
-			Method[] methods = definedIn.getDeclaredMethods();
-			return findMethod(methods,method);
-		} catch (SecurityException e) {
-			throw new RuntimeException(e);
-		}
+		return org.springframework.beans.BeanUtils.findDeclaredMethodWithMinimalParameters(definedIn, method);
+//		try {
+//			Method[] methods = definedIn.getDeclaredMethods();
+//			return findMethod(methods,method);
+//		} catch (SecurityException e) {
+//			throw new RuntimeException(e);
+//		}
 	}
 
 	public static Method findMethod(Method[] methods,String method) {
