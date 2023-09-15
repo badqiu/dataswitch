@@ -64,6 +64,11 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 	 */
 	private boolean async = false;
 	
+	/**
+	 * 未处理任何数据结束时，报错
+	 */
+	private boolean errorOnNoData = false;
+	
 	
 	private Map<String,Object> params = new HashMap<String,Object>(); //运行参数，在没有外部参数传递时使用
 	
@@ -153,6 +158,10 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 		this.failMode = failMode;
 	}
 	
+	public void setFailMode(FailMode failMode) {
+		this.failMode = failMode;
+	}
+	
 	public boolean isAsync() {
 		return async;
 	}
@@ -208,6 +217,14 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 	public void setExceptionHandler(Consumer<Exception> exceptionHandler) {
 		this.exceptionHandler = exceptionHandler;
 	}
+	
+	public boolean isErrorOnNoData() {
+		return errorOnNoData;
+	}
+
+	public void setErrorOnNoData(boolean errorOnNoData) {
+		this.errorOnNoData = errorOnNoData;
+	}
 
 	public String info() {
 		return "id:"+getId();
@@ -255,7 +272,11 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 				processor = new MultiProcessor(processors);
 			}
 			
-			return exec(params, input, output, processor);
+			long rows = exec(params, input, output, processor);
+			if(errorOnNoData && rows == 0) {
+				throw new RuntimeException("no any data write to output,rows=0" +info());
+			}
+			return rows;
 		}finally {
 			destroy();
 		}
