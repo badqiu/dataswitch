@@ -5,9 +5,15 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
 
 import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.Enabled;
@@ -28,7 +34,7 @@ public class MultiInput extends BaseObject implements Input{
 	
 	private transient Input _currentInput;
 	private AtomicInteger _currentIndex = new AtomicInteger();
-	
+	private ExecutorService _executorService = null;
 	
 	public MultiInput() {
 	}
@@ -76,17 +82,21 @@ public class MultiInput extends BaseObject implements Input{
 	
 	@Override
 	public void close() throws Exception {
+		if(_executorService != null) {
+			_executorService.shutdown();
+		}
+		
 		InputOutputUtil.closeAllQuietly(inputs);
 	}
-	
-	
 	
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
 		this.inputs = Enabled.filterByEnabled(inputs);
 		
 		if(concurrent) {
-			this.inputs = toAsyncInputs(inputs);
+			_executorService = Executors.newFixedThreadPool(3);
+			_inputReadEnd = new boolean[inputs.size()];
+//			this.inputs = toAsyncInputs(inputs);
 		}
 		
 		InputOutputUtil.openAll(params, this.inputs);
@@ -101,8 +111,47 @@ public class MultiInput extends BaseObject implements Input{
 	}
 
 	@Override
-	public List<Object> read(int size) {
-		return sequenceRead(size);
+	public List<Object> read(final int size) {
+		if(concurrent) {
+			try {
+				return concurrentRead(size);
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
+			} catch (ExecutionException e) {
+				throw new RuntimeException(e);
+			}
+		}else {
+			return sequenceRead(size);
+		}
+	}
+
+	private boolean[] _inputReadEnd = null;
+	protected List<Object> concurrentRead(final int size) throws InterruptedException, ExecutionException {
+		List all = new ArrayList();
+		
+		for(int i = 0; i < inputs.size(); i++) {
+			Input input = inputs.get(i);
+			boolean readEnd = _inputReadEnd[i];
+			if(readEnd) {
+				continue;
+			}
+			
+			Future<List> future = _executorService.submit(new Callable<List>() {
+				public List call() throws Exception {
+					return input.read(size);
+				}
+			});
+			
+			List sublist = future.get();
+			
+			if(CollectionUtils.isEmpty(sublist)) {
+				_inputReadEnd[i] = true;
+			}else {
+				all.addAll(sublist);
+			}
+		}
+		
+		return all;
 	}
 	
 
