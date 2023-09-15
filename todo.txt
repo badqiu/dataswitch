@@ -4,6 +4,8 @@
 
 支持状态的storage
 
+MultiInput实现真正的并发读
+JdbcInput实现并发读，splitPk实现，可以提高读取的性能。 https://github.com/alibaba/DataX/blob/master/mysqlreader/doc/mysqlreader.md
 select实现 column rename,增加计算列等功能
 runner支持数据库配置变量
 集成runner with xstream
@@ -87,6 +89,7 @@ script 需要增加 context, beforeScript put var into context for init.
   OpenTSDB
   Cassandra
   OpenSearch
+  Phoenix hbase
   Queue
   	#RocketMQ 未测试
   	RabbitMQ
