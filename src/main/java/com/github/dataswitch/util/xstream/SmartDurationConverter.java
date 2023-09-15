@@ -12,7 +12,7 @@ public class SmartDurationConverter extends DurationConverter {
 	public Duration fromString(String str) {
 		if(StringUtils.isBlank(str)) return null;
 		
-		if(str.toLowerCase().startsWith("p")) {
+		if(str.toUpperCase().startsWith("P")) {
 			return super.fromString(str);
 		}else {
 			return super.fromString("PT"+str);
