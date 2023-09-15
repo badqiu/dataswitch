@@ -89,15 +89,21 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 	public void writeField(Object object, String fieldName, Object value, Class definedIn) {
 		try {
 			invokePerfetMethod(object,fieldName,value);
+//		}catch(InvocationTargetException e) {
+//			throw new RuntimeException("error on:"+fieldName+" value:"+value+" object:"+object,e);
 		}catch(Exception e) {
-	        super.writeField(object, fieldName, value, definedIn);
+			Class fieldType = super.getFieldType(object, fieldName, definedIn);
+			Object finalValue = ConvertUtils.convert(value,fieldType);
+	        super.writeField(object, fieldName, finalValue, definedIn);
 		}
 	}
 
-	protected void invokePerfetMethod(Object object, String fieldName, Object value) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	protected void invokePerfetMethod(Object object, String fieldName, Object value) throws IllegalAccessException, InvocationTargetException {
 		if(object == null) return;
 		try {
 			invokeBySetMethod(object, fieldName, value);
+		}catch(InvocationTargetException e) {
+			throw e;
 		}catch(Exception e) {
 			BeanUtils.setProperty(object, fieldName, value);
 		}

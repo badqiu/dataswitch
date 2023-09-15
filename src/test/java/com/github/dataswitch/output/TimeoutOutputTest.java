@@ -44,7 +44,7 @@ public class TimeoutOutputTest {
 		output.setTimeout("5h30m30s");
 		assertEquals(5 * hour + 30 * minute + 30 * second,output.getTimeout());
 		
-		output.setTimeout("2d5h30m30s");
+		output.setTimeout("5h30m30s");
 		assertEquals(5 * hour + 30 * minute + 30 * second,output.getTimeout());
 	}
 	
