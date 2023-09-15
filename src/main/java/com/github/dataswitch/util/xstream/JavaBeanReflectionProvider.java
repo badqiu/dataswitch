@@ -1,4 +1,4 @@
-package com.github.dataswitch.util;
+package com.github.dataswitch.util.xstream;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
+import com.github.dataswitch.util.BeanUtils;
 import com.thoughtworks.xstream.converters.reflection.PureJavaReflectionProvider;
 
 /**
@@ -78,22 +79,7 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 		return null;
 	}
 
-
-
 	private boolean isSimpleType(Class<?> type) {
-//		if(type == null) return false;
-//		if(type.isPrimitive()) {
-//			return true;
-//		}
-//		
-//		if(type == Long.class || type == Integer.class 
-//				|| type == Short.class || type == Byte.class
-//				|| type == Double.class || type == Float.class
-//				|| type == Boolean.class || type == String.class) {
-//			return true;
-//		}
-//
-//		return false;
 		return ClassUtils.isPrimitiveOrWrapper(type);
 	}
 

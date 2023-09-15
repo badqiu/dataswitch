@@ -2,11 +2,12 @@ package com.github.dataswitch.output;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Before;
 import org.junit.Test;
 
-import com.github.dataswitch.util.JavaBeanReflectionProvider;
+import com.github.dataswitch.util.xstream.JavaBeanReflectionProvider;
+import com.github.dataswitch.util.xstream.SmartDurationConverter;
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.converters.reflection.PureJavaReflectionProvider;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 public class TimeoutOutputTest {
@@ -15,6 +16,12 @@ public class TimeoutOutputTest {
 	long second =  1000;
 	
 	TimeoutOutput output = new TimeoutOutput();
+	
+	@Before
+	public void before() {
+		output.setAuthor("author_helloworld");
+	}
+	
 	@Test
 	public void setTimeout() {
 
@@ -37,11 +44,14 @@ public class TimeoutOutputTest {
 		output.setTimeout("5h30m30s");
 		assertEquals(5 * hour + 30 * minute + 30 * second,output.getTimeout());
 		
+		output.setTimeout("2d5h30m30s");
+		assertEquals(5 * hour + 30 * minute + 30 * second,output.getTimeout());
 	}
 	
 	@Test
 	public void setTimeoutFromXml() {
 		XStream xstream = new XStream(new JavaBeanReflectionProvider(),new DomDriver());
+		xstream.registerConverter(new SmartDurationConverter(),XStream.PRIORITY_VERY_HIGH);
 		
 		output = (TimeoutOutput)xstream.fromXML("<com.github.dataswitch.output.TimeoutOutput><timeout>2100</timeout></com.github.dataswitch.output.TimeoutOutput>");
 		assertEquals(2100,output.getTimeout());
