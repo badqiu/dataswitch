@@ -35,10 +35,6 @@ public class InputsOutputsTest {
 		
 		job.setInput(new Input() {
 			@Override
-			public void close() throws IOException {
-			}
-			
-			@Override
 			public List read(int size) {
 				count++;
 				ThreadUtil.sleep(10);
@@ -48,10 +44,6 @@ public class InputsOutputsTest {
 		});
 		
 		job.setOutput(new Output() {
-			@Override
-			public void close() throws IOException {
-			}
-			
 			@Override
 			public void write(List<Object> rows) {
 				for(Object row : rows) {
