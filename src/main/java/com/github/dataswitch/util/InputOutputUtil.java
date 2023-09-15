@@ -45,6 +45,19 @@ public class InputOutputUtil {
 		}
 	}
 	
+	public static void closeAll(AutoCloseable... items) {
+		for(AutoCloseable item : items) {
+			close(item);
+		}
+	}
+	
+	
+	public static void closeAll(FailMode failMode,AutoCloseable... items) {
+		failMode.forEach(items, item -> {
+			close(item);
+		});
+	}
+	
 	public static void closeQuietly(AutoCloseable io) {
 		try {
 			if(io != null) 
@@ -73,6 +86,12 @@ public class InputOutputUtil {
 
 	public static void openAll(Openable... openList) {
 		openAll(null,openList);
+	}
+	
+	public static void openAll(FailMode failMode,Map params,Openable... items) {
+		failMode.forEach(items, item -> {
+			open(params,item);
+		});
 	}
 	
 	public static void openAll(Map params,List<? extends Openable> openList) {

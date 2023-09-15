@@ -6,6 +6,7 @@ import java.util.Map;
 import com.github.dataswitch.enums.FailMode;
 import com.github.dataswitch.output.Output;
 import com.github.dataswitch.util.IOUtil;
+import com.github.dataswitch.util.InputOutputUtil;
 
 /**
  * 将 Input读进来的数据,透明的写入branch Output
@@ -65,7 +66,7 @@ public class TeeInput extends ProxyInput{
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
 		super.open(params);
-		openBranchs(params);
+		InputOutputUtil.openAll(failMode, params, branchs);
 	}
 
 	@Override
@@ -90,19 +91,7 @@ public class TeeInput extends ProxyInput{
 		}
 	}
 
-	private void openBranchs(Map<String, Object> params) {
-		failMode.forEach(branchs, branch -> {
-			try {
-				branch.open(params);
-			} catch (Exception e) {
-				throw new RuntimeException("open error on output:"+branch+" params:"+params,e);
-			}
-		});
-	}
-	
 	private void closeBranchs() {
-		failMode.forEach(branchs, branch -> {
-			IOUtil.close(branch);
-		});
+		InputOutputUtil.closeAll(failMode, branchs);
 	}
 }

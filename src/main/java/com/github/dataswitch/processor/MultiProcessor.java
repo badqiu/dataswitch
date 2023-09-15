@@ -9,6 +9,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 
 import com.github.dataswitch.Enabled;
+import com.github.dataswitch.enums.FailMode;
 import com.github.dataswitch.util.InputOutputUtil;
 /**
  * 多个Processor合成一个Processor,按顺序处理数据
@@ -19,7 +20,8 @@ import com.github.dataswitch.util.InputOutputUtil;
 public class MultiProcessor implements Processor{
 
 	private Processor[] processors;
-
+	private FailMode failMode = FailMode.FAIL_FAST;
+	
 	public MultiProcessor(){
 	}
 	
@@ -44,6 +46,14 @@ public class MultiProcessor implements Processor{
 		setProcessors(processor);
 	}
 	
+	public FailMode getFailMode() {
+		return failMode;
+	}
+
+	public void setFailMode(FailMode failMode) {
+		this.failMode = failMode;
+	}
+
 	@Override
 	public List<Object> process(List<Object> datas) throws Exception {
 		if(ArrayUtils.isEmpty(processors)) return datas;
@@ -87,16 +97,14 @@ public class MultiProcessor implements Processor{
 
 	@Override
 	public void close() throws Exception {
-		for(Processor p : processors) {
-			InputOutputUtil.close(p);
-		}
+		InputOutputUtil.closeAll(failMode,processors);
 	}
 
 	@Override
 	public void open(Map<String, Object> params) throws Exception {
 		processors = Enabled.filterByEnabled(processors);
 		
-		InputOutputUtil.openAll(params, processors);
+		InputOutputUtil.openAll(failMode,params, processors);
 	}
 	
 	
