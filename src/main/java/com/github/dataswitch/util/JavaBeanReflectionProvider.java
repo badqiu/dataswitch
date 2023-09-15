@@ -66,6 +66,8 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 
 
 	private boolean isSimpleType(Class<?> type) {
+		if(type == null) return false;
+		
 		if(type.isPrimitive()) {
 			return true;
 		}
@@ -127,6 +129,8 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 	}
 
 	public static Method findMethod(Class definedIn, String method) {
+		if(definedIn == null) return null;
+		
 		try {
 			Method[] methods = definedIn.getDeclaredMethods();
 			return findMethod(methods,method);
