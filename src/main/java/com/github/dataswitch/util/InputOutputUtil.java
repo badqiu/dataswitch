@@ -134,18 +134,18 @@ public class InputOutputUtil {
 		}
 	}
 	
-	public static void flushAll(Flushable... branchs) {
-		if(branchs == null) return;
+	public static void flushAll(Flushable... items) {
+		if(items == null) return;
 		
-		for(Flushable item : branchs) {
-			if(item == null) continue;
-			
-			try {
-				item.flush();
-			} catch (IOException e) {
-				throw new RuntimeException("flush error,Flushable:"+item,e);
-			}
+		for(Flushable item : items) {
+			flush(item);
 		}
+	}
+	
+	public static void flushAll(FailMode failMode,Flushable... items) {
+		failMode.forEach(items, item -> {
+			flush(item);
+		});
 	}
 	
 	/**
