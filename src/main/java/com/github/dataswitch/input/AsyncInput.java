@@ -15,7 +15,12 @@ import com.github.dataswitch.enums.Constants;
 import com.github.dataswitch.enums.FailMode;
 import com.github.dataswitch.util.InputOutputUtil;
 import com.github.dataswitch.util.Util;
-
+/**
+ * 通过线程异步读取数据的Input 
+ * 
+ * @author badqiu
+ *
+ */
 public class AsyncInput extends ProxyInput{
 	private static Logger logger = LoggerFactory.getLogger(AsyncInput.class);
 	
@@ -99,11 +104,18 @@ public class AsyncInput extends ProxyInput{
 		startReadThread();
 	}
 	
-	private void startReadThread() {
+	protected void startReadThread() {
 		Input input = getProxy();
 		
 		String threadName = getClass().getSimpleName()+"_read_"+getId();
-		thread = new Thread(new Runnable() {
+		Runnable readRunnable = newReadRunnable(input, threadName);
+		thread = new Thread(readRunnable,threadName);
+		thread.setDaemon(true);
+		thread.start();
+	}
+
+	protected Runnable newReadRunnable(Input input, String threadName) {
+		return new Runnable() {
 			@Override
 			public void run() {
 				try {
@@ -147,10 +159,7 @@ public class AsyncInput extends ProxyInput{
 			}
 
 
-		},threadName);
-		
-		thread.setDaemon(true);
-		thread.start();
+		};
 	}
 	
 	@Override
