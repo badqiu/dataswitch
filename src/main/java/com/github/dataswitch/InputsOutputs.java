@@ -274,7 +274,7 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 			
 			long rows = exec(params, input, output, processor);
 			if(errorOnNoData && rows == 0) {
-				throw new RuntimeException("no any data write to output,rows=0" +info());
+				throw new RuntimeException("no any data write to output,data rows=0," +info());
 			}
 			return rows;
 		}finally {

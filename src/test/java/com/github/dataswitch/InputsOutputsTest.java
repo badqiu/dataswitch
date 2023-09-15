@@ -14,9 +14,16 @@ import com.github.dataswitch.util.ThreadUtil;
 
 public class InputsOutputsTest {
 
+	InputsOutputs job = new InputsOutputs();
+
 	@Test()
 	public void test_new_and_exec() {
-		InputsOutputs job = new InputsOutputs();
+		job.exec();
+	}
+	
+	@Test(expected = RuntimeException.class)
+	public void test_setErrorOnNoData() {
+		job.setErrorOnNoData(true);
 		job.exec();
 	}
 	
@@ -24,7 +31,6 @@ public class InputsOutputsTest {
 	int writeCount = 0;
 	@Test
 	public void test_async() {
-		InputsOutputs job = new InputsOutputs();
 		job.setAsync(true);
 		
 		job.setInput(new Input() {
