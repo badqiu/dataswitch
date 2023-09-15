@@ -106,7 +106,7 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 				//ignore
 			}
 			
-			Method method = findMethod(methodName, object.getClass().getDeclaredMethods());
+			Method method = findMethod(object.getClass(),methodName);
 			if(method != null) {
 				Class targetType = method.getParameterTypes()[0];
 				Object finalValue = ConvertUtils.convert(value,targetType);
@@ -129,13 +129,13 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 	public static Method findMethod(Class definedIn, String method) {
 		try {
 			Method[] methods = definedIn.getDeclaredMethods();
-			return findMethod(method, methods);
+			return findMethod(methods,method);
 		} catch (SecurityException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public static Method findMethod(String method, Method[] methods) {
+	public static Method findMethod(Method[] methods,String method) {
 		for(Method m : methods) {
 			if(m.getName().equals(method)) {
 				return m;
