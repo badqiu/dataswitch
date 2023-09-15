@@ -93,29 +93,34 @@ public class JavaBeanReflectionProvider extends PureJavaReflectionProvider {
 
 	protected void invokePerfetMethod(Object object, String fieldName, Object value) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		if(object == null) return;
-		
 		try {
-			String methodName = "set"+StringUtils.capitalize(fieldName);
-			
-			try {
-				Class valueClass = value != null ? value.getClass() : String.class;
-				Method method = object.getClass().getDeclaredMethod(methodName,valueClass);
-				if(method != null) {
-					invokeMethod(object, method,value);
-					return;
-				}
-			}catch(java.lang.NoSuchMethodException e) {
-				//ignore
-			}
-			
-			Method method = findMethod(object.getClass(),methodName);
-			if(method != null) {
-				Class targetType = method.getParameterTypes()[0];
-				Object finalValue = ConvertUtils.convert(value,targetType);
-				invokeMethod(object, method,finalValue);
-			}
+			invokeBySetMethod(object, fieldName, value);
 		}catch(Exception e) {
 			BeanUtils.setProperty(object, fieldName, value);
+		}
+	}
+
+	private void invokeBySetMethod(Object object, String fieldName, Object value)
+			throws IllegalAccessException, InvocationTargetException {
+		
+		String methodName = "set"+StringUtils.capitalize(fieldName);
+		
+		try {
+			Class valueClass = value != null ? value.getClass() : String.class;
+			Method method = object.getClass().getDeclaredMethod(methodName,valueClass);
+			if(method != null) {
+				invokeMethod(object, method,value);
+				return;
+			}
+		}catch(java.lang.NoSuchMethodException e) {
+			//ignore
+		}
+		
+		Method method = findMethod(object.getClass(),methodName);
+		if(method != null) {
+			Class targetType = method.getParameterTypes()[0];
+			Object finalValue = ConvertUtils.convert(value,targetType);
+			invokeMethod(object, method,finalValue);
 		}
 	}
 	
