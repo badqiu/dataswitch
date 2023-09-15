@@ -28,6 +28,18 @@ public class DataGenInput implements Input{
 	private long _count = 0;
 	private long _systemStartTime = System.currentTimeMillis();
 	
+	public DataGenInput() {
+	}
+	
+	public DataGenInput(long rowsLimit) {
+		this.rowsLimit = rowsLimit;
+	}
+	
+	public DataGenInput(long rowsLimit,int rowsPerSecond) {
+		this.rowsPerSecond = rowsPerSecond;
+		this.rowsLimit = rowsLimit;
+	}
+
 	/**
 	 * 每秒生成的数据行数
 	 */
