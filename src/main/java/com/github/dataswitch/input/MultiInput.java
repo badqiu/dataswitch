@@ -13,7 +13,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.ArrayUtils;
 
 import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.Enabled;
@@ -34,7 +33,7 @@ public class MultiInput extends BaseObject implements Input{
 	
 	private transient Input _currentInput;
 	private AtomicInteger _currentIndex = new AtomicInteger();
-	private ExecutorService _executorService = null;
+	private ExecutorService executorService = null;
 	
 	public MultiInput() {
 	}
@@ -72,6 +71,14 @@ public class MultiInput extends BaseObject implements Input{
 	public void setConcurrent(boolean concurrent) {
 		this.concurrent = concurrent;
 	}
+	
+	public ExecutorService getExecutorService() {
+		return executorService;
+	}
+
+	public void setExecutorService(ExecutorService executorService) {
+		this.executorService = executorService;
+	}
 
 	@Override
 	public void commitInput() {
@@ -82,8 +89,8 @@ public class MultiInput extends BaseObject implements Input{
 	
 	@Override
 	public void close() throws Exception {
-		if(_executorService != null) {
-			_executorService.shutdown();
+		if(executorService != null) {
+			executorService.shutdown();
 		}
 		
 		InputOutputUtil.closeAllQuietly(inputs);
@@ -94,7 +101,9 @@ public class MultiInput extends BaseObject implements Input{
 		this.inputs = Enabled.filterByEnabled(inputs);
 		
 		if(concurrent) {
-			_executorService = Executors.newFixedThreadPool(3);
+			if(executorService == null) {
+				executorService = Executors.newFixedThreadPool(3);
+			}
 			_inputReadEnd = new boolean[inputs.size()];
 //			this.inputs = toAsyncInputs(inputs);
 		}
@@ -136,7 +145,7 @@ public class MultiInput extends BaseObject implements Input{
 				continue;
 			}
 			
-			Future<List> future = _executorService.submit(new Callable<List>() {
+			Future<List> future = executorService.submit(new Callable<List>() {
 				public List call() throws Exception {
 					return input.read(size);
 				}
