@@ -8,6 +8,7 @@ import org.apache.commons.collections.CollectionUtils;
 
 import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.util.IOUtil;
+import com.github.dataswitch.util.InputOutputUtil;
 
 public class ProxyOutput extends BaseObject implements Output{
 	
@@ -40,16 +41,16 @@ public class ProxyOutput extends BaseObject implements Output{
 
 	@Override
 	public void close() throws Exception {
-		proxy.close();
+		InputOutputUtil.close(proxy);
 	}
 	
 	@Override
 	public void flush() throws IOException {
-		proxy.flush();
+		InputOutputUtil.flush(proxy);
 	}
 
 	public void open(Map<String, Object> params) throws Exception {
-		proxy.open(params);
+		InputOutputUtil.open(params,proxy);
 	}
 	
 

@@ -18,14 +18,6 @@ public class ProxyInput extends BaseObject  implements Input{
 		setProxy(proxy);
 	}
 
-	public List<Object> read(int size) {
-		return proxy.read(size);
-	}
-
-	public void close() throws Exception {
-		InputOutputUtil.closeQuietly(proxy);
-	}
-
 	public Input getProxy() {
 		return proxy;
 	}
@@ -43,8 +35,16 @@ public class ProxyInput extends BaseObject  implements Input{
 		this.proxy.commitInput();
 	}
 
+	public List<Object> read(int size) {
+		return proxy.read(size);
+	}
+
+	public void close() throws Exception {
+		InputOutputUtil.close(proxy);
+	}
+	
 	public void open(Map<String, Object> params) throws Exception {
-		proxy.open(params);
+		InputOutputUtil.open(params,proxy);
 	}
 
 }
