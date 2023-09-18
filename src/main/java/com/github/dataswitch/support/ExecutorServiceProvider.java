@@ -31,6 +31,8 @@ public class ExecutorServiceProvider extends BaseObject implements Openable,Auto
 	
 	private boolean shutdownExecutorServiceOnClose = false;
 	
+	private boolean close = false;
+	
 	public ExecutorServiceProvider() {
 	}
 	
@@ -41,6 +43,7 @@ public class ExecutorServiceProvider extends BaseObject implements Openable,Auto
 
 	@Override
 	public void close() throws Exception {
+		close = true;
 		if(shutdownExecutorServiceOnClose) {
 			ExecutorServiceUtil.shutdownAndAwaitTermination(executorService, Constants.EXECUTOR_SERVICE_AWAIT_TERMINATION_SECOND);
 		}
@@ -126,5 +129,12 @@ public class ExecutorServiceProvider extends BaseObject implements Openable,Auto
 		this.shutdownExecutorServiceOnClose = shutdownExecutorServiceOnClose;
 	}
 
+	public boolean isClose() {
+		return close;
+	}
+
+	public void setClose(boolean close) {
+		this.close = close;
+	}
 	
 }
