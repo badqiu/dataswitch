@@ -24,7 +24,7 @@ import com.github.dataswitch.util.InputOutputUtil;
  * @author badqiu
  *
  */
-public class MultiOutput extends BaseObject  implements Output{
+public class MultiOutput extends ExecutorServiceProvider  implements Output{
 
 	
 	private static Logger logger = LoggerFactory.getLogger(TeeOutput.class);
@@ -34,7 +34,6 @@ public class MultiOutput extends BaseObject  implements Output{
 	
 	private boolean concurrent = false; //并发写
 	
-	private ExecutorServiceProvider executorService = new ExecutorServiceProvider();
 	
 	private DataRouting dataRouting = DataRouting.ALL;
 	private long _sequence = 0;
@@ -78,37 +77,6 @@ public class MultiOutput extends BaseObject  implements Output{
 		this.concurrent = concurrent;
 	}
 
-	public ExecutorService getExecutorService() {
-		return executorService.getExecutorService();
-	}
-
-	public void setExecutorService(ExecutorService executorService) {
-		this.executorService.setExecutorService(executorService);
-	}
-
-	public int getThreadPoolSize() {
-		return executorService.getThreadPoolSize();
-	}
-
-	public void setThreadPoolSize(int threadPoolSize) {
-		executorService.setThreadPoolSize(threadPoolSize);
-	}
-
-	public String getExecutorGroup() {
-		return executorService.getExecutorGroup();
-	}
-
-	public void setExecutorGroup(String executorGroup) {
-		executorService.setExecutorGroup(executorGroup);
-	}
-
-	public String getExecutorName() {
-		return executorService.getExecutorName();
-	}
-
-	public void setExecutorName(String executorName) {
-		executorService.setExecutorName(executorName);
-	}
 
 	@Override
 	public void write(List<Object> rows) {
@@ -150,8 +118,8 @@ public class MultiOutput extends BaseObject  implements Output{
 	}
 
 	@Override
-	public void close() throws InterruptedException {
-		InputOutputUtil.close(executorService);
+	public void close() throws Exception {
+		super.close();
 		InputOutputUtil.closeAll(branchs);
 	}
 	
@@ -166,7 +134,7 @@ public class MultiOutput extends BaseObject  implements Output{
 		InputOutputUtil.openAll(params,branchs);
 		
 		if(concurrent) {
-			InputOutputUtil.open(params, executorService);
+			super.open(params);
 		}
 	}
 }

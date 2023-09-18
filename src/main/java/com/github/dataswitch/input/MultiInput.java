@@ -24,7 +24,7 @@ import com.github.dataswitch.util.InputOutputUtil;
  * @author badqiu
  *
  */
-public class MultiInput extends BaseObject implements Input{
+public class MultiInput extends ExecutorServiceProvider implements Input{
 
 	private List<Input> inputs = new ArrayList<Input>();
 	
@@ -33,7 +33,6 @@ public class MultiInput extends BaseObject implements Input{
 	
 	private transient Input _currentInput;
 	private AtomicInteger _currentIndex = new AtomicInteger();
-	private ExecutorServiceProvider executorService = new ExecutorServiceProvider();
 	
 	public MultiInput() {
 	}
@@ -72,39 +71,6 @@ public class MultiInput extends BaseObject implements Input{
 		this.concurrent = concurrent;
 	}
 	
-	public ExecutorService getExecutorService() {
-		return executorService.getExecutorService();
-	}
-
-	public void setExecutorService(ExecutorService executorService) {
-		this.executorService.setExecutorService(executorService);
-	}
-	
-
-	public int getThreadPoolSize() {
-		return executorService.getThreadPoolSize();
-	}
-
-	public void setThreadPoolSize(int threadPoolSize) {
-		executorService.setThreadPoolSize(threadPoolSize);
-	}
-
-	public String getExecutorGroup() {
-		return executorService.getExecutorGroup();
-	}
-
-	public void setExecutorGroup(String executorGroup) {
-		executorService.setExecutorGroup(executorGroup);
-	}
-
-	public String getExecutorName() {
-		return executorService.getExecutorName();
-	}
-
-	public void setExecutorName(String executorName) {
-		executorService.setExecutorName(executorName);
-	}
-
 	@Override
 	public void commitInput() {
 		for(Input input : inputs) {
@@ -114,7 +80,7 @@ public class MultiInput extends BaseObject implements Input{
 	
 	@Override
 	public void close() throws Exception {
-		InputOutputUtil.close(executorService);
+		super.close();
 		InputOutputUtil.closeAll(inputs);
 	}
 	
@@ -123,7 +89,7 @@ public class MultiInput extends BaseObject implements Input{
 		this.inputs = Enabled.filterByEnabled(inputs);
 		
 		if(concurrent) {
-			InputOutputUtil.open(params, executorService);
+			super.open(params);
 			_inputReadEnd = new boolean[inputs.size()];
 //			this.inputs = toAsyncInputs(inputs);
 		}
