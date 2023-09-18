@@ -6,6 +6,7 @@
 
 #MultiInput实现真正的并发读
 #MultiOutput实现并发写
+增加使用spring AnnotationConfigApplicationContext
 JdbcInput实现并发读，splitPk实现，可以提高读取的性能。 https://github.com/alibaba/DataX/blob/master/mysqlreader/doc/mysqlreader.md
 select实现 column rename,增加计算列等功能
 runner支持数据库配置变量

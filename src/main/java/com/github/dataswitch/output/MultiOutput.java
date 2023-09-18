@@ -6,12 +6,15 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.math.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.Enabled;
 import com.github.dataswitch.enums.FailMode;
+import com.github.dataswitch.enums.LoadBalance;
 import com.github.dataswitch.support.ExecutorServiceProvider;
 import com.github.dataswitch.util.InputOutputUtil;
 
@@ -32,6 +35,9 @@ public class MultiOutput extends BaseObject  implements Output{
 	private boolean concurrent = false; //并发写
 	
 	private ExecutorServiceProvider executorService = new ExecutorServiceProvider();
+	
+	private LoadBalance loadBalance = LoadBalance.ALL;
+	private long _sequence = 0;
 	
 	public MultiOutput() {
 	}
@@ -56,6 +62,14 @@ public class MultiOutput extends BaseObject  implements Output{
 		this.branchs = branchs;
 	}
 	
+	public LoadBalance getLoadBalance() {
+		return loadBalance;
+	}
+
+	public void setLoadBalance(LoadBalance loadBalance) {
+		this.loadBalance = loadBalance;
+	}
+
 	public boolean isConcurrent() {
 		return concurrent;
 	}
@@ -99,10 +113,30 @@ public class MultiOutput extends BaseObject  implements Output{
 	@Override
 	public void write(List<Object> rows) {
 		if(CollectionUtils.isEmpty(rows)) return;
+		if(ArrayUtils.isEmpty(branchs)) return;
 		
-		failMode.forEach(branchs,(branch) -> {
-			outputWrite(rows, branch);
-		});
+		if(LoadBalance.ALL == loadBalance) {
+			failMode.forEach(branchs,(branch) -> {
+				outputWrite(rows, branch);
+			});
+		}else {
+			int index = getOutputIndexByLoadBalance();
+			Output branch = branchs[index];
+			outputWrite(rows,branch);
+		}
+	}
+
+	private int getOutputIndexByLoadBalance() {
+		if(loadBalance == LoadBalance.RANDOM) {
+			return RandomUtils.nextInt(branchs.length);
+		} else if(loadBalance == LoadBalance.ROUND_ROBIN) {
+			return (int)(_sequence++ % branchs.length);
+//		} else if(loadBalance == LoadBalance.HASH) {
+//			throw new RuntimeException("unsupported loadBalance:"+loadBalance);
+		}
+		
+		
+		throw new RuntimeException("unsupported loadBalance:"+loadBalance);
 	}
 
 	protected void outputWrite(List<Object> rows, Output branch) {
