@@ -11,6 +11,7 @@ public class MultiOutputTest {
 
 	@Test
 	public void test() throws Exception {
+		System.out.println("Runtime.getRuntime().availableProcessors()="+Runtime.getRuntime().availableProcessors());
 		DataGenInput input = new DataGenInput(10);
 		PrintOutput o1 = new PrintOutput(System.err,"o1");
 		PrintOutput o2 = new PrintOutput(System.err,"o2");

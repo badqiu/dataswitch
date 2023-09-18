@@ -31,7 +31,7 @@ public class Constants {
 	/**
 	 * 线程池大小
 	 */
-	public static int EXECUTOR_SERVICE_THREAD_POOL_SIZE = 4;
+	public static int EXECUTOR_SERVICE_THREAD_POOL_SIZE = Runtime.getRuntime().availableProcessors();
 	
 	/**
 	 * 线程池在系统退出时的等待时间
