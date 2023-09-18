@@ -95,7 +95,7 @@ public class JdbcOutput extends DataSourceProvider implements Output,TableName{
 	/**
 	 * 批量更新的数据大小
 	 */
-	private int batchSize = Constants.DEFAULT_BUFFER_SIZE;
+	private int batchSize = Constants.DEFAULT_BATCH_SIZE;
 	
 	/**
 	 * 输入列来源: table or input or config

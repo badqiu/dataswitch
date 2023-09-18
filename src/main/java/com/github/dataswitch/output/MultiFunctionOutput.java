@@ -33,8 +33,8 @@ public class MultiFunctionOutput extends ProxyOutput {
 	private BiFunction<String, String, Lock> newLockFunction;
 	
 	private boolean buffered = false; // done
-	private int batchSize = Constants.DEFAULT_BUFFER_SIZE;
-	private int batchTimeout = Constants.DEFAULT_BUFFER_TIMEOUT;
+	private int batchSize = Constants.DEFAULT_BATCH_SIZE;
+	private int batchTimeout = Constants.DEFAULT_BATCH_TIMEOUT;
 	
 	private boolean retry = false;  //done
 	private int retryTimes = 0; //重试次数
@@ -106,8 +106,8 @@ public class MultiFunctionOutput extends ProxyOutput {
 		this.batchSize = batchSize;
 	}
 
-	public void setBatchTimeout(int bufferTimeout) {
-		this.batchTimeout = bufferTimeout;
+	public void setBatchTimeout(int batchTimeout) {
+		this.batchTimeout = batchTimeout;
 	}
 
 	public void setRetry(boolean retry) {

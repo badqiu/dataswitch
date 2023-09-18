@@ -2,7 +2,7 @@
 数据库连接统一: url,username,password
 批参数统一:
 	#batchSize,
-	batchTimeout,
+	#batchTimeout,
 	retryTimes,
 	retryInterval
 

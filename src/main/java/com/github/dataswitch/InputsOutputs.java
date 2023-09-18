@@ -49,8 +49,8 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 	private String desc; // 描述
 	private String author; // 作者
 	
-	private int batchSize = Constants.DEFAULT_BUFFER_SIZE;
-	private int bufferTimeout = Constants.DEFAULT_BUFFER_TIMEOUT; //超时时间，时间单位毫秒
+	private int batchSize = Constants.DEFAULT_BATCH_SIZE;
+	private int batchTimeout = Constants.DEFAULT_BATCH_TIMEOUT; //超时时间，时间单位毫秒
 	
 	private FailMode failMode = FailMode.FAIL_FAST;
 	
@@ -138,12 +138,12 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 		this.batchSize = batchSize;
 	}
 	
-	public int getBufferTimeout() {
-		return bufferTimeout;
+	public int getBatchTimeout() {
+		return batchTimeout;
 	}
 
-	public void setBufferTimeout(int bufferTimeout) {
-		this.bufferTimeout = bufferTimeout;
+	public void setBatchTimeout(int batchTimeout) {
+		this.batchTimeout = batchTimeout;
 	}
 
 	public String getFailMode() {
@@ -240,7 +240,7 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 	 * @return 数据行数
 	 */
 	public long exec(Map<String,Object> params) {
-		if(batchSize <= 0) batchSize = Constants.DEFAULT_BUFFER_SIZE;
+		if(batchSize <= 0) batchSize = Constants.DEFAULT_BATCH_SIZE;
 		if(params == null) params = Collections.EMPTY_MAP;
 		
 		if(!isEnabled()) {
@@ -263,7 +263,7 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 			}
 			
 			if(batchSize > 0) {
-				output = new BufferedOutput(output, batchSize, bufferTimeout);
+				output = new BufferedOutput(output, batchSize, batchTimeout);
 			}
 			
 			

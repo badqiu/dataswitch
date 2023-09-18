@@ -46,7 +46,7 @@ public class MongodbOutput extends MongodbProvider implements Output {
 	private String columns; //要写入的列
 	private String[] _columnsArray; //要写入的列
 	
-	private int batchSize = Constants.DEFAULT_BUFFER_SIZE;
+	private int batchSize = Constants.DEFAULT_BATCH_SIZE;
 
 	MongoClient _client;
 	MongoDatabase _database = null;

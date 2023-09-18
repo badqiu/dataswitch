@@ -31,7 +31,7 @@ public class AsyncInput extends ProxyInput{
 	private Object lastExceptionData;
 	private Thread thread = null;
 	private FailMode failMode = FailMode.FAIL_FAST;
-	private int readSize = Constants.DEFAULT_BUFFER_SIZE;
+	private int readSize = Constants.DEFAULT_BATCH_SIZE;
 	
 	private Consumer<Exception> exceptionHandler = null;
 	

@@ -22,7 +22,7 @@ public class BufferedOutput extends ProxyOutput{
 	private static Logger logger = LoggerFactory.getLogger(BufferedOutput.class);
 	
 	
-	private int batchSize = Constants.DEFAULT_BUFFER_SIZE;
+	private int batchSize = Constants.DEFAULT_BATCH_SIZE;
 	private long batchTimeout = 0;
 	
 	private long lastSendTime = System.currentTimeMillis();
@@ -33,7 +33,7 @@ public class BufferedOutput extends ProxyOutput{
 	private boolean running = true;
 	
 	public BufferedOutput(Output proxy) {
-		this(proxy,Constants.DEFAULT_BUFFER_SIZE);
+		this(proxy,Constants.DEFAULT_BATCH_SIZE);
 	}
 	
 	public BufferedOutput(Output proxy,int batchSize) {

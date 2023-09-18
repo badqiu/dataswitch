@@ -5,12 +5,12 @@ public class Constants {
 	/**
 	 * 默认缓存条数
 	 */
-	public static int DEFAULT_BUFFER_SIZE = 1000;
+	public static int DEFAULT_BATCH_SIZE = 1000;
 	
 	/**
 	 * 默认缓存超时时间(毫秒)
 	 */
-	public static int DEFAULT_BUFFER_TIMEOUT = 500; 
+	public static int DEFAULT_BATCH_TIMEOUT = 500; 
 	
 	/**
 	 * lock的默认分组

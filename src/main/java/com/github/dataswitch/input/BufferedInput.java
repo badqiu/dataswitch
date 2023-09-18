@@ -14,8 +14,8 @@ import com.github.dataswitch.enums.Constants;
 public class BufferedInput extends ProxyInput{
 	private static Logger logger = LoggerFactory.getLogger(BufferedInput.class);
 	
-	private int batchSize = Constants.DEFAULT_BUFFER_SIZE;
-	private int bufferTimeout = 0;
+	private int batchSize = Constants.DEFAULT_BATCH_SIZE;
+	private int batchTimeout = 0;
 	
 	
 	private long _lastFlushTime = System.currentTimeMillis();
@@ -27,14 +27,14 @@ public class BufferedInput extends ProxyInput{
 	}
 
 	public BufferedInput(Input proxy) {
-		this(proxy,Constants.DEFAULT_BUFFER_SIZE,0);
+		this(proxy,Constants.DEFAULT_BATCH_SIZE,0);
 	}
 	
-	public BufferedInput(Input proxy,int batchSize,int bufferTimeout) {
+	public BufferedInput(Input proxy,int batchSize,int batchTimeout) {
 		super(proxy);
 		
 		this.batchSize = batchSize;
-		this.bufferTimeout = bufferTimeout;
+		this.batchTimeout = batchTimeout;
 	}
 	
 	public int getBatchSize() {
@@ -45,12 +45,12 @@ public class BufferedInput extends ProxyInput{
 		this.batchSize = batchSize;
 	}
 
-	public int getBufferTimeout() {
-		return bufferTimeout;
+	public int getBatchTimeout() {
+		return batchTimeout;
 	}
 
-	public void setBufferTimeout(int bufferTimeout) {
-		this.bufferTimeout = bufferTimeout;
+	public void setBatchTimeout(int batchTimeout) {
+		this.batchTimeout = batchTimeout;
 	}
 
 	@Override
@@ -88,19 +88,19 @@ public class BufferedInput extends ProxyInput{
 	}
 	
 	private boolean isTimeout() {
-		if(bufferTimeout <= 0) {
+		if(batchTimeout <= 0) {
 			return false;
 		}
 		
 		long interval = System.currentTimeMillis() - _lastFlushTime;
-		return interval > bufferTimeout;
+		return interval > batchTimeout;
 	}
 
 	private List<Object> returnBufferList() {
 		List result = _bufferList;
 		_bufferList = new ArrayList(batchSize);
 		
-		if(bufferTimeout > 0) {
+		if(batchTimeout > 0) {
 			_lastFlushTime = System.currentTimeMillis();
 		}
 		

@@ -30,7 +30,7 @@ public class MongodbInput extends MongodbProvider implements Input {
 	private Function<MongoCollection<Document>,FindIterable<Document>> findFunction = null;
 	private int limit;
 	private int skip;
-	private int batchSize = Constants.DEFAULT_BUFFER_SIZE;
+	private int batchSize = Constants.DEFAULT_BATCH_SIZE;
 	
 	private String columns; //要读取的列
 	private String[] _columnsArray;

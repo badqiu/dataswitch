@@ -50,7 +50,7 @@ public class HbaseOutput extends HbaseProvider implements Output{
 	private boolean skipNull = true; //是否忽略null值，不忽略将填写byte[0]作为null值
 	private boolean skipEmpty = false; //是否忽略empty字符串
 	private boolean createTable = false; //是否hbase 建表
-	private int batchSize = Constants.DEFAULT_BUFFER_SIZE; //批量写入的大小
+	private int batchSize = Constants.DEFAULT_BATCH_SIZE; //批量写入的大小
 	private int batchTimeout = 0;
 	private OutputMode outputMode = OutputMode.upsert;
 	

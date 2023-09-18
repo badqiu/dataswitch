@@ -36,8 +36,8 @@ public class HbaseInput  extends HbaseProvider implements Input{
     private String endKey = null;
     
     protected String encoding = StandardCharsets.UTF_8.name();
-    protected int scanCacheSize = Constants.DEFAULT_BUFFER_SIZE;
-    protected int  scanBatchSize = Constants.DEFAULT_BUFFER_SIZE;
+    protected int scanCacheSize = Constants.DEFAULT_BATCH_SIZE;
+    protected int  scanBatchSize = Constants.DEFAULT_BATCH_SIZE;
     
     private boolean columnWithFamily = false; //读列时，是否加上family名
     private String familySeperator = ":"; //加上family的列分隔符

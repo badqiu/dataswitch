@@ -15,7 +15,7 @@ import com.github.dataswitch.util.TableName;
 
 public class QueueProvider extends BaseObject implements Openable,TableName{
 	
-	private int queueSize = 50000 / Constants.DEFAULT_BUFFER_SIZE;
+	private int queueSize = 50000 / Constants.DEFAULT_BATCH_SIZE;
 	
 	private String queueGroup = "default";
 	private String queueName;
