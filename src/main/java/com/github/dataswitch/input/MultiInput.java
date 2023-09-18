@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -91,6 +92,7 @@ public class MultiInput extends BaseObject implements Input{
 	public void close() throws Exception {
 		if(executorService != null) {
 			executorService.shutdown();
+			executorService.awaitTermination(10, TimeUnit.SECONDS);
 		}
 		
 		InputOutputUtil.closeAllQuietly(inputs);

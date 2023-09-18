@@ -5,10 +5,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
 import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.Enabled;
@@ -90,9 +92,11 @@ public class MultiOutput extends BaseObject  implements Output{
 	}
 
 	@Override
-	public void close() {
+	public void close() throws InterruptedException {
+		
 		if(executorService != null) {
 			executorService.shutdown();
+			executorService.awaitTermination(10, TimeUnit.SECONDS);
 		}
 		
 		InputOutputUtil.closeAllQuietly(branchs);
