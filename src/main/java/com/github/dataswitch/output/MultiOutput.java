@@ -105,7 +105,7 @@ public class MultiOutput extends BaseObject  implements Output{
 		});
 	}
 
-	private void outputWrite(List<Object> rows, Output branch) {
+	protected void outputWrite(List<Object> rows, Output branch) {
 		if(concurrent) {
 			getExecutorService().submit(() -> {
 				branch.write(rows);
