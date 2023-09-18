@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.github.dataswitch.processor.MultiProcessor;
 import com.github.dataswitch.processor.Processor;
+import com.github.dataswitch.util.InputOutputUtil;
 
 public class ProcessorOutput extends ProxyOutput {
 
@@ -52,13 +53,13 @@ public class ProcessorOutput extends ProxyOutput {
 	public void open(Map<String, Object> params) throws Exception {
 		super.open(params);
 		_multiProcessor = new MultiProcessor(processors);
-		_multiProcessor.open(params);
+		InputOutputUtil.open(params, _multiProcessor);
 	}
 	
 	@Override
 	public void close() throws Exception {
 		super.close();
-		_multiProcessor.close();
+		InputOutputUtil.close(_multiProcessor);
 	}
 	
 }
