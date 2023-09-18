@@ -1,6 +1,6 @@
 package com.github.dataswitch.enums;
 
-public enum RowKind {
+public enum DataKind {
 	
     INSERT("+I", (byte) 1),
 
@@ -15,16 +15,16 @@ public enum RowKind {
     private final byte value;
 
     /**
-     * Creates a {@link RowKind} enum with the given short string and byte value representation of
-     * the {@link RowKind}.
+     * Creates a {@link DataKind} enum with the given short string and byte value representation of
+     * the {@link DataKind}.
      */
-    RowKind(String shortString, byte value) {
+    DataKind(String shortString, byte value) {
         this.shortString = shortString;
         this.value = value;
     }
 
     /**
-     * Returns a short string representation of this {@link RowKind}.
+     * Returns a short string representation of this {@link DataKind}.
      *
      * <p>
      *
@@ -43,12 +43,12 @@ public enum RowKind {
     }
 
     /**
-     * Creates a {@link RowKind} from the given byte value. Each {@link RowKind} has a byte value
+     * Creates a {@link DataKind} from the given byte value. Each {@link DataKind} has a byte value
      * representation.
      *
-     * @see #toByteValue() for mapping of byte value and {@link RowKind}.
+     * @see #toByteValue() for mapping of byte value and {@link DataKind}.
      */
-    public static RowKind fromByteValue(byte value) {
+    public static DataKind fromByteValue(byte value) {
         switch (value) {
             case 1:
                 return INSERT;

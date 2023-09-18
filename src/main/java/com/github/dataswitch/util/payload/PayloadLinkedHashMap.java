@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.github.dataswitch.enums.RowKind;
+import com.github.dataswitch.enums.DataKind;
 
 public class PayloadLinkedHashMap<K,V,T> extends HashMap<K,V> implements Payloadable<T>{
 	
