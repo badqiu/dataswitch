@@ -45,7 +45,7 @@ public class ExecutorServiceUtil {
 		for(Map.Entry<String,ExecutorService> entry : executorServiceMap.entrySet()) {
 			try {
 				ExecutorService executor = entry.getValue();
-				logger.info("start shuwdown ExecutorService:"+executor);
+				logger.info("start shuwdown ExecutorService,name:"+entry.getKey()+" executorService:"+executor);
 				executor.shutdown();
 				executor.awaitTermination(Constants.EXECUTOR_SERVICE_AWAIT_TERMINATION_SECOND, TimeUnit.SECONDS);
 			}catch(Exception e) {
