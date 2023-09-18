@@ -23,7 +23,7 @@ public class ExecutorServiceProvider extends BaseObject implements Openable,Auto
 	private int threadPoolSize = Constants.EXECUTOR_SERVICE_THREAD_POOL_SIZE;
 	
 	private String executorGroup = Constants.DEFAULT_EXECUTOR_GROUP;
-	private String executorName;
+	private String executorName = "defaultExecutor";
 	
 	private BiFunction<String, Integer, ExecutorService> newExecutorServiceFunction;
 
