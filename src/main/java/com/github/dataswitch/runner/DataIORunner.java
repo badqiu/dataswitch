@@ -130,6 +130,7 @@ public class DataIORunner {
 				}
 			}
 		}
+		
 		try {
 			if(StringUtils.isBlank(configPath)) {
 				// xml from system.in
