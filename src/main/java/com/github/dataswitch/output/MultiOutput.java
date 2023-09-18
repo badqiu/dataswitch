@@ -10,12 +10,13 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
 
 import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.Enabled;
 import com.github.dataswitch.enums.FailMode;
 import com.github.dataswitch.util.InputOutputUtil;
+import com.github.dataswitch.enums.Constants;
+
 /**
  * 将一个输入copy一份输出在branch上
  * 
@@ -96,7 +97,7 @@ public class MultiOutput extends BaseObject  implements Output{
 		
 		if(executorService != null) {
 			executorService.shutdown();
-			executorService.awaitTermination(10, TimeUnit.SECONDS);
+			executorService.awaitTermination(Constants.ON_CLOSE_EXECUTOR_AWAIT_TERMINATION_SECOND, TimeUnit.SECONDS);
 		}
 		
 		InputOutputUtil.closeAllQuietly(branchs);

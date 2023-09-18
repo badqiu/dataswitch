@@ -17,6 +17,7 @@ import org.apache.commons.collections.CollectionUtils;
 
 import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.Enabled;
+import com.github.dataswitch.enums.Constants;
 import com.github.dataswitch.util.InputOutputUtil;
 
 /**
@@ -92,7 +93,7 @@ public class MultiInput extends BaseObject implements Input{
 	public void close() throws Exception {
 		if(executorService != null) {
 			executorService.shutdown();
-			executorService.awaitTermination(10, TimeUnit.SECONDS);
+			executorService.awaitTermination(Constants.ON_CLOSE_EXECUTOR_AWAIT_TERMINATION_SECOND, TimeUnit.SECONDS);
 		}
 		
 		InputOutputUtil.closeAllQuietly(inputs);
