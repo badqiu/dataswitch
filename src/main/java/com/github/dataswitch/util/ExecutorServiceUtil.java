@@ -43,12 +43,14 @@ public class ExecutorServiceUtil {
 
 	public static void shutdownAllAndAwaitTermination()  {
 		for(Map.Entry<String,ExecutorService> entry : executorServiceMap.entrySet()) {
+			String executorId = entry.getKey();
+			ExecutorService executor = entry.getValue();
+
 			try {
-				ExecutorService executor = entry.getValue();
-				logger.info("start shuwdown ExecutorService,executorId:"+entry.getKey()+" executorService:"+executor);
+				logger.info("start shuwdown ExecutorService,executorId:"+executorId+" executorService:"+executor);
 				shutdownAndAwaitTermination(executor,Constants.EXECUTOR_SERVICE_AWAIT_TERMINATION_SECOND);
 			}catch(Exception e) {
-				logger.error("threadPool shutdown error",e);
+				logger.error("threadPool shutdown error,executorId:"+executorId+" executorService:"+executor,e);
 			}
 		}
 	}
