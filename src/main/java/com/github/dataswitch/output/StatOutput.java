@@ -15,6 +15,7 @@ import com.github.dataswitch.util.Util;
  */
 public class StatOutput extends ProxyOutput {
 	private static Logger logger = LoggerFactory.getLogger(StatOutput.class);
+	
 	private long totalRows;
 	private long totalCostTime;
 	private boolean printLog;
