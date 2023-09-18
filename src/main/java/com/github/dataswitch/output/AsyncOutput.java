@@ -56,6 +56,30 @@ public class AsyncOutput extends ProxyOutput{
 	public void setExceptionHandler(Consumer<Exception> exceptionHandler) {
 		this.exceptionHandler = exceptionHandler;
 	}
+	
+	public FailMode getFailMode() {
+		return failMode;
+	}
+
+	public void setFailMode(FailMode failMode) {
+		this.failMode = failMode;
+	}
+
+	public boolean isRunning() {
+		return running;
+	}
+
+	public void setRunning(boolean running) {
+		this.running = running;
+	}
+
+	public Exception getLastException() {
+		return lastException;
+	}
+
+	public Object getLastExceptionData() {
+		return lastExceptionData;
+	}
 
 	@Override
 	public void write(List<Object> rows)  {

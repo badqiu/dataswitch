@@ -66,6 +66,22 @@ public class AsyncInput extends ProxyInput{
 	public void setExceptionHandler(Consumer<Exception> exceptionHandler) {
 		this.exceptionHandler = exceptionHandler;
 	}
+	
+	public boolean isRunning() {
+		return running;
+	}
+
+	public void setRunning(boolean running) {
+		this.running = running;
+	}
+
+	public Exception getLastException() {
+		return lastException;
+	}
+
+	public Object getLastExceptionData() {
+		return lastExceptionData;
+	}
 
 	@Override
 	public List<Object> read(int size) {
