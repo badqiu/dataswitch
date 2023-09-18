@@ -68,7 +68,9 @@ public class StatOutput extends ProxyOutput {
 	
 	@Override
 	public void close() throws Exception {
-		logger.info("stat for write() totalCostTime:"+totalCostTime+" totalRows:"+totalRows+" tps:"+getTps());
+		if(logger.isInfoEnabled()) {
+			logger.info("stat for write() totalCostTime:"+totalCostTime+" totalRows:"+totalRows+" tps:"+getTps());
+		}
 		super.close();
 	}
 	
