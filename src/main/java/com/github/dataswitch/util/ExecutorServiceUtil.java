@@ -46,11 +46,17 @@ public class ExecutorServiceUtil {
 			try {
 				ExecutorService executor = entry.getValue();
 				logger.info("start shuwdown ExecutorService,executorId:"+entry.getKey()+" executorService:"+executor);
-				executor.shutdown();
-				executor.awaitTermination(Constants.EXECUTOR_SERVICE_AWAIT_TERMINATION_SECOND, TimeUnit.SECONDS);
+				shutdownAndAwaitTermination(executor,Constants.EXECUTOR_SERVICE_AWAIT_TERMINATION_SECOND);
 			}catch(Exception e) {
 				logger.error("threadPool shutdown error",e);
 			}
+		}
+	}
+	
+	public static void shutdownAndAwaitTermination(ExecutorService executorService,int timeoutSeconds) throws InterruptedException {
+		if(executorService != null) {
+			executorService.shutdown();
+			executorService.awaitTermination(timeoutSeconds, TimeUnit.SECONDS);
 		}
 	}
 }

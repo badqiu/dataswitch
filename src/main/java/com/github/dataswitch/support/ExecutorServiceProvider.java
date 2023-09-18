@@ -42,10 +42,7 @@ public class ExecutorServiceProvider extends BaseObject implements Openable,Auto
 	@Override
 	public void close() throws Exception {
 		if(shutdownExecutorServiceOnClose) {
-			if(executorService != null) {
-				executorService.shutdown();
-				executorService.awaitTermination(Constants.EXECUTOR_SERVICE_AWAIT_TERMINATION_SECOND, TimeUnit.SECONDS);
-			}
+			ExecutorServiceUtil.shutdownAndAwaitTermination(executorService, Constants.EXECUTOR_SERVICE_AWAIT_TERMINATION_SECOND);
 		}
 	}
 	
