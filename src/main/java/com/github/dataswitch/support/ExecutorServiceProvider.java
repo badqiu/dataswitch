@@ -20,7 +20,7 @@ import com.github.dataswitch.util.TableName;
  */
 public class ExecutorServiceProvider extends BaseObject implements Openable,AutoCloseable,TableName{
 	
-	private int threadPoolSize = 10;
+	private int threadPoolSize = Constants.EXECUTOR_SERVICE_THREAD_POOL_SIZE;
 	
 	private String executorGroup = Constants.DEFAULT_EXECUTOR_GROUP;
 	private String executorName;

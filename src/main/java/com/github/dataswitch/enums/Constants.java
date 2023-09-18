@@ -27,6 +27,12 @@ public class Constants {
 	 */
 	public static String DEFAULT_EXECUTOR_GROUP = System.getProperty("DEFAULT_QUEUE_GROUP","default");
 
+	
+	/**
+	 * 线程池大小
+	 */
+	public static int EXECUTOR_SERVICE_THREAD_POOL_SIZE = 4;
+	
 	/**
 	 * 线程池在系统退出时的等待时间
 	 */
