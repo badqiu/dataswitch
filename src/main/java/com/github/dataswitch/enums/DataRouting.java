@@ -1,6 +1,12 @@
 package com.github.dataswitch.enums;
 
-public enum LoadBalance {
+/**
+ * 数据路由
+ * 
+ * @author badqiu
+ *
+ */
+public enum DataRouting {
 	ALL,
 	ROUND_ROBIN,
 	RANDOM;

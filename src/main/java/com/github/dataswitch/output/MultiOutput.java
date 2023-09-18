@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.Enabled;
 import com.github.dataswitch.enums.FailMode;
-import com.github.dataswitch.enums.LoadBalance;
+import com.github.dataswitch.enums.DataRouting;
 import com.github.dataswitch.support.ExecutorServiceProvider;
 import com.github.dataswitch.util.InputOutputUtil;
 
@@ -36,7 +36,7 @@ public class MultiOutput extends BaseObject  implements Output{
 	
 	private ExecutorServiceProvider executorService = new ExecutorServiceProvider();
 	
-	private LoadBalance loadBalance = LoadBalance.ALL;
+	private DataRouting dataRouting = DataRouting.ALL;
 	private long _sequence = 0;
 	
 	public MultiOutput() {
@@ -62,12 +62,12 @@ public class MultiOutput extends BaseObject  implements Output{
 		this.branchs = branchs;
 	}
 	
-	public LoadBalance getLoadBalance() {
-		return loadBalance;
+	public DataRouting getDataRouting() {
+		return dataRouting;
 	}
 
-	public void setLoadBalance(LoadBalance loadBalance) {
-		this.loadBalance = loadBalance;
+	public void setDataRouting(DataRouting dataRouting) {
+		this.dataRouting = dataRouting;
 	}
 
 	public boolean isConcurrent() {
@@ -115,7 +115,7 @@ public class MultiOutput extends BaseObject  implements Output{
 		if(CollectionUtils.isEmpty(rows)) return;
 		if(ArrayUtils.isEmpty(branchs)) return;
 		
-		if(LoadBalance.ALL == loadBalance) {
+		if(DataRouting.ALL == dataRouting) {
 			failMode.forEach(branchs,(branch) -> {
 				outputWrite(rows, branch);
 			});
@@ -127,16 +127,16 @@ public class MultiOutput extends BaseObject  implements Output{
 	}
 
 	private int getOutputIndexByLoadBalance() {
-		if(loadBalance == LoadBalance.RANDOM) {
+		if(dataRouting == DataRouting.RANDOM) {
 			return RandomUtils.nextInt(branchs.length);
-		} else if(loadBalance == LoadBalance.ROUND_ROBIN) {
+		} else if(dataRouting == DataRouting.ROUND_ROBIN) {
 			return (int)(_sequence++ % branchs.length);
-//		} else if(loadBalance == LoadBalance.HASH) {
-//			throw new RuntimeException("unsupported loadBalance:"+loadBalance);
+//		} else if(dataRouting == DataRouting.HASH) {
+//			throw new RuntimeException("unsupported dataRouting:"+dataRouting);
 		}
 		
 		
-		throw new RuntimeException("unsupported loadBalance:"+loadBalance);
+		throw new RuntimeException("unsupported dataRouting:"+dataRouting);
 	}
 
 	protected void outputWrite(List<Object> rows, Output branch) {
