@@ -8,7 +8,6 @@ import java.util.Map;
 
 import com.github.dataswitch.BaseObject;
 
-//public class Beans implements InitializingBean,DisposableBean{
 public class Beans {	
 	private List<Object> beans = new ArrayList<Object>();
 	
@@ -20,20 +19,6 @@ public class Beans {
 	private String _paramsScript; //参数生成script
 	private String _paramsLanguage; //参数生成language
 	private String _paramsSql; //参数从数据库生成
-	
-//	@Override
-//	public void afterPropertiesSet() throws Exception {
-//		for(Object bean : beans) {
-//			ObjectUtil.afterPropertiesSetAll(bean);
-//		}
-//	}
-//	
-//	@Override
-//	public void destroy() throws Exception {
-//		for(Object bean : beans) {
-//			ObjectUtil.destroyAll(bean);
-//		}
-//	}
 	
 	public Map<String,Object> toBeansMap() {
 		Map<String,Object> result = new HashMap<String,Object>();
@@ -54,6 +39,5 @@ public class Beans {
 	public void setSourceFile(File sourceFile) {
 		this._sourceFile = sourceFile;
 	}
-
 	
 }

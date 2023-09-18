@@ -100,8 +100,6 @@ public class DataIORunner {
 		return PropertiesUtil.createProperties(content);
 	}
 
-
-
 	public void execByTaskId(String springConfigPath, String configPath,Map params, String taskId,String lock) throws Exception {
 		if(StringUtils.isNotBlank(lock)) {
 			JVMUtil.lockFileForOnlyProcess(DataIORunnerMain.class.getSimpleName()+"_"+taskId);
@@ -206,10 +204,10 @@ public class DataIORunner {
 		
 		if(task instanceof Function) {
 			Function<Map<String,Object>,Long> cmd = (Function)task;
-			Long count = cmd.apply(params);
+			cmd.apply(params);
 		}else if(task instanceof Callable) {
 			Callable<Long> cmd = (Callable)task;
-			Long count = cmd.call();
+			cmd.call();
 		}else if(task instanceof Runnable) {
 			Runnable cmd = (Runnable)task;
 			cmd.run();
@@ -220,18 +218,7 @@ public class DataIORunner {
 	}
 	
 	public void systemExit(int status) {
-		try {
-//			for(Beans b : beansList) {
-//				try {
-//					b.destroy();
-//				} catch (Exception e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//			}
-		}finally {
-			System.exit(status);
-		}
+		System.exit(status);
 	}
 
 

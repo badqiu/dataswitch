@@ -13,8 +13,9 @@ import com.github.dataswitch.output.JdbcOutput;
 import com.github.dataswitch.util.freemarker.FreemarkerInputStream;
 import com.github.dataswitch.util.freemarker.FreemarkerReader;
 import com.github.dataswitch.util.xstream.CustomMarshallingStrategy;
+import com.github.dataswitch.util.xstream.JavaBeanReflectionProvider;
+import com.github.dataswitch.util.xstream.SmartDurationConverter;
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.converters.reflection.PureJavaReflectionProvider;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import freemarker.template.Configuration;
@@ -92,7 +93,8 @@ public class DataIOXmlParser implements ApplicationContextAware{
 	public static XStream newBaseXStream(Map beans,ApplicationContext applicationContext) {
 //		Assert.notNull(applicationContext,"applicationContext must be not null");
 		
-		XStream xstream = new XStream(new PureJavaReflectionProvider(),new DomDriver());
+		XStream xstream = new XStream(new JavaBeanReflectionProvider(),new DomDriver());
+		xstream.registerConverter(new SmartDurationConverter(),XStream.PRIORITY_VERY_HIGH);
 		
 		xstream.useAttributeFor(int.class);
 		xstream.useAttributeFor(long.class);
