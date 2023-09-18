@@ -169,18 +169,6 @@ public class InputOutputUtil {
 		return result;
 	}
 	
-	
-//	public static void collectExceptionIfFailAtEnd(FailMode failMode, final List<Exception> exceptions,Exception e) {
-//		if(exceptions == null) return;
-//		if(e == null) return;
-//		
-//		if(failMode == FailMode.FAIL_AT_END) {
-//			if(exceptions.size() < 100) { // limit size for OutOfMemoryError
-//				exceptions.add(e);
-//			}
-//		}
-//	}
-	
 	/**
 	 * 拷贝数据
 	 * @return 拷贝的数据量
