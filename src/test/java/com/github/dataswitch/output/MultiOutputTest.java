@@ -1,9 +1,10 @@
 package com.github.dataswitch.output;
 
+import java.io.PrintStream;
+
 import org.junit.Test;
 
 import com.github.dataswitch.input.DataGenInput;
-import com.github.dataswitch.util.ExecutorServiceUtil;
 import com.github.dataswitch.util.InputOutputUtil;
 import com.github.dataswitch.util.InputOutputUtil.CopyResult;
 
@@ -13,8 +14,9 @@ public class MultiOutputTest {
 	public void test() throws Exception {
 		System.out.println("Runtime.getRuntime().availableProcessors()="+Runtime.getRuntime().availableProcessors());
 		DataGenInput input = new DataGenInput(10);
-		PrintOutput o1 = new PrintOutput(System.err,"o1");
-		PrintOutput o2 = new PrintOutput(System.err,"o2");
+		PrintStream sysout = new PrintStream(System.out);
+		PrintOutput o1 = new PrintOutput(sysout,"o1");
+		PrintOutput o2 = new PrintOutput(sysout,"o2");
 		
 		MultiOutput moutput = new MultiOutput(o1,o2);
 		moutput.setConcurrent(true);
@@ -24,8 +26,9 @@ public class MultiOutputTest {
 		CopyResult result = InputOutputUtil.copy(input, moutput);
 		System.out.println(result);
 		
+		moutput.flush();
 //		ExecutorServiceUtil.shutdownAllAndAwaitTermination();
-		Thread.sleep(3000);
+		Thread.sleep(2000);
 	}
 
 }

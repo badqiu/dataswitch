@@ -7,11 +7,14 @@ import java.util.List;
 import java.util.Objects;
 
 import com.github.dataswitch.BaseObject;
+import com.github.dataswitch.util.InputOutputUtil;
 
 public class PrintOutput extends BaseObject implements Output{
 
 	private String prefix = "";
 	private PrintStream out = System.out;
+	
+	private boolean closeOutOnClose = true;
 	
 	public PrintOutput() {
 	}
@@ -45,6 +48,18 @@ public class PrintOutput extends BaseObject implements Output{
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
 	}
+	
+	public void setOut(PrintStream out) {
+		this.out = out;
+	}
+	
+	public boolean isCloseOutOnClose() {
+		return closeOutOnClose;
+	}
+
+	public void setCloseOutOnClose(boolean closeOutOnClose) {
+		this.closeOutOnClose = closeOutOnClose;
+	}
 
 	@Override
 	public void write(List<Object> rows) {
@@ -59,12 +74,14 @@ public class PrintOutput extends BaseObject implements Output{
 	
 	@Override
 	public void flush() throws IOException {
-		out.flush();
+		InputOutputUtil.flush(out);
 	}
 	
 	@Override
 	public void close() throws IOException {
-		out.close();
+		if(closeOutOnClose) {
+			InputOutputUtil.close(out);
+		}
 	}
 
 }
