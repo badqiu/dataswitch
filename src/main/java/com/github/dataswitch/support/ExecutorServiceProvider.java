@@ -39,7 +39,7 @@ public class ExecutorServiceProvider extends BaseObject implements Openable,Auto
 		if(shutdownExecutorServiceOnClose) {
 			if(executorService != null) {
 				executorService.shutdown();
-				executorService.awaitTermination(Constants.ON_CLOSE_EXECUTOR_AWAIT_TERMINATION_SECOND, TimeUnit.SECONDS);
+				executorService.awaitTermination(Constants.EXECUTOR_SERVICE_AWAIT_TERMINATION_SECOND, TimeUnit.SECONDS);
 			}
 		}
 	}

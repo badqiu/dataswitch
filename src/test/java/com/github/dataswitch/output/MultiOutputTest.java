@@ -3,6 +3,7 @@ package com.github.dataswitch.output;
 import org.junit.Test;
 
 import com.github.dataswitch.input.DataGenInput;
+import com.github.dataswitch.util.ExecutorServiceUtil;
 import com.github.dataswitch.util.InputOutputUtil;
 import com.github.dataswitch.util.InputOutputUtil.CopyResult;
 
@@ -16,10 +17,13 @@ public class MultiOutputTest {
 		
 		MultiOutput moutput = new MultiOutput(o1,o2);
 		moutput.setConcurrent(true);
+		moutput.setExecutorName("name1");
 		moutput.open(null);
 		
 		CopyResult result = InputOutputUtil.copy(input, moutput);
 		System.out.println(result);
+		
+		ExecutorServiceUtil.shutdownAllAndAwaitTermination();
 	}
 
 }

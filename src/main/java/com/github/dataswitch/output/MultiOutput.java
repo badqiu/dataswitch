@@ -71,7 +71,6 @@ public class MultiOutput extends BaseObject  implements Output{
 	public void setExecutorService(ExecutorService executorService) {
 		this.executorService.setExecutorService(executorService);
 	}
-	
 
 	public int getThreadPoolSize() {
 		return executorService.getThreadPoolSize();

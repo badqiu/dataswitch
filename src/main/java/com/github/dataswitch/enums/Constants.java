@@ -30,7 +30,7 @@ public class Constants {
 	/**
 	 * MultiOutput,MultiInput并发执行时，close时默认的等待时间
 	 */
-	public static int ON_CLOSE_EXECUTOR_AWAIT_TERMINATION_SECOND = 10;
+	public static int EXECUTOR_SERVICE_AWAIT_TERMINATION_SECOND = 10;
 	
 	/**
 	 * hive列分隔符
