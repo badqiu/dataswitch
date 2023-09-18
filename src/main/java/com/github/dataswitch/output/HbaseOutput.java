@@ -126,8 +126,8 @@ public class HbaseOutput extends HbaseProvider implements Output{
 		return batchSize;
 	}
 
-	public void setBatchSize(int writeBufferSize) {
-		this.batchSize = writeBufferSize;
+	public void setBatchSize(int writeBatchSize) {
+		this.batchSize = writeBatchSize;
 	}
 	
 	public int getBatchTimeout() {

@@ -49,7 +49,7 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 	private String desc; // 描述
 	private String author; // 作者
 	
-	private int bufferSize = Constants.DEFAULT_BUFFER_SIZE;
+	private int batchSize = Constants.DEFAULT_BUFFER_SIZE;
 	private int bufferTimeout = Constants.DEFAULT_BUFFER_TIMEOUT; //超时时间，时间单位毫秒
 	
 	private FailMode failMode = FailMode.FAIL_FAST;
@@ -130,12 +130,12 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 		}
 	}
 	
-	public int getBufferSize() {
-		return bufferSize;
+	public int getBatchSize() {
+		return batchSize;
 	}
 
-	public void setBufferSize(int bufferSize) {
-		this.bufferSize = bufferSize;
+	public void setBatchSize(int batchSize) {
+		this.batchSize = batchSize;
 	}
 	
 	public int getBufferTimeout() {
@@ -240,7 +240,7 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 	 * @return 数据行数
 	 */
 	public long exec(Map<String,Object> params) {
-		if(bufferSize <= 0) bufferSize = Constants.DEFAULT_BUFFER_SIZE;
+		if(batchSize <= 0) batchSize = Constants.DEFAULT_BUFFER_SIZE;
 		if(params == null) params = Collections.EMPTY_MAP;
 		
 		if(!isEnabled()) {
@@ -262,8 +262,8 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 				output = new AsyncOutput(output);
 			}
 			
-			if(bufferSize > 0) {
-				output = new BufferedOutput(output, bufferSize, bufferTimeout);
+			if(batchSize > 0) {
+				output = new BufferedOutput(output, batchSize, bufferTimeout);
 			}
 			
 			
@@ -288,7 +288,7 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 		
 		try {
 			
-			CopyResult copyResult = InputOutputUtil.copy(input, output,bufferSize,processor,params,failMode,exceptionHandler);
+			CopyResult copyResult = InputOutputUtil.copy(input, output,batchSize,processor,params,failMode,exceptionHandler);
 			
 			rows = copyResult.getCount();
 			costTime = copyResult.getTotalCostTime();
@@ -297,7 +297,7 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 		}catch(Exception e) {
 			throw new RuntimeException(info() +" copy error",e);
 		}finally {
-			String msg = info() + " copy end,rows:" + rows +" costSeconds:"+(costTime / 1000) + " tps:"+(rows * 1000.0 / costTime) + " bufferSize:"+ bufferSize+" failMode:" + failMode +" inputs:" + Arrays.toString(inputs) + " outputs:" + Arrays.toString(outputs);
+			String msg = info() + " copy end,rows:" + rows +" costSeconds:"+(costTime / 1000) + " tps:"+(rows * 1000.0 / costTime) + " batchSize:"+ batchSize+" failMode:" + failMode +" inputs:" + Arrays.toString(inputs) + " outputs:" + Arrays.toString(outputs);
 			logger.info(msg);
 		}
 	}

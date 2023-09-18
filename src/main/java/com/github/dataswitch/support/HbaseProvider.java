@@ -194,7 +194,7 @@ public class HbaseProvider extends BaseObject implements com.github.dataswitch.u
 		return hConnection;
 	}
 
-	public static BufferedMutator getBufferedMutator(String hbaseConfig, String userTable, long writeBufferSize,long batchTimeout) {
+	public static BufferedMutator getBufferedMutator(String hbaseConfig, String userTable, long writeBatchSize,long batchTimeout) {
 		org.apache.hadoop.conf.Configuration hConfiguration = getHbaseConfiguration(hbaseConfig);
 		org.apache.hadoop.hbase.client.Connection hConnection = getHbaseConnection(hbaseConfig);
 		TableName hTableName = TableName.valueOf(userTable);
@@ -205,7 +205,7 @@ public class HbaseProvider extends BaseObject implements com.github.dataswitch.u
 			checkHbaseTable(admin, hTableName);
 			// 参考HTable getBufferedMutator()
 			bufferedMutator = hConnection.getBufferedMutator(new BufferedMutatorParams(hTableName)
-					.pool(HTable.getDefaultExecutor(hConfiguration)).writeBufferSize(writeBufferSize));
+					.pool(HTable.getDefaultExecutor(hConfiguration)).writeBufferSize(writeBatchSize));
 			bufferedMutator.setWriteBufferPeriodicFlush(batchTimeout,batchTimeout);
 		} catch (Exception e) {
 			InputOutputUtil.close(bufferedMutator);
@@ -216,7 +216,7 @@ public class HbaseProvider extends BaseObject implements com.github.dataswitch.u
 		return bufferedMutator;
 	}
 
-	public static Table getTable(String hbaseConfig, String userTable, long writeBufferSize) {
+	public static Table getTable(String hbaseConfig, String userTable, long writeBatchSize) {
 		org.apache.hadoop.hbase.client.Connection hConnection = getHbaseConnection(hbaseConfig);
 		TableName hTableName = TableName.valueOf(userTable);
 		org.apache.hadoop.hbase.client.Admin admin = null;
@@ -226,7 +226,7 @@ public class HbaseProvider extends BaseObject implements com.github.dataswitch.u
 			checkHbaseTable(admin, hTableName);
 			hTable = hConnection.getTable(hTableName);
 			BufferedMutatorParams bufferedMutatorParams = new BufferedMutatorParams(hTableName);
-			bufferedMutatorParams.writeBufferSize(writeBufferSize);
+			bufferedMutatorParams.writeBufferSize(writeBatchSize);
 		} catch (Exception e) {
 			InputOutputUtil.close(hTable);
 			InputOutputUtil.close(admin);

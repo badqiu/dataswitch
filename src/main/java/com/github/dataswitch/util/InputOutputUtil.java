@@ -157,13 +157,13 @@ public class InputOutputUtil {
 	/**
 	 * 将input全部读完,返回所有数据行
 	 * @param input
-	 * @param bufferSize 每次读的批量大小
+	 * @param batchSize 每次读的批量大小
 	 * @return
 	 */
-	public static List<Object> readFully(Input input,int bufferSize) {
-		List<Object> result = new ArrayList<Object>(bufferSize);
+	public static List<Object> readFully(Input input,int batchSize) {
+		List<Object> result = new ArrayList<Object>(batchSize);
 		List<Object> rows = null;
-		while(CollectionUtils.isNotEmpty((rows = input.read(bufferSize)))) {
+		while(CollectionUtils.isNotEmpty((rows = input.read(batchSize)))) {
 			result.addAll(rows);
 		}
 		return result;
@@ -205,44 +205,44 @@ public class InputOutputUtil {
 	 * 拷贝数据
 	 * @return 拷贝的数据量
 	 */
-	public static CopyResult copy(Input input,Output output,int bufferSize) {
-		return copy(input,output,bufferSize,DEFAULT_PROCESSOR,FailMode.FAIL_FAST);
+	public static CopyResult copy(Input input,Output output,int batchSize) {
+		return copy(input,output,batchSize,DEFAULT_PROCESSOR,FailMode.FAIL_FAST);
 	}
 	
 	/**
 	 * 拷贝数据
 	 * @return 拷贝的数据量
 	 */
-	public static CopyResult copy(Input input,Output output,int bufferSize,Processor processor) {
-		return copy(input,output,bufferSize,processor,FailMode.FAIL_FAST);
+	public static CopyResult copy(Input input,Output output,int batchSize,Processor processor) {
+		return copy(input,output,batchSize,processor,FailMode.FAIL_FAST);
 	}
 	
 	/**
 	 * 
 	 * @param input
 	 * @param output
-	 * @param bufferSize
+	 * @param batchSize
 	 * @param ignoreWriteError
 	 * @return 拷贝的数据量
 	 */
-	public static CopyResult copy(Input input,Output output,int bufferSize,Processor processor,FailMode failMode) {
-		return copy(input,output,bufferSize,processor,null,failMode,null);
+	public static CopyResult copy(Input input,Output output,int batchSize,Processor processor,FailMode failMode) {
+		return copy(input,output,batchSize,processor,null,failMode,null);
 	}
 
-	public static CopyResult copy(Input input,Output output,int bufferSize,Processor processor,Map params,FailMode failMode) {
-		return copy(input,output,bufferSize,processor,params,failMode,null);
+	public static CopyResult copy(Input input,Output output,int batchSize,Processor processor,Map params,FailMode failMode) {
+		return copy(input,output,batchSize,processor,params,failMode,null);
 	}
 
 	/**
 	 * 
 	 * @param input
 	 * @param output
-	 * @param bufferSize
+	 * @param batchSize
 	 * @param failMode,取值: failFast,failAtEnd,failNever
 	 * @return 拷贝的数据量
 	 */
-	public static CopyResult copy(Input input,Output output,int bufferSize,Processor processor,Map params,FailMode failMode,Consumer<Exception> exceptionHandler) {
-		if(bufferSize <= 0) throw new IllegalArgumentException("bufferSize > 0 must be true");
+	public static CopyResult copy(Input input,Output output,int batchSize,Processor processor,Map params,FailMode failMode,Consumer<Exception> exceptionHandler) {
+		if(batchSize <= 0) throw new IllegalArgumentException("batchSize > 0 must be true");
 		
 		long totalCostTime = 0;
 		long startTime = System.currentTimeMillis();
@@ -261,7 +261,7 @@ public class InputOutputUtil {
 			while(true) {
 				try {
 					long startReadTime = System.currentTimeMillis();
-					rows = input.read(bufferSize);
+					rows = input.read(batchSize);
 					long readCost = System.currentTimeMillis() - startReadTime;
 					readCostSum += readCost;
 					

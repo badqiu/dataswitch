@@ -96,8 +96,8 @@ public class MultiFunctionInput extends ProxyInput{
 		this.buffered = buffered;
 	}
 
-	public void setBatchSize(int bufferSize) {
-		this.batchSize = bufferSize;
+	public void setBatchSize(int batchSize) {
+		this.batchSize = batchSize;
 	}
 
 	public void setBatchTimeout(int bufferTimeout) {

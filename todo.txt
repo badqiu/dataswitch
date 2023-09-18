@@ -1,6 +1,10 @@
 字段概念统一:  table,column,primaryKeys
 数据库连接统一: url,username,password
-批参数统一: batchSize,batchTimeout,retryTimes,retryInterval
+批参数统一:
+	#batchSize,
+	batchTimeout,
+	retryTimes,
+	retryInterval
 
 支持状态的storage
 

@@ -68,7 +68,7 @@ public class InputsOutputsTest {
 		
 		count = 0;
 		job.setSync(true);
-		job.setBufferSize(50);
+		job.setBatchSize(50);
 		job.exec();
 		assertEquals(100,count);
 		assertEquals(297,writeCount);

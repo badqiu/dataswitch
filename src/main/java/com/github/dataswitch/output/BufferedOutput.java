@@ -12,7 +12,7 @@ import org.springframework.util.Assert;
 import com.github.dataswitch.enums.Constants;
 
 /**
- * 提供缓冲功能的Output,缓冲池大小根据bufferSize设置
+ * 提供缓冲功能的Output,缓冲池大小根据batchSize设置
  * 
  * @author badqiu
  *
