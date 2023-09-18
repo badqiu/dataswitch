@@ -54,6 +54,14 @@ public class DataIOXmlParser implements ApplicationContextAware{
 		this.beans = beans;
 	}
 
+	public Configuration newConfiguration() {
+		Configuration conf = new Configuration();
+		conf.setNumberFormat("###########.##");
+		conf.setDateFormat("yyyy-MM-dd");
+		conf.setDateTimeFormat("yyyy-MM-dd HH:mm:ss");
+		return conf;
+	}
+	
 	public Beans fromXml(InputStream input,Map params,Configuration conf) {
 		XStream xstream = newCustomXStream();
 		

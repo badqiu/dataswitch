@@ -138,7 +138,7 @@ public class DataIORunner {
 		try {
 			if(StringUtils.isBlank(configPath)) {
 				// xml from system.in
-				Configuration conf = newConfiguration();
+				Configuration conf = xmlParser.newConfiguration();
 				Beans beans = xmlParser.fromXml(System.in, params, conf);
 				beansList.add(beans);
 				return;
@@ -157,7 +157,7 @@ public class DataIORunner {
 		logger.info("load sqlrunner by configPath:"+configPathFile.getAbsolutePath());
 		Collection<File> files = Util.listFiles(configPathFile,"xml");
 		Assert.notEmpty(files,"not found any xml config file by configPath:"+configPathFile);
-		Configuration conf = newConfiguration();
+		Configuration conf = xmlParser.newConfiguration();
 		
 		if(configPathFile.isDirectory()) {
 			conf.setDirectoryForTemplateLoading(configPathFile);
@@ -178,13 +178,6 @@ public class DataIORunner {
 		
 	}
 
-	private Configuration newConfiguration() {
-		Configuration conf = new Configuration();
-		conf.setNumberFormat("###########.##");
-		conf.setDateFormat("yyyy-MM-dd");
-		conf.setDateTimeFormat("yyyy-MM-dd HH:mm:ss");
-		return conf;
-	}
 
 	private Beans parseBeansFromInputStream(Map params, DataIOXmlParser xmlParser, Configuration conf, File file,FileInputStream input) throws Exception {
 		Beans beans = xmlParser.fromXml(input, params,conf);
