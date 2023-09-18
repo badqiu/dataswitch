@@ -14,7 +14,7 @@ public class PrintOutput extends BaseObject implements Output{
 	private String prefix = "";
 	private PrintStream out = System.out;
 	
-	private boolean closeOutOnClose = true;
+	private boolean closeOutOnClose = false;
 	
 	public PrintOutput() {
 	}
