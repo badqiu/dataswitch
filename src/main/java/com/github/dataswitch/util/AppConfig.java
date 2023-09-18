@@ -87,7 +87,7 @@ public class AppConfig {
 		return value;
 	}
 	
-	private String getRequiredProerptyOrEnv(String key) {
+	public String getRequiredProerpty(String key) {
 		String value = getProperty(key);
 		
 		if(StringUtils.isBlank(value)) {
