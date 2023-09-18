@@ -12,7 +12,12 @@ import com.github.dataswitch.Openable;
 import com.github.dataswitch.enums.Constants;
 import com.github.dataswitch.util.ExecutorServiceUtil;
 import com.github.dataswitch.util.TableName;
-
+/**
+ * 提供线程池ExecutorService的创建
+ * 
+ * @author badqiu
+ *
+ */
 public class ExecutorServiceProvider extends BaseObject implements Openable,AutoCloseable,TableName{
 	
 	private int threadPoolSize = 10;

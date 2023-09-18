@@ -28,9 +28,9 @@ public class Constants {
 	public static String DEFAULT_EXECUTOR_GROUP = System.getProperty("DEFAULT_QUEUE_GROUP","default");
 
 	/**
-	 * MultiOutput,MultiInput并发执行时，close时默认的等待时间
+	 * 线程池在系统退出时的等待时间
 	 */
-	public static int EXECUTOR_SERVICE_AWAIT_TERMINATION_SECOND = 10;
+	public static int EXECUTOR_SERVICE_AWAIT_TERMINATION_SECOND = 30;
 	
 	/**
 	 * hive列分隔符
