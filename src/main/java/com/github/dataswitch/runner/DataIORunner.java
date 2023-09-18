@@ -101,6 +101,10 @@ public class DataIORunner {
 	}
 
 	public void execByTaskId(String springConfigPath, String configPath,Map params, String taskId,String lock) throws Exception {
+		if(StringUtils.isBlank(taskId)) return;
+		
+		taskId = taskId.trim();
+		
 		if(StringUtils.isNotBlank(lock)) {
 			JVMUtil.lockFileForOnlyProcess(DataIORunnerMain.class.getSimpleName()+"_"+taskId);
 		}
