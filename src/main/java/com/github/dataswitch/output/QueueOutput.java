@@ -10,8 +10,6 @@ import com.github.dataswitch.support.QueueProvider;
 
 public class QueueOutput extends QueueProvider implements Output{
 
-	
-	
 	public QueueOutput() {
 		super();
 	}

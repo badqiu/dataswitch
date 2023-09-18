@@ -8,16 +8,14 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.collections.CollectionUtils;
 
 import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.Enabled;
-import com.github.dataswitch.enums.Constants;
+import com.github.dataswitch.support.ExecutorServiceProvider;
 import com.github.dataswitch.util.InputOutputUtil;
 
 /**
@@ -35,7 +33,7 @@ public class MultiInput extends BaseObject implements Input{
 	
 	private transient Input _currentInput;
 	private AtomicInteger _currentIndex = new AtomicInteger();
-	private ExecutorService executorService = null;
+	private ExecutorServiceProvider executorService = new ExecutorServiceProvider();
 	
 	public MultiInput() {
 	}
@@ -75,11 +73,36 @@ public class MultiInput extends BaseObject implements Input{
 	}
 	
 	public ExecutorService getExecutorService() {
-		return executorService;
+		return executorService.getExecutorService();
 	}
 
 	public void setExecutorService(ExecutorService executorService) {
-		this.executorService = executorService;
+		this.executorService.setExecutorService(executorService);
+	}
+	
+
+	public int getThreadPoolSize() {
+		return executorService.getThreadPoolSize();
+	}
+
+	public void setThreadPoolSize(int threadPoolSize) {
+		executorService.setThreadPoolSize(threadPoolSize);
+	}
+
+	public String getExecutorGroup() {
+		return executorService.getExecutorGroup();
+	}
+
+	public void setExecutorGroup(String executorGroup) {
+		executorService.setExecutorGroup(executorGroup);
+	}
+
+	public String getExecutorName() {
+		return executorService.getExecutorName();
+	}
+
+	public void setExecutorName(String executorName) {
+		executorService.setExecutorName(executorName);
 	}
 
 	@Override
@@ -91,12 +114,8 @@ public class MultiInput extends BaseObject implements Input{
 	
 	@Override
 	public void close() throws Exception {
-		if(executorService != null) {
-			executorService.shutdown();
-			executorService.awaitTermination(Constants.ON_CLOSE_EXECUTOR_AWAIT_TERMINATION_SECOND, TimeUnit.SECONDS);
-		}
-		
-		InputOutputUtil.closeAllQuietly(inputs);
+		InputOutputUtil.close(executorService);
+		InputOutputUtil.closeAll(inputs);
 	}
 	
 	@Override
@@ -104,9 +123,7 @@ public class MultiInput extends BaseObject implements Input{
 		this.inputs = Enabled.filterByEnabled(inputs);
 		
 		if(concurrent) {
-			if(executorService == null) {
-				executorService = Executors.newFixedThreadPool(3);
-			}
+			InputOutputUtil.open(params, executorService);
 			_inputReadEnd = new boolean[inputs.size()];
 //			this.inputs = toAsyncInputs(inputs);
 		}
@@ -148,7 +165,7 @@ public class MultiInput extends BaseObject implements Input{
 				continue;
 			}
 			
-			Future<List> future = executorService.submit(new Callable<List>() {
+			Future<List> future = getExecutorService().submit(new Callable<List>() {
 				public List call() throws Exception {
 					return input.read(size);
 				}

@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
@@ -14,8 +12,8 @@ import org.slf4j.LoggerFactory;
 import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.Enabled;
 import com.github.dataswitch.enums.FailMode;
+import com.github.dataswitch.support.ExecutorServiceProvider;
 import com.github.dataswitch.util.InputOutputUtil;
-import com.github.dataswitch.enums.Constants;
 
 /**
  * 将一个输入copy一份输出在branch上
@@ -32,7 +30,8 @@ public class MultiOutput extends BaseObject  implements Output{
 	private FailMode failMode = FailMode.FAIL_FAST;
 	
 	private boolean concurrent = false; //并发写
-	private ExecutorService executorService = null;
+	
+	private ExecutorServiceProvider executorService = new ExecutorServiceProvider();
 	
 	public MultiOutput() {
 	}
@@ -66,11 +65,36 @@ public class MultiOutput extends BaseObject  implements Output{
 	}
 
 	public ExecutorService getExecutorService() {
-		return executorService;
+		return executorService.getExecutorService();
 	}
 
 	public void setExecutorService(ExecutorService executorService) {
-		this.executorService = executorService;
+		this.executorService.setExecutorService(executorService);
+	}
+	
+
+	public int getThreadPoolSize() {
+		return executorService.getThreadPoolSize();
+	}
+
+	public void setThreadPoolSize(int threadPoolSize) {
+		executorService.setThreadPoolSize(threadPoolSize);
+	}
+
+	public String getExecutorGroup() {
+		return executorService.getExecutorGroup();
+	}
+
+	public void setExecutorGroup(String executorGroup) {
+		executorService.setExecutorGroup(executorGroup);
+	}
+
+	public String getExecutorName() {
+		return executorService.getExecutorName();
+	}
+
+	public void setExecutorName(String executorName) {
+		executorService.setExecutorName(executorName);
 	}
 
 	@Override
@@ -84,7 +108,7 @@ public class MultiOutput extends BaseObject  implements Output{
 
 	private void outputWrite(List<Object> rows, Output branch) {
 		if(concurrent) {
-			executorService.submit(() -> {
+			getExecutorService().submit(() -> {
 				branch.write(rows);
 			});
 		}else {
@@ -94,13 +118,8 @@ public class MultiOutput extends BaseObject  implements Output{
 
 	@Override
 	public void close() throws InterruptedException {
-		
-		if(executorService != null) {
-			executorService.shutdown();
-			executorService.awaitTermination(Constants.ON_CLOSE_EXECUTOR_AWAIT_TERMINATION_SECOND, TimeUnit.SECONDS);
-		}
-		
-		InputOutputUtil.closeAllQuietly(branchs);
+		InputOutputUtil.close(executorService);
+		InputOutputUtil.closeAll(branchs);
 	}
 	
 	@Override
@@ -114,9 +133,7 @@ public class MultiOutput extends BaseObject  implements Output{
 		InputOutputUtil.openAll(params,branchs);
 		
 		if(concurrent) {
-			if(executorService == null) {
-				executorService = Executors.newFixedThreadPool(3);
-			}
+			InputOutputUtil.open(params, executorService);
 		}
 	}
 }

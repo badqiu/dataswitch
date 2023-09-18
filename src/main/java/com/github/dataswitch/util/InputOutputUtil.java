@@ -2,7 +2,6 @@ package com.github.dataswitch.util;
 
 import java.io.EOFException;
 import java.io.Flushable;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -46,11 +45,18 @@ public class InputOutputUtil {
 	}
 	
 	public static void closeAll(AutoCloseable... items) {
+		if(items == null) return;
 		for(AutoCloseable item : items) {
 			close(item);
 		}
 	}
 	
+	public static void closeAll(List<? extends AutoCloseable> items) {
+		if(items == null) return;
+		for(AutoCloseable item : items) {
+			close(item);
+		}
+	}
 	
 	public static void closeAll(FailMode failMode,AutoCloseable... items) {
 		failMode.forEach(items, item -> {

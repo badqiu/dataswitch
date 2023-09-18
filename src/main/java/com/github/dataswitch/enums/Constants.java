@@ -18,6 +18,16 @@ public class Constants {
 	public static String DEFAULT_LOCK_GROUP = System.getProperty("DEFAULT_LOCK_GROUP","default");
 	
 	/**
+	 * queue的默认分组
+	 */
+	public static String DEFAULT_QUEUE_GROUP = System.getProperty("DEFAULT_QUEUE_GROUP","default");
+
+	/**
+	 * queue的默认分组
+	 */
+	public static String DEFAULT_EXECUTOR_GROUP = System.getProperty("DEFAULT_QUEUE_GROUP","default");
+
+	/**
 	 * MultiOutput,MultiInput并发执行时，close时默认的等待时间
 	 */
 	public static int ON_CLOSE_EXECUTOR_AWAIT_TERMINATION_SECOND = 10;
@@ -32,6 +42,4 @@ public class Constants {
 	 */
 	public static final String NULL_VALUE = "\\N";
 
-	
-	
 }
