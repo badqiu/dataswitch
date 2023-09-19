@@ -75,7 +75,13 @@ public class InputParameterGenerator implements Supplier<Map<String,Object>>{
 	}
 
 	private static boolean isBlank(Object v) {
-		return v == null || StringUtils.isBlank(Objects.toString(v,""));
+		if(v == null) return true;
+		
+		if(v instanceof String) {
+			return StringUtils.isBlank(((String)v));
+		}
+		
+		return false;
 	}
 	
 	
