@@ -4,7 +4,8 @@
 	#batchSize,
 	#batchTimeout,
 	retryTimes,
-	retryInterval
+	retryInterval, now retryIntervalMills
+	retryTimeout, now retryTimeoutMills
 
 支持状态的storage
 
