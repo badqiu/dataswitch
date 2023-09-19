@@ -15,6 +15,8 @@ public class ProxyOutput extends BaseObject implements Output{
 	private Output proxy;
 	
 	private boolean autoFlush;
+	
+	private boolean close = false;
 
 	public ProxyOutput() {
 	}
@@ -47,6 +49,14 @@ public class ProxyOutput extends BaseObject implements Output{
 	public void setAutoFlush(boolean autoFlush) {
 		this.autoFlush = autoFlush;
 	}
+	
+	public boolean isClose() {
+		return close;
+	}
+
+	public void setClose(boolean close) {
+		this.close = close;
+	}
 
 	public void write(List<Object> rows) {
 		if(CollectionUtils.isEmpty(rows)) return;
@@ -59,6 +69,7 @@ public class ProxyOutput extends BaseObject implements Output{
 
 	@Override
 	public void close() throws Exception {
+		close = true;
 		InputOutputUtil.close(proxy);
 	}
 	
