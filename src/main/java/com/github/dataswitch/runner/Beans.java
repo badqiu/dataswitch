@@ -11,7 +11,7 @@ import com.github.dataswitch.BaseObject;
 public class Beans {	
 	private List<Object> beans = new ArrayList<Object>();
 	
-	private File _sourceFile;
+	private File sourceFile;
 	
 //	private String _paramsFile; //参数文件
 //	private String _paramsUrl; //参数URL
@@ -33,11 +33,11 @@ public class Beans {
 	}
 
 	public File getSourceFile() {
-		return _sourceFile;
+		return sourceFile;
 	}
 
 	public void setSourceFile(File sourceFile) {
-		this._sourceFile = sourceFile;
+		this.sourceFile = sourceFile;
 	}
 	
 }
