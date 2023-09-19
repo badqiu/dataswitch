@@ -2,6 +2,7 @@ package com.github.dataswitch.processor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -96,7 +97,7 @@ public class JoinProcessor implements Processor {
 		if(ArrayUtils.isEmpty(joinKeys)) return null;
 		if(CollectionUtils.isEmpty(joinDatas)) return null;
 		
-		Map resultMap = new HashMap();
+		Map resultMap = new LinkedHashMap();
 		for(Map row : joinDatas) {
 			String key = buildMapKey(joinKeys);
 			resultMap.put(key, row);
