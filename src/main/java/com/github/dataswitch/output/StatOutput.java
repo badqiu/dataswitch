@@ -17,6 +17,7 @@ public class StatOutput extends ProxyOutput {
 	private static Logger logger = LoggerFactory.getLogger(StatOutput.class);
 	
 	private long totalRows;
+	private long errorRows;
 	private long totalCostTime;
 	private boolean printLog;
 	
@@ -35,9 +36,17 @@ public class StatOutput extends ProxyOutput {
 	public long getTotalCostTime() {
 		return totalCostTime;
 	}
+	
+	public long getErrorRows() {
+		return errorRows;
+	}
 
 	public long getTps() {
 		return Util.getTPS(totalRows, totalCostTime);
+	}
+	
+	public double getErrorRate() {
+		return (double)errorRows / totalRows;
 	}
 	
 	public void setPrintLog(boolean printLog) {
@@ -53,6 +62,9 @@ public class StatOutput extends ProxyOutput {
 		
 		try {
 			super.write(rows);
+		}catch(RuntimeException e) {
+			errorRows += rowsSize;
+			throw e;
 		}finally {
 			long costTimeMills = System.currentTimeMillis() - start;
 	
@@ -73,7 +85,7 @@ public class StatOutput extends ProxyOutput {
 	@Override
 	public void close() throws Exception {
 		if(logger.isInfoEnabled()) {
-			logger.info("stat for write() totalCostTime:"+totalCostTime+" totalRows:"+totalRows+" tps:"+getTps());
+			logger.info("stat for write() totalCostTime:"+totalCostTime+" totalRows:"+totalRows+" tps:"+getTps()+" errorRows:"+errorRows);
 		}
 		super.close();
 	}
