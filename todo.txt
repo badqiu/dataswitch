@@ -8,13 +8,17 @@
 	retryTimeout, now retryTimeoutMills
 
 支持状态的storage
+	作用：存储状态，如kafka offset,计算数据的中间状态，如group by状态
+
 
 #MultiInput实现真正的并发读
 #MultiOutput实现并发写
 #增加使用spring AnnotationConfigApplicationContext
+JdbcInput实现读取数据为Bean
+JdbcOutput实现处理数据为Bean
 JdbcInput实现并发读，splitPk实现，可以提高读取的性能。 https://github.com/alibaba/DataX/blob/master/mysqlreader/doc/mysqlreader.md
 select实现 column rename,增加计算列等功能
-runner支持数据库配置变量
+runner支持数据库配置变量, Supply
 #集成runner with xstream
 xstream集成参数generator
 JdbcOutput replace数据时，其它数据库，使用insert or update by get data
