@@ -18,7 +18,7 @@ import com.github.dataswitch.util.TableName;
  * @author badqiu
  *
  */
-public class ExecutorServiceProvider extends BaseObject implements Openable,AutoCloseable,TableName{
+public class ExecutorServiceProvider extends BaseObject implements Openable,AutoCloseable{
 	
 	private int threadPoolSize = Constants.EXECUTOR_SERVICE_THREAD_POOL_SIZE;
 	
@@ -102,15 +102,6 @@ public class ExecutorServiceProvider extends BaseObject implements Openable,Auto
 
 	public void setExecutorService(ExecutorService executorService) {
 		this.executorService = executorService;
-	}
-
-	public void setTable(String table) {
-		setExecutorName(table);
-	}
-	
-	@Override
-	public String getTable() {
-		return getExecutorName();
 	}
 
 	public BiFunction<String, Integer, ExecutorService> getNewExecutorServiceFunction() {
