@@ -1,13 +1,11 @@
 package com.github.dataswitch.output;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 
 import com.github.dataswitch.BaseObject;
-import com.github.dataswitch.util.IOUtil;
 import com.github.dataswitch.util.InputOutputUtil;
 
 public class ProxyOutput extends BaseObject implements Output{
