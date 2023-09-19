@@ -18,7 +18,7 @@ public class TxtSerializerTest {
 	@Test
 	public void test() throws Exception {
 		ser.setColumns("name,birth_date");
-		ser.setColumnSplit(",");
+		ser.setColumnSeparator(",");
 		
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		Map map = MapUtil.newMap("name","badqiu","sex","f","birth_date",parse("1998-8-1 10:12:13", "yyyy-MM-dd HH:mm:ss"));

@@ -26,20 +26,20 @@ public class TxtFileOutput extends FileOutput {
 		txtSerializer.setColumns(columns);
 	}
 
-	public String getColumnSplit() {
-		return txtSerializer.getColumnSplit();
+	public String getColumnSeparator() {
+		return txtSerializer.getColumnSeparator();
 	}
 
-	public void setColumnSplit(String columnSplit) {
-		txtSerializer.setColumnSplit(columnSplit);
+	public void setColumnSeparator(String columnSeparator) {
+		txtSerializer.setColumnSeparator(columnSeparator);
 	}
 
 	public String getLineSplit() {
-		return txtSerializer.getLineSplit();
+		return txtSerializer.getLineSeparator();
 	}
 
 	public void setLineSplit(String lineSplit) {
-		txtSerializer.setLineSplit(lineSplit);
+		txtSerializer.setLineSeparator(lineSplit);
 	}
 
 	public String getCharset() {

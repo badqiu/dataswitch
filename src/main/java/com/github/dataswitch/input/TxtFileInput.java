@@ -12,12 +12,12 @@ public class TxtFileInput extends FileInput {
 		return (TxtDeserializer)getDeserializer();
 	}
 
-	public String getColumnSplit() {
-		return getTxtDeserializer().getColumnSplit();
+	public String getColumnSeparator() {
+		return getTxtDeserializer().getColumnSeparator();
 	}
 
-	public void setColumnSplit(String columnSplit) {
-		getTxtDeserializer().setColumnSplit(columnSplit);
+	public void setColumnSeparator(String columnSeparator) {
+		getTxtDeserializer().setColumnSeparator(columnSeparator);
 	}
 
 	public String getNullValue() {

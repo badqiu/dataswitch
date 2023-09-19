@@ -18,7 +18,7 @@ public class WriterOutputTest {
 	public void test() throws IOException {
 		List<Object> rows = TestUtil.newTestDatas(2);
 		output.setColumns("pwd, age,username");
-		output.setColumnSplit(",");
+		output.setColumnSeparator(",");
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		for(Object obj : rows) {
 			output.serialize(obj, out);

@@ -29,7 +29,7 @@ public class HttpOutputTest {
 		
 		output.setUrl("http://www.baidu.com");
 		TxtSerializer txt = new TxtSerializer();
-		txt.setColumnSplit(",");
+		txt.setColumnSeparator(",");
 		txt.setColumns("account,data");
 		output.setSerializer(txt);
 		output.open(null);
@@ -48,7 +48,7 @@ public class HttpOutputTest {
 		
 		output.setUrl("http://localhost:8080/userdata/importData.do?username=yuminxiong&password=iXZfu38dfdo20M8Odw9eJR5dfeQ2ogy4o0Oet4G&importMode=append&appId=lj&module=master");
 		TxtSerializer txt = new TxtSerializer();
-		txt.setColumnSplit(",");
+		txt.setColumnSeparator(",");
 		txt.setColumns("account,data");
 		output.setSerializer(txt);
 		output.open(null);

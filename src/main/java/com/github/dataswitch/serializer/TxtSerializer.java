@@ -27,8 +27,8 @@ public class TxtSerializer extends BaseObject implements Serializer<Object>,Flus
 	private String dateFormat = "yyyy-MM-dd HH:mm:ss";
 	
 	private String columns; // 输出列
-	private String columnSplit = Constants.COLUMN_SPLIT; //列分隔符
-	private String lineSplit = "\n"; //行分隔符
+	private String columnSeparator = Constants.COLUMN_SPLIT; //列分隔符
+	private String lineSeparator = System.getProperty("line.separator"); //行分隔符
 	private String charset;
 	
 	private String[] _columnNames;
@@ -38,10 +38,10 @@ public class TxtSerializer extends BaseObject implements Serializer<Object>,Flus
 	}
 	
 	public TxtSerializer(TxtSerializer so) {
-		setLineSplit(so.getLineSplit());
+		setLineSeparator(so.getLineSeparator());
 		setNullValue(so.getNullValue());
 		setColumns(so.getColumns());
-		setColumnSplit(so.getColumnSplit());
+		setColumnSeparator(so.getColumnSeparator());
 		setCharset(so.getCharset());
 	}
 
@@ -61,20 +61,20 @@ public class TxtSerializer extends BaseObject implements Serializer<Object>,Flus
 		this.columns = columns;
 	}
 
-	public String getColumnSplit() {
-		return columnSplit;
+	public String getColumnSeparator() {
+		return columnSeparator;
 	}
 
-	public void setColumnSplit(String columnSplit) {
-		this.columnSplit = columnSplit;
+	public void setColumnSeparator(String columnSeparator) {
+		this.columnSeparator = columnSeparator;
 	}
 
-	public String getLineSplit() {
-		return lineSplit;
+	public String getLineSeparator() {
+		return lineSeparator;
 	}
 
-	public void setLineSplit(String lineSplit) {
-		this.lineSplit = lineSplit;
+	public void setLineSeparator(String lineSplit) {
+		this.lineSeparator = lineSplit;
 	}
 	
 	public String getCharset() {
@@ -100,8 +100,8 @@ public class TxtSerializer extends BaseObject implements Serializer<Object>,Flus
 //				Object value = getValue(row, name);
 //				values.add(format(value));
 //			}
-//			out.write(StringUtils.join(values,columnSplit));
-//			out.write(lineSplit);
+//			out.write(StringUtils.join(values,columnSeparator));
+//			out.write(lineSeparator);
 //		}catch(IOException e) {
 //			throw new RuntimeException("write() error,id:"+getId(),e);
 //		}
@@ -111,7 +111,7 @@ public class TxtSerializer extends BaseObject implements Serializer<Object>,Flus
 		try {
 			String str = toLineString(row);
 			out.write(charset == null ? str.getBytes() : str.getBytes(charset));
-			out.write(lineSplit.getBytes());
+			out.write(lineSeparator.getBytes());
 		}catch(IOException e) {
 			throw new RuntimeException("write() error,id:"+getId(),e);
 		}
@@ -123,7 +123,7 @@ public class TxtSerializer extends BaseObject implements Serializer<Object>,Flus
 			Object value = getValue(row, name);
 			values.add(format(value));
 		}
-		return StringUtils.join(values,columnSplit);
+		return StringUtils.join(values,columnSeparator);
 	}
 
 	private Object getValue(Object row, String name) {

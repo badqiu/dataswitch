@@ -22,7 +22,7 @@ public class TxtDeserializer extends BaseObject implements Deserializer<Map>{
 	/**
 	 * 分隔符
 	 **/
-	private String columnSplit = Constants.COLUMN_SPLIT;
+	private String columnSeparator = Constants.COLUMN_SPLIT;
 	
 	/**
 	 * hive 的null 值特殊转义字符
@@ -52,17 +52,17 @@ public class TxtDeserializer extends BaseObject implements Deserializer<Map>{
 	public TxtDeserializer(TxtDeserializer in) {
 		this.setColumns(in.getColumns());
 		this.setNullValue(in.getNullValue());
-		this.setColumnSplit(in.getColumnSplit());
+		this.setColumnSeparator(in.getColumnSeparator());
 		this.setCharset(in.getCharset());
 		this.setSkipLines(in.getSkipLines());
 	}
 	
-	public String getColumnSplit() {
-		return columnSplit;
+	public String getColumnSeparator() {
+		return columnSeparator;
 	}
 
-	public void setColumnSplit(String columnSplit) {
-		this.columnSplit = columnSplit;
+	public void setColumnSeparator(String columnSeparator) {
+		this.columnSeparator = columnSeparator;
 	}
 
 	public String getNullValue() {
@@ -97,8 +97,8 @@ public class TxtDeserializer extends BaseObject implements Deserializer<Map>{
 		this.charset = charset;
 	}
 	
-	public TxtDeserializer columnSplit(String columnSplit) {
-		setColumnSplit(columnSplit);
+	public TxtDeserializer columnSeparator(String columnSeparator) {
+		setColumnSeparator(columnSeparator);
 		return this;
 	}
 	
@@ -123,12 +123,12 @@ public class TxtDeserializer extends BaseObject implements Deserializer<Map>{
 	}
 	
 	private Map toMap(String line,String[] columnNames) {
-		String[] columnValues = splitLine(line,columnSplit);
+		String[] columnValues = splitLine(line,columnSeparator);
 		return MapUtil.toMap(columnValues, columnNames);
 	}
 	
-	private String[] splitLine(String line, String columnSplit) {
-		String[] array = org.apache.commons.lang.StringUtils.splitPreserveAllTokens(line, columnSplit);
+	private String[] splitLine(String line, String columnSeparator) {
+		String[] array = org.apache.commons.lang.StringUtils.splitPreserveAllTokens(line, columnSeparator);
 		for (int i = 0; i < array.length; i++) {
 			if (nullValue.equals(array[i])) {
 				array[i] = null;
