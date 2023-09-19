@@ -18,6 +18,7 @@ runner支持数据库配置变量
 xstream集成参数generator
 JdbcOutput replace数据时，其它数据库，使用insert or update by get data
 支持每行数据增加RowKing(update,delete,insert,upsert)
+csv输出数据时，使用Map的自然顺序
 output能够感知到Input ???,或是感知至Input的columns DataType ???
 整库同步工具,或是用参数生成InputsOutputs ???
 InputsOutputs配置文件生成工具
