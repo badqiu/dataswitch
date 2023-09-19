@@ -200,6 +200,10 @@ public class DataIORunner {
 		
 		logger.info("execTaskById() taskId:"+taskId+" task:"+task);
 		
+		execTask(task,params);
+	}
+
+	private static void execTask(Object task,Map<String, Object> params) throws Exception {
 		if(task instanceof Function) {
 			Function<Map<String,Object>,Long> cmd = (Function)task;
 			cmd.apply(params);
@@ -212,7 +216,6 @@ public class DataIORunner {
 		}else {
 			throw new UnsupportedOperationException("task must imlements interface: Function<Map,Long> or Callable<Long> or Runnable. current task class:"+task.getClass());
 		}
-		
 	}
 	
 	public void systemExit(int status) {
