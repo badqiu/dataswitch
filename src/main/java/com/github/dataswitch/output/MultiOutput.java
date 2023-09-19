@@ -33,9 +33,8 @@ public class MultiOutput extends ExecutorServiceProvider  implements Output{
 	private FailMode failMode = FailMode.FAIL_FAST;
 	
 	private boolean concurrent = false; //并发写
-	
-	
 	private DataRouting dataRouting = DataRouting.ALL;
+	
 	private long _sequence = 0;
 	
 	public MultiOutput() {
