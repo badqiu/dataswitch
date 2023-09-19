@@ -13,13 +13,19 @@ import com.github.dataswitch.util.InputOutputUtil;
 public class ProxyOutput extends BaseObject implements Output{
 	
 	private Output proxy;
+	
+	private boolean autoFlush;
 
 	public ProxyOutput() {
 	}
 	
 	public ProxyOutput(Output proxy) {
-		super();
+		this(proxy,false);
+	}
+	
+	public ProxyOutput(Output proxy,boolean autoFlush) {
 		this.proxy = proxy;
+		this.autoFlush = autoFlush;
 	}
 
 	public Output getProxy() {
@@ -34,9 +40,21 @@ public class ProxyOutput extends BaseObject implements Output{
 		setProxy(proxy);
 	}
 	
+	public boolean isAutoFlush() {
+		return autoFlush;
+	}
+
+	public void setAutoFlush(boolean autoFlush) {
+		this.autoFlush = autoFlush;
+	}
+
 	public void write(List<Object> rows) {
 		if(CollectionUtils.isEmpty(rows)) return;
 		proxy.write(rows);
+		
+		if(autoFlush) {
+			flush();
+		}
 	}
 
 	@Override
@@ -45,7 +63,7 @@ public class ProxyOutput extends BaseObject implements Output{
 	}
 	
 	@Override
-	public void flush() throws IOException {
+	public void flush()  {
 		InputOutputUtil.flush(proxy);
 	}
 
