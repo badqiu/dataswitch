@@ -42,11 +42,7 @@ import com.github.dataswitch.util.ScriptEngineUtil;
  */
 public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callable<Long>,Function<Map<String,Object>, Long>,Openable,Closeable,InitializingBean,DisposableBean {
 
-
 	private static Logger logger = LoggerFactory.getLogger(InputsOutputs.class);
-	
-	private String desc; // 描述
-	private String author; // 作者
 	
 	private int batchSize = Constants.DEFAULT_BATCH_SIZE;
 	private int batchTimeout = Constants.DEFAULT_BATCH_TIMEOUT; //超时时间，时间单位毫秒
@@ -75,22 +71,8 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 	private String initScript; //初始化执行的脚本
 	private String destoryScript; //destory() 时执行的脚本
 	
-	public String getDesc() {
-		return desc;
-	}
 
-	public void setDesc(String desc) {
-		this.desc = desc;
-	}
 
-	public String getAuthor() {
-		return author;
-	}
-
-	public void setAuthor(String author) {
-		this.author = author;
-	}
-	
 	public void setInput(Input input) {
 		setInputs(input);
 	}
