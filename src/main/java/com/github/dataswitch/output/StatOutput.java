@@ -50,14 +50,18 @@ public class StatOutput extends ProxyOutput {
 		
 		int rowsSize = rows.size();
 		long start = System.currentTimeMillis();
-		super.write(rows);
-		long costTimeMills = System.currentTimeMillis() - start;
-
 		
-		totalRows += rowsSize;
-		totalCostTime += costTimeMills;
-		
-		printLogIfTrue(rowsSize, costTimeMills);
+		try {
+			super.write(rows);
+		}finally {
+			long costTimeMills = System.currentTimeMillis() - start;
+	
+			
+			totalRows += rowsSize;
+			totalCostTime += costTimeMills;
+			
+			printLogIfTrue(rowsSize, costTimeMills);
+		}
 	}
 
 	private void printLogIfTrue(long rowsSize, long costTimeMills) {
