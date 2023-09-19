@@ -22,7 +22,7 @@ public class InputOutputTest {
 		FileInput input = new FileInput();
 		TxtDeserializer deserializer = new TxtDeserializer();
 		deserializer.setColumns("id,username,age,sex");
-		deserializer.setColumnSplit(",");
+		deserializer.setColumnSeparator(",");
 		input.setDeserializer(deserializer);
 		input.setDirs(Arrays.asList(ResourceUtils.getFile("classpath:test/fileinput").getAbsolutePath()));
 		

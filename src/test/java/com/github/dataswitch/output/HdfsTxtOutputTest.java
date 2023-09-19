@@ -14,7 +14,7 @@ public class HdfsTxtOutputTest {
 		Map row = MapUtil.newMap("username","badqiu","age",20,"height",185);
 		HdfsTxtOutput output = new HdfsTxtOutput();
 		output.setColumns("username,age");
-		output.setColumnSplit(",");
+		output.setColumnSeparator(",");
 		output.setDir("/tmp/hdfs_txt_output_test/test");
 		output.setHdfsUri("hdfs://localhost:54310");
 		output.open(null);

@@ -50,7 +50,7 @@ public class BizFileInputTest {
 			input.setInclude(props.get("include"));
 			input.setColumns(props.get("columns"));
 			input.setSkipLines(1);
-			input.setColumnSplit("\t");
+			input.setColumnSeparator("\t");
 			input.setCharset("GBK");
 			List<Map> rows = MapHelper.one2ManyRows(input.read(10000),"日期");
 			MapHelper.allPutAll(rows,MapUtil.newMap("gameName",gameName));

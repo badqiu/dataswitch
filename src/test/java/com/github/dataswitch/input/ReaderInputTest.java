@@ -15,7 +15,7 @@ public class ReaderInputTest {
 	@Test
 	public void test() throws IOException {
 		input.setColumns("username, age,sex");
-		input.setColumnSplit(",");
+		input.setColumnSeparator(",");
 		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream("badqiu,20,F\njane,15,M".getBytes());
 		int count = 0;
 		while(true) {

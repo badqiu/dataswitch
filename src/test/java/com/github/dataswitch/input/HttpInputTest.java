@@ -16,7 +16,7 @@ public class HttpInputTest {
 		input.setUrl("http://www.163.com","http://www.baidu.com");
 		TxtDeserializer deserializer = new TxtDeserializer();
 		deserializer.setColumns("username, age");
-		deserializer.setColumnSplit(",");
+		deserializer.setColumnSeparator(",");
 		input.setDeserializer(deserializer);
 		TestUtil.printInputReadRows(input);
 	}

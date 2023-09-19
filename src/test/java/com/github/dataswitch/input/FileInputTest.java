@@ -45,7 +45,7 @@ public class FileInputTest {
 		FileInput input = new FileInput();
 		TxtDeserializer deserializer = new TxtDeserializer();
 		deserializer.setColumns(columns);
-		deserializer.setColumnSplit(",");
+		deserializer.setColumnSeparator(",");
 		input.setDeserializer(deserializer);
 		input.setDirs(Arrays.asList(ResourceUtils.getFile(file).getAbsolutePath()));
 		return input;
