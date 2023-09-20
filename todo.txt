@@ -10,7 +10,7 @@
 支持状态的storage
 	作用：存储状态，如kafka offset,计算数据的中间状态，如group by状态
 
-
+Processor里面支持if else or case when?
 #MultiInput实现真正的并发读
 #MultiOutput实现并发写
 #增加使用spring AnnotationConfigApplicationContext
