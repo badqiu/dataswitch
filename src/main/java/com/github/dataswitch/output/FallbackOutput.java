@@ -43,8 +43,11 @@ public class FallbackOutput extends ProxyOutput{
 		try {
 			super.write(rows);
 		}catch(Exception e) {
-			logger.warn("fallback write rows,fallback output:"+fallback+" rows.size:"+rows.size());
-			fallback.write(rows);
+			logger.warn("fallback write rows,fallback output:"+fallback+" rows.size:"+rows.size()+" exception:"+e);
+			
+			if(fallback != null) {
+				fallback.write(rows);
+			}
 		}
 	}
 	
