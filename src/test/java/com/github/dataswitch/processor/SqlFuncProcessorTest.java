@@ -57,19 +57,19 @@ public class SqlFuncProcessorTest {
 	
 	@Test
 	public void test_select() throws Exception {
-		List rows = newList(10);
+		List rows = newListWithName(10);
 		
 		p.setSelect("name");
 		p.open(null);
 		List results = p.process(rows);
 		System.out.println(results);
-		assertEquals("[{}, {}, {}, {}, {}, {}, {}, {}, {}, {}]",results.toString());
+		assertEquals("[{name=n10}, {name=n9}, {name=n8}, {name=n7}, {name=n6}, {name=n5}, {name=n4}, {name=n3}, {name=n2}, {name=n1}]",results.toString());
 		
 		p.setSelect("count,name");
 		p.open(null);
 		results = p.process(rows);
 		System.out.println(results);
-		assertEquals("[{count=0}, {count=1}, {count=2}, {count=3}, {count=4}, {count=5}, {count=6}, {count=7}, {count=8}, {count=9}]",results.toString());
+		assertEquals("[{count=0, name=n10}, {count=1, name=n9}, {count=2, name=n8}, {count=3, name=n7}, {count=4, name=n6}, {count=5, name=n5}, {count=6, name=n4}, {count=7, name=n3}, {count=8, name=n2}, {count=9, name=n1}]",results.toString());
 	}
 	
 	@Test

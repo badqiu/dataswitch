@@ -2,6 +2,7 @@ package com.github.dataswitch.processor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -212,6 +213,16 @@ public class SqlFuncProcessor extends BaseProcessor{
 	}
 
 	private Object selectByKeys(Map map,String[] keys) {
+//		if(true) {
+//			Map result = new HashMap();
+//			for(String key : keys) {
+//				Object value = MVEL.eval(key,map);
+//				result.put(key,value);
+//			}
+//			return result;
+//		}
+		
+		
 		Map result = new LinkedHashMap(keys.length * 2);
 		for(String key : keys) {
 			Object value = map.get(key);
