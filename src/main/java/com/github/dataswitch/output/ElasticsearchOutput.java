@@ -218,6 +218,7 @@ public class ElasticsearchOutput implements Output,TableName{
 				throw new IllegalArgumentException("not found id value by primaryKeys:"+primaryKeys+" on row:"+row);
 			}
 			UpdateRequest request = new UpdateRequest(index,id);
+			request.doc(row);
 			return request;
 		}else if(outputMode == OutputMode.delete) {
 			String id = getIdFromData(row);
