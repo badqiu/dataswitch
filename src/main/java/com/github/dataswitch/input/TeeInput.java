@@ -70,8 +70,8 @@ public class TeeInput extends ProxyInput{
 	}
 
 	@Override
-	public List<Object> read(int size) {
-		List<Object> result =  super.read(size);
+	public List<Map<String, Object>> read(int size) {
+		List<Map<String, Object>> result =  super.read(size);
 		
 		failMode.forEach(branchs, branch -> {
 			branch.write(result);

@@ -54,7 +54,7 @@ public class RocketMqInput implements Input,TableName{
 
     
     
-	private BlockingQueue<Object> _queue = new ArrayBlockingQueue<Object>(1000);
+	private BlockingQueue<Map<String, Object>> _queue = new ArrayBlockingQueue<Map<String, Object>>(1000);
 	
 	private ClientServiceProvider _clientServiceProvider;
 	private ClientConfiguration _clientConfiguration;
@@ -162,7 +162,7 @@ public class RocketMqInput implements Input,TableName{
 	            .setMessageListener(messageView -> {
 	            	
 	                try {
-	                	Object value = processMsg(messageView);
+	                	Map<String,Object> value = processMsg(messageView);
 	                	
 	                	if(value != null) {
 	                		_queue.put(value);
@@ -204,7 +204,7 @@ public class RocketMqInput implements Input,TableName{
 	}
 	
 	@Override
-	public List<Object> read(int size) {
+	public List<Map<String, Object>> read(int size) {
 		try {
 			return read0(size);
 		}catch(Exception e) {
@@ -212,16 +212,16 @@ public class RocketMqInput implements Input,TableName{
 		}
 	}
 
-	private List<Object> read0(int size) throws InterruptedException  {
-		List<Object> messages = QueueUtil.batchTake(_queue,size, asyncReadTimeout);
+	private List<Map<String, Object>> read0(int size) throws InterruptedException  {
+		List<Map<String, Object>> messages = QueueUtil.batchTake(_queue,size, asyncReadTimeout);
 		return messages;
 	}
 
-	protected Object processMsg(MessageView msg) throws JsonParseException, JsonMappingException, IOException {
+	protected Map<String, Object> processMsg(MessageView msg) throws JsonParseException, JsonMappingException, IOException {
 		byte[] array = msg.getBody().array();
 		if(ArrayUtils.isEmpty(array)) return null;
 		
-		return objectMapper.readValue(array, valueType);
+		return (Map)objectMapper.readValue(array, valueType);
 	}
 
 

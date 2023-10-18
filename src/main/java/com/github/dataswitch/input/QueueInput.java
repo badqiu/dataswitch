@@ -1,6 +1,7 @@
 package com.github.dataswitch.input;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
 import com.github.dataswitch.output.QueueOutput;
@@ -12,7 +13,7 @@ public class QueueInput extends QueueProvider implements Input{
 		super();
 	}
 
-	public QueueInput(BlockingQueue<List<Object>> queue) {
+	public QueueInput(BlockingQueue<List<Map<String, Object>>> queue) {
 		super(queue);
 	}
 
@@ -21,7 +22,7 @@ public class QueueInput extends QueueProvider implements Input{
 	}
 
 	@Override
-	public List<Object> read(int size) {
+	public List<Map<String, Object>> read(int size) {
 		try {
 			return getQueue().take();
 		} catch (InterruptedException e) {

@@ -106,7 +106,7 @@ public class MultiInput extends ExecutorServiceProvider implements Input{
 	}
 
 	@Override
-	public List<Object> read(final int size) {
+	public List<Map<String, Object>> read(final int size) {
 		if(concurrent) {
 			try {
 				return concurrentRead(size);
@@ -121,7 +121,7 @@ public class MultiInput extends ExecutorServiceProvider implements Input{
 	}
 
 	private boolean[] _inputReadEnd = null;
-	protected List<Object> concurrentRead(final int size) throws InterruptedException, ExecutionException {
+	protected List<Map<String, Object>> concurrentRead(final int size) throws InterruptedException, ExecutionException {
 		List all = new ArrayList();
 		
 		for(int i = 0; i < inputs.size(); i++) {
@@ -150,7 +150,7 @@ public class MultiInput extends ExecutorServiceProvider implements Input{
 	}
 	
 
-	private List<Object> sequenceRead(int size) {
+	private List<Map<String, Object>> sequenceRead(int size) {
 		if(_currentInput == null) {
 			int i = _currentIndex.get();
 			if(i >= inputs.size()) {
@@ -161,7 +161,7 @@ public class MultiInput extends ExecutorServiceProvider implements Input{
 			_currentIndex.incrementAndGet();
 		}
 		
-		List<Object> result = _currentInput.read(size);
+		List<Map<String, Object>> result = _currentInput.read(size);
 		if(CollectionUtils.isEmpty(result)) {
 			_currentInput = null;
 			return read(size);

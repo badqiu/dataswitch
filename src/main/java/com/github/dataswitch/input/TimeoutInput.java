@@ -2,6 +2,7 @@ package com.github.dataswitch.input;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 
 import com.github.dataswitch.output.Output;
 
@@ -44,7 +45,7 @@ public class TimeoutInput extends ProxyInput{
 	}
 	
 	@Override
-	public List read(int size) {
+	public List<Map<String, Object>> read(int size) {
 		throwTimeoutExceptionIfTrue();
 		
 		if(_startTime == 0) {

@@ -1,7 +1,7 @@
 package com.github.dataswitch.processor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -24,9 +24,11 @@ public class JsonProcessor extends BaseProcessor implements Processor{
 	}
 
 	@Override
-	protected Object processOne(Object row) throws Exception {
+	protected Map<String, Object> processOne(Map<String,Object> row) throws Exception {
 		String str = objectMapper.writeValueAsString(row);
-		return str;
+		Map map = new HashMap();
+		map.put("json", str);
+		return map;
 	}
 
 }

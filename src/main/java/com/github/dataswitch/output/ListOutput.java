@@ -2,6 +2,7 @@ package com.github.dataswitch.output;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 
@@ -17,7 +18,7 @@ public class ListOutput implements Output{
 	}
 
 	@Override
-	public void write(List<Object> rows) {
+	public void write(List<Map<String, Object>> rows) {
 		if(CollectionUtils.isEmpty(rows)) return;
 		
 		list.addAll(rows);

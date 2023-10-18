@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +24,7 @@ public class ScriptOutputTest {
 			}
 
 			@Override
-			public void write(List<Object> rows) {
+			public void write(List<Map<String, Object>> rows) {
 				System.out.println("debug:"+rows);
 				debugOutputExecute = true;
 			}
@@ -31,7 +32,7 @@ public class ScriptOutputTest {
 	}
 	@Test
 	public void test() throws Exception {
-		List<Object> rows = TestUtil.newTestDatas(20);
+		List<Map<String,Object>> rows = TestUtil.newTestDatas(20);
 		output.setLanguage("groovy");
 		output.setBeforeScript("System.out.println('before executed'); this.beforeVar = ' beforeValue';");
 		output.setScript("System.out.println(username+' pwd:' + pwd + beforeVar);");
@@ -48,7 +49,7 @@ public class ScriptOutputTest {
 	public void test_with_output() throws Exception {
 		
 		
-		List<Object> rows = TestUtil.newTestDatas(20);
+		List<Map<String,Object>> rows = TestUtil.newTestDatas(20);
 		output.setLanguage("groovy");
 		output.setBeforeScript("System.out.println('before executed'); this.beforeVar = ' beforeValue';");
 		output.setScript("System.out.println(username+' pwd:' + pwd + beforeVar); output.write([username])");

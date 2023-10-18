@@ -82,7 +82,7 @@ public class AsyncOutput extends ProxyOutput{
 	}
 
 	@Override
-	public void write(List<Object> rows)  {
+	public void write(List<Map<String, Object>> rows)  {
 		if(CollectionUtils.isEmpty(rows)) return;
 		
 		if(FailMode.FAIL_FAST == failMode && lastException != null) {

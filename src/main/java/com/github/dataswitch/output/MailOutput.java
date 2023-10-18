@@ -173,7 +173,7 @@ public class MailOutput extends BaseObject implements Output{
 	}
 
 	@Override
-	public void write(List<Object> rows) {
+	public void write(List<Map<String, Object>> rows) {
 		this.rows.addAll(rows);
 	}
 

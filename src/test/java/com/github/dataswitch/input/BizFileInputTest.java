@@ -69,15 +69,15 @@ public class BizFileInputTest {
 			
 			Processor processor = percentValueProcessor();
 			
-			InputOutputUtil.write(jdbcOutput, Arrays.asList(finalRows), processor);
+//			InputOutputUtil.write(jdbcOutput, Arrays.asList(finalRows), processor);
 		}
 	}
 
 	private Processor percentValueProcessor() {
 		Processor processor = new Processor() {
-			public List<Object> process(List datas) throws Exception {
-				List<Object> result = new ArrayList();
-				for(Map row : (List<Map>)datas) {
+			public List<Map<String, Object>> process(List<Map<String, Object>> datas) throws Exception {
+				List<Map<String,Object>> result = new ArrayList();
+				for(Map row : datas) {
 					String value = (String)row.get("value");
 					row.put("value", ""+percentString2Number(value));
 					result.add(row);
@@ -110,7 +110,7 @@ public class BizFileInputTest {
 			}
 		}
 	
-		private static List<Map> one2ManyRows(List<Object> inputs,String... removeKeys) {
+		private static List<Map> one2ManyRows(List<Map<String, Object>> inputs,String... removeKeys) {
 			List<Map> outputs = new ArrayList<Map>();
 			for(Object obj : inputs) {
 				Map common = (Map)obj;

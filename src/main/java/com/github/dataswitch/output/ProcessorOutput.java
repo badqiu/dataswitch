@@ -40,7 +40,7 @@ public class ProcessorOutput extends ProxyOutput {
 	}
 
 	@Override
-	public void write(List<Object> rows) {
+	public void write(List<Map<String, Object>> rows) {
 		try {
 			List newRows = _multiProcessor.process(rows);
 			getProxy().write(newRows);

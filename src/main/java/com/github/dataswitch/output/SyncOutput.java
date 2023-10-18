@@ -1,6 +1,7 @@
 package com.github.dataswitch.output;
 
 import java.util.List;
+import java.util.Map;
 
 public class SyncOutput extends ProxyOutput{
 
@@ -13,7 +14,7 @@ public class SyncOutput extends ProxyOutput{
 	}
 
 	@Override
-	public synchronized void write(List<Object> rows) {
+	public synchronized void write(List<Map<String, Object>> rows) {
 		super.write(rows);
 	}
 	

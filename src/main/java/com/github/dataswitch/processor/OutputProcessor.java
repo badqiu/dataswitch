@@ -25,7 +25,7 @@ public class OutputProcessor implements Processor {
 	}
 
 	@Override
-	public List<Object> process(List<Object> datas) throws Exception {
+	public List<Map<String, Object>> process(List<Map<String, Object>> datas) throws Exception {
 		output.write(datas);
 		return datas;
 	}

@@ -1,6 +1,7 @@
 package com.github.dataswitch.processor;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.github.dataswitch.util.Util;
@@ -13,21 +14,21 @@ import com.github.dataswitch.util.Util;
 public class UnderscoreKeyNameMapProcessor extends BaseProcessor{
 
 	@Override
-	protected Object processOne(Object row) throws Exception {
+	protected Map<String,Object> processOne(Map<String,Object> row) throws Exception {
 		if(row == null) return null;
 		
 		if(row instanceof Map) {
 			return processMap((Map)row);
 		}
 		
-		return row;
+		return (Map)row;
 	}
 
-	private Object processMap(Map<String,Object> row) {
+	private Map<String,Object> processMap(Map<String,Object> row) {
 		return keyUnderscoreName(row);
 	}
 
-	private Object keyUnderscoreName(Map<String, Object> row) {
+	private Map<String, Object> keyUnderscoreName(Map<String, Object> row) {
 		Map<String,Object> r = new LinkedHashMap();
 		row.forEach((key,value) -> {
 			r.put(Util.underscoreName(key), value);

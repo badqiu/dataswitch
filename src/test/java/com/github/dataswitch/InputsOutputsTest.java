@@ -2,14 +2,15 @@ package com.github.dataswitch;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
 import com.github.dataswitch.input.Input;
 import com.github.dataswitch.output.Output;
+import com.github.dataswitch.util.MapUtil;
 import com.github.dataswitch.util.ThreadUtil;
 
 public class InputsOutputsTest {
@@ -35,17 +36,17 @@ public class InputsOutputsTest {
 		
 		job.setInput(new Input() {
 			@Override
-			public List read(int size) {
+			public synchronized List<Map<String, Object>> read(int size) {
 				count++;
 				ThreadUtil.sleep(10);
 				if(count >= 100) return null;
-				return Arrays.asList(count);
+				return Arrays.asList(MapUtil.newMap("count",count));
 			}
 		});
 		
 		job.setOutput(new Output() {
 			@Override
-			public void write(List<Object> rows) {
+			public synchronized void write(List<Map<String, Object>> rows) {
 				for(Object row : rows) {
 					System.out.println(row);
 					writeCount++;

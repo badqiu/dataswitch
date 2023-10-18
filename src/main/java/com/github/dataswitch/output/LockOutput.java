@@ -33,7 +33,7 @@ public class LockOutput extends LockProvider implements Output {
 		setProxy(proxy);
 	}
 	
-	public void write(List<Object> rows) {
+	public void write(List<Map<String, Object>> rows) {
 		if(CollectionUtils.isEmpty(rows)) return;
 		
 		Lock lock = getLock();

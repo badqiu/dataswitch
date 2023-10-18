@@ -63,13 +63,13 @@ public class BufferedInput extends ProxyInput{
 	}
 
 	@Override
-	public List<Object> read(int size) {
+	public List<Map<String, Object>> read(int size) {
 		if(_reachEnd) {
 			return Collections.EMPTY_LIST;
 		}
 		
 		
-		List<Object> list = super.read(size);
+		List<Map<String, Object>> list = super.read(size);
 		if(CollectionUtils.isEmpty(list)) {
 			_reachEnd = true;
 			return returnBufferList();
@@ -96,7 +96,7 @@ public class BufferedInput extends ProxyInput{
 		return interval > batchTimeout;
 	}
 
-	private List<Object> returnBufferList() {
+	private List<Map<String, Object>> returnBufferList() {
 		List result = _bufferList;
 		_bufferList = new ArrayList(batchSize);
 		

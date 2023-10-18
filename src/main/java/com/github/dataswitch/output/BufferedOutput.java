@@ -26,7 +26,7 @@ public class BufferedOutput extends ProxyOutput{
 	private long batchTimeout = 0;
 	
 	private long lastSendTime = System.currentTimeMillis();
-	private List<Object> bufferList = new ArrayList<Object>();
+	private List<Map<String, Object>> bufferList = new ArrayList<Map<String, Object>>();
 	
 	private boolean init = false;
 	
@@ -47,7 +47,7 @@ public class BufferedOutput extends ProxyOutput{
 		}
 		setBatchSize(batchSize);
 		setBatchTimeout(batchTimeout);
-		bufferList = new ArrayList<Object>(batchSize);
+		bufferList = new ArrayList<Map<String, Object>>(batchSize);
 	}
 	
 	public void setBatchSize(int batchSize) {
@@ -59,7 +59,7 @@ public class BufferedOutput extends ProxyOutput{
 	}
 
 	@Override
-	public void write(List<Object> rows) {
+	public void write(List<Map<String, Object>> rows) {
 		if(CollectionUtils.isEmpty(rows)) return;
 		
 		bufferList.addAll(rows);
@@ -86,8 +86,8 @@ public class BufferedOutput extends ProxyOutput{
 			return;
 		}
 		
-		List<Object> tempBuf = bufferList;
-		bufferList = new ArrayList<Object>(batchSize);
+		List<Map<String, Object>> tempBuf = bufferList;
+		bufferList = new ArrayList<Map<String, Object>>(batchSize);
 		try {
 			super.write(tempBuf);
 		}finally {

@@ -139,7 +139,7 @@ public class JdbcInput extends DataSourceProvider implements Input,TableName{
 	}
 	
 	@Override
-	public List<Object> read(int size) { // TODO 可以继承BaseInput,删除该方法
+	public List<Map<String, Object>> read(int size) { // TODO 可以继承BaseInput,删除该方法
 		
 		long start = System.currentTimeMillis();
 		List result = new ArrayList<Map>();

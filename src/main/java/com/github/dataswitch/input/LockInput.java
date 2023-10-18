@@ -44,7 +44,7 @@ public class LockInput extends LockProvider implements Input {
 	}
 	
 	@Override
-	public List<Object> read(int size) {
+	public List<Map<String, Object>> read(int size) {
 		Lock lock = getLock();
 		try {
 			lock.lock();

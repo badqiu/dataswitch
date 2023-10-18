@@ -45,7 +45,7 @@ public class JdbcOutputTest {
 		output.setBeforeSql("delete from user");
 		output.setSql("insert into user (id,username) values(:id,:username)");
 		output.open(new HashMap());
-		List<Object> inputRows = TestUtil.newTestDatas(20);
+		List<Map<String,Object>> inputRows = TestUtil.newTestDatas(20);
 		output.write(inputRows);
 		
 		List<Map<String,Object>> rows = new JdbcTemplate(ds).queryForList("select * from user");
@@ -61,7 +61,7 @@ public class JdbcOutputTest {
 		output.setBeforeSql("delete from user");
 		output.setSql("insert into user (id,username) values(:id,:username)");
 		output.open(new HashMap());
-		List<Object> inputRows = TestUtil.newTestDatas(20);
+		List<Map<String,Object>> inputRows = TestUtil.newTestDatas(20);
 		output.write(inputRows);
 		
 		List<Map<String,Object>> rows = new JdbcTemplate(ds).queryForList("select * from user");
@@ -108,7 +108,7 @@ public class JdbcOutputTest {
 		output.setTable("user");
 		output.setAutoAlterTableAddColumn(true);
 		output.open(new HashMap());
-		List<Object> inputRows = TestUtil.newTestDatas(20);
+		List<Map<String,Object>> inputRows = TestUtil.newTestDatas(20);
 		output.write(inputRows);
 		
 		List<Map<String,Object>> rows = new JdbcTemplate(ds).queryForList("select * from user");
@@ -126,7 +126,7 @@ public class JdbcOutputTest {
 		output.columnsFrom(ColumnsFrom.table);
 		output.open(new HashMap());
 		
-		List<Object> inputRows = TestUtil.newTestDatas(20);
+		List<Map<String,Object>> inputRows = TestUtil.newTestDatas(20);
 		output.write(inputRows);
 		
 		List<Map<String,Object>> rows = new JdbcTemplate(ds).queryForList("select * from user");
@@ -147,7 +147,7 @@ public class JdbcOutputTest {
 //		output.setPrimaryKeys("id");
 		output.open(new HashMap());
 		
-		List<Object> inputRows = TestUtil.newTestDatas(20);
+		List<Map<String,Object>> inputRows = TestUtil.newTestDatas(20);
 		output.write(inputRows);
 		
 		List<Map<String,Object>> rows = new JdbcTemplate(ds).queryForList("select * from user");
@@ -166,7 +166,7 @@ public class JdbcOutputTest {
 //		output.setPrimaryKeys("id");
 		output.open(new HashMap());
 		
-		List<Object> inputRows = TestUtil.newTestDatas(20);
+		List<Map<String,Object>> inputRows = TestUtil.newTestDatas(20);
 		output.write(inputRows);
 		
 		List<Map<String,Object>> rows = new JdbcTemplate(ds).queryForList("select * from user");
@@ -185,7 +185,7 @@ public class JdbcOutputTest {
 		output.setPrimaryKeys("id");
 		output.open(new HashMap());
 		
-		List<Object> inputRows = TestUtil.newTestDatas(20);
+		List<Map<String,Object>> inputRows = TestUtil.newTestDatas(20);
 		for(OutputMode outputMode : OutputMode.values()) {
 			output.outputMode(outputMode);
 			try {

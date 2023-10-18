@@ -12,7 +12,7 @@ import javax.script.ScriptEngine;
  */
 public class DefaultProcessor implements Processor {
 
-	public List<Object> process(List<Object> datas) {
+	public List<Map<String, Object>> process(List<Map<String, Object>> datas) {
 		return datas;
 	}
 

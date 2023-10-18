@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import com.github.dataswitch.input.QueueInput;
 import com.github.dataswitch.util.InputOutputUtil;
+import com.github.dataswitch.util.MapUtil;
 import com.github.dataswitch.util.ThreadUtil;
 
 public class QueueOutputTest {
@@ -28,7 +29,7 @@ public class QueueOutputTest {
 	private void testQueueReadWrite(QueueOutput output, QueueInput input) {
 		int count = 20;
 		for(int i = 0; i < count; i++) {
-			output.write(Arrays.asList(i));
+			output.write(Arrays.asList(MapUtil.newMap("i",i)));
 		}
 		
 		StatOutput statOutput = new StatOutput(new PrintOutput());

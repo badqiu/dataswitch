@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -16,7 +17,7 @@ public class WriterOutputTest {
 	TxtSerializer output = new  TxtSerializer();
 	@Test
 	public void test() throws IOException {
-		List<Object> rows = TestUtil.newTestDatas(2);
+		List<Map<String,Object>> rows = TestUtil.newTestDatas(2);
 		output.setColumns("pwd, age,username");
 		output.setColumnSeparator(",");
 		ByteArrayOutputStream out = new ByteArrayOutputStream();

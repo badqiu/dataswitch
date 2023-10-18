@@ -3,6 +3,7 @@ package com.github.dataswitch.input;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Map;
 
 import com.github.dataswitch.output.Output;
 
@@ -23,7 +24,7 @@ public class OutputStreamOutput implements Output{
 	}
 
 	@Override
-	public void write(List<Object> rows){
+	public void write(List<Map<String, Object>> rows){
 		try {
 			for(Object row : rows) {
 				if(row == null) continue;

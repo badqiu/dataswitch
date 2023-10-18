@@ -22,12 +22,12 @@ public class QueueProvider extends BaseObject implements Openable,TableName{
 	
 	private BiFunction<String, Integer, BlockingQueue> newQueueFunction;
 
-	private BlockingQueue<List<Object>> queue = null;
+	private BlockingQueue<List<Map<String, Object>>> queue = null;
 	
 	public QueueProvider() {
 	}
 	
-	public QueueProvider(BlockingQueue<List<Object>> queue) {
+	public QueueProvider(BlockingQueue<List<Map<String, Object>>> queue) {
 		this.queue = queue;
 	}
 
@@ -95,11 +95,11 @@ public class QueueProvider extends BaseObject implements Openable,TableName{
 		return getQueueName();
 	}
 
-	public BlockingQueue<List<Object>> getQueue() {
+	public BlockingQueue<List<Map<String, Object>>> getQueue() {
 		return queue;
 	}
 
-	public void setQueue(BlockingQueue<List<Object>> queue) {
+	public void setQueue(BlockingQueue<List<Map<String, Object>>> queue) {
 		this.queue = queue;
 	}
 

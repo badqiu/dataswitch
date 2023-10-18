@@ -46,7 +46,7 @@ public class ObjectMethodInput extends BaseObject  implements Input{
 	}
 
 	@Override
-	public List<Object> read(int size) {
+	public List<Map<String, Object>> read(int size) {
 		if(invoked) {
 			return null;
 		}
@@ -62,7 +62,7 @@ public class ObjectMethodInput extends BaseObject  implements Input{
 		} 
 	}
 	
-	private List<Object> convert2List(Object result) {
+	private List<Map<String, Object>> convert2List(Object result) {
 		if(result == null)
 			return null;
 		if(result.getClass().isArray()) {

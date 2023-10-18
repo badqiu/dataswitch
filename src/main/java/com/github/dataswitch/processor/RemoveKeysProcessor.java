@@ -20,7 +20,7 @@ public class RemoveKeysProcessor extends BaseProcessor {
 	}
 
 	@Override
-	protected Object processOne(Object row) throws Exception {
+	protected Map<String,Object> processOne(Map<String,Object> row) throws Exception {
 		if(row == null) return null;
 		
 		Map map = (Map)row;
@@ -28,7 +28,7 @@ public class RemoveKeysProcessor extends BaseProcessor {
 		return processMap(map);
 	}
 
-	private Object processMap(Map map) {
+	private Map<String,Object> processMap(Map map) {
 		for(String key : _keysArray) {
 			map.remove(key);
 		}

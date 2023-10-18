@@ -160,9 +160,9 @@ public class InputOutputUtil {
 	 * @param batchSize 每次读的批量大小
 	 * @return
 	 */
-	public static List<Object> readFully(Input input,int batchSize) {
-		List<Object> result = new ArrayList<Object>(batchSize);
-		List<Object> rows = null;
+	public static List<Map<String, Object>> readFully(Input input,int batchSize) {
+		List<Map<String, Object>> result = new ArrayList(batchSize);
+		List<Map<String, Object>> rows = null;
 		while(CollectionUtils.isNotEmpty((rows = input.read(batchSize)))) {
 			result.addAll(rows);
 		}
@@ -253,7 +253,7 @@ public class InputOutputUtil {
 		Exception lastException = null;
 		
 		long count = 0;
-		List<Object> rows = null;
+		List<Map<String, Object>> rows = null;
 		long readCostSum = 0;
 		long writeCostSum = 0;
 		try {
@@ -319,12 +319,12 @@ public class InputOutputUtil {
 	 * write数据
 	 * @return 写的数据量
 	 */
-	public static int write(Output output, List<Object> rows,Processor processor) throws Exception {
+	public static int write(Output output, List<Map<String, Object>> rows,Processor processor) throws Exception {
 		if(CollectionUtils.isEmpty((rows))) {
 			return 0;
 		}
 		
-		List<Object> processedRows = processor == null ? rows : processor.process(rows);
+		List<Map<String, Object>> processedRows = processor == null ? rows : processor.process(rows);
 		if(CollectionUtils.isEmpty(processedRows)) {
 			return 0;
 		}

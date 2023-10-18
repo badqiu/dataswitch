@@ -1,6 +1,7 @@
 package com.github.dataswitch.output;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -14,7 +15,7 @@ public class QueueOutput extends QueueProvider implements Output{
 		super();
 	}
 
-	public QueueOutput(BlockingQueue<List<Object>> queue) {
+	public QueueOutput(BlockingQueue<List<Map<String, Object>>> queue) {
 		super(queue);
 	}
 
@@ -23,7 +24,7 @@ public class QueueOutput extends QueueProvider implements Output{
 	}
 
 	@Override
-	public void write(List<Object> rows) {
+	public void write(List<Map<String, Object>> rows) {
 		if(CollectionUtils.isEmpty(rows)) return;
 		
 		try {

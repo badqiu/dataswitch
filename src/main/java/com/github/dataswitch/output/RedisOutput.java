@@ -58,7 +58,7 @@ public class RedisOutput extends BaseObject implements Output{
 	}
 
 	@Override
-	public void write(List<Object> rows) {
+	public void write(List<Map<String, Object>> rows) {
 		if(CollectionUtils.isEmpty(rows)) return;
 		
 		try {
@@ -78,7 +78,7 @@ public class RedisOutput extends BaseObject implements Output{
 		jedisPool = new JedisPool(url);
 	}
 	
-	public static void batchRedis(JedisPool jedisPool,final List<Object> datas,final Map globalContext, final String script) throws Exception {
+	public static void batchRedis(JedisPool jedisPool,final List<Map<String, Object>> datas,final Map globalContext, final String script) throws Exception {
 		Assert.hasText(script,"script must be not empty");
 		Assert.notNull(jedisPool,"jedisPool must be not null");
 		RedisTemplate template = new RedisTemplate(jedisPool);

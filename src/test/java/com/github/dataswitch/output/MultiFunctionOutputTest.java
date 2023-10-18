@@ -1,8 +1,12 @@
 package com.github.dataswitch.output;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
+
+import com.github.dataswitch.util.MapUtil;
 
 public class MultiFunctionOutputTest {
 
@@ -25,10 +29,18 @@ public class MultiFunctionOutputTest {
 		
 		output.open(null);
 		
-		output.write(Arrays.asList(1,2,3,4,5));
+		output.write(newMaps(5));
 		
 		Thread.sleep(3000);
 		output.close();
+	}
+
+	private List<Map<String, Object>> newMaps(int size) {
+		List<Map<String,Object>> r = new ArrayList<Map<String,Object>>();
+		for(int i = 0; i < size; i++) {
+			r.add(MapUtil.newMap("i",i));
+		}
+		return r;
 	}
 
 }

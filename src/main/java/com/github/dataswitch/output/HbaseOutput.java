@@ -218,7 +218,7 @@ public class HbaseOutput extends HbaseProvider implements Output{
 	}
 	
 	@Override
-	public void write(List<Object> rows) {
+	public void write(List<Map<String, Object>> rows) {
 		if(CollectionUtils.isEmpty(rows)) return;
 		
 		for(Object row : rows) {

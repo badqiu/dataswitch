@@ -116,7 +116,7 @@ public class SqlFuncProcessor extends BaseProcessor{
 	}
 
 	@Override
-	public List<Object> process(List<Object> datas) throws Exception {
+	public List<Map<String, Object>> process(List<Map<String, Object>> datas) throws Exception {
 		List<Map> list = (List)super.process(datas);
 		
 		list = groupBy(list);
@@ -162,7 +162,7 @@ public class SqlFuncProcessor extends BaseProcessor{
 	}
 
 	@Override
-	protected Object processOne(Object row) throws Exception {
+	protected Map<String,Object> processOne(Map<String,Object> row) throws Exception {
 		if(row == null) return null;
 		
 		Map map = (Map)row;
@@ -170,7 +170,7 @@ public class SqlFuncProcessor extends BaseProcessor{
 		return processMap(map);
 	}
 
-	private Object processMap(Map map) {
+	private Map<String,Object> processMap(Map map) {
 		if(offset > 0) {
 			_OffsetCount++;
 			if(_OffsetCount <= offset) {
@@ -212,7 +212,7 @@ public class SqlFuncProcessor extends BaseProcessor{
 		return map;
 	}
 
-	private Object selectByKeys(Map map,String[] keys) {
+	private Map<String,Object> selectByKeys(Map map,String[] keys) {
 //		if(true) {
 //			Map result = new HashMap();
 //			for(String key : keys) {

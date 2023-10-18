@@ -2,6 +2,7 @@ package com.github.dataswitch.output;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.util.Assert;
 
@@ -65,7 +66,7 @@ public class RetryOutput extends ProxyOutput {
 	}
 	
 	@Override
-	public void write(List<Object> rows) {
+	public void write(List<Map<String, Object>> rows) {
 
 		Retry.retry(retryTimes, retryIntervalMills,retryTimeoutMills, () -> {
 			super.write(rows);

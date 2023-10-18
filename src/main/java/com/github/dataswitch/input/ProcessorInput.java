@@ -40,7 +40,7 @@ public class ProcessorInput extends ProxyInput {
 	}
 
 	@Override
-	public List read(int size) {
+	public List<Map<String, Object>> read(int size) {
 		try {
 			List list = getProxy().read(size);
 			if(CollectionUtils.isEmpty(list)) {

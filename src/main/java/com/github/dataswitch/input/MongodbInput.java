@@ -107,7 +107,7 @@ public class MongodbInput extends MongodbProvider implements Input {
 	}
 
 	@Override
-	public List<Object> read(int size) {
+	public List<Map<String, Object>> read(int size) {
 		List<Map> results = new ArrayList<Map>(size);
 		for(int i = 0; _mongoCursor.hasNext() && i < size; i++) {
 			Document doc = _mongoCursor.next();

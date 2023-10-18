@@ -37,7 +37,7 @@ public class LoggerOutput extends BaseObject implements Output {
 	}
 
 	@Override
-	public void write(List<Object> rows) {
+	public void write(List<Map<String, Object>> rows) {
 		if(rows == null) return;
 		
 		for(Object row : rows) {

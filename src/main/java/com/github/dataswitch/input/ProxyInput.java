@@ -35,7 +35,7 @@ public class ProxyInput extends BaseObject  implements Input{
 		this.proxy.commitInput();
 	}
 
-	public List<Object> read(int size) {
+	public List<Map<String, Object>> read(int size) {
 		return proxy.read(size);
 	}
 

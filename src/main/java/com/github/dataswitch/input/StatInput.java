@@ -1,6 +1,7 @@
 package com.github.dataswitch.input;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
@@ -44,10 +45,10 @@ public class StatInput extends ProxyInput {
 	}
 
 	@Override
-	public List<Object> read(int size) {
+	public List<Map<String, Object>> read(int size) {
 		
 		long start = System.currentTimeMillis();
-		List<Object> rows = super.read(size);
+		List<Map<String, Object>> rows = super.read(size);
 		long costTimeMills = System.currentTimeMillis() - start;
 		
 		int rowsSize = CollectionUtils.isEmpty(rows) ? 0 : rows.size();

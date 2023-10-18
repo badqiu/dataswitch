@@ -55,15 +55,15 @@ public class MultiProcessor implements Processor{
 	}
 
 	@Override
-	public List<Object> process(List<Object> datas) throws Exception {
+	public List<Map<String, Object>> process(List<Map<String, Object>> datas) throws Exception {
 		if(ArrayUtils.isEmpty(processors)) return datas;
 		if(CollectionUtils.isEmpty(datas)) return datas;
 		
 		return process0(datas);
 	}
 
-	private List<Object> process0(List<Object> datas) throws Exception {
-		List<Object> tempDatas = datas;
+	private List<Map<String, Object>> process0(List<Map<String, Object>> datas) throws Exception {
+		List<Map<String, Object>> tempDatas = datas;
 		for(Processor p : processors) {
 			tempDatas = p.process(tempDatas);
 			

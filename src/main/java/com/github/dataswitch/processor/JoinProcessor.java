@@ -106,7 +106,7 @@ public class JoinProcessor implements Processor {
 	}
 
 	@Override
-	public List<Object> process(List<Object> datas) throws Exception {
+	public List<Map<String, Object>> process(List<Map<String, Object>> datas) throws Exception {
 		return (List)processMaps((List)datas);
 	}
 

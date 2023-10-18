@@ -1,6 +1,7 @@
 package com.github.dataswitch.processor;
 
 import java.util.List;
+import java.util.Map;
 
 import com.github.dataswitch.util.ObjectSqlQueryUtil;
 
@@ -25,7 +26,7 @@ public class SqlProcessor implements Processor {
 	}
 
 	@Override
-	public List<Object> process(List<Object> datas) throws Exception {
+	public List<Map<String, Object>> process(List<Map<String, Object>> datas) throws Exception {
 		if(datas == null) return null;
 		
 		List result = ObjectSqlQueryUtil.query(sql, (List) datas);

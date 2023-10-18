@@ -217,8 +217,8 @@ public class HbaseInput  extends HbaseProvider implements Input{
 
     
 	@Override
-	public List<Object> read(int size) {
-		List<Object> list = new ArrayList<Object>(size);
+	public List<Map<String, Object>> read(int size) {
+		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>(size);
 		for(int i = 0; i < size; i++) {
 			Result result = getNextHbaseRow();
 			if(result == null) {

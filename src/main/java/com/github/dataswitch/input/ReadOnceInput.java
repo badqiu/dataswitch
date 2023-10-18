@@ -2,6 +2,7 @@ package com.github.dataswitch.input;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 只读一次的Input 
@@ -21,7 +22,7 @@ public class ReadOnceInput extends ProxyInput implements Input {
 		super(proxy);
 	}
 
-	public synchronized List<Object> read(int size) {
+	public synchronized List<Map<String, Object>> read(int size) {
 		if(_readOnce) return Collections.EMPTY_LIST;
 		
 		_readOnce = true;

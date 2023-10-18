@@ -2,6 +2,7 @@ package com.github.dataswitch.input;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.util.Assert;
 
@@ -65,7 +66,7 @@ public class RetryInput extends ProxyInput {
 	}
 	
 	@Override
-	public List<Object> read(int size) {
+	public List<Map<String, Object>> read(int size) {
 		return (List)Retry.retry(retryTimes, retryIntervalMills,retryTimeoutMills, () -> {
 			return super.read(size);
 		});

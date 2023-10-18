@@ -3,6 +3,7 @@ package com.github.dataswitch.input;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
@@ -45,7 +46,7 @@ public class FunctionInput <RESULT> extends BaseObject implements Input{
 	}
 
 	@Override
-	public List<Object> read(int size) {
+	public List<Map<String, Object>> read(int size) {
 		Object result = function.apply(size);
 		Collection collection = Util.oneToList(result);
 		return new ArrayList(collection);

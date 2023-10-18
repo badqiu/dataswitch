@@ -72,12 +72,12 @@ public class DataGenInput implements Input{
 	}
 
 	@Override
-	public List<Object> read(int size) {
+	public List<Map<String, Object>> read(int size) {
 		return genRows();
 	}
 
 
-	private List<Object> genRows() {
+	private List<Map<String, Object>> genRows() {
 		if(reachRowsLimit()) {
 			return Collections.EMPTY_LIST;
 		}

@@ -92,18 +92,18 @@ public class ScriptProcessor implements Processor {
 	}
 
 	@Override
-	public List<Object> process(List<Object> datas) throws Exception {
+	public List<Map<String, Object>> process(List<Map<String, Object>> datas) throws Exception {
 		if(StringUtils.isBlank(script)) {
 			return datas;
 		}
 		
 
 		if (rowEval) {
-			List<Object> resultList = new ArrayList<Object>();
+			List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
 			for (Object row : datas) {
 				javax.script.Bindings bindings = createBinding();
 				bindings.put("row", row);
-				Object result = eval(bindings);
+				Map<String,Object> result = eval(bindings);
 				if (result != null) {
 					resultList.add(result);
 				}
@@ -112,7 +112,7 @@ public class ScriptProcessor implements Processor {
 		} else {
 			javax.script.Bindings bindings = createBinding();
 			bindings.put("rows", datas);
-			return (List<Object>)eval(bindings); 
+			return (List<Map<String, Object>>)eval(bindings); 
 		}
 	}
 	
@@ -132,11 +132,11 @@ public class ScriptProcessor implements Processor {
 		}
 	}
 
-	private Object eval(javax.script.Bindings bindings)throws ScriptException {
+	private Map eval(javax.script.Bindings bindings)throws ScriptException {
 		if(compiledScript == null) {
-			return scriptEngine.eval(script, bindings);
+			return (Map)scriptEngine.eval(script, bindings);
 		}else {
-			return compiledScript.eval(bindings);
+			return (Map)compiledScript.eval(bindings);
 		}
 	}
 

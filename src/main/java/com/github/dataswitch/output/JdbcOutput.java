@@ -328,7 +328,7 @@ public class JdbcOutput extends DataSourceProvider implements Output,TableName{
 	
 
 
-	private String alterTableAndGetFinalSql(final List<Object> rows) {
+	private String alterTableAndGetFinalSql(final List<Map<String, Object>> rows) {
 		String sql = getSql();
 		if(StringUtils.isNotBlank(sql)) {
 			return sql;
@@ -359,7 +359,7 @@ public class JdbcOutput extends DataSourceProvider implements Output,TableName{
 		return JdbcUtil.newAlterTableAddColumnFunction(jdbcTemplate, table);
 	}
 
-	protected Map getAllColumnWithValue(final List<Object> rows) {
+	protected Map getAllColumnWithValue(final List<Map<String, Object>> rows) {
 		List tmpRows = new ArrayList(rows);
 		Map allColumnsWithValue = MapUtil.mergeAllMapWithNotNullValue((List) tmpRows);
 		
@@ -452,7 +452,7 @@ public class JdbcOutput extends DataSourceProvider implements Output,TableName{
 
 
 	@Override
-	public void write(final List<Object> rows) {
+	public void write(final List<Map<String, Object>> rows) {
 		if(CollectionUtils.isEmpty(rows)) return;
 		
 		long start = System.currentTimeMillis();
@@ -473,7 +473,7 @@ public class JdbcOutput extends DataSourceProvider implements Output,TableName{
 		return StringUtils.substring(finalSql,0,100);
 	}
 
-	protected String executeWithJdbc(final List<Object> rows) {
+	protected String executeWithJdbc(final List<Map<String, Object>> rows) {
 		if(CollectionUtils.isEmpty(rows)) return null;
 		
 		String finalSql = alterTableAndGetFinalSql(rows);

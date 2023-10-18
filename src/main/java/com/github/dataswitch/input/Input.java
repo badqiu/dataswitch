@@ -7,14 +7,14 @@ import java.util.function.Function;
 import com.github.dataswitch.Enabled;
 import com.github.dataswitch.Openable;
 
-public interface Input extends Function<Integer, List<Object>>,Openable,AutoCloseable{
+public interface Input extends Function<Integer, List<Map<String, Object>>>,Openable,AutoCloseable{
 	
 	/**
 	 * 读取数据，
 	 * @param size 每次读取批量大小
 	 * @return 返回为null或空，代表读取数据结束，程序可以退出
 	 */
-	public List<Object> read(int size) ;
+	public List<Map<String, Object>> read(int size) ;
 	
 	/** 一般output处理完数据，用于kafka的offset commit */
 	public default void commitInput() {};
@@ -29,7 +29,7 @@ public interface Input extends Function<Integer, List<Object>>,Openable,AutoClos
 	}
 	
 	@Override
-	default List<Object> apply(Integer t) {
+	default List<Map<String, Object>> apply(Integer t) {
 		return read(t);
 	}
 }

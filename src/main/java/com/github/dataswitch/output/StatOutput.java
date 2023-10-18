@@ -1,6 +1,7 @@
 package com.github.dataswitch.output;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
@@ -54,7 +55,7 @@ public class StatOutput extends ProxyOutput {
 	}
 
 	@Override
-	public void write(List<Object> rows) {
+	public void write(List<Map<String, Object>> rows) {
 		if(CollectionUtils.isEmpty(rows)) return;
 		
 		int rowsSize = rows.size();

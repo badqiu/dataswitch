@@ -78,7 +78,7 @@ public class MultiOutput extends ExecutorServiceProvider  implements Output{
 
 
 	@Override
-	public void write(List<Object> rows) {
+	public void write(List<Map<String, Object>> rows) {
 		if(CollectionUtils.isEmpty(rows)) return;
 		if(ArrayUtils.isEmpty(branchs)) return;
 		
@@ -106,7 +106,7 @@ public class MultiOutput extends ExecutorServiceProvider  implements Output{
 		throw new RuntimeException("unsupported dataRouting:"+dataRouting);
 	}
 
-	protected void outputWrite(List<Object> rows, Output branch) {
+	protected void outputWrite(List<Map<String, Object>> rows, Output branch) {
 		if(concurrent) {
 			getExecutorService().submit(() -> {
 				branch.write(rows);

@@ -2,6 +2,7 @@ package com.github.dataswitch.processor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -47,11 +48,11 @@ public class FunctionProcessor implements Processor {
 	}
 
 	@Override
-	public List<Object> process(List<Object> datas) throws Exception {
+	public List<Map<String, Object>> process(List<Map<String, Object>> datas) throws Exception {
 		if(processOne) {
-			List<Object> results = new ArrayList(datas.size());
-			for(Object object : datas) {
-				Object result = function.apply(object);
+			List<Map<String, Object>> results = new ArrayList(datas.size());
+			for(Map<String,Object> object : datas) {
+				Map<String,Object> result = (Map)function.apply(object);
 				if(result != null) {
 					results.add(result);
 				}

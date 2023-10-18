@@ -113,7 +113,7 @@ public class KafkaOutput implements Output,TableName{
 	}
 	
 	@Override
-	public void write(List<Object> rows) {
+	public void write(List<Map<String, Object>> rows) {
 		if(CollectionUtils.isEmpty(rows)) {
 			return;
 		}

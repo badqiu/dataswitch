@@ -84,7 +84,7 @@ public class AsyncInput extends ProxyInput{
 	}
 
 	@Override
-	public List<Object> read(int size) {
+	public List<Map<String, Object>> read(int size) {
 		readSize = size;
 		
 		if(FailMode.FAIL_FAST == failMode && lastException != null) {

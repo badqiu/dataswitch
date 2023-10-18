@@ -139,7 +139,7 @@ public class RocketMqOutput implements Output,TableName{
 	}
 	
 	@Override
-	public void write(List<Object> rows) {
+	public void write(List<Map<String, Object>> rows) {
 		try {
 			write0((List)rows);
 		} catch (Exception e) {

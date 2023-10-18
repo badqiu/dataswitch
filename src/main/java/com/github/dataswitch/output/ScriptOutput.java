@@ -99,7 +99,7 @@ public class ScriptOutput extends BaseObject implements Output{
 	}
 
 	@Override
-	public void write(List<Object> rows) {
+	public void write(List<Map<String, Object>> rows) {
 		if(CollectionUtils.isEmpty(rows)) return;
 		
 		try {

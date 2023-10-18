@@ -3,6 +3,7 @@ package com.github.dataswitch.input;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.github.dataswitch.output.Output;
 
@@ -19,7 +20,7 @@ public class CollectDataOutput implements Output{
 	}
 
 	@Override
-	public void write(List<Object> rows) {
+	public void write(List<Map<String, Object>> rows) {
 		datas.addAll(rows);
 	}
 

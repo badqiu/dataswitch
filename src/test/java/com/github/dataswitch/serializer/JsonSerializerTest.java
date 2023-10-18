@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -28,11 +29,12 @@ public class JsonSerializerTest {
 	}
 	
 	@Test
-	public void test_with_fileoutput() {
+	public void test_with_fileoutput() throws Exception {
 		FileOutput output = new FileOutput();
 		output.setDir("/tmp/JsonSerializerTest/");
 		output.setFilename("JsonSerializerTest.json");
 		output.setSerializer(new JsonSerializer());
+		output.open(null);
 		output.writeObject(MapUtil.newLinkedMap("name","badqiu1","age",20));
 		output.writeObject(MapUtil.newLinkedMap("name","badqiu2","age",22));
 		output.close();
@@ -41,7 +43,7 @@ public class JsonSerializerTest {
 		input.setDeserializer(new JsonDeserializer());
 		input.setDir("/tmp/JsonSerializerTest/");
 		
-		List<Object> rows = input.read(100);
+		List<Map<String, Object>> rows = input.read(100);
 		System.out.println(rows.toString());
 		assertEquals("[{name=badqiu1, age=20}, {name=badqiu2, age=22}]",rows.toString());
 	}

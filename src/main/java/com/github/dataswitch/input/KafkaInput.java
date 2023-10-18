@@ -38,7 +38,7 @@ public class KafkaInput implements Input,TableName{
 	private boolean sync = false;
 	
 	private transient List<ConsumerWorker> kafkaConsumerThreads = new ArrayList<ConsumerWorker>();
-	protected transient LinkedBlockingQueue<Object> queue = new LinkedBlockingQueue<Object>(20000);
+	protected transient LinkedBlockingQueue<Map<String,Object>> queue = new LinkedBlockingQueue<Map<String,Object>>(20000);
 	private transient KafkaConsumer<Object,Object> kafkaConsumer = null;
 	private int asyncReadTimeout = 500;
 	private int kafkaPollTimeout = 500;
@@ -205,7 +205,7 @@ public class KafkaInput implements Input,TableName{
 
 	protected void processRecordsForQueue(ConsumerRecords<Object, Object> records) throws InterruptedException {
 		for(ConsumerRecord<Object,Object> c : records) {
-			Object value = processOne(c);
+			Map<String,Object> value = processOne(c);
 			if(value != null) {
 				queue.put(value);
 			}
@@ -230,7 +230,7 @@ public class KafkaInput implements Input,TableName{
 	}
 
 	@Override
-	public List<Object> read(int size) {
+	public List<Map<String, Object>> read(int size) {
 		
 		if(sync) {
 			return syncRead();
@@ -250,16 +250,16 @@ public class KafkaInput implements Input,TableName{
 		}
 	}
 
-	private List<Object> syncRead() {
+	private List<Map<String, Object>> syncRead() {
 		while(true) {
 			ConsumerRecords<Object, Object> records = kafkaConsumer.poll(kafkaPollTimeout);
 			if(records == null || records.isEmpty()) {
 				continue;
 			}
 			
-			List<Object> result = new ArrayList(records.count());
+			List<Map<String, Object>> result = new ArrayList(records.count());
 			for(ConsumerRecord<Object,Object> c : records) {
-				Object value = processOne(c);
+				Map<String,Object> value = processOne(c);
 				
 				if(value != null) {
 					result.add(value);
@@ -269,13 +269,13 @@ public class KafkaInput implements Input,TableName{
 		}
 	}
 
-	protected Object processOne(ConsumerRecord<Object, Object> c) {
-		return c.value();
+	protected Map<String, Object> processOne(ConsumerRecord<Object, Object> c) {
+		return (Map)c.value();
 	}
 
-	private List<Object> asyncRead(int size) {
+	private List<Map<String, Object>> asyncRead(int size) {
 		try {
-			return QueueUtil.batchTake(queue,size, asyncReadTimeout);
+			return (List)QueueUtil.batchTake(queue,size, asyncReadTimeout);
 		}catch(InterruptedException e) {
 			throw new RuntimeException(e);
 		}

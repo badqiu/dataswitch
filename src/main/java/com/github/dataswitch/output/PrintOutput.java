@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import com.github.dataswitch.BaseObject;
@@ -62,7 +63,7 @@ public class PrintOutput extends BaseObject implements Output{
 	}
 
 	@Override
-	public void write(List<Object> rows) {
+	public void write(List<Map<String, Object>> rows) {
 		if(rows == null) return;
 		
 		for(Object row : rows) {

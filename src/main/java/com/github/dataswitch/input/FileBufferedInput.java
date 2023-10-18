@@ -91,7 +91,7 @@ public class FileBufferedInput extends ProxyInput{
 	}
 	
 	@Override
-	public List<Object> read(int size) {
+	public List<Map<String, Object>> read(int size) {
 		if(_tempFile == null) {
 			_tempFile = new File(dir,finalFilename());
 			if(!_tempFile.exists() || _tempFile.length() <= 0) {

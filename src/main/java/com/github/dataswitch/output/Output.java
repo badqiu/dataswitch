@@ -10,9 +10,9 @@ import java.util.function.Function;
 import com.github.dataswitch.Enabled;
 import com.github.dataswitch.Openable;
 
-public interface Output extends Function<List<Object>,Void>,Consumer<List<Object>>,AutoCloseable,Flushable,Openable{
+public interface Output extends Function<List<Map<String, Object>>,Void>,Consumer<List<Map<String, Object>>>,AutoCloseable,Flushable,Openable{
 
-	public void write(List<Object> rows);
+	public void write(List<Map<String, Object>> rows);
 	
 	@Override
 	public default void flush() throws IOException{
@@ -29,12 +29,12 @@ public interface Output extends Function<List<Object>,Void>,Consumer<List<Object
 	}
 	
 	@Override
-	default void accept(List<Object> t) {
+	default void accept(List<Map<String, Object>> t) {
 		write(t);
 	}
 	
 	@Override
-	default Void apply(List<Object> t) {
+	default Void apply(List<Map<String, Object>> t) {
 		accept(t);
 		return null;
 	}

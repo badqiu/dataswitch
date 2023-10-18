@@ -44,7 +44,7 @@ public class MultiFunctionOutput extends ProxyOutput {
 	private boolean nullOutput = false; //done
 	private boolean print = false; //done
 	
-	private Consumer<List<Object>> consumer; //done
+	private Consumer<List<Map<String, Object>>> consumer; //done
 	private String logger = null; //done
 	
 	private FailMode failMode = FailMode.FAIL_FAST;
@@ -66,7 +66,7 @@ public class MultiFunctionOutput extends ProxyOutput {
 		super.setProxy(proxy);
 	}
 	
-	public void setConsumer(Consumer<List<Object>> consumer) {
+	public void setConsumer(Consumer<List<Map<String, Object>>> consumer) {
 		this.consumer = consumer;
 	}
 

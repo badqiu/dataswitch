@@ -56,7 +56,7 @@ public class ProxyOutput extends BaseObject implements Output{
 		this.close = close;
 	}
 
-	public void write(List<Object> rows) {
+	public void write(List<Map<String, Object>> rows) {
 		if(CollectionUtils.isEmpty(rows)) return;
 		proxy.write(rows);
 		

@@ -8,11 +8,11 @@ import com.github.dataswitch.util.BeanUtils;
 public class Bean2MapProcessor extends BaseProcessor{
 
 	@Override
-	protected Object processOne(Object row) throws Exception {
+	protected Map<String,Object> processOne(Map<String,Object> row) throws Exception {
 		if(row == null) return null;
 		
 		if(row instanceof Map) {
-			return row;
+			return (Map)row;
 		}
 		
 		if(row.getClass().isPrimitive()) {

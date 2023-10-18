@@ -2,6 +2,7 @@ package com.github.dataswitch.output;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 
 public class TimeoutOutput extends ProxyOutput{
 
@@ -43,7 +44,7 @@ public class TimeoutOutput extends ProxyOutput{
 	}
 	
 	@Override
-	public void write(List<Object> rows) {
+	public void write(List<Map<String, Object>> rows) {
 		throwTimeoutExceptionIfTrue();
 		
 		if(_startTime == 0) {
