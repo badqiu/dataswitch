@@ -24,6 +24,7 @@ public class BufferedOutput extends ProxyOutput{
 	
 	private int batchSize = Constants.DEFAULT_BATCH_SIZE;
 	private long batchTimeout = 0;
+	private boolean startAutoFlushThread = true;
 	
 	private long lastSendTime = System.currentTimeMillis();
 	private List<Map<String, Object>> bufferList = new ArrayList<Map<String, Object>>();
@@ -54,8 +55,12 @@ public class BufferedOutput extends ProxyOutput{
 		this.batchSize = batchSize;
 	}
 
-	public void setBatchTimeout(int batchTimeout) {
+	public void setBatchTimeout(long batchTimeout) {
 		this.batchTimeout = batchTimeout;
+	}
+
+	public void setStartAutoFlushThread(boolean startAutoFlushThread) {
+		this.startAutoFlushThread = startAutoFlushThread;
 	}
 
 	@Override
@@ -114,6 +119,9 @@ public class BufferedOutput extends ProxyOutput{
 
 	private void startAutoFlushThread() {
 		if(batchTimeout <= 0) {
+			return;
+		}
+		if(!startAutoFlushThread) {
 			return;
 		}
 		
