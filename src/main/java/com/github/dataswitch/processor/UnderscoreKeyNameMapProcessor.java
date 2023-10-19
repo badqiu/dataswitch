@@ -15,20 +15,12 @@ public class UnderscoreKeyNameMapProcessor extends BaseProcessor{
 
 	@Override
 	protected Map<String,Object> processOne(Map<String,Object> row) throws Exception {
-		if(row == null) return null;
-		
-		if(row instanceof Map) {
-			return processMap((Map)row);
-		}
-		
-		return (Map)row;
-	}
-
-	private Map<String,Object> processMap(Map<String,Object> row) {
 		return keyUnderscoreName(row);
 	}
 
 	private Map<String, Object> keyUnderscoreName(Map<String, Object> row) {
+		if(row == null) return null;
+		
 		Map<String,Object> r = new LinkedHashMap();
 		row.forEach((key,value) -> {
 			r.put(Util.underscoreName(key), value);
