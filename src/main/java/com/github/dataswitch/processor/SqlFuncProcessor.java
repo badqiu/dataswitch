@@ -33,8 +33,8 @@ public class SqlFuncProcessor extends BaseProcessor{
 	// limit offset,limit
 	
 	private String where; //过滤数据,语法使用MVEL，类似java条件表达式
-	private String select; //要select的列,没有则选择所有列
-	private String remove; //要删除的列,没有不移除列
+	private String select; //要select的列,如果没有则选择所有列
+	private String remove; //要删除的列,如果没有不移除列
 	private long limit; //
 	private long offset; //从0开始
 	
