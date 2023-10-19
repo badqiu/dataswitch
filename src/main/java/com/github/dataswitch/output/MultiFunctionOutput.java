@@ -177,7 +177,7 @@ public class MultiFunctionOutput extends ProxyOutput {
 		}
 		
 		if(ArrayUtils.isNotEmpty(processors)) {
-			output = new ProcessorOutput(output);
+			output = new ProcessorOutput(output,processors);
 		}
 		
 		if(stat) {
