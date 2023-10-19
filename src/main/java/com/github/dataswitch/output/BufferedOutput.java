@@ -65,9 +65,9 @@ public class BufferedOutput extends ProxyOutput{
 		bufferList.addAll(rows);
 
 		if(bufferList.size() > batchSize) {
-			flushBuffer();
+			flush();
 		}else if(batchTimeout > 0 && isTimeout()) {
-			flushBuffer();
+			flush();
 		}
 	}
 
@@ -81,7 +81,7 @@ public class BufferedOutput extends ProxyOutput{
 		flushBuffer();
 	}
 
-	public void flushBuffer() {
+	private synchronized void flushBuffer() {
 		if(bufferList == null || bufferList.isEmpty()) {
 			return;
 		}
@@ -119,7 +119,13 @@ public class BufferedOutput extends ProxyOutput{
 		
 		String threadName = getClass().getSimpleName() + "_auto_flush";
 		
-		Thread t = new Thread(() -> {
+		Thread t = new Thread(newFlushRunnable(),threadName);
+		
+		t.start();
+	}
+
+	protected Runnable newFlushRunnable() {
+		return () -> {
 			
 			logger.info("flush thread started,batchTimeout:"+batchTimeout);
 			try {
@@ -137,12 +143,10 @@ public class BufferedOutput extends ProxyOutput{
 					}
 				}
 			}finally {
-				logger.info("flush thread exit");
+				logger.info("BufferedOutput auto flush thread exit");
 			}
 			
-		},threadName);
-		
-		t.start();
+		};
 	}
 
 	@Override

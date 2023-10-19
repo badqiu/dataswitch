@@ -2,13 +2,13 @@ package com.github.dataswitch;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.aspectj.lang.annotation.After;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 
 import com.github.dataswitch.input.Input;
 import com.github.dataswitch.output.Output;
@@ -17,6 +17,9 @@ import com.github.dataswitch.util.ThreadUtil;
 
 public class InputsOutputsTest {
 
+	@Rule 
+	public TestName testName = new TestName();
+	
 	InputsOutputs job = new InputsOutputs();
 
 	@Test()
@@ -84,7 +87,7 @@ public class InputsOutputsTest {
 //					System.out.println(row+" writeCount:"+writeCount+" count:"+count+" rows.size:"+rows.size());
 					writeCount++;
 				}
-				System.out.println(" -------- rows.size:"+rows.size());
+				System.out.println(testName.getMethodName() + " -------- rows.size:"+rows.size());
 			}
 		});
 	}
