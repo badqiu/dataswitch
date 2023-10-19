@@ -133,7 +133,7 @@ public class AsyncOutput extends ProxyOutput{
 					try {
 						rows = queue.take();
 						if(CollectionUtils.isEmpty(rows)) {
-							System.err.println("error on queue.take() empty rows");
+							logger.error("error on queue.take() empty rows");
 							continue;
 						}
 						

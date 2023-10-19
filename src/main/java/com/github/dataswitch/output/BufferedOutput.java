@@ -135,7 +135,7 @@ public class BufferedOutput extends ProxyOutput{
 	protected Runnable newFlushRunnable() {
 		return () -> {
 			
-			logger.info("flush thread started,batchTimeout:"+batchTimeout);
+			logger.info("BufferedOutput auto flush thread started,batchTimeout:"+batchTimeout);
 			try {
 				while(running) {
 					try {
