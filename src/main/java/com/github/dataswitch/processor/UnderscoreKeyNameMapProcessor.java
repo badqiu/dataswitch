@@ -10,7 +10,7 @@ import com.github.dataswitch.util.Util;
  * @author badqiu
  *
  */
-public class UnderscoreKeyNameMapProcessor extends BaseProcessor{
+public class UnderscoreKeyNameMapProcessor extends ProcessOneProcessor{
 
 	@Override
 	protected Map<String,Object> processOne(Map<String,Object> row) throws Exception {

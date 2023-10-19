@@ -6,7 +6,7 @@ import org.springframework.util.Assert;
 
 import com.github.dataswitch.util.Util;
 
-public class RemoveKeysProcessor extends BaseProcessor {
+public class RemoveKeysProcessor extends ProcessOneProcessor {
 	private String keys = null;
 	
 	private String[] _keysArray = null;

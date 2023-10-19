@@ -23,7 +23,7 @@ import com.github.dataswitch.util.Util;
  * @author badqiu
  *
  */
-public class SqlFuncProcessor extends BaseProcessor{
+public class SqlFuncProcessor extends ProcessOneProcessor{
 	private static Logger logger = LoggerFactory.getLogger(SqlFuncProcessor.class);
 	// where columns
 	// select columns

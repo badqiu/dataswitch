@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.github.dataswitch.util.BeanUtils;
 
-public class Bean2MapProcessor extends BaseProcessor{
+public class Bean2MapProcessor extends ProcessOneProcessor{
 
 	@Override
 	protected Map<String,Object> processOne(Map<String,Object> row) throws Exception {

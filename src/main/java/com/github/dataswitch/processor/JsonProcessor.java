@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author badqiu
  *
  */
-public class JsonProcessor extends BaseProcessor implements Processor{
+public class JsonProcessor extends ProcessOneProcessor implements Processor{
 
 	private ObjectMapper objectMapper = new ObjectMapper();
 	

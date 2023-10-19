@@ -7,7 +7,7 @@ import java.util.Map;
 
 import com.github.dataswitch.BaseObject;
 
-public abstract class BaseProcessor extends BaseObject implements Processor{
+public abstract class ProcessOneProcessor extends BaseObject implements Processor{
 
 	@Override
 	public List<Map<String, Object>> process(List<Map<String, Object>> datas) throws Exception {
