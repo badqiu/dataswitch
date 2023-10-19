@@ -1,7 +1,6 @@
 package com.github.dataswitch.processor;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.github.dataswitch.util.Util;
