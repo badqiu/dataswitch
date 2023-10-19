@@ -28,27 +28,29 @@ public class InputsOutputsTest {
 		job.exec();
 	}
 	
-	int count = 0;
-	int writeCount = 0;
+	volatile int count = 0;
+	volatile int writeCount = 0;
 	@Test
 	public void test_async() {
 		job.setAsync(true);
 		
 		job.setInput(new Input() {
 			@Override
-			public synchronized List<Map<String, Object>> read(int size) {
+			public List<Map<String, Object>> read(int size) {
 				count++;
 				ThreadUtil.sleep(10);
 				if(count >= 100) return null;
-				return Arrays.asList(MapUtil.newMap("count",count));
+				
+				Map map = MapUtil.newMap("count",0 + count);
+				return Arrays.asList(map);
 			}
 		});
 		
 		job.setOutput(new Output() {
 			@Override
-			public synchronized void write(List<Map<String, Object>> rows) {
+			public void write(List<Map<String, Object>> rows) {
 				for(Object row : rows) {
-					System.out.println(row);
+					System.out.println(row+" writeCount:"+writeCount+" count:"+count);
 					writeCount++;
 				}
 			}

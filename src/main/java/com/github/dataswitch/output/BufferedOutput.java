@@ -30,7 +30,7 @@ public class BufferedOutput extends ProxyOutput{
 	
 	private boolean init = false;
 	
-	private boolean running = true;
+	private volatile boolean running = true;
 	
 	public BufferedOutput(Output proxy) {
 		this(proxy,Constants.DEFAULT_BATCH_SIZE);

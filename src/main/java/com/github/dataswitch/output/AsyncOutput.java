@@ -27,7 +27,7 @@ public class AsyncOutput extends ProxyOutput{
 	private FailMode failMode = FailMode.FAIL_FAST;
 	private Consumer<Exception> exceptionHandler = null;
 
-	private boolean running = true;
+	private volatile boolean running = true;
 	private Exception lastException;
 	private Object lastExceptionData;
 	

@@ -26,7 +26,7 @@ public class AsyncInput extends ProxyInput{
 	
 	private BlockingQueue<List> queue = new ArrayBlockingQueue<List>(100);
 
-	private boolean running = true;
+	private volatile boolean running = true;
 	private Exception lastException;
 	private Object lastExceptionData;
 	private Thread thread = null;
