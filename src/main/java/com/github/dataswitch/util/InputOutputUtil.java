@@ -226,11 +226,11 @@ public class InputOutputUtil {
 	 * @return 拷贝的数据量
 	 */
 	public static CopyResult copy(Input input,Output output,int batchSize,Processor processor,FailMode failMode) {
-		return openCopyClose(input,output,batchSize,processor,null,failMode,null,false,false);
+		return openCopyClose(input,output,batchSize,processor,null,failMode,null,true,true);
 	}
 
 	public static CopyResult copy(Input input,Output output,int batchSize,Processor processor,Map params,FailMode failMode) {
-		return openCopyClose(input,output,batchSize,processor,params,failMode,null,false,false);
+		return openCopyClose(input,output,batchSize,processor,params,failMode,null,true,true);
 	}
 
 	/**

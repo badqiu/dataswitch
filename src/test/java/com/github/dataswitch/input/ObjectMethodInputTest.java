@@ -9,9 +9,10 @@ public class ObjectMethodInputTest {
 
 	ObjectMethodInput input = new ObjectMethodInput();
 	@Test
-	public void test_getList() {
+	public void test_getList() throws Exception {
 		input.setObject(new ObjectMethodInputTest());
 		input.setMethod("getList");
+		input.open(null);
 		
 		List results = input.read(1000);
 		for(Object row : results) {
@@ -20,10 +21,11 @@ public class ObjectMethodInputTest {
 	}
 	
 	@Test
-	public void test_getListWithArgs() {
+	public void test_getListWithArgs() throws Exception {
 		input.setObject(new ObjectMethodInputTest());
 		input.setMethod("getListWithArgs");
 		input.setArgs(6);
+		input.open(null);
 		
 		List results = input.read(1000);
 		for(Object row : results) {
@@ -32,9 +34,10 @@ public class ObjectMethodInputTest {
 	}
 
 	@Test
-	public void test_staticMethod() {
+	public void test_staticMethod() throws Exception {
 		input.setObject(new ObjectMethodInputTest());
 		input.setMethod("getStaticList");
+		input.open(null);
 		
 		List results = input.read(1000);
 		for(Object row : results) {

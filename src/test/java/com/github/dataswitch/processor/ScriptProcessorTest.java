@@ -45,13 +45,15 @@ public class ScriptProcessorTest {
 		 assertNull(result);
 	}
 
-	private ScriptProcessor newScriptProcessor() {
+	private ScriptProcessor newScriptProcessor() throws Exception {
 		ScriptProcessor sp = new ScriptProcessor();
 		sp.setLanguage("groovy");
 		sp.setRowEval(true);
 		sp.setInitScript("println 'initScript executed'");
 
 		sp.setContext(MapUtil.newMap("name", "badqiu"));
+		
+		sp.open(null);
 		return sp;
 	}
 

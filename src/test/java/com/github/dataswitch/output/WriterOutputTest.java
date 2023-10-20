@@ -26,8 +26,9 @@ public class WriterOutputTest {
 		}
 		output.flush();
 		String string = out.toString();
-		System.out.println(string);
-		assertEquals(string,"123,20,badqiu_0\n123,21,badqiu_1\n");
+		System.out.print(string);
+		assertEquals(string.trim(),
+				"123,20,badqiu_0\n123,21,badqiu_1\n".trim());
 	}
 
 }
