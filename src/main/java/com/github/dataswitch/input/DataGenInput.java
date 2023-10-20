@@ -156,8 +156,9 @@ public class DataGenInput implements Input{
 		}
 		
 		//date 有性能影响
-		map.put("nullBirthDate", num10 == 1 ? null :DateUtils.addDays(date,-days));
-		map.put("birthDate", DateUtils.addDays(date,-days));
+		Date birthDate = DateUtils.addDays(date,-days);
+		map.put("nullBirthDate", num10 == 1 ? null :birthDate);
+		map.put("birthDate", birthDate);
 		map.put("offlineDate", DateUtils.addDays(date,days));
 		map.put("createTime", new Timestamp(System.currentTimeMillis()));
 		
