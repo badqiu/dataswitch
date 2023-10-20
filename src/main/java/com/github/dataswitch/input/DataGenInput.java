@@ -128,7 +128,7 @@ public class DataGenInput implements Input{
 
 		int age = (int)(10 + (count % 20));
 		long money = _systemStartTime + i * 100;
-		float pay = count * 100;
+		float pay = num100;
 		double fee = (_systemStartTime + i * 50) / 10000.0;
 
 		boolean enabled = count % 5 == 1 ? false : true;
