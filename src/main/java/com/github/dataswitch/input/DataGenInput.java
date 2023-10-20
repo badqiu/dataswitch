@@ -168,7 +168,6 @@ public class DataGenInput implements Input{
 		map.put("password", RandomStringUtils.randomAlphanumeric(8));
 		
 		//string 有性能影响
-		
 		map.put("group", "group_"+num10);
 		map.put("name", "name_"+num100);
 		map.put("type", "type_"+num1000);
