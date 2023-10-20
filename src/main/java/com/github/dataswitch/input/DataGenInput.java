@@ -122,7 +122,6 @@ public class DataGenInput implements Input{
 	protected Object genRow(int i,long count) {
 		Date date = new Date(_systemStartTime);
 		int days = (int)(count % 10000 + 1);
-		String email = "hi"+(_count % 10000)+"@qq.com";
 		long num10 = count % 10;
 		long num100 = count % 100;
 		long num1000 = count % 1000;
@@ -133,6 +132,8 @@ public class DataGenInput implements Input{
 		double fee = (_systemStartTime + i * 50) / 10000.0;
 
 		boolean enabled = count % 5 == 1 ? false : true;
+		
+		String email = "hi"+(_count % 10000)+"@qq.com";
 		
 		Map map = new HashMap(40);
 		map.put("id", count);
@@ -167,6 +168,7 @@ public class DataGenInput implements Input{
 		map.put("password", RandomStringUtils.randomAlphanumeric(8));
 		
 		//string 有性能影响
+		
 		map.put("group", "group_"+num10);
 		map.put("name", "name_"+num100);
 		map.put("type", "type_"+num1000);
