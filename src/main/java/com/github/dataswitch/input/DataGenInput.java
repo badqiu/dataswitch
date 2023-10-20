@@ -160,7 +160,7 @@ public class DataGenInput implements Input{
 		map.put("nullBirthDate", num10 == 1 ? null :birthDate);
 		map.put("birthDate", birthDate);
 		map.put("offlineDate", DateUtils.addDays(date,days));
-		map.put("createTime", new Timestamp(System.currentTimeMillis()));
+		map.put("createTimestamp", new Timestamp(System.currentTimeMillis()));
 		
 		//random 有性能影响
 		map.put("random1", RandomUtils.nextInt(10));
