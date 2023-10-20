@@ -35,6 +35,17 @@ public class DataGenInputTest {
 	}
 	
 	@Test
+	public void setRowsPerSecond_Max1_with_fast() {
+		long rowsLimit = 1000000;
+		input.setRowsPerSecond(500000);
+		input.setRowsLimit(rowsLimit);
+		input.setFast(true);
+		StatOutput output = new StatOutput(new NullOutput());
+		InputOutputUtil.copy(input, output);
+		assertEquals(output.getTotalRows(),rowsLimit);
+	}
+	
+	@Test
 	public void testRowsLimit() {
 		int rowsLimit = 3;
 		input.setRowsPerSecond(1);

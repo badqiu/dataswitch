@@ -28,6 +28,8 @@ public class DataGenInput implements Input{
 	private long _count = 0;
 	private long _systemStartTime = System.currentTimeMillis();
 	
+	private boolean fast = false; //是否快速生成行数据
+	
 	public DataGenInput() {
 	}
 	
@@ -69,6 +71,14 @@ public class DataGenInput implements Input{
 
 	public void setIntervalSecond(int intervalSecond) {
 		this.intervalSecond = intervalSecond;
+	}
+	
+	public boolean isFast() {
+		return fast;
+	}
+
+	public void setFast(boolean fast) {
+		this.fast = fast;
 	}
 
 	@Override
@@ -133,30 +143,34 @@ public class DataGenInput implements Input{
 		map.put("pay", pay);
 		map.put("fee", fee);
 		
-		//string
-		map.put("group", "group_"+num10);
-		map.put("name", "name_"+num100);
-		map.put("type", "type_"+num1000);
-		map.put("email", email);
-		
 		//boolean
 		map.put("enabled", enabled);
 		
-		//random
+		map.put("nullAge", num10 == 1 ? null : i);
+		map.put("nullEmail", num100 == 1 ? null : email);
+		map.put("nullMoney", num1000 == 1 ? null : money);
+
+		if(fast) {
+			return map;
+		}
+		
+		//date 有性能影响
+		map.put("nullBirthDate", num10 == 1 ? null :DateUtils.addDays(date,-days));
+		map.put("birthDate", DateUtils.addDays(date,-days));
+		map.put("offlineDate", DateUtils.addDays(date,days));
+		map.put("createTime", new Timestamp(System.currentTimeMillis()));
+		
+		//random 有性能影响
 		map.put("random1", RandomUtils.nextInt(10));
 		map.put("random2", RandomUtils.nextInt(100));
 		map.put("random3", RandomUtils.nextInt(1000));
 		map.put("password", RandomStringUtils.randomAlphanumeric(8));
 		
-		map.put("nullAge", num10 == 1 ? null : i);
-		map.put("nullEmail", num100 == 1 ? null : email);
-		map.put("nullMoney", num1000 == 1 ? null : money);
-		
-		//date
-		map.put("nullBirthDate", num10 == 1 ? null :DateUtils.addDays(date,-days));
-		map.put("birthDate", DateUtils.addDays(date,-days));
-		map.put("offlineDate", DateUtils.addDays(date,days));
-		map.put("createTime", new Timestamp(System.currentTimeMillis()));
+		//string 有性能影响
+		map.put("group", "group_"+num10);
+		map.put("name", "name_"+num100);
+		map.put("type", "type_"+num1000);
+		map.put("email", email);
 		
 		return map;
 	}
