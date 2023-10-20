@@ -110,35 +110,53 @@ public class DataGenInput implements Input{
 
 
 	protected Object genRow(int i,long count) {
-		long age = 10 + (count % 20);
 		Date date = new Date(_systemStartTime);
 		int days = (int)(count % 10000 + 1);
-		long money = _systemStartTime + i * 100;
 		String email = "hi"+(_count % 10000)+"@qq.com";
+		long num10 = count % 10;
+		long num100 = count % 100;
+		long num1000 = count % 1000;
+
+		int age = (int)(10 + (count % 20));
+		long money = _systemStartTime + i * 100;
+		float pay = count * 100;
+		double fee = (_systemStartTime + i * 50) / 10000.0;
+
+		boolean enabled = count % 5 == 1 ? false : true;
 		
-		Map map = new HashMap(33);
+		Map map = new HashMap(40);
 		map.put("id", count);
-		map.put("group", "group_"+(count % 10));
-		map.put("name", "name_"+(count % 100));
-		map.put("type", "type_"+(count % 1000));
-		map.put("age", (int)age);
-		map.put("birthDate", DateUtils.addDays(date,-days));
-		map.put("offlineDate", DateUtils.addDays(date,days));
+		
+		//number
+		map.put("age", age);
+		map.put("money", money);
+		map.put("pay", pay);
+		map.put("fee", fee);
+		
+		//string
+		map.put("group", "group_"+num10);
+		map.put("name", "name_"+num100);
+		map.put("type", "type_"+num1000);
+		map.put("email", email);
+		
+		//boolean
+		map.put("enabled", enabled);
+		
+		//random
 		map.put("random1", RandomUtils.nextInt(10));
 		map.put("random2", RandomUtils.nextInt(100));
 		map.put("random3", RandomUtils.nextInt(1000));
-		map.put("money", money);
-		map.put("pay", count * 100);
-		map.put("fee", (_systemStartTime + i * 50) / 10000.0);
-		map.put("createTime", new Timestamp(System.currentTimeMillis()));
-		map.put("enabled", count % 5 == 1 ? false : true);
-		map.put("email", email);
-		map.put("password", RandomStringUtils.randomAlphanumeric(32));
+		map.put("password", RandomStringUtils.randomAlphanumeric(8));
 		
-		map.put("nullAge", count % 10 == 1 ? null : i);
-		map.put("nullEmail", count % 100 == 1 ? null : email);
-		map.put("nullMoney", count % 1000 == 1 ? null : money);
-		map.put("nullBirthDate", count % 10 == 1 ? null :DateUtils.addDays(date,-days));
+		map.put("nullAge", num10 == 1 ? null : i);
+		map.put("nullEmail", num100 == 1 ? null : email);
+		map.put("nullMoney", num1000 == 1 ? null : money);
+		
+		//date
+		map.put("nullBirthDate", num10 == 1 ? null :DateUtils.addDays(date,-days));
+		map.put("birthDate", DateUtils.addDays(date,-days));
+		map.put("offlineDate", DateUtils.addDays(date,days));
+		map.put("createTime", new Timestamp(System.currentTimeMillis()));
 		
 		return map;
 	}
