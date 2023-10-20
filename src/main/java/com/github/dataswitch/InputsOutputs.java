@@ -269,7 +269,7 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 		
 		try {
 			
-			CopyResult copyResult = InputOutputUtil.copy(input, output,batchSize,processor,params,failMode,exceptionHandler);
+			CopyResult copyResult = InputOutputUtil.openCopyClose(input, output,batchSize,processor,params,failMode,exceptionHandler,true,true);
 			
 			rows = copyResult.getCount();
 			costTime = copyResult.getTotalCostTime();

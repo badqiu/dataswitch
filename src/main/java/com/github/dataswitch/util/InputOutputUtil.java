@@ -226,11 +226,11 @@ public class InputOutputUtil {
 	 * @return 拷贝的数据量
 	 */
 	public static CopyResult copy(Input input,Output output,int batchSize,Processor processor,FailMode failMode) {
-		return copy(input,output,batchSize,processor,null,failMode,null);
+		return openCopyClose(input,output,batchSize,processor,null,failMode,null,false,false);
 	}
 
 	public static CopyResult copy(Input input,Output output,int batchSize,Processor processor,Map params,FailMode failMode) {
-		return copy(input,output,batchSize,processor,params,failMode,null);
+		return openCopyClose(input,output,batchSize,processor,params,failMode,null,false,false);
 	}
 
 	/**
@@ -241,13 +241,15 @@ public class InputOutputUtil {
 	 * @param failMode,取值: failFast,failAtEnd,failNever
 	 * @return 拷贝的数据量
 	 */
-	public static CopyResult copy(Input input,Output output,int batchSize,Processor processor,Map params,FailMode failMode,Consumer<Exception> exceptionHandler) {
+	public static CopyResult openCopyClose(Input input,Output output,int batchSize,Processor processor,Map params,FailMode failMode,Consumer<Exception> exceptionHandler,boolean open,boolean close) {
 		if(batchSize <= 0) throw new IllegalArgumentException("batchSize > 0 must be true");
 		
 		long totalCostTime = 0;
 		long startTime = System.currentTimeMillis();
-
-		openAll(params,input, output, processor);
+		
+		if(open) {
+			openAll(params,input, output, processor);
+		}
 		
 		Object lastExceptionData = null;
 		Exception lastException = null;
@@ -288,13 +290,15 @@ public class InputOutputUtil {
 					}
 					
 					
-					logger.warn("copy warn,input:"+input+" output:"+output+" processor:"+processor+" one rowData:"+firstRow,e);
+					logger.warn("copy warn,input:"+input+" output:"+output+" processor:"+processor+", one rowData:"+firstRow,e);
 					
 					handleException(exceptionHandler, e);
 				}
 			}
 		}finally {
-			closeAllQuietly(input, output, processor);
+			if(close) {
+				closeAllQuietly(input, output, processor);
+			}
 			totalCostTime = System.currentTimeMillis() - startTime; 
 		}
 		
