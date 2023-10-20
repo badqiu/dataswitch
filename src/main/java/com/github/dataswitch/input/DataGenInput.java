@@ -163,9 +163,9 @@ public class DataGenInput implements Input{
 		map.put("createTimestamp", new Timestamp(System.currentTimeMillis()));
 		
 		//random 有性能影响
-		map.put("random1", RandomUtils.nextInt(10));
-		map.put("random2", RandomUtils.nextInt(100));
-		map.put("random3", RandomUtils.nextInt(1000));
+		map.put("random10", RandomUtils.nextInt(10));
+		map.put("random100", RandomUtils.nextInt(100));
+		map.put("random1000", RandomUtils.nextInt(1000));
 		map.put("password", RandomStringUtils.randomAlphanumeric(8));
 		
 		//string 有性能影响
