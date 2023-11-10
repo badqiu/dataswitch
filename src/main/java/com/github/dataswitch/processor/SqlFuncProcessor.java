@@ -249,12 +249,12 @@ public class SqlFuncProcessor extends ProcessOneProcessor{
 		if(StringUtils.isBlank(where)) return null;
 		
 		String result = where.trim();
-		result = result.replaceAll("(?i)\sand\s", " && ");
-		result = result.replaceAll("(?i)\sor\s", " || ");
+		result = result.replaceAll("(?i)\\sand\\s", " && ");
+		result = result.replaceAll("(?i)\\sor\\s", " || ");
 
-		result = result.replaceAll("(?i)\snot\s+", " ! ");
+		result = result.replaceAll("(?i)\\snot\\s+", " ! ");
 		if(result.toLowerCase().startsWith("not")) {
-			result = result.replaceAll("(?i)not\s+", " ! ");
+			result = result.replaceAll("(?i)not\\s+", " ! ");
 		}
 		return result;
 	}

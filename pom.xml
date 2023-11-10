@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.dataswitch</groupId>
 	<artifactId>dataswitch</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<!-- deploy path -->
@@ -11,12 +11,12 @@
     <repository>
       <id>releases</id>
       <name>Internal Releases</name>
-      <url>http://172.17.32.102:8081/nexus/content/repositories/releases/</url>
+      <url>http://113.96.39.141/nexus/content/repositories/releases/</url>
     </repository>
     <snapshotRepository>
       <id>snapshots</id>
       <name>Internal snapshots</name>
-      <url>http://172.17.32.102:8081/nexus/content/repositories/snapshots/</url>
+      <url>http://113.96.39.141/nexus/content/repositories/snapshots/</url>
     </snapshotRepository>
   </distributionManagement>
 
@@ -167,7 +167,7 @@
 			<dependency>
 	        <groupId>com.github.rapid.common</groupId>
 	        <artifactId>rapid-common-redis</artifactId>
-	        <version>1.0.6</version>
+	        <version>1.0.0</version>
 			</dependency>
 
 			<dependency>

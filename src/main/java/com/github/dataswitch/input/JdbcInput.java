@@ -110,7 +110,7 @@ public class JdbcInput extends DataSourceProvider implements Input,TableName{
 		}
 		
 		if(removeSqlWhere) {
-			String removeWhereSql = sql.replaceFirst("(?mi)\s(WHERE\s.*)", "");
+			String removeWhereSql = sql.replaceFirst("(?mi)\\s(WHERE\\s.*)", "");
 			logger.info("removeSqlWhere is true, removed where sql:"+removeWhereSql);
 			sql = removeWhereSql;
 		}

@@ -6,6 +6,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -59,6 +60,12 @@ public class VTest {
 		list.forEach((item) -> {
 			
 		});
+	}
+	
+	@Test
+	public void testUUID() {
+		System.out.println(UUID.randomUUID().toString());
+		System.out.println(System.currentTimeMillis());
 	}
 	
 	public static void main(String[] args) throws InterruptedException {
