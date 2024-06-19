@@ -20,6 +20,7 @@ public class MongodbInputTest {
 		input.setUrl(mongodbUrl);
 		input.setDatabase("test");
 		input.setCollection("badqiu_test");
+		input.open(null);
 	}
 	
 	@After

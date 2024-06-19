@@ -22,13 +22,14 @@ public class ScriptProcessorTest {
 	public void testRowEval() throws Exception {
 		 ScriptProcessor sp = newScriptProcessor();
 		 sp.setScript("println 'row eval,name:'+name+' row='+row; return row;");
+		 sp.open(null);
 		 
 		 List rows = new ArrayList();
-		 rows.add("1");
-		 rows.add("2");
+		 rows.add(MapUtil.newMap("age","1"));
+		 rows.add(MapUtil.newMap("age","2"));
 		 Object result = sp.process(rows);
 		 System.out.println("result:"+result);
-		 assertEquals("[1, 2]",result.toString());
+		 assertEquals("[{age=1}, {age=2}]",result.toString());
 	}
 	
 	@Test
@@ -36,6 +37,7 @@ public class ScriptProcessorTest {
 		 ScriptProcessor sp = newScriptProcessor();
 		 sp.setRowEval(false);
 		 sp.setScript("println 'row eval,name:'+name+' rows='+rows");
+		 sp.open(null);
 		 
 		 List rows = new ArrayList();
 		 rows.add("1");

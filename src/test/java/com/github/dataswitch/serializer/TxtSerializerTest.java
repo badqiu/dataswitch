@@ -26,7 +26,8 @@ public class TxtSerializerTest {
 		ser.flush();
 		
 		System.out.println(out.toString());
-		assertEquals("badqiu,1998-08-01 10:12:13",out.toString());
+		assertEquals("badqiu,1998-08-01 10:12:13\n"
+				+ "",out.toString());
 	}
 
 	private Object parse(String date, String pattern) throws ParseException {
