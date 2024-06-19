@@ -48,11 +48,11 @@ public class VTest {
 		return time+workId+incr;
 	}
 
-	@Test
-	public void test_exec() throws IOException {
-		Process p1 = Runtime.getRuntime().exec("bin/flume-ng agent --name usbyteplus1 --conf conf/ --conf-file conf/usbyteplus1.conf -Dflume.root.logger=INFO");
-		IOUtils.copy(p1.getInputStream(),System.out);
-	}
+//	@Test
+//	public void test_exec() throws IOException {
+//		Process p1 = Runtime.getRuntime().exec("bin/flume-ng agent --name usbyteplus1 --conf conf/ --conf-file conf/usbyteplus1.conf -Dflume.root.logger=INFO");
+//		IOUtils.copy(p1.getInputStream(),System.out);
+//	}
 	
 	@Test
 	public void testArray() {

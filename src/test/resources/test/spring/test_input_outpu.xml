@@ -6,8 +6,8 @@
 	
 	<bean id="fileInput" class="com.github.dataswitch.input.FileInput" >
 		<property name="dir" value="classpath:test/fileinput"></property>
-		<property name="IOInput" >
-			<bean class="com.github.dataswitch.input.ReaderInput">
+		<property name="deserializer" >
+			<bean class="com.github.dataswitch.serializer.TxtDeserializer">
 				<property name="columns" value="name,age,sex"></property>
 			</bean>
 		</property>
@@ -15,8 +15,8 @@
 	
 	<bean id="fileOutput" class="com.github.dataswitch.output.FileOutput" >
 		<property name="dir" value="/tmp/fileout"></property>
-		<property name="IOOutput" >
-			<bean class="com.github.dataswitch.output.WriterOutput">
+		<property name="serializer" >
+			<bean class="com.github.dataswitch.serializer.TxtSerializer">
 				<property name="columns" value="name,age"></property>
 			</bean>
 		</property>
