@@ -26,7 +26,7 @@ public class QueuePerfTest {
     }
 
     private static long doTest(final BlockingQueue<Integer> q, final int n) throws Exception {
-        long startTime = System.nanoTime();
+        long startTime = System.currentTimeMillis();
 
         e.submit(new Runnable() {
             public void run() {
@@ -43,9 +43,10 @@ public class QueuePerfTest {
                 return sum;
             }
         }).get();
-        long costTime = System.nanoTime() - startTime;
+        long costTime = System.currentTimeMillis() - startTime;
 
-        long tps = (long)(1000000000.0 * N / costTime); // Throughput, items/sec
+        System.out.print(q.getClass().getSimpleName()+" costTime:"+costTime+" ");
+        long tps = (long)(1000.0 * N / costTime); // Throughput, items/sec
         return tps;
     }
 }  
