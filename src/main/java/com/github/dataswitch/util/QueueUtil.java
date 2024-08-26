@@ -30,20 +30,20 @@ public class QueueUtil {
 	
 	public static <T> List<T> batchTake(BlockingQueue<T> queue,int size, int timeout) throws InterruptedException {
 		List results = new ArrayList(size);
-//		long startReadTime = System.currentTimeMillis();
-//		
-//		for(int i = 0; i < size; i++) {
-//			Object object = queue.take();
-//			results.add(object);
-//			if(isTimeout(timeout,startReadTime)) {
-//				break;
-//			}
-//		}
-//		
-//		return results;
+		long startReadTime = System.currentTimeMillis();
 		
-		Queues.drain(queue, results, size, timeout, TimeUnit.MILLISECONDS);
+		for(int i = 0; i < size; i++) {
+			Object object = queue.take();
+			results.add(object);
+			if(isTimeout(timeout,startReadTime)) {
+				break;
+			}
+		}
+		
 		return results;
+		
+//		Queues.drain(queue, results, size, timeout, TimeUnit.MILLISECONDS);
+//		return results;
 	}
 	
 	private static boolean isTimeout(int timeout,long startReadTime) {
