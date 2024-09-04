@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.StringJoiner;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -121,12 +122,25 @@ public class ElasticsearchOutput implements Output,TableName{
 		_primaryKeys = Util.splitColumns(primaryKeys);
 	}
 
+	private int timeout = 1000 * 30;
 	private synchronized RestHighLevelClient makeConnection() {
         RestHighLevelClient client = null;
         HttpHost[] hostList = newHttpHostArray(hosts);
         RestClientBuilder restClient = RestClient.builder(hostList);
-        restClient.setPathPrefix(connectionPathPrefix);
+        if(StringUtils.isNotBlank(connectionPathPrefix)) {
+        	restClient.setPathPrefix(connectionPathPrefix);
+        }
         
+        int connectTimeout = timeout;
+        int socketTimeout = timeout;
+        int connectionRequestTimeout = timeout;
+        
+        restClient.setRequestConfigCallback(requestConfigBuilder -> {
+                    requestConfigBuilder.setConnectTimeout(connectTimeout);
+                    requestConfigBuilder.setSocketTimeout(socketTimeout);
+                    requestConfigBuilder.setConnectionRequestTimeout(connectionRequestTimeout);
+                    return requestConfigBuilder;
+                });
     
 		if(StringUtils.isBlank(username)) {
         	client = new RestHighLevelClient(restClient);
@@ -182,7 +196,8 @@ public class ElasticsearchOutput implements Output,TableName{
 		BulkResponse bulkResponse = _client.bulk(bulkRequest, RequestOptions.DEFAULT);
 		
 	    if (bulkResponse.hasFailures()) {
-	        throw new RuntimeException("Failed to write data to Elasticsearch!,rows.size:"+rows.size()+" firstRow:"+rows.get(0));
+	        String firstFailureMessage = bulkResponse.getItems()[0].getFailureMessage();
+			throw new RuntimeException("Failed to write data to Elasticsearch!,rows.size:"+rows.size()+" firstRow:"+rows.get(0)+" firstFailMessage:"+firstFailureMessage);
 	    }
 	}
 

@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import com.github.dataswitch.input.DataGenInput;
+import com.github.dataswitch.util.InputOutputUtil;
 import com.github.dataswitch.util.MapUtil;
 
 public class ElasticsearchOutputTest {
@@ -34,4 +36,16 @@ public class ElasticsearchOutputTest {
 		assertEquals(null,v);
 	}
 	
+	@Test
+	public void testWrite() {
+		output.setIndex("test_demo_index");
+		output.setHosts(System.getenv("TEST_ES_HOSTS"));
+		output.setUsername(System.getenv("TEST_ES_USERNAME"));
+		output.setPassword(System.getenv("TEST_ES_PASSWORD"));
+		DataGenInput input = new DataGenInput(1000);
+		
+		InputOutputUtil.openAll(input,output);
+		InputOutputUtil.copy(input, output);
+		
+	}
 }
