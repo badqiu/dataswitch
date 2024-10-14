@@ -28,6 +28,7 @@ import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.CreateIndexResponse;
+import org.springframework.util.Assert;
 
 import com.github.dataswitch.enums.OutputMode;
 import com.github.dataswitch.util.InputOutputUtil;
@@ -164,6 +165,7 @@ public class ElasticsearchOutput implements Output,TableName{
     }
 
 	private static HttpHost[] newHttpHostArray(String hosts) {
+		Assert.hasText(hosts,"hosts must be not blank");
 		String[] hostList = org.springframework.util.StringUtils.tokenizeToStringArray(hosts, ",; \t\n");
 		List<HttpHost> result = new ArrayList<HttpHost>();
 		for(String host : hostList) {
