@@ -25,7 +25,7 @@ public class Constants {
 	/**
 	 * queue的默认分组
 	 */
-	public static String DEFAULT_EXECUTOR_GROUP = System.getProperty("DEFAULT_QUEUE_GROUP","default");
+	public static String DEFAULT_EXECUTOR_GROUP = System.getProperty("DEFAULT_EXECUTOR_GROUP","default");
 
 	
 	/**
