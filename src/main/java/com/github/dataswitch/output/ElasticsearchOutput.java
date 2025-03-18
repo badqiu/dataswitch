@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.StringJoiner;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -27,6 +28,7 @@ import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.CreateIndexResponse;
+import org.springframework.util.Assert;
 
 import com.github.dataswitch.enums.OutputMode;
 import com.github.dataswitch.util.InputOutputUtil;
@@ -121,12 +123,25 @@ public class ElasticsearchOutput implements Output,TableName{
 		_primaryKeys = Util.splitColumns(primaryKeys);
 	}
 
+	private int timeout = 1000 * 30;
 	private synchronized RestHighLevelClient makeConnection() {
         RestHighLevelClient client = null;
         HttpHost[] hostList = newHttpHostArray(hosts);
         RestClientBuilder restClient = RestClient.builder(hostList);
-        restClient.setPathPrefix(connectionPathPrefix);
+        if(StringUtils.isNotBlank(connectionPathPrefix)) {
+        	restClient.setPathPrefix(connectionPathPrefix);
+        }
         
+        int connectTimeout = timeout;
+        int socketTimeout = timeout;
+        int connectionRequestTimeout = timeout;
+        
+        restClient.setRequestConfigCallback(requestConfigBuilder -> {
+                    requestConfigBuilder.setConnectTimeout(connectTimeout);
+                    requestConfigBuilder.setSocketTimeout(socketTimeout);
+                    requestConfigBuilder.setConnectionRequestTimeout(connectionRequestTimeout);
+                    return requestConfigBuilder;
+                });
     
 		if(StringUtils.isBlank(username)) {
         	client = new RestHighLevelClient(restClient);
@@ -150,6 +165,7 @@ public class ElasticsearchOutput implements Output,TableName{
     }
 
 	private static HttpHost[] newHttpHostArray(String hosts) {
+		Assert.hasText(hosts,"hosts must be not blank");
 		String[] hostList = org.springframework.util.StringUtils.tokenizeToStringArray(hosts, ",; \t\n");
 		List<HttpHost> result = new ArrayList<HttpHost>();
 		for(String host : hostList) {
@@ -182,7 +198,8 @@ public class ElasticsearchOutput implements Output,TableName{
 		BulkResponse bulkResponse = _client.bulk(bulkRequest, RequestOptions.DEFAULT);
 		
 	    if (bulkResponse.hasFailures()) {
-	        throw new RuntimeException("Failed to write data to Elasticsearch!,rows.size:"+rows.size()+" firstRow:"+rows.get(0));
+	        String firstFailureMessage = bulkResponse.getItems()[0].getFailureMessage();
+			throw new RuntimeException("Failed to write data to Elasticsearch!,rows.size:"+rows.size()+" firstRow:"+rows.get(0)+" firstFailMessage:"+firstFailureMessage);
 	    }
 	}
 

@@ -78,11 +78,11 @@ public class RedisOutput extends BaseObject implements Output{
 		jedisPool = new JedisPool(url);
 	}
 	
-	public static void batchRedis(JedisPool jedisPool,final List<Map<String, Object>> datas,final Map globalContext, final String script) throws Exception {
+	public static void batchRedis(JedisPool jedisPool,final List<Map<String, Object>> rows,final Map globalContext, final String script) throws Exception {
 		Assert.hasText(script,"script must be not empty");
 		Assert.notNull(jedisPool,"jedisPool must be not null");
 		RedisTemplate template = new RedisTemplate(jedisPool);
-		String newExpr = String.format("foreach(row : datas) { var redis = redis; %s}",script);
+		String newExpr = String.format("foreach(row : rows) { var redis = redis; %s}",script);
 		final Serializable expr = MVEL.compileExpression(newExpr);
 		template.execute(new RedisTransactionCallback(){
 			@Override
@@ -91,7 +91,7 @@ public class RedisOutput extends BaseObject implements Output{
 				if(globalContext != null) {
 					vars.putAll(globalContext);
 				}
-				vars.put("datas", datas);
+				vars.put("rows", rows);
 				vars.put("redis", redis);
 				MVEL.executeExpression(expr,vars);
 				redis.exec();

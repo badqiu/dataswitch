@@ -6,6 +6,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -47,11 +48,11 @@ public class VTest {
 		return time+workId+incr;
 	}
 
-	@Test
-	public void test_exec() throws IOException {
-		Process p1 = Runtime.getRuntime().exec("bin/flume-ng agent --name usbyteplus1 --conf conf/ --conf-file conf/usbyteplus1.conf -Dflume.root.logger=INFO");
-		IOUtils.copy(p1.getInputStream(),System.out);
-	}
+//	@Test
+//	public void test_exec() throws IOException {
+//		Process p1 = Runtime.getRuntime().exec("bin/flume-ng agent --name usbyteplus1 --conf conf/ --conf-file conf/usbyteplus1.conf -Dflume.root.logger=INFO");
+//		IOUtils.copy(p1.getInputStream(),System.out);
+//	}
 	
 	@Test
 	public void testArray() {
@@ -59,6 +60,12 @@ public class VTest {
 		list.forEach((item) -> {
 			
 		});
+	}
+	
+	@Test
+	public void testUUID() {
+		System.out.println(UUID.randomUUID().toString());
+		System.out.println(System.currentTimeMillis());
 	}
 	
 	public static void main(String[] args) throws InterruptedException {

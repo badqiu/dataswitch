@@ -9,9 +9,8 @@ import org.junit.Test;
 public class BlockingQueueTest {
 	private BlockingQueue<List> queue = new ArrayBlockingQueue<List>(100);
 	
-	@Test
+	@Test(expected=NullPointerException.class)
 	public void test_put_null() throws InterruptedException {
-		
 		queue.put(null);
 	}
 }
