@@ -2,14 +2,18 @@ package com.github.dataswitch.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang.time.DurationFormatUtils;
 
 
 public class DateUtil {
@@ -188,4 +192,46 @@ public class DateUtil {
 		return new SimpleDateFormat(dateFormat).format(date);
 	}
 	
+	
+	
+	
+
+    /**
+     * 生成时间序列
+     * @param start 开始时间（包含）
+     * @param end   结束时间（包含）
+     * @param stepMinute  步长（分钟），必须为正整数
+     * @return 从 start 到 end 按步长生成的时间序列
+     * @throws IllegalArgumentException 参数无效时抛出异常
+     */
+    public static List<Date> generateDateTimeLoop(
+    		Date start, 
+    		Date end, 
+            int stepMinute
+    ) {
+        // 1. 参数校验
+        if (Objects.isNull(start) || Objects.isNull(end)) {
+            throw new IllegalArgumentException("开始/结束时间不能为null");
+        }
+        if (stepMinute <= 0) {
+            throw new IllegalArgumentException("步长必须为正整数");
+        }
+        if (start.after(end)) {
+            return Collections.emptyList(); // 开始时间晚于结束时返回空列表
+        }
+        
+        
+
+        // 2. 生成序列
+        List<Date> result = new ArrayList<>();
+        Date current = start;
+        
+        while (!current.after(end)) { // 包含结束时间
+            result.add(current);
+//            current = current.plusMinutes(stepMinute); // 按步长递增
+            current = DateUtils.addMinutes(current, stepMinute);
+        }
+        return result;
+    }
+    
 }
