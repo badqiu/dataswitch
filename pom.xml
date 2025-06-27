@@ -167,7 +167,7 @@
 			<dependency>
 	        <groupId>com.github.rapid.common</groupId>
 	        <artifactId>rapid-common-redis</artifactId>
-	        <version>1.0.0</version>
+	        <version>1.0.8-release</version>
 			</dependency>
 
 			<dependency>
