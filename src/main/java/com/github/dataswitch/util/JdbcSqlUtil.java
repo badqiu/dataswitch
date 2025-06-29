@@ -110,7 +110,8 @@ public class JdbcSqlUtil {
 			if(StringUtils.isBlank(columnName)) return;
 			
 			valueJoiner.add(":"+columnName);
-			keyJoiner.add("`"+columnName+"`");
+//			keyJoiner.add("`"+columnName+"`");
+			keyJoiner.add(columnName);
 		});
 		
 		String sql = "INSERT INTO " + table + " ("+keyJoiner.toString()+") VALUES ("+valueJoiner.toString()+")";
