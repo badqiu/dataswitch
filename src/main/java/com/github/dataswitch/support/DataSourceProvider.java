@@ -108,7 +108,10 @@ public class DataSourceProvider extends BaseObject{
 		DataSource result = dataSourceCache.get(dataSourceKey);
 		if(result == null) {
 			DriverManagerDataSource ds = new DriverManagerDataSource();
-			ds.setDriverClassName(driverClass);
+			if(StringUtils.isNotBlank(driverClass)) {
+				ds.setDriverClassName(driverClass);
+			}
+			
 			ds.setUsername(username);
 			ds.setPassword(password);
 			ds.setUrl(jdbcUrl);
