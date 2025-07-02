@@ -11,12 +11,12 @@
     <repository>
       <id>releases</id>
       <name>Internal Releases</name>
-      <url>http://113.96.39.141/nexus/content/repositories/releases/</url>
+      <url>https://nexus.modo5.com/nexus/repository/maven-releases/</url>
     </repository>
     <snapshotRepository>
       <id>snapshots</id>
       <name>Internal snapshots</name>
-      <url>http://113.96.39.141/nexus/content/repositories/snapshots/</url>
+      <url>https://nexus.modo5.com/nexus/repository/maven-snapshots/</url>
     </snapshotRepository>
   </distributionManagement>
 
