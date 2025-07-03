@@ -4,8 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 
-import org.codehaus.jackson.map.ObjectMapper;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dataswitch.BaseObject;
 
 public class JsonSerializer  extends BaseObject implements Serializer<Map>{
