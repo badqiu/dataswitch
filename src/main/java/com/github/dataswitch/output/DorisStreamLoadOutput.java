@@ -9,12 +9,19 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
+import org.apache.http.ProtocolException;
+import org.apache.http.client.RedirectStrategy;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.DefaultRedirectStrategy;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.springframework.util.Assert;
 
@@ -25,11 +32,11 @@ import com.github.dataswitch.util.CsvUtils;
 
 public class DorisStreamLoadOutput implements Output {
 
-	private static String FORMAT_JSON = "json";
-	private static String FORMAT_CSV = "csv";
-	
-	private static String CSV_COLUMN_SEPARATOR = Constants.COLUMN_SPLIT;
-	
+    private static String FORMAT_JSON = "json";
+    private static String FORMAT_CSV = "csv";
+    
+    private static String CSV_COLUMN_SEPARATOR = Constants.COLUMN_SPLIT;
+    
     // Doris 连接配置
     private String host;
     private int port = 8030;
@@ -37,7 +44,7 @@ public class DorisStreamLoadOutput implements Output {
     private String table;
     private String user;
     private String password;
-    private String format = "json";  // 支持json/csv
+    private String format = FORMAT_JSON;  // 支持json/csv
     private String csvColumnSeparator = CSV_COLUMN_SEPARATOR;
 
     
@@ -63,8 +70,45 @@ public class DorisStreamLoadOutput implements Output {
         if (params.containsKey("password")) password = (String) params.get("password");
         if (params.containsKey("format")) format = (String) params.get("format");
         
-        // 创建可复用的HTTP客户端
-        httpClient = HttpClients.createDefault();
+        // 创建支持重定向的HTTP客户端
+        httpClient = createHttpClientWithRedirect();
+    }
+
+    /**
+     * 创建支持重定向的HTTP客户端，并确保重定向时携带认证头
+     */
+    private CloseableHttpClient createHttpClientWithRedirect() {
+        // 自定义重定向策略：保留所有请求头（尤其是Authorization）
+        RedirectStrategy customRedirectStrategy = new DefaultRedirectStrategy() {
+            @Override
+            public boolean isRedirected(HttpRequest request, HttpResponse response, HttpContext context) {
+                try {
+					return super.isRedirected(request, response, context);
+				} catch (ProtocolException e) {
+					throw new RuntimeException(e);
+				}
+            }
+
+            @Override
+            public HttpUriRequest getRedirect(HttpRequest request, HttpResponse response, HttpContext context) throws ProtocolException {
+                HttpUriRequest redirect = super.getRedirect(request, response, context);
+                // 复制原始请求的所有头信息到重定向请求
+                redirect.setHeaders(request.getAllHeaders());
+                return redirect;
+            }
+        };
+
+        // 配置请求超时
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectTimeout(timeoutSeconds * 1000)
+                .setConnectionRequestTimeout(timeoutSeconds * 1000)
+                .setSocketTimeout(timeoutSeconds * 1000)
+                .build();
+
+        return HttpClientBuilder.create()
+                .setRedirectStrategy(customRedirectStrategy)  // 启用自定义重定向策略
+                .setDefaultRequestConfig(requestConfig)
+                .build();
     }
 
     @Override
@@ -83,7 +127,7 @@ public class DorisStreamLoadOutput implements Output {
             addRequiredHeaders(httpPut);
             
             // 3. 设置请求体
-            httpPut.setEntity(new StringEntity(payload));
+            httpPut.setEntity(new StringEntity(payload, "UTF-8"));  // 显式指定编码
             
             // 4. 发送请求并处理响应
             httpClientExecuteWithRetry(httpPut);
@@ -92,103 +136,113 @@ public class DorisStreamLoadOutput implements Output {
         }
     }
 
-	private void httpClientExecuteWithRetry(HttpPut httpPut)
-			throws IOException, ClientProtocolException, InterruptedException {
-		int tmpRetryCount = 0;
-		while (tmpRetryCount <= retryCount) {
-		    HttpResponse response = httpClient.execute(httpPut);
-		    if (handleResponse(response)) {
-		        break; // 成功则退出重试循环
-		    }
-		    tmpRetryCount++;
-		    Thread.sleep(1000 * (1 << tmpRetryCount)); // 指数退避
-		}
-	}
-
-	private CsvUtils csvUtils = new CsvUtils();
-    private String convertToDorisFormat(List<Map<String, Object>> rows) {
-    	if(FORMAT_CSV.equals(format)){
-    		return toCsvLines(rows);
-    	}if(FORMAT_JSON.equals(format)) {
-	        return toJsonLines(rows);
-    	}else {
-    		throw new RuntimeException("unsupport format:"+format+", support:csv or json");
-    	}
+    private void httpClientExecuteWithRetry(HttpPut httpPut)
+            throws IOException, InterruptedException {
+        int tmpRetryCount = 0;
+        while (tmpRetryCount <= retryCount) {
+            try (CloseableHttpResponse response = httpClient.execute(httpPut)) {  // 使用CloseableHttpResponse确保资源释放
+                if (handleResponse(response)) {
+                    break; // 成功则退出重试循环
+                }
+            } catch (Exception e) {
+                System.err.println("请求异常，重试次数：" + tmpRetryCount + "，异常：" + e.getMessage());
+            }
+            tmpRetryCount++;
+            long sleepTime = 1000L * (1 << tmpRetryCount); // 指数退避（1s, 2s, 4s...）
+            Thread.sleep(sleepTime);
+        }
     }
 
-	private String toJsonLines(List<Map<String, Object>> rows) {
-		StringBuilder sb = new StringBuilder();
-		for (Map<String, Object> row : rows) {
-		    sb.append(toJSONString(row));
-		    sb.append("\n"); // 行分隔符
-		}
-		return sb.toString();
-	}
+    private CsvUtils csvUtils = new CsvUtils();
+    private String convertToDorisFormat(List<Map<String, Object>> rows) {
+        if(FORMAT_CSV.equals(format)){
+            return toCsvLines(rows);
+        }if(FORMAT_JSON.equals(format)) {
+            return toJsonLines(rows);
+        }else {
+            throw new RuntimeException("unsupport format:"+format+", support:csv or json");
+        }
+    }
 
-	private String toCsvLines(List<Map<String, Object>> rows) {
-		Assert.notEmpty(csvColumns,"csvColumns must be not empty");
-		
-		StringBuilder sb = new StringBuilder();
-		for (Map<String, Object> row : rows) {
-			List<Object> values = new ArrayList();
-			for(String c : csvColumns) {
-				Object columnValue = row.get(c);
-				values.add(csvUtils.toCsvStringValue(columnValue)); 
-			}
-			sb.append(toCsvString(values));
-		    sb.append("\n"); // 行分隔符
-		}
-		return sb.toString();
-	}
+    private String toJsonLines(List<Map<String, Object>> rows) {
+        StringBuilder sb = new StringBuilder();
+        for (Map<String, Object> row : rows) {
+            sb.append(toJSONString(row));
+            sb.append("\n"); // 行分隔符
+        }
+        return sb.toString();
+    }
 
-    
+    private String toCsvLines(List<Map<String, Object>> rows) {
+        Assert.notEmpty(csvColumns,"csvColumns must be not empty");
+        
+        StringBuilder sb = new StringBuilder();
+        for (Map<String, Object> row : rows) {
+            List<Object> values = new ArrayList<>();
+            for(String c : csvColumns) {
+                Object columnValue = row.get(c);
+                values.add(csvUtils.toCsvStringValue(columnValue)); 
+            }
+            sb.append(toCsvString(values));
+            sb.append("\n"); // 行分隔符
+        }
+        return sb.toString();
+    }
 
-	private Object toCsvString(List<Object> values) {
-		return StringUtils.join(values,csvColumnSeparator);
-	}
+    private Object toCsvString(List<Object> values) {
+        return StringUtils.join(values,csvColumnSeparator);
+    }
 
-	ObjectMapper objectMapper = new ObjectMapper();
+    ObjectMapper objectMapper = new ObjectMapper();
     private Object toJSONString(Map<String, Object> row) {
-		try {
-			return objectMapper.writeValueAsString(row);
-		} catch (JsonProcessingException e) {
-			throw new RuntimeException("writeValueAsString() row:"+row,e);
-		}
-	}
+        try {
+            return objectMapper.writeValueAsString(row);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("writeValueAsString() row:"+row,e);
+        }
+    }
 
-	// 添加必要的HTTP头[1,6](@ref)
+    // 添加必要的HTTP头
     private void addRequiredHeaders(HttpPut httpPut) {
-        // 认证头
+        // 认证头（重定向时需要保留）
         String auth = user + ":" + password;
         String encodedAuth = java.util.Base64.getEncoder().encodeToString(auth.getBytes());
         httpPut.setHeader("Authorization", "Basic " + encodedAuth);
         
         // Stream Load参数
-        httpPut.setHeader("Expect", "100-continue");
-        httpPut.setHeader("label", "stream_load_" + UUID.randomUUID()); // 唯一标识
+        httpPut.setHeader("label", "stream_load_" + UUID.randomUUID()); // 唯一标识，避免重复导入
         httpPut.setHeader("format", format);
-        httpPut.setHeader("strip_outer_array", "true"); // JSON专用
-		httpPut.setHeader("column_separator", csvColumnSeparator);    // CSV专用
         httpPut.setHeader("timeout", String.valueOf(timeoutSeconds));
         
+        // 格式专用参数
+        if (FORMAT_JSON.equals(format)) {
+            httpPut.setHeader("strip_outer_array", "true"); // JSON数组处理
+        } else if (FORMAT_CSV.equals(format)) {
+            httpPut.setHeader("column_separator", csvColumnSeparator);    // CSV分隔符
+        }
+        
+        // 重定向场景下移除Expect头，避免冲突
+        httpPut.removeHeaders("Expect");
+        
+        // 添加自定义头
         httpHeaders.forEach((key,value) -> {
-        	httpPut.setHeader(key,value);
+            httpPut.setHeader(key,value);
         });
     }
 
-    // 处理响应并返回是否成功[1,4](@ref)
+    // 处理响应并返回是否成功
     private boolean handleResponse(HttpResponse response) throws IOException {
         int statusCode = response.getStatusLine().getStatusCode();
         HttpEntity entity = response.getEntity();
-        String responseBody = EntityUtils.toString(entity);
+        String responseBody = entity != null ? EntityUtils.toString(entity, "UTF-8") : ""; // 显式指定编码
         
-        // 检查HTTP状态码
+        // 检查HTTP状态码（重定向后可能是200或3xx，但最终应返回200）
         if (statusCode != 200) {
             System.err.println("HTTP Error: " + statusCode + " - " + responseBody);
             return false;
         }
         
-        // 检查Doris返回状态
+        // 检查Doris返回状态（JSON格式）
         if (responseBody.contains("\"Status\":\"Success\"")) {
             System.out.println("Stream Load succeeded: " + 
                               StringUtils.substring(responseBody, 0, 100) + "...");
@@ -202,7 +256,7 @@ public class DorisStreamLoadOutput implements Output {
     @Override
     public void close() throws Exception {
         if (httpClient != null) {
-            httpClient.close();
+            httpClient.close(); // 关闭HTTP客户端，释放资源
         }
     }
 
@@ -211,7 +265,7 @@ public class DorisStreamLoadOutput implements Output {
         // Stream Load实时写入，无需额外flush
     }
 
-    // 配置setters（可在外部通过Map配置）
+    // 配置setters
     public void setHost(String host) { this.host = host; }
     public void setPort(int port) { this.port = port; }
     public void setDatabase(String database) { this.database = database; }
@@ -220,13 +274,9 @@ public class DorisStreamLoadOutput implements Output {
     public void setPassword(String password) { this.password = password; }
     public void setFormat(String format) { this.format = format; }
     public void setBatchSize(int batchSize) { this.batchSize = batchSize; }
-
-	public void setTimeoutSeconds(int timeoutSeconds) {
-		this.timeoutSeconds = timeoutSeconds;
-	}
-
-	public void setRetryCount(int retryCount) {
-		this.retryCount = retryCount;
-	}
-    
+    public void setTimeoutSeconds(int timeoutSeconds) { this.timeoutSeconds = timeoutSeconds; }
+    public void setRetryCount(int retryCount) { this.retryCount = retryCount; }
+    public void setCsvColumns(List<String> csvColumns) { this.csvColumns = csvColumns; }
+    public void setCsvColumnSeparator(String csvColumnSeparator) { this.csvColumnSeparator = csvColumnSeparator; }
+    public void setHttpHeaders(Map<String, String> httpHeaders) { this.httpHeaders = httpHeaders; }
 }
