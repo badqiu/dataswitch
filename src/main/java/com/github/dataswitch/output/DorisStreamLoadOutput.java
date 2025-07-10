@@ -1,6 +1,8 @@
 package com.github.dataswitch.output;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -14,27 +16,41 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.springframework.util.Assert;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.dataswitch.enums.Constants;
+import com.github.dataswitch.util.CsvUtils;
 
 public class DorisStreamLoadOutput implements Output {
 
+	private static String FORMAT_JSON = "json";
+	private static String FORMAT_CSV = "csv";
+	
+	private static String CSV_COLUMN_SEPARATOR = Constants.COLUMN_SPLIT;
+	
     // Doris 连接配置
-    private String host = "127.0.0.1";
+    private String host;
     private int port = 8030;
-    private String database = "default_db";
-    private String table = "default_table";
-    private String user = "root";
-    private String password = "";
+    private String database;
+    private String table;
+    private String user;
+    private String password;
     private String format = "json";  // 支持json/csv
+    private String csvColumnSeparator = CSV_COLUMN_SEPARATOR;
 
+    
     private int timeoutSeconds = 600; // 默认超时600秒
     
     // 性能优化参数
     private int batchSize = 5000;     // 批次大小
     private int retryCount = 3;       // 失败重试次数
     private CloseableHttpClient httpClient;
+    
+    private Map<String,String> httpHeaders = new HashMap<String,String>();
+    
+    private List<String> csvColumns = new ArrayList();
 
     @Override
     public void open(Map<String, Object> params) throws Exception {
@@ -89,17 +105,49 @@ public class DorisStreamLoadOutput implements Output {
 		}
 	}
 
-    // 转换数据为JSON格式（每行一个JSON对象）
+	private CsvUtils csvUtils = new CsvUtils();
     private String convertToDorisFormat(List<Map<String, Object>> rows) {
-        StringBuilder sb = new StringBuilder();
-        for (Map<String, Object> row : rows) {
-            sb.append(toJSONString(row));
-            sb.append("\n"); // 行分隔符
-        }
-        return sb.toString();
+    	if(FORMAT_CSV.equals(format)){
+    		return toCsvLines(rows);
+    	}if(FORMAT_JSON.equals(format)) {
+	        return toJsonLines(rows);
+    	}else {
+    		throw new RuntimeException("unsupport format:"+format+", support:csv or json");
+    	}
     }
 
-    ObjectMapper objectMapper = new ObjectMapper();
+	private String toJsonLines(List<Map<String, Object>> rows) {
+		StringBuilder sb = new StringBuilder();
+		for (Map<String, Object> row : rows) {
+		    sb.append(toJSONString(row));
+		    sb.append("\n"); // 行分隔符
+		}
+		return sb.toString();
+	}
+
+	private String toCsvLines(List<Map<String, Object>> rows) {
+		Assert.notEmpty(csvColumns,"csvColumns must be not empty");
+		
+		StringBuilder sb = new StringBuilder();
+		for (Map<String, Object> row : rows) {
+			List<Object> values = new ArrayList();
+			for(String c : csvColumns) {
+				Object columnValue = row.get(c);
+				values.add(csvUtils.toCsvStringValue(columnValue)); 
+			}
+			sb.append(toCsvString(values));
+		    sb.append("\n"); // 行分隔符
+		}
+		return sb.toString();
+	}
+
+    
+
+	private Object toCsvString(List<Object> values) {
+		return StringUtils.join(values,csvColumnSeparator);
+	}
+
+	ObjectMapper objectMapper = new ObjectMapper();
     private Object toJSONString(Map<String, Object> row) {
 		try {
 			return objectMapper.writeValueAsString(row);
@@ -120,8 +168,12 @@ public class DorisStreamLoadOutput implements Output {
         httpPut.setHeader("label", "stream_load_" + UUID.randomUUID()); // 唯一标识
         httpPut.setHeader("format", format);
         httpPut.setHeader("strip_outer_array", "true"); // JSON专用
-        httpPut.setHeader("column_separator", ",");    // CSV专用
+		httpPut.setHeader("column_separator", csvColumnSeparator);    // CSV专用
         httpPut.setHeader("timeout", String.valueOf(timeoutSeconds));
+        
+        httpHeaders.forEach((key,value) -> {
+        	httpPut.setHeader(key,value);
+        });
     }
 
     // 处理响应并返回是否成功[1,4](@ref)
