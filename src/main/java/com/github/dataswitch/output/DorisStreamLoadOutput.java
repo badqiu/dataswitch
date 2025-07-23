@@ -33,10 +33,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dataswitch.enums.Constants;
 import com.github.dataswitch.util.CsvUtils;
+import com.github.dataswitch.util.Retry;
 
 public class DorisStreamLoadOutput implements Output {
 	
 	private static Logger log = LoggerFactory.getLogger(DorisStreamLoadOutput.class);
+	
+	public static final int FE_HTTP_PORT = 8030;
+	public static final int FE_MYSQL_PORT = 9030;
+	public static final int BE_HTTP_PORT = 8040;
+	public static final int BE_DATA_PORT = 9060;
 	
 	public static String FORMAT_JSON = "json";
     public static String FORMAT_CSV = "csv";
@@ -45,7 +51,11 @@ public class DorisStreamLoadOutput implements Output {
     
     // Doris 连接配置
     private String host;
-    private int port = 8030;
+    
+    // Frontend: http=8030 mysql=9030  
+    // Backend: http=8040 thrift_data=9060
+    private int port = FE_HTTP_PORT; 
+    
     private String database;
     private String table;
     private String user;
@@ -145,17 +155,23 @@ public class DorisStreamLoadOutput implements Output {
     private void httpClientExecuteWithRetry(HttpPut httpPut)
             throws IOException, InterruptedException {
         int tmpRetryCount = 0;
+        String errorMsg = null;
         while (tmpRetryCount <= retryCount) {
             try (CloseableHttpResponse response = httpClient.execute(httpPut)) {  // 使用CloseableHttpResponse确保资源释放
-                if (handleResponse(response)) {
+            	errorMsg = getResponseErrorMsg(response);
+            	if (errorMsg == null) {
                     break; // 成功则退出重试循环
                 }
             } catch (Exception e) {
-                log.warn("httpClientExecuteWithRetry error, retry:"+tmpRetryCount,e);
+                log.warn("httpClientExecuteWithRetry error, retryCount:"+tmpRetryCount,e);
             }
             tmpRetryCount++;
             long sleepTime = 1000L * (1 << tmpRetryCount); // 指数退避（1s, 2s, 4s...）
             Thread.sleep(sleepTime);
+        }
+        
+        if(errorMsg != null) {
+        	throw new RuntimeException(" stream load data into doris error,errorMsg:"+errorMsg);
         }
     }
 
@@ -237,25 +253,27 @@ public class DorisStreamLoadOutput implements Output {
     }
 
     // 处理响应并返回是否成功
-    private boolean handleResponse(HttpResponse response) throws IOException {
+    private String getResponseErrorMsg(HttpResponse response) throws IOException {
         int statusCode = response.getStatusLine().getStatusCode();
         HttpEntity entity = response.getEntity();
         String responseBody = entity != null ? EntityUtils.toString(entity, "UTF-8") : ""; // 显式指定编码
         
         // 检查HTTP状态码（重定向后可能是200或3xx，但最终应返回200）
         if (statusCode != 200) {
-            log.warn("HTTP Error: " + statusCode + " - " + responseBody);
-            return false;
+            String errorMsg = "HTTP Error: " + statusCode + " - " + responseBody;
+			log.warn(errorMsg);
+            return errorMsg;
         }
         
         // 检查Doris返回状态（JSON格式）
         if (responseBody.contains("\"Status\":\"Success\"")) {
         	log.info("Stream Load succeeded: " + 
                               StringUtils.substring(responseBody, 0, 100) + "...");
-            return true;
+            return null;
         } else {
-        	log.warn("Doris Import Error: " + responseBody);
-            return false;
+        	String errorMsg = "Doris Import Error: " + responseBody;
+			log.warn(errorMsg);
+            return errorMsg;
         }
     }
 
