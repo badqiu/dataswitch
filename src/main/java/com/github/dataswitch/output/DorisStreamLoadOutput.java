@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
@@ -31,7 +33,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dataswitch.enums.Constants;
 import com.github.dataswitch.util.CsvUtils;
-import com.mysql.jdbc.log.Log;
 
 public class DorisStreamLoadOutput implements Output {
 	
@@ -284,4 +285,47 @@ public class DorisStreamLoadOutput implements Output {
     public void setCsvColumns(List<String> csvColumns) { this.csvColumns = csvColumns; }
     public void setCsvColumnSeparator(String csvColumnSeparator) { this.csvColumnSeparator = csvColumnSeparator; }
     public void setHttpHeaders(Map<String, String> httpHeaders) { this.httpHeaders = httpHeaders; }
+    
+    public void setJdbcUrl(String jdbcUrl) {
+    	if (StringUtils.isBlank(jdbcUrl)) {
+            return;
+        }
+        
+        try {
+            // 解析 JDBC URL 格式: jdbc:mysql://host:port/database
+            Pattern pattern = Pattern.compile("jdbc:mysql://([^:/]+)(?::(\\d+))?/([^?]+)");
+            Matcher matcher = pattern.matcher(jdbcUrl);
+            
+            if (matcher.find()) {
+                // 提取主机名
+                String extractedHost = matcher.group(1);
+                if (StringUtils.isNotBlank(extractedHost)) {
+                    this.host = extractedHost;
+                }
+                
+                // 提取端口（如果存在）
+                String portStr = matcher.group(2);
+                if (StringUtils.isNotBlank(portStr)) {
+//                    try {
+//                        int extractedPort = Integer.parseInt(portStr);
+//                        if (extractedPort > 0 && extractedPort <= 65535) {
+//                            this.port = extractedPort;
+//                        }
+//                    } catch (NumberFormatException e) {
+//                    	throw new RuntimeException("Invalid port in JDBC URL:"+jdbcUrl+" port:"+portStr);
+//                    }
+                }
+                
+                // 提取数据库名
+                String extractedDb = matcher.group(3);
+                if (StringUtils.isNotBlank(extractedDb)) {
+                    this.database = extractedDb;
+                }
+            } else {
+                throw new RuntimeException("Error parsing JDBC URL: " + jdbcUrl);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error parsing JDBC URL: " + jdbcUrl, e);
+        }
+    }
 }
