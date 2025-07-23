@@ -23,15 +23,20 @@ import org.apache.http.impl.client.DefaultRedirectStrategy;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dataswitch.enums.Constants;
 import com.github.dataswitch.util.CsvUtils;
+import com.mysql.jdbc.log.Log;
 
 public class DorisStreamLoadOutput implements Output {
-
+	
+	private static Logger log = LoggerFactory.getLogger(DorisStreamLoadOutput.class);
+	
 	public static String FORMAT_JSON = "json";
     public static String FORMAT_CSV = "csv";
     
@@ -145,7 +150,7 @@ public class DorisStreamLoadOutput implements Output {
                     break; // 成功则退出重试循环
                 }
             } catch (Exception e) {
-                System.err.println("请求异常，重试次数：" + tmpRetryCount + "，异常：" + e.getMessage());
+                log.warn("httpClientExecuteWithRetry error, retry:"+tmpRetryCount,e);
             }
             tmpRetryCount++;
             long sleepTime = 1000L * (1 << tmpRetryCount); // 指数退避（1s, 2s, 4s...）
@@ -238,17 +243,17 @@ public class DorisStreamLoadOutput implements Output {
         
         // 检查HTTP状态码（重定向后可能是200或3xx，但最终应返回200）
         if (statusCode != 200) {
-            System.err.println("HTTP Error: " + statusCode + " - " + responseBody);
+            log.warn("HTTP Error: " + statusCode + " - " + responseBody);
             return false;
         }
         
         // 检查Doris返回状态（JSON格式）
         if (responseBody.contains("\"Status\":\"Success\"")) {
-            System.out.println("Stream Load succeeded: " + 
+        	log.info("Stream Load succeeded: " + 
                               StringUtils.substring(responseBody, 0, 100) + "...");
             return true;
         } else {
-            System.err.println("Doris Import Error: " + responseBody);
+        	log.warn("Doris Import Error: " + responseBody);
             return false;
         }
     }
