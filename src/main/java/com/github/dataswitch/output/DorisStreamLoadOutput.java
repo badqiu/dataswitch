@@ -198,20 +198,21 @@ public class DorisStreamLoadOutput implements Output {
     private String toCsvLines(List<Map<String, Object>> rows) {
         Assert.notEmpty(csvColumns,"csvColumns must be not empty");
         
-        StringBuilder sb = new StringBuilder();
+        StringBuilder lines = new StringBuilder();
         for (Map<String, Object> row : rows) {
             List<Object> values = new ArrayList<>();
             for(String c : csvColumns) {
                 Object columnValue = row.get(c);
                 values.add(csvUtils.toCsvStringValue(columnValue)); 
             }
-            sb.append(toCsvString(values));
-            sb.append("\n"); // 行分隔符
+            
+            lines.append(toCsvLine(values));
+            lines.append("\n"); // 行分隔符
         }
-        return sb.toString();
+        return lines.toString();
     }
 
-    private Object toCsvString(List<Object> values) {
+    private Object toCsvLine(List<Object> values) {
         return StringUtils.join(values,csvColumnSeparator);
     }
 
