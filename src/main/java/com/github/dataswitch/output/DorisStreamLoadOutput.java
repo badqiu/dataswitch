@@ -151,7 +151,7 @@ public class DorisStreamLoadOutput implements Output {
             try (CloseableHttpResponse response = httpClient.execute(httpPut)) {  // 使用CloseableHttpResponse确保资源释放
             	errorMsg = getResponseErrorMsg(response);
             	if (errorMsg == null) {
-                    break; // 成功则退出重试循环
+                    return;
                 }
             } catch (Exception e) {
                 log.warn("httpClientExecuteWithRetry error, retryCount:"+tmpRetryCount,e);
@@ -161,9 +161,7 @@ public class DorisStreamLoadOutput implements Output {
             Thread.sleep(sleepTime);
         }
         
-        if(errorMsg != null) {
-        	throw new RuntimeException(" stream load data into doris error,errorMsg:"+errorMsg);
-        }
+        throw new RuntimeException(" stream load data into doris error,errorMsg:"+errorMsg);
     }
 
     private CsvUtils csvUtils = new CsvUtils();
