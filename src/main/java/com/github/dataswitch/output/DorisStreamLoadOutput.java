@@ -32,8 +32,8 @@ import com.github.dataswitch.util.CsvUtils;
 
 public class DorisStreamLoadOutput implements Output {
 
-    private static String FORMAT_JSON = "json";
-    private static String FORMAT_CSV = "csv";
+	public static String FORMAT_JSON = "json";
+    public static String FORMAT_CSV = "csv";
     
     private static String CSV_COLUMN_SEPARATOR = Constants.COLUMN_SPLIT;
     

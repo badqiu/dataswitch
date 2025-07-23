@@ -1,4 +1,6 @@
 package com.github.dataswitch.util;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 import java.util.Arrays;
@@ -27,7 +29,10 @@ public class CsvUtils {
         
         // 处理日期类型
         if (v instanceof Date) {
-            return DATE_TIME_FORMATTER.format(((Date) v).toInstant());
+        	LocalDateTime ldt = ((Date) v).toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDateTime();
+            return DATE_TIME_FORMATTER.format(ldt);
         }
         
         // 处理 Java 8+ 时间类型
