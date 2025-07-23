@@ -73,19 +73,10 @@ public class DorisStreamLoadOutput implements Output {
     
     private Map<String,String> httpHeaders = new HashMap<String,String>();
     
-    private List<String> csvColumns = new ArrayList();
+    private List<String> csvColumns = new ArrayList<String>();
 
     @Override
     public void open(Map<String, Object> params) throws Exception {
-        // 从参数初始化配置
-        if (params.containsKey("host")) host = (String) params.get("host");
-        if (params.containsKey("port")) port = (int) params.get("port");
-        if (params.containsKey("database")) database = (String) params.get("database");
-        if (params.containsKey("table")) table = (String) params.get("table");
-        if (params.containsKey("user")) user = (String) params.get("user");
-        if (params.containsKey("password")) password = (String) params.get("password");
-        if (params.containsKey("format")) format = (String) params.get("format");
-        
         // 创建支持重定向的HTTP客户端
         httpClient = createHttpClientWithRedirect();
     }
