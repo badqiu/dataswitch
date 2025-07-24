@@ -33,13 +33,14 @@ import org.springframework.util.Assert;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.util.CsvUtils;
 /**
  * doris http streamload导入数据
  * 支持csv,json format
  * 
  */
-public class DorisStreamLoadOutput implements Output,Cloneable {
+public class DorisStreamLoadOutput extends BaseObject implements Output,Cloneable {
 	
 	private static Logger log = LoggerFactory.getLogger(DorisStreamLoadOutput.class);
 	
@@ -255,7 +256,7 @@ public class DorisStreamLoadOutput implements Output,Cloneable {
         httpPut.setHeader("Authorization", "Basic " + encodedAuth);
         
         // Stream Load参数
-        httpPut.setHeader("label", "stream_load_" + UUID.randomUUID()); // 唯一标识，避免重复导入
+        httpPut.setHeader("label", getId() + "_uuid_" + UUID.randomUUID()); // 唯一标识，避免重复导入
         httpPut.setHeader("timeout", String.valueOf(timeoutSeconds));
         
         // 格式专用参数
