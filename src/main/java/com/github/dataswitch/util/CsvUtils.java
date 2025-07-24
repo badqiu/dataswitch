@@ -1,23 +1,24 @@
 package com.github.dataswitch.util;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.commons.lang3.time.DateFormatUtils;
+
 public class CsvUtils {
-    
+    private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
     // CSV 中使用的引号字符
     private static final char QUOTE_CHAR = '"';
     // CSV 中的转义引号 (双引号)
     private static final String ESCAPED_QUOTE = "\"\"";
     // 日期时间格式
     private static final DateTimeFormatter DATE_TIME_FORMATTER = 
-        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
     
     // 空值表示
     private static final String NULL_VALUE = "";
@@ -29,10 +30,7 @@ public class CsvUtils {
         
         // 处理日期类型
         if (v instanceof Date) {
-        	LocalDateTime ldt = ((Date) v).toInstant()
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDateTime();
-            return DATE_TIME_FORMATTER.format(ldt);
+        	return DateFormatUtils.format((Date)v, DATE_TIME_FORMAT);
         }
         
         // 处理 Java 8+ 时间类型
@@ -43,6 +41,12 @@ public class CsvUtils {
         // 处理字符串类型 - 需要添加引号和转义
         if (v instanceof String) {
             return escapeAndQuoteString((String) v);
+        }
+
+        if (v instanceof byte[]) {
+            // 将byte[]转换为Base64字符串
+            String base64String = Base64.getEncoder().encodeToString((byte[]) v);
+            return escapeAndQuoteString(base64String);
         }
         
         // 处理集合类型
@@ -61,7 +65,7 @@ public class CsvUtils {
         }
         
         // 其他类型使用默认的 toString()
-        return Objects.toString(v);
+        return escapeAndQuoteString(Objects.toString(v));
     }
     
     private String escapeAndQuoteString(String value) {
@@ -103,7 +107,7 @@ public class CsvUtils {
         return handleCollection(Arrays.asList(objectArray));
     }
     
-    private Object[] toObjectArray(Object array) {
+    private static Object[] toObjectArray(Object array) {
         if (array instanceof Object[]) {
             return (Object[]) array;
         }

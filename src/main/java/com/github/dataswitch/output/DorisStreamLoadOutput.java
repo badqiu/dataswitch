@@ -1,6 +1,7 @@
 package com.github.dataswitch.output;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpRequest;
@@ -31,11 +33,13 @@ import org.springframework.util.Assert;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.dataswitch.enums.Constants;
 import com.github.dataswitch.util.CsvUtils;
-import com.github.dataswitch.util.Retry;
-
-public class DorisStreamLoadOutput implements Output {
+/**
+ * doris http streamload导入数据
+ * 支持csv,json format
+ * 
+ */
+public class DorisStreamLoadOutput implements Output,Cloneable {
 	
 	private static Logger log = LoggerFactory.getLogger(DorisStreamLoadOutput.class);
 	
@@ -47,7 +51,7 @@ public class DorisStreamLoadOutput implements Output {
 	public static String FORMAT_JSON = "json";
     public static String FORMAT_CSV = "csv";
     
-    private static String CSV_COLUMN_SEPARATOR = Constants.COLUMN_SPLIT;
+    private static String CSV_COLUMN_SEPARATOR = "\t";
     
     // Doris 连接配置
     private String host;
@@ -55,6 +59,7 @@ public class DorisStreamLoadOutput implements Output {
     // Frontend: http=8030 mysql=9030  
     // Backend: http=8040 thrift_data=9060
     private int port = FE_HTTP_PORT; 
+//    private int port = BE_HTTP_PORT;  //FE会重定向至BE这个端口
     
     private String database;
     private String table;
@@ -74,6 +79,8 @@ public class DorisStreamLoadOutput implements Output {
     private Map<String,String> httpHeaders = new HashMap<String,String>();
     
     private List<String> csvColumns = new ArrayList<String>();
+    
+    private boolean csvFilterUnknowChars = false;
 
     @Override
     public void open(Map<String, Object> params) throws Exception {
@@ -110,6 +117,8 @@ public class DorisStreamLoadOutput implements Output {
                 .setConnectTimeout(timeoutSeconds * 1000)
                 .setConnectionRequestTimeout(timeoutSeconds * 1000)
                 .setSocketTimeout(timeoutSeconds * 1000)
+                .setExpectContinueEnabled(false)
+                .setRedirectsEnabled(true)
                 .build();
 
         return HttpClientBuilder.create()
@@ -131,7 +140,7 @@ public class DorisStreamLoadOutput implements Output {
                                           host, port, database, table);
             
             HttpPut httpPut = new HttpPut(loadUrl);
-            addRequiredHeaders(httpPut);
+//            addHttpHeaders(httpPut);
             
             // 3. 设置请求体
             httpPut.setEntity(new StringEntity(payload, "UTF-8"));  // 显式指定编码
@@ -148,7 +157,26 @@ public class DorisStreamLoadOutput implements Output {
         int tmpRetryCount = 0;
         String errorMsg = null;
         while (tmpRetryCount <= retryCount) {
+        	addHttpHeaders(httpPut);
+        	
             try (CloseableHttpResponse response = httpClient.execute(httpPut)) {  // 使用CloseableHttpResponse确保资源释放
+            	int statusCode = response.getStatusLine().getStatusCode();
+                
+                // 处理重定向响应（307）
+                if (statusCode == HttpStatus.SC_TEMPORARY_REDIRECT) {
+                    String newLocation = response.getFirstHeader("Location").getValue();
+                    if (StringUtils.isNotBlank(newLocation)) {
+                        log.info("Received 307 redirect to new location: {}",  newLocation);
+                        
+                        // 更新请求URL为重定向目标
+                        httpPut.setURI(new URI(newLocation));
+                        
+                        // 重置重试计数，重定向不应计入错误重试
+                        tmpRetryCount = 0; 
+                        continue; // 立即重新尝试
+                    }
+                }
+                
             	errorMsg = getResponseErrorMsg(response);
             	if (errorMsg == null) {
                     return;
@@ -156,6 +184,7 @@ public class DorisStreamLoadOutput implements Output {
             } catch (Exception e) {
                 log.warn("httpClientExecuteWithRetry error, retryCount:"+tmpRetryCount,e);
             }
+            log.warn("httpClientExecuteWithRetry error, retryCount:"+tmpRetryCount+" errorMsg:"+errorMsg);
             tmpRetryCount++;
             long sleepTime = 1000L * (1 << tmpRetryCount); // 指数退避（1s, 2s, 4s...）
             Thread.sleep(sleepTime);
@@ -192,7 +221,11 @@ public class DorisStreamLoadOutput implements Output {
             List<Object> values = new ArrayList<>();
             for(String c : csvColumns) {
                 Object columnValue = row.get(c);
-                values.add(csvUtils.toCsvStringValue(columnValue)); 
+                String csvStringValue = csvUtils.toCsvStringValue(columnValue);
+                if(csvFilterUnknowChars) {
+                	csvStringValue = csvStringValue.replaceAll("[\u0000-\u001F]", "");
+                }
+				values.add(csvStringValue); 
             }
             
             lines.append(toCsvLine(values));
@@ -215,7 +248,7 @@ public class DorisStreamLoadOutput implements Output {
     }
 
     // 添加必要的HTTP头
-    private void addRequiredHeaders(HttpPut httpPut) {
+    private void addHttpHeaders(HttpPut httpPut) {
         // 认证头（重定向时需要保留）
         String auth = user + ":" + password;
         String encodedAuth = java.util.Base64.getEncoder().encodeToString(auth.getBytes());
@@ -223,10 +256,10 @@ public class DorisStreamLoadOutput implements Output {
         
         // Stream Load参数
         httpPut.setHeader("label", "stream_load_" + UUID.randomUUID()); // 唯一标识，避免重复导入
-        httpPut.setHeader("format", format);
         httpPut.setHeader("timeout", String.valueOf(timeoutSeconds));
         
         // 格式专用参数
+        httpPut.setHeader("format", format);
         if (FORMAT_JSON.equals(format)) {
             httpPut.setHeader("strip_outer_array", "true"); // JSON数组处理
         } else if (FORMAT_CSV.equals(format)) {
@@ -234,7 +267,8 @@ public class DorisStreamLoadOutput implements Output {
         }
         
         // 重定向场景下移除Expect头，避免冲突
-        httpPut.removeHeaders("Expect");
+//        httpPut.removeHeaders("Expect");
+        httpPut.setHeader("Expect","100-continue");
         
         // 添加自定义头
         httpHeaders.forEach((key,value) -> {
@@ -251,18 +285,18 @@ public class DorisStreamLoadOutput implements Output {
         // 检查HTTP状态码（重定向后可能是200或3xx，但最终应返回200）
         if (statusCode != 200) {
             String errorMsg = "HTTP Error: " + statusCode + " - " + responseBody;
-			log.warn(errorMsg);
             return errorMsg;
         }
         
+        Map responseMap = objectMapper.readValue(responseBody, Map.class);
         // 检查Doris返回状态（JSON格式）
-        if (responseBody.contains("\"Status\":\"Success\"")) {
+        boolean isResponseSuccess = "Success".equals(responseMap.get("Status"));
+		if (isResponseSuccess) {
         	log.info("Stream Load succeeded: " + 
                               StringUtils.substring(responseBody, 0, 100) + "...");
             return null;
         } else {
         	String errorMsg = "Doris Import Error: " + responseBody;
-			log.warn(errorMsg);
             return errorMsg;
         }
     }
@@ -294,7 +328,15 @@ public class DorisStreamLoadOutput implements Output {
     public void setCsvColumnSeparator(String csvColumnSeparator) { this.csvColumnSeparator = csvColumnSeparator; }
     public void setHttpHeaders(Map<String, String> httpHeaders) { this.httpHeaders = httpHeaders; }
     
-    public void setJdbcUrl(String jdbcUrl) {
+    public boolean isCsvFilterUnknowChars() {
+		return csvFilterUnknowChars;
+	}
+
+	public void setCsvFilterUnknowChars(boolean csvFilterUnknowChars) {
+		this.csvFilterUnknowChars = csvFilterUnknowChars;
+	}
+
+	public void setJdbcUrl(String jdbcUrl) {
     	if (StringUtils.isBlank(jdbcUrl)) {
             return;
         }
@@ -336,4 +378,13 @@ public class DorisStreamLoadOutput implements Output {
             throw new RuntimeException("Error parsing JDBC URL: " + jdbcUrl, e);
         }
     }
+	
+	@Override
+	public DorisStreamLoadOutput clone()  {
+		try {
+			return (DorisStreamLoadOutput)super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new RuntimeException(e);
+		}
+	}
 }
