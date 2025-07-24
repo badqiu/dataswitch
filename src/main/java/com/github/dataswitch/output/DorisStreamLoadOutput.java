@@ -256,7 +256,7 @@ public class DorisStreamLoadOutput extends BaseObject implements Output,Cloneabl
         httpPut.setHeader("Authorization", "Basic " + encodedAuth);
         
         // Stream Load参数
-        httpPut.setHeader("label", getId() + "_uuid_" + UUID.randomUUID()); // 唯一标识，避免重复导入
+        httpPut.setHeader("label", table + "_uuid_" + UUID.randomUUID()); // 唯一标识，避免重复导入
         httpPut.setHeader("timeout", String.valueOf(timeoutSeconds));
         
         // 格式专用参数
