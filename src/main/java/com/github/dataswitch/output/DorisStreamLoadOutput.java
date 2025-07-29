@@ -301,8 +301,12 @@ public class DorisStreamLoadOutput extends BaseObject implements Output,Cloneabl
         } else {
         	String errorMsg = "Doris Import Error: " + responseBody;
         	if(StringUtils.isNotBlank(errorUrl)) {
-        		String errorContent = UrlUtil.httpGet(errorUrl);
-        		errorMsg += " \nerrorUrlContent:"+StringUtils.substring(errorContent, 0, 1000);
+        		try {
+        			String errorContent = UrlUtil.httpGet(errorUrl);
+        			errorMsg += " \nerrorUrlContent:"+StringUtils.substring(errorContent, 0, 1000);
+        		}catch(Exception e) {
+        			log.warn("ignore get url content error,errorUrl:"+errorUrl,e);
+        		}
         	}
             return errorMsg;
         }
