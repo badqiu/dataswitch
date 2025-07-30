@@ -84,10 +84,12 @@ public class DorisStreamLoadOutput extends BaseObject implements Output,Cloneabl
     
     private boolean csvFilterUnknowChars = false;
 
+    private String jdbcUrl;
     @Override
     public void open(Map<String, Object> params) throws Exception {
         // 创建支持重定向的HTTP客户端
         httpClient = createHttpClientWithRedirect();
+        setByJdbcUrl(jdbcUrl);
     }
 
     /**
@@ -303,7 +305,7 @@ public class DorisStreamLoadOutput extends BaseObject implements Output,Cloneabl
         	if(StringUtils.isNotBlank(errorUrl)) {
         		try {
         			String errorContent = UrlUtil.httpGet(errorUrl);
-        			errorMsg += " \nerrorUrlContent:"+StringUtils.substring(errorContent, 0, 1000);
+        			errorMsg += " \nerrorUrlContent:"+StringUtils.substring(errorContent, 0, 1024 * 100);
         		}catch(Exception e) {
         			log.warn("ignore get url content error,errorUrl:"+errorUrl,e);
         		}
@@ -350,9 +352,15 @@ public class DorisStreamLoadOutput extends BaseObject implements Output,Cloneabl
 	}
 
 	public void setJdbcUrl(String jdbcUrl) {
-    	if (StringUtils.isBlank(jdbcUrl)) {
+    	setByJdbcUrl(jdbcUrl);
+    }
+
+	private void setByJdbcUrl(String jdbcUrl) {
+		if (StringUtils.isBlank(jdbcUrl)) {
             return;
         }
+    	
+        jdbcUrl = jdbcUrl.trim();
         
         try {
             // 解析 JDBC URL 格式: jdbc:mysql://host:port/database
@@ -363,7 +371,9 @@ public class DorisStreamLoadOutput extends BaseObject implements Output,Cloneabl
                 // 提取主机名
                 String extractedHost = matcher.group(1);
                 if (StringUtils.isNotBlank(extractedHost)) {
-                    this.host = extractedHost;
+                	if(StringUtils.isBlank(host)) {
+                		this.host = extractedHost;
+                	}
                 }
                 
                 // 提取端口（如果存在）
@@ -382,7 +392,9 @@ public class DorisStreamLoadOutput extends BaseObject implements Output,Cloneabl
                 // 提取数据库名
                 String extractedDb = matcher.group(3);
                 if (StringUtils.isNotBlank(extractedDb)) {
-                    this.database = extractedDb;
+                	if(StringUtils.isBlank(database)) {
+                		this.database = extractedDb;
+                	}
                 }
             } else {
                 throw new RuntimeException("Error parsing JDBC URL: " + jdbcUrl);
@@ -390,7 +402,7 @@ public class DorisStreamLoadOutput extends BaseObject implements Output,Cloneabl
         } catch (Exception e) {
             throw new RuntimeException("Error parsing JDBC URL: " + jdbcUrl, e);
         }
-    }
+	}
 	
 	@Override
 	public DorisStreamLoadOutput clone()  {
