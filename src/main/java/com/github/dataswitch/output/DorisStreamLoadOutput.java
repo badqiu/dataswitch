@@ -293,19 +293,19 @@ public class DorisStreamLoadOutput extends BaseObject implements Output,Cloneabl
         }
         
         Map responseMap = objectMapper.readValue(responseBody, Map.class);
+        
         // 检查Doris返回状态（JSON格式）
         String errorUrl = (String)responseMap.get("ErrorURL");
         boolean isResponseSuccess = "Success".equals(responseMap.get("Status"));
 		if (isResponseSuccess) {
-        	log.info("Stream Load succeeded: " + 
-                              StringUtils.substring(responseBody, 0, 100) + "...");
+//        	log.info("Stream Load succeeded: " + StringUtils.substring(responseBody, 0, 100) + "...");
             return null;
         } else {
         	String errorMsg = "Doris Import Error: " + responseBody;
         	if(StringUtils.isNotBlank(errorUrl)) {
         		try {
         			String errorContent = UrlUtil.httpGet(errorUrl);
-        			errorMsg += " \nerrorUrlContent:"+StringUtils.substring(errorContent, 0, 1024 * 100);
+        			errorMsg += " \n errorUrlContent:"+StringUtils.substring(errorContent, 0, 1024 * 100);
         		}catch(Exception e) {
         			log.warn("ignore get url content error,errorUrl:"+errorUrl,e);
         		}
