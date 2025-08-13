@@ -126,8 +126,8 @@ public class JdbcInput extends DataSourceProvider implements Input,TableName{
 			_conn = getDataSource().getConnection();
 			_conn.setAutoCommit(false);
 			_conn.setReadOnly(true);
+			
 			PreparedStatement ps = _conn.prepareStatement(sql,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-//			PreparedStatement ps = _conn.prepareStatement(sql);
 			ps.setFetchSize(fetchSize);
 			ps.setFetchDirection(ResultSet.FETCH_FORWARD);
 			
