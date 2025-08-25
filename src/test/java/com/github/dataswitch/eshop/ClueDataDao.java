@@ -22,8 +22,8 @@ public class ClueDataDao {
     private static final String BATCH_INSERT_SQL = "INSERT INTO clue_data (clue_detail, submit_times, is_collect, is_grant, "
                    + "query_clue_card_info, product_diagnose_result, auto_submit_task, "
                    + "cate_qualification_open, has_cate_qualification, word_clue_indicator_info, "
-                   + "category_clue_extra_info, hot_sale_products, clue_indicator, clue_collect_info,batch_date) "
-                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                   + "category_clue_extra_info, hot_sale_products, clue_indicator, clue_collect_info,batch_date,keyword) "
+                   + "VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     
     // Gson实例作为静态变量，避免重复创建
     private static final Gson gson = new Gson();
@@ -47,6 +47,10 @@ public class ClueDataDao {
             int count = 0;
             for (ClueData clueData : clueDataList) {
                 // 设置参数
+            	if(count == 1) {
+            		System.out.println("count=1 data:"+gson.toJson(clueData));
+            	}
+            	
                 pstmt.setString(1, gson.toJson(clueData.clue_detail));
                 pstmt.setInt(2, clueData.submit_times);
                 pstmt.setBoolean(3, clueData.is_collect);
@@ -62,6 +66,8 @@ public class ClueDataDao {
                 pstmt.setString(13, gson.toJson(clueData.clue_indicator));
                 pstmt.setString(14, gson.toJson(clueData.clue_collect_info));
                 pstmt.setTimestamp(15, new Timestamp(clueData.batch_date.getTime()));
+                pstmt.setString(16, clueData.getKeyword());
+                
                 
                 // 添加到批处理
                 pstmt.addBatch();

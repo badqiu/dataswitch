@@ -65,7 +65,7 @@ public class JinritemaiCrawler {
         int totalPages = 1;
         System.out.println("总页数: " + totalPages);
         
-        Date batchDate = extracteDate(new Date(),"yyyyMMddHH");
+        Date batchDate = extracteDate(new Date(),"yyyyMMdd");
         // 分页爬取
         for (int currentPage = 1; currentPage <= totalPages; currentPage++) {
             try {
@@ -76,6 +76,7 @@ public class JinritemaiCrawler {
                 for(ClueData c : clues) {
                 	c.setBatch_date(batchDate);
                 }
+                
                 clueDataDao.batchSaveClueData(clues);
                 
                 sleepRandomSecondsForBlock();
@@ -87,7 +88,7 @@ public class JinritemaiCrawler {
     }
 
 	private static Date extracteDate(Date date,String format) {
-		return DateUtils.parseDate(DateFormatUtils.format(date,format));
+		return DateUtils.parseDate(DateFormatUtils.format(date,format),new String[] {format});
 	}
 
 	private static void sleepRandomSecondsForBlock() throws InterruptedException {

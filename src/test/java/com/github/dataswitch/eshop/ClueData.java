@@ -2,6 +2,8 @@ package com.github.dataswitch.eshop;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * 抖店商机中心数据
  */
@@ -24,6 +26,11 @@ public class ClueData {
     public Date batch_date;
     
     
+    public String getKeyword() {
+    	if(clue_detail == null) return null;
+    	
+    	return clue_detail.getName();
+    }
 
     public ClueDetail getClue_detail() {
 		return clue_detail;
