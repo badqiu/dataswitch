@@ -59,6 +59,14 @@
 		</dependency>
      -->
 
+    <!-- 核心HTTP客户端库 -->
+    <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient</artifactId>
+        <version>4.5.13</version>
+        <optional>true</optional>
+    </dependency>
+    
 	<dependency>
 	    <groupId>org.apache.rocketmq</groupId>
 	    <artifactId>rocketmq-client-java</artifactId>
