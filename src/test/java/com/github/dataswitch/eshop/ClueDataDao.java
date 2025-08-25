@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.List;
 
 import com.google.gson.Gson;
@@ -11,31 +12,9 @@ import com.google.gson.Gson;
 /**
  * 抖店-商机中心-爬虫数据批量插入实现
  * 
-drop table clue_data;CREATE
-
- TABLE clue_data (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    clue_detail JSON,
-    submit_times INT,
-    is_collect BOOLEAN,
-    is_grant BOOLEAN,
-    query_clue_card_info JSON,
-    product_diagnose_result JSON,
-    auto_submit_task JSON,
-    cate_qualification_open BOOLEAN,
-    has_cate_qualification BOOLEAN,
-    word_clue_indicator_info JSON,
-    category_clue_extra_info JSON,
-    hot_sale_products JSON,
-    clue_indicator JSON,
-    clue_collect_info JSON,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    batch_date DateTime
-);
-
  */
 public class ClueDataDao {
-    private static final String DB_URL = "jdbc:mysql://107.173.159.122:3306/eshop_test?useInformationSchema=true&nullDatabaseMeansCurrent=true&useUnicode=true&characterEncoding=utf8&allowMultiQueries=true";
+    private static final String DB_URL = "jdbc:mysql://107.173.159.122:3306/eshop_test?useInformationSchema=true&nullDatabaseMeansCurrent=true&useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&rewriteBatchedStatements=true";
     private static final String DB_USER = "admin";
     private static final String DB_PASSWORD = "pwd_dkSjdjkJfffVVjd23hf82kdsfusdfhjhdhfjijfjfuuHFhdfdjysywO";
     
@@ -82,7 +61,7 @@ public class ClueDataDao {
                 pstmt.setString(12, gson.toJson(clueData.hot_sale_products));
                 pstmt.setString(13, gson.toJson(clueData.clue_indicator));
                 pstmt.setString(14, gson.toJson(clueData.clue_collect_info));
-                pstmt.setObject(15, clueData.batch_date);
+                pstmt.setTimestamp(15, new Timestamp(clueData.batch_date.getTime()));
                 
                 // 添加到批处理
                 pstmt.addBatch();
@@ -98,6 +77,7 @@ public class ClueDataDao {
             pstmt.executeBatch();
             conn.commit(); // 提交最后一批数据
             
+            System.out.println("all data insert into db");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
