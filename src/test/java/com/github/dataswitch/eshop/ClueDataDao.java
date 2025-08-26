@@ -158,6 +158,7 @@ public class ClueDataDao {
         if (clueDataList == null || clueDataList.isEmpty()) {
             return;
         }
+        System.out.println("batchSaveClueDataWithNamedParams() dataList.size:"+clueDataList.size());
         
         // 创建参数源数组
         SqlParameterSource[] batchParams = new SqlParameterSource[clueDataList.size()];

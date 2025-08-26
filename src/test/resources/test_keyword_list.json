@@ -1,0 +1,401 @@
+{
+  "data": {
+    "module_data": {
+      "info_list": {
+        "compass_general_table_value": {
+          "basic_meta": [
+            {
+              "index_name": "rank"
+            },
+            {
+              "index_name": "query"
+            },
+            {
+              "index_name": "search_show_ucnt",
+              "sorted": -3
+            },
+            {
+              "index_name": "search_ucnt",
+              "sorted": -2
+            },
+            {
+              "index_name": "pay_amt",
+              "sorted": -2
+            },
+            {
+              "index_name": "product_show_ucnt",
+              "sorted": -2
+            },
+            {
+              "index_name": "prod_show_click_ratio",
+              "sorted": -2
+            },
+            {
+              "index_name": "prod_click_pay_ratio",
+              "sorted": -2
+            },
+            {
+              "index_name": "pay_cnt",
+              "sorted": -2
+            },
+            {
+              "index_name": "search_click_ucnt",
+              "sorted": -2
+            },
+            {
+              "index_name": "pay_ucnt",
+              "sorted": -2
+            },
+            {
+              "index_name": "compete_index",
+              "sorted": -2
+            },
+            {
+              "index_name": "pay_per_usr_price",
+              "sorted": -2
+            },
+            {
+              "index_name": "show_product_cnt",
+              "sorted": -2
+            },
+            {
+              "index_name": "shop_show_product"
+            },
+            {
+              "index_name": "hot_product"
+            }
+          ],
+          "data": [
+            {
+              "cell_info": {
+                "compete_index": {
+                  "cell_type": 2,
+                  "index_values": {
+                    "out_period_ratio": {
+                      "unit": 4,
+                      "value": 0
+                    },
+                    "value": {
+                      "unit": 5,
+                      "value": 27.45
+                    }
+                  }
+                },
+                "hot_product": {
+                  "cell_type": 70,
+                  "product_list": [
+                    {
+                      "detail_h5_url": "https://haohuo.jinritemai.com/ecommerce/trade/detail/index.html?id=3768244313776062788&origin_type=pc_compass_manage",
+                      "product_audit_status": 3,
+                      "product_id": "3768244313776062788",
+                      "product_image": "https://p3-aio.ecombdimg.com/obj/ecom-shop-material/jpeg_m_0f5882e000273178c2893ca2562e8637_sx_104911_www800-800",
+                      "product_name": "新疆西藏包邮大国荣耀礼盒通用烟盒礼盒一米盒装磁吸礼品盒高端礼",
+                      "product_status": 0
+                    },
+                    {
+                      "detail_h5_url": "https://haohuo.jinritemai.com/ecommerce/trade/detail/index.html?id=3764182284207522004&origin_type=pc_compass_manage",
+                      "product_audit_status": 3,
+                      "product_id": "3764182284207522004",
+                      "product_image": "https://p3-aio.ecombdimg.com/obj/ecom-shop-material/jpeg_m_4cace5b8ca4eccc61214dc61e02e4309_sx_256795_www1209-1209",
+                      "product_name": "【能能】一米礼盒生日节日纪念送男友送父亲不含烟高档磁吸礼盒",
+                      "product_status": 0
+                    },
+                    {
+                      "detail_h5_url": "https://haohuo.jinritemai.com/ecommerce/trade/detail/index.html?id=3769115079858061593&origin_type=pc_compass_manage",
+                      "product_audit_status": 0,
+                      "product_id": "3769115079858061593",
+                      "product_image": "https://p3-aio.ecombdimg.com/obj/ecom-shop-material/png_m_09d0c8526773d39392eb5b01644d601d_sx_872450_www720-720",
+                      "product_name": "香烟礼盒一米长磁吸空盒创意浪漫七夕礼物送男友好客山东翻盖烟盒",
+                      "product_status": 3
+                    }
+                  ]
+                },
+                "is_cate_query": {
+                  "cell_type": 2,
+                  "index_values": {
+                    "value": {
+                      "unit": 5,
+                      "value": 0
+                    }
+                  }
+                },
+                "origin_search_cate_id": {
+                  "cell_type": 1,
+                  "value": {
+                    "unit": 1
+                  }
+                },
+                "origin_search_industry_id": {
+                  "cell_type": 1,
+                  "value": {
+                    "unit": 1
+                  }
+                },
+                "pay_amt": {
+                  "cell_type": 2,
+                  "index_values": {
+                    "extra_value": {
+                      "lower": {
+                        "unit": 3,
+                        "value": 0
+                      },
+                      "upper": {
+                        "unit": 3,
+                        "value": 25000
+                      }
+                    },
+                    "out_period_ratio": {
+                      "unit": 4,
+                      "value": 0
+                    }
+                  }
+                },
+                "pay_cnt": {
+                  "cell_type": 2,
+                  "index_values": {
+                    "extra_value": {
+                      "lower": {
+                        "unit": 5,
+                        "value": 0
+                      },
+                      "upper": {
+                        "unit": 5,
+                        "value": 50
+                      }
+                    },
+                    "out_period_ratio": {
+                      "unit": 4,
+                      "value": 0
+                    }
+                  }
+                },
+                "pay_per_usr_price": {
+                  "cell_type": 2,
+                  "index_values": {
+                    "extra_value": {
+                      "lower": {
+                        "unit": 3,
+                        "value": 0
+                      },
+                      "upper": {
+                        "unit": 3,
+                        "value": 50
+                      }
+                    },
+                    "out_period_ratio": {
+                      "unit": 4,
+                      "value": 0
+                    }
+                  }
+                },
+                "pay_ucnt": {
+                  "cell_type": 2,
+                  "index_values": {
+                    "extra_value": {
+                      "lower": {
+                        "unit": 5,
+                        "value": 0
+                      },
+                      "upper": {
+                        "unit": 5,
+                        "value": 50
+                      }
+                    },
+                    "out_period_ratio": {
+                      "unit": 4,
+                      "value": 0
+                    }
+                  }
+                },
+                "prod_click_pay_ratio": {
+                  "cell_type": 2,
+                  "index_values": {
+                    "extra_value": {
+                      "lower": {
+                        "unit": 4,
+                        "value": 0
+                      },
+                      "upper": {
+                        "unit": 4,
+                        "value": 0.01
+                      }
+                    },
+                    "out_period_ratio": {
+                      "unit": 4,
+                      "value": 0
+                    }
+                  }
+                },
+                "prod_show_click_ratio": {
+                  "cell_type": 2,
+                  "index_values": {
+                    "extra_value": {
+                      "lower": {
+                        "unit": 4,
+                        "value": 0.05
+                      },
+                      "upper": {
+                        "unit": 4,
+                        "value": 0.075
+                      }
+                    },
+                    "out_period_ratio": {
+                      "unit": 4,
+                      "value": 0
+                    }
+                  }
+                },
+                "product_show_ucnt": {
+                  "cell_type": 2,
+                  "index_values": {
+                    "extra_value": {
+                      "lower": {
+                        "unit": 5,
+                        "value": 1000
+                      },
+                      "upper": {
+                        "unit": 5,
+                        "value": 2500
+                      }
+                    },
+                    "out_period_ratio": {
+                      "unit": 4,
+                      "value": 0
+                    }
+                  }
+                },
+                "query": {
+                  "cell_type": 1,
+                  "value": {
+                    "unit": 1,
+                    "value_str": "一米烟盒购买渠道"
+                  }
+                },
+                "rank": {
+                  "cell_type": 1,
+                  "value": {
+                    "unit": 5,
+                    "value": 41
+                  }
+                },
+                "search_click_ucnt": {
+                  "cell_type": 2,
+                  "index_values": {
+                    "extra_value": {
+                      "lower": {
+                        "unit": 5,
+                        "value": 5000
+                      },
+                      "upper": {
+                        "unit": 5,
+                        "value": 7500
+                      }
+                    },
+                    "out_period_ratio": {
+                      "unit": 4,
+                      "value": 0
+                    }
+                  }
+                },
+                "search_show_ucnt": {
+                  "cell_type": 2,
+                  "index_values": {
+                    "extra_value": {
+                      "lower": {
+                        "unit": 5,
+                        "value": 10000
+                      },
+                      "upper": {
+                        "unit": 5,
+                        "value": 25000
+                      }
+                    },
+                    "out_period_ratio": {
+                      "unit": 4,
+                      "value": 0
+                    }
+                  }
+                },
+                "search_ucnt": {
+                  "cell_type": 2,
+                  "index_values": {
+                    "extra_value": {
+                      "lower": {
+                        "unit": 5,
+                        "value": 10000
+                      },
+                      "upper": {
+                        "unit": 5,
+                        "value": 25000
+                      }
+                    },
+                    "out_period_ratio": {
+                      "unit": 4,
+                      "value": 0
+                    }
+                  }
+                },
+                "shop_product_diagnosis": {
+                  "cell_type": 62
+                },
+                "shop_show_product": {
+                  "cell_type": 70
+                },
+                "show_product_cnt": {
+                  "cell_type": 2,
+                  "index_values": {
+                    "extra_value": {
+                      "lower": {
+                        "unit": 5,
+                        "value": 250
+                      },
+                      "upper": {
+                        "unit": 5,
+                        "value": 500
+                      }
+                    },
+                    "out_period_ratio": {
+                      "unit": 4,
+                      "value": 0
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "data_key_list": [
+            "query",
+            "search_show_ucnt",
+            "search_ucnt",
+            "pay_amt",
+            "product_show_ucnt",
+            "prod_show_click_ratio",
+            "prod_click_pay_ratio",
+            "pay_cnt",
+            "search_click_ucnt",
+            "pay_ucnt",
+            "compete_index",
+            "pay_per_usr_price",
+            "show_product_cnt",
+            "hot_product",
+            "shop_show_product",
+            "shop_product_diagnosis",
+            "origin_search_industry_id",
+            "origin_search_cate_id",
+            "is_cate_query",
+            "rank"
+          ],
+          "meta": [],
+          "page_result": {
+            "page_no": 5,
+            "page_size": 10,
+            "total": 493
+          }
+        },
+        "data_type": 600
+      }
+    }
+  },
+  "msg": "",
+  "st": 0
+}
