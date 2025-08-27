@@ -8,12 +8,14 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.ResourceUtils;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * 关键词搜索指标数据实体
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class KeywordMetric {
 
     public static void main(String[] args) throws IOException {
@@ -40,6 +42,7 @@ public class KeywordMetric {
             System.out.println("搜索词: " + metric.getQuery().getValue().getValue_str());
             System.out.println("排名: " + metric.getRank().getValue().getValue());
             System.out.println("竞争指数: " + metric.getCompete_index().getIndex_values().getValue().getValue());
+            System.out.println("产品数量: " + metric.getShow_product_cnt());
             
             // 输出热门商品信息
             if (metric.getHot_product() != null) {
@@ -133,6 +136,26 @@ public class KeywordMetric {
      * 排名
      */
     private IndexValue rank;
+    
+    /**
+     * 是否类目查询
+     */
+    private IndexValue is_cate_query;
+    
+    /**
+     * 原始搜索类目ID
+     */
+    private IndexValue origin_search_cate_id;
+    
+    /**
+     * 原始搜索行业ID
+     */
+    private IndexValue origin_search_industry_id;
+    
+    /**
+     * 店铺商品诊断
+     */
+    private IndexValue shop_product_diagnosis;
 
     // Getters and Setters
     public IndexValue getQuery() { return query; }
@@ -182,6 +205,18 @@ public class KeywordMetric {
 
     public IndexValue getRank() { return rank; }
     public void setRank(IndexValue rank) { this.rank = rank; }
+    
+    public IndexValue getIs_cate_query() { return is_cate_query; }
+    public void setIs_cate_query(IndexValue is_cate_query) { this.is_cate_query = is_cate_query; }
+
+    public IndexValue getOrigin_search_cate_id() { return origin_search_cate_id; }
+    public void setOrigin_search_cate_id(IndexValue origin_search_cate_id) { this.origin_search_cate_id = origin_search_cate_id; }
+
+    public IndexValue getOrigin_search_industry_id() { return origin_search_industry_id; }
+    public void setOrigin_search_industry_id(IndexValue origin_search_industry_id) { this.origin_search_industry_id = origin_search_industry_id; }
+
+    public IndexValue getShop_product_diagnosis() { return shop_product_diagnosis; }
+    public void setShop_product_diagnosis(IndexValue shop_product_diagnosis) { this.shop_product_diagnosis = shop_product_diagnosis; }
 
     /**
      * 指标值内部类
@@ -200,6 +235,19 @@ public class KeywordMetric {
         
         public Value getValue() { return value; }
         public void setValue(Value value) { this.value = value; }
+        
+        
+        public String toString() {
+        	if(value != null) {
+        		return value.toString();
+        	}
+        	if(index_values != null) {
+        		return index_values.toString();
+        	}
+        	return "cell_type:"+cell_type;
+        }
+        
+        
     }
 
     /**
@@ -259,7 +307,7 @@ public class KeywordMetric {
             return String.valueOf(v.getValue());
         }
         
-        private Value getBestValue0() {
+        public Value getBestValue0() {
             if(value != null) {
                 return value; 
             }
@@ -272,6 +320,10 @@ public class KeywordMetric {
                 }
             }
             return null;
+        }
+        
+        public String toString() {
+        	return getBestValue();
         }
     }
 
@@ -292,6 +344,13 @@ public class KeywordMetric {
 
         public String getValue_str() { return value_str; }
         public void setValue_str(String value_str) { this.value_str = value_str; }
+        
+		@Override
+		public String toString() {
+			return "Value [unit=" + unit + ", value=" + value + ", value_str=" + value_str + "]";
+		}
+        
+        
     }
 
     /**
