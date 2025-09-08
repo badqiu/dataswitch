@@ -238,8 +238,24 @@ public class DorisStreamLoadOutput extends BaseObject implements Output,Cloneabl
         return lines.toString();
     }
 
-    private Object toCsvLine(List<Object> values) {
-        return StringUtils.join(values,csvColumnSeparator);
+    // 引入包围符（例如双引号）和转义符
+    private String enclose = "\"";
+    private String escape = "\\"; // 用于转义字段中的包围符本身
+
+    private String toCsvLine(List<Object> values) {
+        // 对List中的每个值进行处理：转义包围符、包裹包围符
+        List<String> processedValues = new ArrayList<>();
+        for (Object value : values) {
+            String strValue = String.valueOf(value);
+            // 1. 转义：如果字段值中含有包围符，需要先转义（例如 " 转义为 \"）
+            // 注意：此处的转义逻辑需根据你选择的包围符和转义符来确定
+            String escapedValue = strValue.replace(enclose, escape + enclose);
+            // 2. 包裹：用包围符将整个字段值包起来，防止其中的分隔符或换行符被误解析
+            String enclosedValue = enclose + escapedValue + enclose;
+            processedValues.add(enclosedValue);
+        }
+        // 3. 用分隔符拼接所有处理后的字段
+        return StringUtils.join(processedValues, csvColumnSeparator);
     }
 
     ObjectMapper objectMapper = new ObjectMapper();
