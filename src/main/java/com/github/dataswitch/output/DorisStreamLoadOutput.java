@@ -53,7 +53,8 @@ public class DorisStreamLoadOutput extends BaseObject implements Output,Cloneabl
 	public static String FORMAT_JSON = "json";
     public static String FORMAT_CSV = "csv";
     
-    private static String CSV_COLUMN_SEPARATOR = "\t";
+    private static String CSV_COLUMN_SEPARATOR = "\001";
+    private static String CSV_LINE_SEPARATOR = "\002";
     
     // Doris 连接配置
     private String host;
@@ -69,6 +70,7 @@ public class DorisStreamLoadOutput extends BaseObject implements Output,Cloneabl
     private String password;
     private String format = FORMAT_JSON;  // 支持json/csv
     private String csvColumnSeparator = CSV_COLUMN_SEPARATOR;
+    private String csvLineSeparator = CSV_LINE_SEPARATOR;
 
     
     private int timeoutSeconds = 600; // 默认超时600秒
@@ -156,6 +158,30 @@ public class DorisStreamLoadOutput extends BaseObject implements Output,Cloneabl
         }
     }
 
+    /**
+     * 将字符串中的不可见字符转义为 \xHH 格式（HH为十六进制值）
+     * @param input 原始字符串
+     * @return 转义后的字符串（不可见字符替换为 \xHH）
+     */
+    public static String escapeInvisibleChars(String input) {
+        if (input == null || input.isEmpty()) {
+            return input;
+        }
+        
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+            // 判断是否为不可见字符：ASCII ≤ 31 或等于 127（DEL）
+            if (c <= 31 || c == 127) {
+                // 格式化为 \xHH（HH为两位十六进制值）
+                result.append(String.format("\\x%02X", (int) c));
+            } else {
+                result.append(c); // 可见字符保留原样
+            }
+        }
+        return result.toString();
+    }
+    
     private void httpClientExecuteWithRetry(HttpPut httpPut)
             throws IOException, InterruptedException {
         int tmpRetryCount = 0;
@@ -233,29 +259,14 @@ public class DorisStreamLoadOutput extends BaseObject implements Output,Cloneabl
             }
             
             lines.append(toCsvLine(values));
-            lines.append("\n"); // 行分隔符
+            lines.append(csvLineSeparator); // 行分隔符
         }
         return lines.toString();
     }
 
-    // 引入包围符（例如双引号）和转义符
-    private String enclose = "\"";
-    private String escape = "\\"; // 用于转义字段中的包围符本身
 
     private String toCsvLine(List<Object> values) {
-        // 对List中的每个值进行处理：转义包围符、包裹包围符
-        List<String> processedValues = new ArrayList<>();
-        for (Object value : values) {
-            String strValue = String.valueOf(value);
-            // 1. 转义：如果字段值中含有包围符，需要先转义（例如 " 转义为 \"）
-            // 注意：此处的转义逻辑需根据你选择的包围符和转义符来确定
-            String escapedValue = strValue.replace(enclose, escape + enclose);
-            // 2. 包裹：用包围符将整个字段值包起来，防止其中的分隔符或换行符被误解析
-            String enclosedValue = enclose + escapedValue + enclose;
-            processedValues.add(enclosedValue);
-        }
-        // 3. 用分隔符拼接所有处理后的字段
-        return StringUtils.join(processedValues, csvColumnSeparator);
+        return StringUtils.join(values, csvColumnSeparator);
     }
 
     ObjectMapper objectMapper = new ObjectMapper();
@@ -283,7 +294,8 @@ public class DorisStreamLoadOutput extends BaseObject implements Output,Cloneabl
         if (FORMAT_JSON.equals(format)) {
             httpPut.setHeader("strip_outer_array", "true"); // JSON数组处理
         } else if (FORMAT_CSV.equals(format)) {
-            httpPut.setHeader("column_separator", csvColumnSeparator);    // CSV分隔符
+        	httpPut.setHeader("column_separator", escapeInvisibleChars(csvColumnSeparator));    // CSV分隔符
+        	httpPut.setHeader("line_delimiter", escapeInvisibleChars(CSV_LINE_SEPARATOR));
         }
         
         // 重定向场景下移除Expect头，避免冲突
@@ -357,7 +369,10 @@ public class DorisStreamLoadOutput extends BaseObject implements Output,Cloneabl
     public void setRetryCount(int retryCount) { this.retryCount = retryCount; }
     public void setCsvColumns(List<String> csvColumns) { this.csvColumns = csvColumns; }
     public void setCsvColumnSeparator(String csvColumnSeparator) { this.csvColumnSeparator = csvColumnSeparator; }
-    public void setHttpHeaders(Map<String, String> httpHeaders) { this.httpHeaders = httpHeaders; }
+    public void setCsvLineSeparator(String csvLineSeparator) {
+		this.csvLineSeparator = csvLineSeparator;
+	}
+	public void setHttpHeaders(Map<String, String> httpHeaders) { this.httpHeaders = httpHeaders; }
     
     public boolean isCsvFilterUnknowChars() {
 		return csvFilterUnknowChars;
