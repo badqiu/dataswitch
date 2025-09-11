@@ -87,6 +87,7 @@ public class DorisStreamLoadOutput extends BaseObject implements Output,Cloneabl
     private boolean csvFilterUnknowChars = false;
 
     private String jdbcUrl;
+    
     @Override
     public void open(Map<String, Object> params) throws Exception {
         // 创建支持重定向的HTTP客户端
@@ -139,22 +140,21 @@ public class DorisStreamLoadOutput extends BaseObject implements Output,Cloneabl
         
         try {
             // 1. 将数据转换为Doris支持的格式
-            String payload = convertToDorisFormat(rows);
+            String payloadData = convertToDorisFormatData(rows);
             
             // 2. 构建Stream Load请求
             String loadUrl = String.format("http://%s:%d/api/%s/%s/_stream_load", 
                                           host, port, database, table);
             
             HttpPut httpPut = new HttpPut(loadUrl);
-//            addHttpHeaders(httpPut);
             
             // 3. 设置请求体
-            httpPut.setEntity(new StringEntity(payload, "UTF-8"));  // 显式指定编码
+            httpPut.setEntity(new StringEntity(payloadData, "UTF-8"));  // 显式指定编码
             
             // 4. 发送请求并处理响应
             httpClientExecuteWithRetry(httpPut);
         } catch (Exception e) {
-            throw new RuntimeException("Doris Stream Load failed", e);
+            throw new RuntimeException("Doris Http Stream Load failed,table:"+table+" database:"+database, e);
         }
     }
 
@@ -224,7 +224,7 @@ public class DorisStreamLoadOutput extends BaseObject implements Output,Cloneabl
     }
 
     private CsvUtils csvUtils = new CsvUtils();
-    private String convertToDorisFormat(List<Map<String, Object>> rows) {
+    private String convertToDorisFormatData(List<Map<String, Object>> rows) {
         if(FORMAT_CSV.equals(format)){
             return toCsvLines(rows);
         }if(FORMAT_JSON.equals(format)) {
