@@ -386,6 +386,7 @@ public class DorisStreamLoadOutput extends BaseObject implements Output,Cloneabl
     	setByJdbcUrl(jdbcUrl);
     }
 
+	// set database,host by jdbcUrl
 	private void setByJdbcUrl(String jdbcUrl) {
 		if (StringUtils.isBlank(jdbcUrl)) {
             return;

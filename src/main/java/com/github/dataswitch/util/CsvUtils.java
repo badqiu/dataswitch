@@ -1,5 +1,8 @@
 package com.github.dataswitch.util;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 import java.util.Arrays;
@@ -8,7 +11,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.postgresql.jdbc.PgArray;
 import org.postgresql.util.PGobject;
 
@@ -41,7 +43,7 @@ public class CsvUtils {
         
         // 处理日期类型
         if (v instanceof Date) {
-        	return DateFormatUtils.format((Date)v, DATE_TIME_FORMAT);
+        	return dateFormat((Date)v);
         }
         
         // 处理 Java 8+ 时间类型
@@ -82,6 +84,14 @@ public class CsvUtils {
 //        return escapeAndQuoteString(Objects.toString(v));
         return JsonUtil.toJsonString(v);
     }
+
+	private static String dateFormat(Date date) {
+	    LocalDateTime localDateTime = date.toInstant()
+	                                    .atZone(ZoneId.systemDefault())
+	                                    .toLocalDateTime();
+	    return DATE_TIME_FORMATTER.format(localDateTime);
+	}
+	
 
 	private Object recoverFromPgArray(PgArray v) {
 		try {
