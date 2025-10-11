@@ -243,6 +243,7 @@ public class DorisStreamLoadOutput extends BaseObject implements Output,Cloneabl
         return sb.toString();
     }
 
+    private static final Pattern CONTROL_CHARS_PATTERN = Pattern.compile("[\\u0000-\\u001F]");
     private String toCsvLines(List<Map<String, Object>> rows) {
         Assert.notEmpty(csvColumns,"csvColumns must be not empty");
         
@@ -253,7 +254,7 @@ public class DorisStreamLoadOutput extends BaseObject implements Output,Cloneabl
                 Object columnValue = row.get(c);
                 String csvStringValue = csvUtils.toCsvStringValue(columnValue);
                 if(csvFilterUnknowChars) {
-                	csvStringValue = csvStringValue.replaceAll("[\u0000-\u001F]", "");
+                	csvStringValue = CONTROL_CHARS_PATTERN.matcher(csvStringValue).replaceAll("");;
                 }
 				values.add(csvStringValue); 
             }
