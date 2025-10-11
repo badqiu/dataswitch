@@ -35,6 +35,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.util.CsvUtils;
+import com.github.dataswitch.util.StringRemoveUtil;
 import com.github.dataswitch.util.UrlUtil;
 /**
  * doris http streamload导入数据
@@ -243,7 +244,6 @@ public class DorisStreamLoadOutput extends BaseObject implements Output,Cloneabl
         return sb.toString();
     }
 
-    private static final Pattern CONTROL_CHARS_PATTERN = Pattern.compile("[\\u0000-\\u001F]");
     private String toCsvLines(List<Map<String, Object>> rows) {
         Assert.notEmpty(csvColumns,"csvColumns must be not empty");
         
@@ -254,7 +254,7 @@ public class DorisStreamLoadOutput extends BaseObject implements Output,Cloneabl
                 Object columnValue = row.get(c);
                 String csvStringValue = csvUtils.toCsvStringValue(columnValue);
                 if(csvFilterUnknowChars) {
-                	csvStringValue = CONTROL_CHARS_PATTERN.matcher(csvStringValue).replaceAll("");;
+                	csvStringValue = StringRemoveUtil.removeControlCharactersLoop(csvStringValue);;
                 }
 				values.add(csvStringValue); 
             }
