@@ -1,9 +1,7 @@
 package com.github.dataswitch.util;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 import java.util.Arrays;
 import java.util.Base64;
@@ -20,9 +18,7 @@ public class CsvUtils {
     private static final char QUOTE_CHAR = '"';
     // CSV 中的转义引号 (双引号)
     private static final String ESCAPED_QUOTE = "\"\"";
-    // 日期时间格式
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = 
-        DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
+
     
     // 空值表示
     private static final String NULL_VALUE = "";
@@ -43,12 +39,12 @@ public class CsvUtils {
         
         // 处理日期类型
         if (v instanceof Date) {
-        	return dateFormat((Date)v);
+        	return FataDateFormatUtil.formatDateTime((Date)v);
         }
         
         // 处理 Java 8+ 时间类型
         if (v instanceof Temporal) {
-            return DATE_TIME_FORMATTER.format((Temporal) v);
+            return FataDateFormatUtil.DATE_TIME_FORMATTER.format((Temporal) v);
         }
         
         // 处理字符串类型 - 需要添加引号和转义
@@ -85,13 +81,6 @@ public class CsvUtils {
         return JsonUtil.toJsonString(v);
     }
 
-	private static String dateFormat(Date date) {
-	    LocalDateTime localDateTime = date.toInstant()
-	                                    .atZone(ZoneId.systemDefault())
-	                                    .toLocalDateTime();
-	    return DATE_TIME_FORMATTER.format(localDateTime);
-	}
-	
 
 	private Object recoverFromPgArray(PgArray v) {
 		try {

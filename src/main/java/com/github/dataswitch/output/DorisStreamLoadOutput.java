@@ -244,22 +244,22 @@ public class DorisStreamLoadOutput extends BaseObject implements Output,Cloneabl
         return sb.toString();
     }
 
-    private String toCsvLines(List<Map<String, Object>> rows) {
+    public String toCsvLines(List<Map<String, Object>> rows) {
         Assert.notEmpty(csvColumns,"csvColumns must be not empty");
         
         StringBuilder lines = new StringBuilder();
         for (Map<String, Object> row : rows) {
-            List<Object> values = new ArrayList<>();
-            for(String c : csvColumns) {
-                Object columnValue = row.get(c);
+            List<Object> csvFields = new ArrayList<>();
+            for(String columnName : csvColumns) {
+                Object columnValue = row.get(columnName);
                 String csvStringValue = csvUtils.toCsvStringValue(columnValue);
                 if(csvFilterUnknowChars) {
                 	csvStringValue = StringRemoveUtil.removeControlCharactersLoop(csvStringValue);;
                 }
-				values.add(csvStringValue); 
+				csvFields.add(csvStringValue); 
             }
             
-            lines.append(toCsvLine(values));
+            lines.append(toCsvLine(csvFields));
             lines.append(csvLineSeparator); // 行分隔符
         }
         return lines.toString();
