@@ -297,6 +297,7 @@ public class DorisStreamLoadOutput extends BaseObject implements Output,Cloneabl
         } else if (FORMAT_CSV.equals(format)) {
         	httpPut.setHeader("column_separator", escapeInvisibleChars(csvColumnSeparator));    // CSV分隔符
         	httpPut.setHeader("line_delimiter", escapeInvisibleChars(CSV_LINE_SEPARATOR));
+        	httpPut.setHeader("columns", StringUtils.join(csvColumns,","));
         }
         
         // 重定向场景下移除Expect头，避免冲突
