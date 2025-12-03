@@ -24,7 +24,6 @@
 		<spring.version>5.3.31</spring.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<slf4j.version>1.6.6</slf4j.version>
-		<kafka.version>2.6.0</kafka.version>
 		<jackson.version>2.11.3</jackson.version>
 		
 		<elastic.version>7.15.0</elastic.version>
@@ -35,29 +34,6 @@
 
 	<dependencies>
 
-
-    <!-- 
-		<dependency>
-			<groupId>org.apache.kafka</groupId>
-			<artifactId>kafka_2.12</artifactId>
-			<version>${kafka.version}</version>
-			<optional>true</optional>
-		</dependency>
-	
-		<dependency>
-			<groupId>org.apache.kafka</groupId>
-			<artifactId>kafka-clients</artifactId>
-			<version>${kafka.version}</version>
-			<optional>true</optional>
-		</dependency>
-	
-		<dependency>
-			<groupId>org.apache.kafka</groupId>
-			<artifactId>kafka-streams</artifactId>
-			<version>${kafka.version}</version>
-			<optional>true</optional>
-		</dependency>
-     -->
 
     <!-- 核心HTTP客户端库 -->
     <dependency>
@@ -83,9 +59,9 @@
 
     <dependency>
       <groupId>org.apache.kafka</groupId>
-      <artifactId>kafka_2.10</artifactId>
+      <artifactId>kafka_2.13</artifactId>
 <!--      <version>0.10.2.1</version> -->
-      <version>0.9.0.1</version>
+      <version>3.1.2</version>
       <optional>true</optional>
     </dependency>
     
