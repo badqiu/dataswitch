@@ -45,6 +45,8 @@ public class KafkaInput implements Input,TableName{
 	
 	private boolean manualAssignTopic = false; //手工分配partition及线程，使用该功能，将不能多机消费数据
 	
+	private boolean opened = false;
+	
 	public Properties getProperties() {
 		return properties;
 	}
@@ -132,12 +134,12 @@ public class KafkaInput implements Input,TableName{
 			kafkaConsumer.subscribe(topicList);
 			this.kafkaConsumer = kafkaConsumer;
 		}else {
-			for(String topic : topicList) {
-				if(!StringUtils.hasText(topic)) {
-					continue;
-				}
-				
-				if(manualAssignTopic) {
+			if(manualAssignTopic) {
+				for(String topic : topicList) {
+					if(!StringUtils.hasText(topic)) {
+						continue;
+					}
+					
 					List<PartitionInfo> partitions = kafkaConsumer.partitionsFor(topic);
 					for(PartitionInfo p : partitions) {
 						kafkaConsumer = buildKafkaConsumer(properties);
@@ -146,20 +148,14 @@ public class KafkaInput implements Input,TableName{
 						ConsumerWorker worker = startConsumerThread(kafkaConsumer);
 						kafkaConsumerThreads.add(worker);
 					}
-				}else {
-					
-					List<PartitionInfo> partitions = kafkaConsumer.partitionsFor(topic);
-					for(PartitionInfo p : partitions) {
-						kafkaConsumer = buildKafkaConsumer(properties);
-						kafkaConsumer.subscribe(topicList);
-						ConsumerWorker worker = startConsumerThread(kafkaConsumer);
-						kafkaConsumerThreads.add(worker);
-					}
-					
 				}
+			}else {
+				kafkaConsumer = buildKafkaConsumer(properties);
+				kafkaConsumer.subscribe(topicList);
+				ConsumerWorker worker = startConsumerThread(kafkaConsumer);
+				kafkaConsumerThreads.add(worker);
 			}
 		}
-		
 	}
 
 	private ConsumerWorker startConsumerThread(KafkaConsumer<Object, Object> kafkaConsumer) {
@@ -231,6 +227,9 @@ public class KafkaInput implements Input,TableName{
 
 	@Override
 	public List<Map<String, Object>> read(int size) {
+		if(!opened) {
+			throw new RuntimeException("need open()");
+		}
 		
 		if(sync) {
 			return syncRead();
@@ -285,6 +284,7 @@ public class KafkaInput implements Input,TableName{
 	public void open(Map<String, Object> params) throws Exception {
 		Input.super.open(params);
 		init();
+		opened = true;
 	}
 
 	public synchronized void init() {
