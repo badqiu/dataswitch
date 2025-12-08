@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.lang3.StringUtils;
@@ -297,7 +298,10 @@ public class DorisStreamLoadOutput extends BaseObject implements Output,Cloneabl
         } else if (FORMAT_CSV.equals(format)) {
         	httpPut.setHeader("column_separator", escapeInvisibleChars(csvColumnSeparator));    // CSV分隔符
         	httpPut.setHeader("line_delimiter", escapeInvisibleChars(CSV_LINE_SEPARATOR));
-        	httpPut.setHeader("columns", StringUtils.join(csvColumns,","));
+        	String columnsHeader = csvColumns.stream()
+                    .map(DorisStreamLoadOutput::escapeColumnName)
+                    .collect(Collectors.joining(","));
+			httpPut.setHeader("columns", columnsHeader);
         }
         
         // 重定向场景下移除Expect头，避免冲突
@@ -308,6 +312,22 @@ public class DorisStreamLoadOutput extends BaseObject implements Output,Cloneabl
         httpHeaders.forEach((key,value) -> {
             httpPut.setHeader(key,value);
         });
+    }
+    
+    private static String escapeColumnName(String columnName) {
+        if (StringUtils.isBlank(columnName)) {
+            return columnName;
+        }
+        
+        // 移除可能存在的空格
+        String trimmed = columnName.trim();
+        
+        // 如果列名已经是反引号包裹的，直接返回
+        if (trimmed.startsWith("`") && trimmed.endsWith("`")) {
+            return trimmed;
+        }
+        
+        return "`" + columnName + "`";
     }
 
     // 处理响应并返回是否成功
