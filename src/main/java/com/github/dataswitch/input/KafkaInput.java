@@ -210,9 +210,13 @@ public class KafkaInput implements Input,TableName{
 
 	protected void processRecordsForQueue(ConsumerRecords<Object, Object> records) throws InterruptedException {
 		for(ConsumerRecord<Object,Object> c : records) {
-			Map<String,Object> value = processOne(c);
-			if(value != null) {
-				queue.put(value);
+			List<Map<String,Object>> values = processOne(c);
+			if(values != null) {
+				for(Map row : values) {
+					if(row != null) {
+						queue.put(row);
+					}
+				}
 			}
 		}
 	}
@@ -267,18 +271,18 @@ public class KafkaInput implements Input,TableName{
 			
 			List<Map<String, Object>> result = new ArrayList(records.count());
 			for(ConsumerRecord<Object,Object> c : records) {
-				Map<String,Object> value = processOne(c);
+				List<Map<String,Object>> values = processOne(c);
 				
-				if(value != null) {
-					result.add(value);
+				if(values != null) {
+					result.addAll(values);
 				}
 			}
 			return result;
 		}
 	}
 
-	protected Map<String, Object> processOne(ConsumerRecord<Object, Object> c) {
-		return (Map)c.value();
+	protected List<Map<String,Object>> processOne(ConsumerRecord<Object, Object> c) {
+		return (List<Map<String,Object>>)c.value();
 	}
 
 	private List<Map<String, Object>> asyncRead(int size) {
