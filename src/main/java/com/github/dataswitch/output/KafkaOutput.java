@@ -27,7 +27,7 @@ public class KafkaOutput implements Output,TableName{
 	
 	private static ObjectMapper objectMapper = new ObjectMapper();
 	
-	private Properties properties;
+	private Properties properties  = new Properties();
 	private String topic;
 
 	private KafkaProducer<Object,Object> kafkaProducer;
@@ -133,7 +133,8 @@ public class KafkaOutput implements Output,TableName{
 			} 
 		};
 		
-		Future<RecordMetadata> future = kafkaProducer.send(new ProducerRecord<Object, Object>(topic, row), callback );
+		ProducerRecord<Object, Object> record = new ProducerRecord<Object, Object>(topic, row);
+		Future<RecordMetadata> future = kafkaProducer.send(record, callback );
 //		sendMessageWithRetry(kafkaProducer,topic,row,retryTimes);
 	}
 	

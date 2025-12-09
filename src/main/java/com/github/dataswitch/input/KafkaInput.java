@@ -30,7 +30,7 @@ public class KafkaInput implements Input,TableName{
 	
 	private volatile boolean running = true;
 	
-	private Properties properties;
+	private Properties properties = new Properties();
 	private String propertiesString;
 	private String topic;
 	
