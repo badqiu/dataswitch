@@ -118,12 +118,12 @@ public class KafkaOutput implements Output,TableName{
 			return;
 		}
 		
-		for(Object row : rows) {
+		for(Map<String, Object> row : rows) {
 			producerSendOne(row);
 		}
 	}
 
-	protected void producerSendOne(Object row) {
+	protected void producerSendOne(Map<String, Object> row) {
 		Callback callback = new Callback() {
 			@Override
 			public void onCompletion(RecordMetadata metadata, Exception exception) {
