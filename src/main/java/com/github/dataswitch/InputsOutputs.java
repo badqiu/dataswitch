@@ -228,10 +228,6 @@ public class InputsOutputs extends BaseObject implements Enabled,Runnable,Callab
 			throw new IllegalStateException("enabled is false, "+info());
 		}
 		
-//		Assert.hasText(getId(),"id must be not blank");
-//		Assert.hasText(getAuthor(),"author must be not blank");
-//		Assert.hasText(getRemarks(),"remarks must be not blank");
-//		Assert.hasText(getCreateDate(),"createDate must be not blank");
 		
 		try {
 			afterPropertiesSet();

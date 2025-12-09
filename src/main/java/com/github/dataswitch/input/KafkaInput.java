@@ -170,6 +170,8 @@ public class KafkaInput implements Input,TableName{
 	public class ConsumerWorker implements Runnable{
 		public KafkaConsumer<Object, Object> workerKafkaConsumer;
 		
+		private boolean triggerCommit = false;
+		
 		public void run() {
 			try {
 				logger.info("kafka consumer thread start, work on partitions:" + workerKafkaConsumer.assignment());
@@ -182,8 +184,15 @@ public class KafkaInput implements Input,TableName{
 						}
 						
 						processRecordsForQueue(records);
+						
+						
 					}catch(Exception e) {
 						logger.error("consumer error",e);
+					}finally {
+						if(triggerCommit) {
+							triggerCommit = false;
+							workerKafkaConsumer.commitSync();
+						}
 					}
 				}
 			}finally {
@@ -244,7 +253,7 @@ public class KafkaInput implements Input,TableName{
 			kafkaConsumer.commitSync();
 		}else {
 			for(ConsumerWorker worker : kafkaConsumerThreads) {
-				worker.workerKafkaConsumer.commitSync();
+				worker.triggerCommit = true; //不同线程，直接commit会报错。kafka不是线程安全的，不允许多线程访问
 			}
 		}
 	}
