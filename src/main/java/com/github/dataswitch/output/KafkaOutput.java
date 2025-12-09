@@ -133,10 +133,16 @@ public class KafkaOutput implements Output,TableName{
 			} 
 		};
 		
-		ProducerRecord<Object, Object> record = new ProducerRecord<Object, Object>(topic, row);
+		ProducerRecord<Object, Object> record = newProducerRecord(row);
 		Future<RecordMetadata> future = kafkaProducer.send(record, callback );
 //		sendMessageWithRetry(kafkaProducer,topic,row,retryTimes);
 	}
+
+	protected ProducerRecord<Object, Object> newProducerRecord(Map<String, Object> row) {
+		ProducerRecord<Object, Object> r = new ProducerRecord<Object, Object>(topic, (Object) row);
+		return r;
+	}
+
 	
 	public void sendMessageWithRetry(KafkaProducer<Object, Object> kafkaProducer, String topic, Object row, int retryTimes) {
 	    int retryCount = 0;
