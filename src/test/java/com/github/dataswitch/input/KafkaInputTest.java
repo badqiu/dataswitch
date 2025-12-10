@@ -14,9 +14,9 @@ public class KafkaInputTest {
 	public void test() throws Exception {
 		KafkaInput input = new KafkaInput() {
 			@Override
-			protected Map<String, Object> processOne(ConsumerRecord<Object, Object> c) {
+			protected List<Map<String, Object>> processOne(ConsumerRecord<Object, Object> c) {
 				String str = (String)c.value();
-				return (Map)JSON.parse(str);
+				return (List)JSON.parse(str);
 			}
 		};
 		input.setTopic("data_collect.http_request_info_log");
@@ -28,7 +28,7 @@ public class KafkaInputTest {
 		while(true) {
 			List<Map> rows = (List)input.read(100);
 			for(Map row : rows) {
-				System.out.println("read_row:" + row);
+				System.out.println("read_row:" + JSON.toString(row));
 			}
 		}
 	}

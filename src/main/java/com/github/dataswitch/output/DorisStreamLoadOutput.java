@@ -2,6 +2,7 @@ package com.github.dataswitch.output;
 
 import java.io.IOException;
 import java.net.URI;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +35,7 @@ import org.springframework.util.Assert;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.github.dataswitch.BaseObject;
 import com.github.dataswitch.util.CsvUtils;
 import com.github.dataswitch.util.StringRemoveUtil;
@@ -237,12 +239,13 @@ public class DorisStreamLoadOutput extends BaseObject implements Output,Cloneabl
     }
 
     private String toJsonLines(List<Map<String, Object>> rows) {
-        StringBuilder sb = new StringBuilder();
-        for (Map<String, Object> row : rows) {
-            sb.append(toJSONString(row));
-            sb.append("\n"); // 行分隔符
-        }
-        return sb.toString();
+//        StringBuilder sb = new StringBuilder();
+//        for (Map<String, Object> row : rows) {
+//            sb.append(toJSONString(row));
+//            sb.append("\n"); // 行分隔符
+//        }
+//        return sb.toString();
+    	return toJSONString(rows);
     }
 
     public String toCsvLines(List<Map<String, Object>> rows) {
@@ -271,12 +274,18 @@ public class DorisStreamLoadOutput extends BaseObject implements Output,Cloneabl
         return StringUtils.join(values, csvColumnSeparator);
     }
 
-    ObjectMapper objectMapper = new ObjectMapper();
-    private Object toJSONString(Map<String, Object> row) {
+    static ObjectMapper objectMapper = new ObjectMapper();
+    static {
+    	// 最佳配置方案（推荐）
+    	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+    	objectMapper.setDateFormat(dateFormat);// doris使用日期格式
+    	objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // 禁用时间戳格式
+    }
+    static String toJSONString(Object data) {
         try {
-            return objectMapper.writeValueAsString(row);
+            return objectMapper.writeValueAsString(data);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("writeValueAsString() row:"+row,e);
+            throw new RuntimeException("writeValueAsString() data:"+data,e);
         }
     }
 
