@@ -103,7 +103,7 @@ public class BaseObject implements Enabled {
 		ObjectMapper objectMapper = new ObjectMapper();
 		try {
 			Map<String,String> params = objectMapper.readValue(json, Map.class);
-			BeanUtils.copyProperties(this, params);
+			configByMap(params);
 		} catch (Exception e) {
 			throw new RuntimeException(id + " error configByJson:"+json,e);
 		} 
@@ -114,7 +114,7 @@ public class BaseObject implements Enabled {
 		
 		Map<String,String> params = URLQueryUtil.splitQueryForSingleValue(query);
 		try {
-			BeanUtils.copyProperties(this, params);
+			configByMap(params);
 		} catch (Exception e) {
 			throw new RuntimeException(id + " error configByQuery:"+query,e);
 		} 
@@ -125,7 +125,7 @@ public class BaseObject implements Enabled {
 		
 		Map<String,String> params = (Map)PropertiesUtil.createProperties(properties);
 		try {
-			BeanUtils.copyProperties(this, params);
+			configByMap(params);
 		} catch (Exception e) {
 			throw new RuntimeException(id + " error setConfigByProperties:"+properties,e);
 		}
@@ -139,10 +139,14 @@ public class BaseObject implements Enabled {
 			Map root = new HashMap();
 			Map<String,String> params = (Map)xstream.fromXML(xml,root);
 			
-			BeanUtils.copyProperties(this, params);
+			configByMap(params);
 		} catch (Exception e) {
 			throw new RuntimeException(id + " error configByXml:"+xml,e);
 		} 
+	}
+
+	public void configByMap(Map<String, String> params) {
+		BeanUtils.copyProperties(this, params);
 	}
 	
 	public void setConfigByYaml(String yaml) {
@@ -151,7 +155,7 @@ public class BaseObject implements Enabled {
 		YAMLMapper mapper = new YAMLMapper();
         try {
             Map<String, String> params = mapper.readValue(yaml, Map.class);
-            BeanUtils.copyProperties(this, params);
+            configByMap(params);
         } catch (IOException e) {
         	throw new RuntimeException(id + " error configByYaml:"+yaml,e);
         }
