@@ -2,6 +2,7 @@ package com.github.dataswitch;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -30,6 +31,10 @@ public class BaseObject implements Enabled {
 	
 	
 	private boolean enabled = true;
+	
+	private String tags; //标签，一般用于过滤数据使用
+	
+	private boolean lock;
 
 	public String getId() {
 		return id;
@@ -69,6 +74,22 @@ public class BaseObject implements Enabled {
 
 	public void setAuthor(String author) {
 		this.author = author;
+	}
+	
+	public String getTags() {
+		return tags;
+	}
+
+	public void setTags(String tags) {
+		this.tags = tags;
+	}
+	
+	public boolean isLock() {
+		return lock;
+	}
+
+	public void setLock(boolean lock) {
+		this.lock = lock;
 	}
 
 	@Override
