@@ -132,6 +132,7 @@ public class BufferedOutput extends ProxyOutput{
 		autoFlushThread = new Thread(newFlushRunnable(),threadName);
 		
 		autoFlushThread.start();
+		
 	}
 
 	protected Runnable newFlushRunnable() {
