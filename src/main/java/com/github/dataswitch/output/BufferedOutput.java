@@ -33,6 +33,8 @@ public class BufferedOutput extends ProxyOutput{
 	
 	private volatile boolean running = true;
 	
+	private Thread autoFlushThread = null;
+	
 	public BufferedOutput(Output proxy) {
 		this(proxy,Constants.DEFAULT_BATCH_SIZE);
 	}
@@ -127,9 +129,9 @@ public class BufferedOutput extends ProxyOutput{
 		
 		String threadName = getClass().getSimpleName() + "_auto_flush";
 		
-		Thread t = new Thread(newFlushRunnable(),threadName);
+		autoFlushThread = new Thread(newFlushRunnable(),threadName);
 		
-		t.start();
+		autoFlushThread.start();
 	}
 
 	protected Runnable newFlushRunnable() {
@@ -162,7 +164,9 @@ public class BufferedOutput extends ProxyOutput{
 		flush();
 		super.close();
 		running = false;
-		
+		if(autoFlushThread != null) {
+			autoFlushThread.join();
+		}
 	}
 
 }
