@@ -31,7 +31,7 @@ public class BufferedOutput extends ProxyOutput{
 	
 	private boolean init = false;
 	
-	private volatile boolean running = true;
+	private volatile boolean running = false;
 	
 	private Thread autoFlushThread = null;
 	
